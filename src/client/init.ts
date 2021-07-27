@@ -28,7 +28,7 @@ import { initializeSw } from '@client/scripts/initialize-sw';
 import { reloadChannel } from '@client/scripts/unison-reload';
 import { reactionPicker } from '@client/scripts/reaction-picker';
 
-console.info(`Misskey v${version}`);
+console.info(`Honisskey v${version}`);
 
 // boot.jsのやつを解除
 window.onerror = null;

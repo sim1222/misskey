@@ -5,7 +5,7 @@
 		<section class="_formItem about">
 			<div class="_formPanel panel" :class="{ playing: easterEggEngine != null }" ref="about">
 				<img src="/static-assets/client/about-icon.png" alt="" class="icon" ref="icon" @load="iconLoaded" draggable="false"/>
-				<div class="misskey">Misskey</div>
+				<div class="misskey">Honisskey (Forked from Misskey)</div>
 				<div class="version">v{{ version }}</div>
 				<span class="emoji" v-for="emoji in easterEggEmojis" :key="emoji.id" :data-physics-x="emoji.left" :data-physics-y="emoji.top" :class="{ _physics_circle_: !emoji.emoji.startsWith(':') }"><MkEmoji class="emoji" :emoji="emoji.emoji" :custom-emojis="$instance.emojis" :is-reaction="false" :normal="true" :no-style="true"/></span>
 			</div>
@@ -14,7 +14,7 @@
 			{{ $ts._aboutMisskey.about }}
 		</section>
 		<FormGroup>
-			<FormLink to="https://github.com/misskey-dev/misskey" external>
+			<FormLink to="https://github.com/ThinaticSystem/honisskey" external>
 				<template #icon><i class="fas fa-code"></i></template>
 				{{ $ts._aboutMisskey.source }}
 				<template #suffix>GitHub</template>
