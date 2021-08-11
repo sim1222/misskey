@@ -1,11 +1,11 @@
 {
-	"name": "misskey",
-	"author": "syuilo <syuilotan@yahoo.co.jp>",
+	"name": "honisskey",
+	"author": "ThinaticSystem <git@thinaticsystem.com>",
 	"version": "12.84.3",
 	"codename": "indigo",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/misskey-dev/misskey.git"
+		"url": "https://github.com/ThinaticSystem/honisskey.git"
 	},
 	"main": "./index.js",
 	"private": true,
