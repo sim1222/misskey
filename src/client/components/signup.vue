@@ -179,14 +179,14 @@ export default defineComponent({
 				'hcaptcha-response': this.hCaptchaResponse,
 				'g-recaptcha-response': this.reCaptchaResponse,
 			}).then(() => {
-				os.api('signin', {
+				return os.api('signin', {
 					username: this.username,
 					password: this.password
 				}).then(res => {
 					this.$emit('signup', res);
 
 					if (this.autoSet) {
-						login(res.i);
+						return login(res.i);
 					}
 				});
 			}).catch(() => {
