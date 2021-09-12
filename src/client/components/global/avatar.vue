@@ -145,14 +145,17 @@ export default defineComponent({
 						$frame1: $frame1 + 5%;
 						$frame2: $frame2 + 5%;
 					}
+
 				  from { transform: rotate(calc(#{$invert} * 37.6deg)) skew(calc(#{$invert} * 30deg)); }
 				  #{$frame1} { transform: rotate(calc(#{$invert} * 10deg)) skew(calc(#{$invert} * 30deg)); }
 				  #{$frame2} { transform: rotate(calc(#{$invert} * 20deg)) skew(calc(#{$invert} * 30deg)); }
 				  #{$frame3} { transform: rotate(calc(#{$invert} * 0deg)) skew(calc(#{$invert} * 30deg)); }
 				  to { transform: rotate(calc(#{$invert} * 37.6deg)) skew(calc(#{$invert} * 30deg)); }
 				}
+
 				animation: kf-#{$lr} 1s infinite;
 			}
+
 			&::before {
 				@include earwiggle(left);
 			}
