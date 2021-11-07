@@ -39,8 +39,6 @@
 
 	<FormSwitch v-model="isCat">{{ $ts.flagAsCat }}<template #desc>{{ $ts.flagAsCatDescription }}</template></FormSwitch>
 
-	<FormSwitch v-model="isBot">{{ $ts.flagAsBot }}<template #desc>{{ $ts.flagAsBotDescription }}</template></FormSwitch>
-
 	<FormSwitch v-model="alwaysMarkNsfw">{{ $ts.alwaysMarkSensitive }}</FormSwitch>
 </FormBase>
 </template>
@@ -96,7 +94,6 @@ export default defineComponent({
 			fieldValue3: null,
 			avatarId: null,
 			bannerId: null,
-			isBot: false,
 			isCat: false,
 			alwaysMarkNsfw: false,
 			saving: false,
@@ -111,7 +108,6 @@ export default defineComponent({
 		this.lang = this.$i.lang;
 		this.avatarId = this.$i.avatarId;
 		this.bannerId = this.$i.bannerId;
-		this.isBot = this.$i.isBot;
 		this.isCat = this.$i.isCat;
 		this.alwaysMarkNsfw = this.$i.alwaysMarkNsfw;
 
@@ -129,7 +125,6 @@ export default defineComponent({
 		this.$watch('location', this.save);
 		this.$watch('birthday', this.save);
 		this.$watch('lang', this.save);
-		this.$watch('isBot', this.save);
 		this.$watch('isCat', this.save);
 		this.$watch('alwaysMarkNsfw', this.save);
 	},
@@ -237,7 +232,6 @@ export default defineComponent({
 				location: this.location || null,
 				birthday: this.birthday || null,
 				lang: this.lang || null,
-				isBot: !!this.isBot,
 				isCat: !!this.isCat,
 				alwaysMarkNsfw: !!this.alwaysMarkNsfw,
 			}).then(i => {
