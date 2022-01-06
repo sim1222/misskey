@@ -29,6 +29,7 @@ export const builtinThemes = [
 	require('@/themes/d-botanical.json5'),
 	require('@/themes/d-pumpkin.json5'),
 	require('@/themes/d-black.json5'),
+	require('@/themes/d-ncat.json5'),
 ] as Theme[];
 
 let timeout = null;

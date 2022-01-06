@@ -1,0 +1,15 @@
+{
+	id: '5cba19a8-b0e0-42b2-9ab2-35ffd623b045',
+	base: 'dark',
+	desc: 'ぬぁ～んဗ',
+	name: 'Ncat.v2',
+	props: {
+		bg: '#13141C',
+		fg: '#FFF',
+		navBg: '@bg',
+		panel: '@bg',
+		accent: '#96CCE7',
+		renote: '#B0E7CB',
+	},
+	author: '@n@nca10.net',
+}
