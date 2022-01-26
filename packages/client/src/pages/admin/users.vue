@@ -43,8 +43,8 @@
 					<header>
 						<MkUserName class="name" :user="user"/>
 						<span class="acct">@{{ acct(user) }}</span>
-						<span v-if="user.isAdmin" class="staff"><i class="fas fa-bookmark"></i></span>
-						<span v-if="user.isModerator" class="staff"><i class="far fa-bookmark"></i></span>
+						<span v-if="user.isAdmin" class="staff"><img style="height: 20px;transform: translateY(4px);" src="https://s3.nca10.net/misskey/e322f15e-ac35-40bd-a457-6a7b07b8764f.svg"/></span>
+						<span v-if="user.isModerator" class="staff"><img style="height: 20px;transform: translateY(4px);" src="https://s3.nca10.net/misskey/e322f15e-ac35-40bd-a457-6a7b07b8764f.svg"/></span>
 						<span v-if="user.isSilenced" class="punished"><i class="fas fa-microphone-slash"></i></span>
 						<span v-if="user.isSuspended" class="punished"><i class="fas fa-snowflake"></i></span>
 					</header>
@@ -238,6 +238,8 @@ export default defineComponent({
 						> .staff {
 							margin-left: 0.5em;
 							color: var(--badge);
+							height: 20px;
+							transform: translateY(4px);
 						}
 
 						> .punished {
