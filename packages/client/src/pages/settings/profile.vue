@@ -69,60 +69,6 @@ const profile = reactive({
 	alwaysMarkNsfw: $i.alwaysMarkNsfw,
 });
 
-<<<<<<< HEAD
-export default defineComponent({
-	components: {
-		MkButton,
-		FormInput,
-		FormTextarea,
-		FormSwitch,
-		FormSelect,
-		FormSlot,
-	},
-	
-	emits: ['info'],
-
-	data() {
-		return {
-			[symbols.PAGE_INFO]: {
-				title: this.$ts.profile,
-				icon: 'fas fa-user',
-				bg: 'var(--bg)',
-			},
-			host,
-			langs,
-			name: null,
-			description: null,
-			birthday: null,
-			lang: null,
-			location: null,
-			fieldName0: null,
-			fieldValue0: null,
-			fieldName1: null,
-			fieldValue1: null,
-			fieldName2: null,
-			fieldValue2: null,
-			fieldName3: null,
-			fieldValue3: null,
-			avatarId: null,
-			bannerId: null,
-			isCat: false,
-			alwaysMarkNsfw: false,
-			saving: false,
-		}
-	},
-
-	created() {
-		this.name = this.$i.name;
-		this.description = this.$i.description;
-		this.location = this.$i.location;
-		this.birthday = this.$i.birthday;
-		this.lang = this.$i.lang;
-		this.avatarId = this.$i.avatarId;
-		this.bannerId = this.$i.bannerId;
-		this.isCat = this.$i.isCat;
-		this.alwaysMarkNsfw = this.$i.alwaysMarkNsfw;
-=======
 const additionalFields = reactive({
 	fieldName0: $i.fields[0] ? $i.fields[0].name : null,
 	fieldValue0: $i.fields[0] ? $i.fields[0].value : null,
@@ -139,7 +85,6 @@ watch(() => profile, () => {
 }, {
 	deep: true,
 });
->>>>>>> upstream/master
 
 function save() {
 	os.apiWithDialog('i/update', {
@@ -154,16 +99,6 @@ function save() {
 	});
 }
 
-<<<<<<< HEAD
-		this.$watch('name', this.save);
-		this.$watch('description', this.save);
-		this.$watch('location', this.save);
-		this.$watch('birthday', this.save);
-		this.$watch('lang', this.save);
-		this.$watch('isCat', this.save);
-		this.$watch('alwaysMarkNsfw', this.save);
-	},
-=======
 function changeAvatar(ev) {
 	selectFile(ev.currentTarget || ev.target, i18n.locale.avatar).then(async (file) => {
 		const i = await os.apiWithDialog('i/update', {
@@ -173,7 +108,6 @@ function changeAvatar(ev) {
 		$i.avatarUrl = i.avatarUrl;
 	});
 }
->>>>>>> upstream/master
 
 function changeBanner(ev) {
 	selectFile(ev.currentTarget || ev.target, i18n.locale.banner).then(async (file) => {
@@ -202,34 +136,10 @@ async function editMetadata() {
 			label: i18n.locale._profile.metadataLabel + ' 2',
 			default: additionalFields.fieldName1,
 		},
-<<<<<<< HEAD
-
-		save() {
-			this.saving = true;
-
-			os.apiWithDialog('i/update', {
-				name: this.name || null,
-				description: this.description || null,
-				location: this.location || null,
-				birthday: this.birthday || null,
-				lang: this.lang || null,
-				isCat: !!this.isCat,
-				alwaysMarkNsfw: !!this.alwaysMarkNsfw,
-			}).then(i => {
-				this.saving = false;
-				this.$i.avatarId = i.avatarId;
-				this.$i.avatarUrl = i.avatarUrl;
-				this.$i.bannerId = i.bannerId;
-				this.$i.bannerUrl = i.bannerUrl;
-			}).catch(err => {
-				this.saving = false;
-			});
-=======
 		fieldValue1: {
 			type: 'string',
 			label: i18n.locale._profile.metadataContent + ' 2',
 			default: additionalFields.fieldValue1,
->>>>>>> upstream/master
 		},
 		fieldName2: {
 			type: 'string',
