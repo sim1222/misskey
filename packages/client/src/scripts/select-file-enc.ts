@@ -46,7 +46,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						os.toast('Start await beffile');
 						//ここでストップ
 						console.log('Start await beffile');
-						const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
+						const befFile = new Uint8Array(readFromBlobOrFile(input.files[0]));
 
 						os.toast('Loading FFmpeg.wasm');
 						console.log('Loading FFmpeg.wasm');
@@ -55,6 +55,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 							console.log('Loading FFmpeg.wasm-core');
 							await ffmpeg.load();
 						}
+
 						os.toast('Set ffmpeg files');
 						console.log('Set ffmpeg files');
 						ffmpeg.FS('writeFile', infilename, await fetchFile(befFile));
