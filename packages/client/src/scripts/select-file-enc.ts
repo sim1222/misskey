@@ -22,10 +22,12 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						reader.onload = () => {
 							resolve(reader.result);
 						};
-						reader.onerror = reject;
+						reader.onerror = ({ target: { error: { code } } }) => {
+							reject(os.alert({ type: 'error', text: 'file could not be read! ' + code }));
+						};
 						reader.readAsArrayBuffer(blob);
-					})
-				);
+					}
+				));
 
 				const ffmpegconv = async ({ target: { files } }) => {
 					os.toast('Start const ffmpegconv');
@@ -44,8 +46,8 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					os.toast('Converted')
 					const aftFile = await ffmpeg.FS('readFile', outfilename);
 					os.toast('Uploading')
-					os.upload(aftFile, defaultStore.state.uploadFolder).then(res).catch(e => {os.alert({type: 'error', text: e})});
-				}
+					os.upload(aftFile, defaultStore.state.uploadFolder).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
+				};
 
 				const promises = Array.from(input.files).map(file => os.upload(file, defaultStore.state.uploadFolder));
 
