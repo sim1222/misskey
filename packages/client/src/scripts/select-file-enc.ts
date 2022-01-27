@@ -81,10 +81,10 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 	});
 }
 
-export function selectFile(src: any, label: string | null = null): Promise<DriveFile> {
+export function selectFileEnc(src: any, label: string | null = null): Promise<DriveFile> {
 	return select(src, label, false) as Promise<DriveFile>;
 }
 
-export function selectFiles(src: any, label: string | null = null): Promise<DriveFile[]> {
+export function selectFilesEnc(src: any, label: string | null = null): Promise<DriveFile[]> {
 	return select(src, label, true) as Promise<DriveFile[]>;
 }
