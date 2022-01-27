@@ -3,13 +3,17 @@ import { stream } from '@/stream';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
 import { DriveFile } from 'misskey-js/built/entities';
+import { fs } from 'fs';
+import { createFFmpeg, fetchFile } from '@/ffmpeg/ffmpeg';
 
 function select(src: any, label: string | null, multiple: boolean): Promise<DriveFile | DriveFile[]> {
 	return new Promise((res, rej) => {
+
+		const ffmpeg = createFFmpeg({ log: true });
+
 		const chooseFileFromPc = () => {
 			const input = document.createElement('input');
 			input.type = 'file';
-			input.multiple = multiple;
 			input.onchange = () => {
 				const promises = Array.from(input.files).map(file => os.upload(file, defaultStore.state.uploadFolder));
 
@@ -22,6 +26,34 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					});
 				});
 
+				const readFromBlobOrFile = (blob) => (
+					new Promise((resolve, reject) => {
+						const reader = new FileReader();
+						reader.onload = () => {
+							resolve(reader.result);
+						};
+						reader.onerror = reject;
+						reader.readAsArrayBuffer(blob);
+					})
+				);
+
+				const ffmpegconv = async ({ target: { files } }) => {
+					var infilename = files[0].name;
+					var outfilename = infilename.replace(/\.[^/.]+$/, '') + '.mp4';
+					const befFile = new Uint8Array(await readFromBlobOrFile(files[0]));
+					if (!ffmpeg.isLoaded()) {
+						await ffmpeg.load();
+					}
+					ffmpeg.FS('writeFile', infilename, await fetchFile(befFile));
+					await ffmpeg.run(['-i', `video.avi`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`]);
+					const aftFile = await ffmpeg.FS('readFile', outfilename);
+					os.upload(aftFile, defaultStore.state.uploadFolder).then(res).catch(e => {os.alert({type: 'error', text: e})});
+				}
+
+				ffmpegconv(input.files[0]);
+				
+
+
 				// 一応廃棄
 				(window as any).__misskey_input_ref__ = null;
 			};
@@ -31,6 +63,9 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 			(window as any).__misskey_input_ref__ = input;
 
 			input.click();
+
+
+
 		};
 
 		const chooseFileFromDrive = () => {
