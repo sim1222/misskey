@@ -23,10 +23,10 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 
 
 				const readFromBlobOrFile = (blob: any) => (
-					new Promise((resolve, reject) => {
+					new Promise<ArrayBuffer>((resolve, reject) => {
 						const reader = new FileReader();
 						reader.onload = () => {
-							resolve(reader.result);
+							resolve(<ArrayBuffer>reader.result);
 						};
 						reader.onerror = ({ target: { error: { code } } }) => {
 							reject(os.alert({ type: 'error', text: 'file could not be read! ' + code }));
@@ -49,8 +49,8 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						var outfilename = 'out.mp4';
 						os.toast('Start await beffile');
 						//ここでストップ
-						//console.log('Start await beffile');
-						//const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
+						console.log('Start await beffile');
+						const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
 
 						if (!ffmpeg.isLoaded()) {
 							os.toast('Loading FFmpeg.wasm-core');
