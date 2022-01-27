@@ -50,16 +50,16 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					os.upload(aftFile.buffer, defaultStore.state.uploadFolder).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
 				};
 
-				const promises = Array.from(input.files).map(file => os.upload(file, defaultStore.state.uploadFolder));
+				//const promises = Array.from(input.files).map(file => os.upload(file, defaultStore.state.uploadFolder));
 
-				Promise.all(promises).then(driveFiles => {
-					res(multiple ? driveFiles : driveFiles[0]);
-				}).catch(e => {
-					os.alert({
-						type: 'error',
-						text: e
-					});
-				});
+				//Promise.all(promises).then(driveFiles => {
+				//	res(multiple ? driveFiles : driveFiles[0]);
+				//}).catch(e => {
+				//	os.alert({
+				//		type: 'error',
+				//		text: e
+				//	});
+				//});
 				os.toast('Try use FFmpeg.wasm')
 				ffmpegconv(input.files[0]);
 				
