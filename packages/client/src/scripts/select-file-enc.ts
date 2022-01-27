@@ -36,12 +36,13 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					async function ffmpegconv() {
 						os.toast('Start const ffmpegconv');
 						console.log('Start const ffmpegconv');
-						var infilename = input.files[0].name;
+						var infilename = Array.from(input.files)[0].name;
 						let video = null;
 						var outfilename = infilename.replace(/\.[^/.]+$/, '') + '.mp4';
 						os.toast('Start await beffile');
+						//ここでストップ
 						console.log('Start await beffile');
-						const befFile = await readFromBlobOrFile(input.files[0].name));
+						const befFile = await readFromBlobOrFile(input.files[0].name);
 
 						os.toast('Loading FFmpeg.wasm');
 						console.log('Loading FFmpeg.wasm');
