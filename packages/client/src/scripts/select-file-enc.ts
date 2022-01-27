@@ -40,7 +40,8 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 				
 				const ffmpeg = createFFmpeg({ log: true });
 				
-					async function ffmpegconv() {
+				async function ffmpegconv() {
+						if(input.files == null) return;
 						os.toast('Start const ffmpegconv');
 						console.log('Start const ffmpegconv');
 						var infilename = Array.from(input.files[0].name);
@@ -48,8 +49,8 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						var outfilename = 'out.mp4';
 						os.toast('Start await beffile');
 						//ここでストップ
-						console.log('Start await beffile');
-						const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
+						//console.log('Start await beffile');
+						//const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
 
 						if (!ffmpeg.isLoaded()) {
 							os.toast('Loading FFmpeg.wasm-core');
