@@ -351,7 +351,7 @@ function chooseFileFrom(ev) {
 	});
 }
 
-function chooseFileFrom(ev) {
+function chooseFileFromEnc(ev) {
 	selectFilesEnc(ev.currentTarget || ev.target, i18n.locale.attachFile).then(files_ => {
 		for (const file of files_) {
 			files.push(file);
