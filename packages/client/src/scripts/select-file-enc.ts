@@ -9,8 +9,7 @@ import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 function select(src: any, label: string | null, multiple: boolean): Promise<DriveFile | DriveFile[]> {
 	return new Promise((res, rej) => {
 
-		const ffmpeg = createFFmpeg({ log: true });
-
+		
 		const chooseFileFromPc = () => {
 			const input = document.createElement('input');
 			input.type = 'file';
@@ -29,6 +28,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					}
 				));
 
+				const ffmpeg = createFFmpeg({ log: true });
 				const ffmpegconv = async ({ target: { files } }) => {
 					os.toast('Start const ffmpegconv');
 					var infilename = files[0].name;
@@ -40,13 +40,14 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						os.toast('Loading FFmpeg.wasm-core')
 						await ffmpeg.load();
 					}
+					os.toast('Set ffmpeg files')
 					ffmpeg.FS('writeFile', infilename, await fetchFile(befFile));
 					os.toast('Converting')
 					await ffmpeg.run(['-i', `video.avi`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`]);
 					os.toast('Converted')
 					const aftFile = await ffmpeg.FS('readFile', outfilename);
 					os.toast('Uploading')
-					os.upload(aftFile, defaultStore.state.uploadFolder).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
+					os.upload(aftFile.buffer, defaultStore.state.uploadFolder).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
 				};
 
 				const promises = Array.from(input.files).map(file => os.upload(file, defaultStore.state.uploadFolder));
