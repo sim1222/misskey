@@ -41,12 +41,17 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					var infilename = files[0].name;
 					var outfilename = infilename.replace(/\.[^/.]+$/, '') + '.mp4';
 					const befFile = new Uint8Array(await readFromBlobOrFile(files[0]));
+					os.toast('Loading FFmpeg.wasm')
 					if (!ffmpeg.isLoaded()) {
+						os.toast('Loading FFmpeg.wasm-core')
 						await ffmpeg.load();
 					}
 					ffmpeg.FS('writeFile', infilename, await fetchFile(befFile));
+					os.toast('Converting')
 					await ffmpeg.run(['-i', `video.avi`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`]);
+					os.toast('Converted')
 					const aftFile = await ffmpeg.FS('readFile', outfilename);
+					os.toast('Uploading')
 					os.upload(aftFile, defaultStore.state.uploadFolder).then(res).catch(e => {os.alert({type: 'error', text: e})});
 				}
 
