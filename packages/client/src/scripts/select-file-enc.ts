@@ -15,16 +15,6 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 			const input = document.createElement('input');
 			input.type = 'file';
 			input.onchange = () => {
-				const promises = Array.from(input.files).map(file => os.upload(file, defaultStore.state.uploadFolder));
-
-				Promise.all(promises).then(driveFiles => {
-					res(multiple ? driveFiles : driveFiles[0]);
-				}).catch(e => {
-					os.alert({
-						type: 'error',
-						text: e
-					});
-				});
 
 				const readFromBlobOrFile = (blob) => (
 					new Promise((resolve, reject) => {
@@ -55,6 +45,17 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					os.upload(aftFile, defaultStore.state.uploadFolder).then(res).catch(e => {os.alert({type: 'error', text: e})});
 				}
 
+				const promises = Array.from(input.files).map(file => os.upload(file, defaultStore.state.uploadFolder));
+
+				Promise.all(promises).then(driveFiles => {
+					res(multiple ? driveFiles : driveFiles[0]);
+				}).catch(e => {
+					os.alert({
+						type: 'error',
+						text: e
+					});
+				});
+				os.toast('Try use FFmpeg.wasm')
 				ffmpegconv(input.files[0]);
 				
 
