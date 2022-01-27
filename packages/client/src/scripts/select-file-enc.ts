@@ -35,18 +35,23 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					const ffmpeg = createFFmpeg({ log: true });
 					async function ffmpegconv() {
 						os.toast('Start const ffmpegconv');
+						console.log('Start const ffmpegconv');
 						var infilename = input.files[0].name;
 						let video = null;
 						var outfilename = infilename.replace(/\.[^/.]+$/, '') + '.mp4';
 						os.toast('Start await beffile');
+						console.log('Start await beffile');
 						const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0].name));
 
-						os.toast('Loading FFmpeg.wasm')
+						os.toast('Loading FFmpeg.wasm');
+						console.log('Loading FFmpeg.wasm');
 						if (!ffmpeg.isLoaded()) {
-							os.toast('Loading FFmpeg.wasm-core')
+							os.toast('Loading FFmpeg.wasm-core');
+							console.log('Loading FFmpeg.wasm-core');
 							await ffmpeg.load();
 						}
-						os.toast('Set ffmpeg files')
+						os.toast('Set ffmpeg files');
+						console.log('Set ffmpeg files');
 						ffmpeg.FS('writeFile', infilename, await fetchFile(befFile));
 						os.toast('Converting')
 						await ffmpeg.run('-i', `video.avi`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`);
