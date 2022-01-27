@@ -6,6 +6,7 @@ import { DriveFile } from 'misskey-js/built/entities';
 import { fs } from 'fs';
 import { defineComponent, ref } from 'vue';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import * as ffmpegcore from '@ffmpeg/ffmpeg-core';
 
 
 function select(src: any, label: string | null, multiple: boolean): Promise<DriveFile | DriveFile[]> {
@@ -37,7 +38,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 
 					
 				
-				const ffmpeg = createFFmpeg({ log: true ,corePath: 'https://unpkg.com/@ffmpeg/core@0.10.0/dist/ffmpeg-core.js'});
+				const ffmpeg = createFFmpeg({ log: true });
 				
 					async function ffmpegconv() {
 						os.toast('Start const ffmpegconv');
