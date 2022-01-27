@@ -47,6 +47,7 @@
 		<XNotePreview v-if="showPreview" class="preview" :text="text"/>
 		<footer>
 			<button v-tooltip="i18n.locale.attachFile" class="_button" @click="chooseFileFrom"><i class="fas fa-photo-video"></i></button>
+			<button v-tooltip="i18n.locale.attachFile" class="_button" @click="chooseFileFrom"><i class="far fa-file-video"></i></button>
 			<button v-tooltip="i18n.locale.poll" class="_button" :class="{ active: poll }" @click="togglePoll"><i class="fas fa-poll-h"></i></button>
 			<button v-tooltip="i18n.locale.useCw" class="_button" :class="{ active: useCw }" @click="useCw = !useCw"><i class="fas fa-eye-slash"></i></button>
 			<button v-tooltip="i18n.locale.mention" class="_button" @click="insertMention"><i class="fas fa-at"></i></button>
