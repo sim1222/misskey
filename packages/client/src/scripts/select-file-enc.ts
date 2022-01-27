@@ -37,7 +37,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 
 					
 				
-				const ffmpeg = createFFmpeg({ log: true });
+				const ffmpeg = createFFmpeg({ log: true ,corePath: 'https://unpkg.com/@ffmpeg/core@0.10.0/dist/ffmpeg-core.js'});
 				
 					async function ffmpegconv() {
 						os.toast('Start const ffmpegconv');
@@ -50,11 +50,11 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						console.log('Start await beffile');
 						const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
 
-						//if (!ffmpeg.isLoaded()) {
+						if (!ffmpeg.isLoaded()) {
 							os.toast('Loading FFmpeg.wasm-core');
 							console.log('Loading FFmpeg.wasm-core');
 							await ffmpeg.load();
-						//}
+						}
 
 						os.toast('Set ffmpeg files');
 						console.log('Set ffmpeg files');
