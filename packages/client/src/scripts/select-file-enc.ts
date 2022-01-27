@@ -61,7 +61,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 				//	});
 				//});
 				os.toast('Try use FFmpeg.wasm')
-				ffmpegconv(input.files[0]);
+				ffmpegconv;
 				
 
 
