@@ -42,7 +42,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						console.log('Start const ffmpegconv');
 						var infilename = Array.from(input.files[0].name);
 						let video = null;
-						var outfilename = infilename.replace(/\.[^/.]+$/, '') + '.mp4';
+						var outfilename = 'out.mp4';
 						os.toast('Start await beffile');
 						//ここでストップ
 						console.log('Start await beffile');
