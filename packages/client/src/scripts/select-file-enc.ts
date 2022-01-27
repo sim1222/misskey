@@ -41,7 +41,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						var outfilename = infilename.replace(/\.[^/.]+$/, '') + '.mp4';
 						os.toast('Start await beffile');
 						console.log('Start await beffile');
-						const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0].name));
+						const befFile = await readFromBlobOrFile(input.files[0].name));
 
 						os.toast('Loading FFmpeg.wasm');
 						console.log('Loading FFmpeg.wasm');
