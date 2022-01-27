@@ -4,6 +4,7 @@ import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
 import { DriveFile } from 'misskey-js/built/entities';
 import { fs } from 'fs';
+import { defineComponent, ref } from 'vue';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 
 
@@ -36,20 +37,19 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 
 					
 				
-					const ffmpeg = createFFmpeg({ log: true });
+				const ffmpeg = createFFmpeg({ log: true });
+				
 					async function ffmpegconv() {
 						os.toast('Start const ffmpegconv');
 						console.log('Start const ffmpegconv');
 						var infilename = Array.from(input.files[0].name);
-						let video = null;
+						let video = ref(null);
 						var outfilename = 'out.mp4';
 						os.toast('Start await beffile');
 						//ここでストップ
 						console.log('Start await beffile');
-						const befFile = new Uint8Array(readFromBlobOrFile(input.files[0]));
+						const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
 
-						os.toast('Loading FFmpeg.wasm');
-						console.log('Loading FFmpeg.wasm');
 						if (!ffmpeg.isLoaded()) {
 							os.toast('Loading FFmpeg.wasm-core');
 							console.log('Loading FFmpeg.wasm-core');
