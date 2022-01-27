@@ -28,8 +28,10 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 				);
 
 				const ffmpegconv = async ({ target: { files } }) => {
+					os.toast('Start const ffmpegconv');
 					var infilename = files[0].name;
 					var outfilename = infilename.replace(/\.[^/.]+$/, '') + '.mp4';
+					os.toast('Start await beffile');
 					const befFile = new Uint8Array(await readFromBlobOrFile(files[0]));
 					os.toast('Loading FFmpeg.wasm')
 					if (!ffmpeg.isLoaded()) {
