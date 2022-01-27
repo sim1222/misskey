@@ -42,7 +42,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						os.toast('Start await beffile');
 						//ここでストップ
 						console.log('Start await beffile');
-						const befFile = await readFromBlobOrFile(input.files[0]);
+						const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
 
 						os.toast('Loading FFmpeg.wasm');
 						console.log('Loading FFmpeg.wasm');
