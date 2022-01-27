@@ -22,7 +22,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 
 
 
-				const readFromBlobOrFile = (blob) => (
+				const readFromBlobOrFile = (blob: any) => (
 					new Promise((resolve, reject) => {
 						const reader = new FileReader();
 						reader.onload = () => {
