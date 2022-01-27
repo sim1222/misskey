@@ -21,7 +21,6 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 
 
 				const readFromBlobOrFile = (blob) => (
-					console.log('start readfrombloborfile'),
 					new Promise((resolve, reject) => {
 						const reader = new FileReader();
 						reader.onload = () => {
