@@ -55,14 +55,14 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						if (!ffmpeg.isLoaded()) {
 							os.toast('Loading FFmpeg.wasm-core');
 							console.log('Loading FFmpeg.wasm-core');
-							await ffmpeg.load();
+							 ffmpeg.load();
 						}
 
 						os.toast('Set ffmpeg files');
 						console.log('Set ffmpeg files');
 						ffmpeg.FS('writeFile', infilename, await fetchFile(befFile));
 						os.toast('Converting')
-						await ffmpeg.run('-i', `video.avi`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`);
+						await ffmpeg.run('-i', `video.mov`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`);
 						os.toast('Converted')
 						const aftFile = ffmpeg.FS('readFile', outfilename);
 						os.toast('Uploading')
