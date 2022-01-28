@@ -48,21 +48,22 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						let video = ref(null);
 						var outfilename = 'out.mp4';
 						os.toast('Start await beffile');
-						//ここでストップ
+						
 						console.log('Start await beffile');
 						const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
 
 						if (!ffmpeg.isLoaded()) {
 							os.toast('Loading FFmpeg.wasm-core');
 							console.log('Loading FFmpeg.wasm-core');
+							//ここでストップ
 							 await ffmpeg.load();
 						}
 
 						os.toast('Set ffmpeg files');
 						console.log('Set ffmpeg files');
-						ffmpeg.FS('writeFile', infilename[0], await fetchFile(befFile));
+						ffmpeg.FS('writeFile', 'input.mov', await fetchFile(infilename[0]));
 						os.toast('Converting')
-						await ffmpeg.run('-i', `video.mov`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`);
+						await ffmpeg.run('-i', `input.mov`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`);
 						os.toast('Converted')
 						const aftFile = ffmpeg.FS('readFile', outfilename);
 						os.toast('Uploading')
