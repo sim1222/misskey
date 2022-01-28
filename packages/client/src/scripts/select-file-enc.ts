@@ -6,7 +6,7 @@ import { DriveFile } from 'misskey-js/built/entities';
 import { fs } from 'fs';
 import { defineComponent, ref } from 'vue';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import * as ffmpegcore from '@ffmpeg/ffmpeg-core';
+import * as ffmpegcore from '@ffmpeg/core';
 
 
 function select(src: any, label: string | null, multiple: boolean): Promise<DriveFile | DriveFile[]> {
