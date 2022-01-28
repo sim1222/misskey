@@ -19,8 +19,8 @@
 									<MkUserName class="name" :user="user" :nowrap="true"/>
 									<div class="bottom">
 										<span class="username"><MkAcct :user="user" :detail="true" /></span>
-										<span v-if="user.isAdmin" :title="$ts.isAdmin" style="color: var(--badge);"><i class="fas fa-bookmark"></i></span>
-										<span v-if="!user.isAdmin && user.isModerator" :title="$ts.isModerator" style="color: var(--badge);"><i class="far fa-bookmark"></i></span>
+										<span v-if="user.isAdmin" :title="$ts.isAdmin" style="color: var(--badge);"><img style="height: 20px; transform: translateY(4px);" src="https://s3.nca10.net/misskey/e322f15e-ac35-40bd-a457-6a7b07b8764f.svg"/></span>
+								<span v-if="!user.isAdmin && user.isModerator" :title="$ts.isModerator" style="color: var(--badge);"><img style="height: 20px; transform: translateY(4px);" src="https://s3.nca10.net/misskey/e322f15e-ac35-40bd-a457-6a7b07b8764f.svg"/></span>
 										<span v-if="user.isLocked" :title="$ts.isLocked"><i class="fas fa-lock"></i></span>
 										<span v-if="user.isBot" :title="$ts.isBot"><i class="fas fa-robot"></i></span>
 									</div>
@@ -399,7 +399,7 @@ export default defineComponent({
 						> .bottom {
 							> * {
 								display: inline-block;
-								margin-right: 16px;
+								margin-right: 8px;
 								line-height: 20px;
 								opacity: 0.8;
 
