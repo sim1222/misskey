@@ -8,6 +8,9 @@
 >
 	<header>
 		<button v-if="!fixed" class="cancel _button" @click="cancel"><i class="fas fa-times"></i></button>
+		<button v-click-anime v-tooltip="i18n.locale.switchAccount" class="account _button" @click="openAccountMenu">
+			<MkAvatar :user="postAccount ?? $i" class="avatar"/>
+		</button>
 		<div>
 			<span class="text-count" :class="{ over: textLength > maxTextLength }">{{ maxTextLength - textLength }}</span>
 			<span v-if="localOnly" class="local-only"><i class="fas fa-biohazard"></i></span>
@@ -99,7 +102,7 @@ const props = withDefaults(defineProps<{
 	initialLocalOnly?: boolean;
 	initialVisibleUsers?: misskey.entities.User[];
 	initialNote?: misskey.entities.Note;
-	share?: boolean;
+	instant?: boolean;
 	fixed?: boolean;
 	autofocus?: boolean;
 }>(), {
@@ -638,7 +641,7 @@ onMounted(() => {
 
 	nextTick(() => {
 		// 書きかけの投稿を復元
-		if (!props.share && !props.mention && !props.specified) {
+		if (!props.instant && !props.mention && !props.specified) {
 			const draft = JSON.parse(localStorage.getItem('drafts') || '{}')[draftKey];
 			if (draft) {
 				text = draft.data.text;
