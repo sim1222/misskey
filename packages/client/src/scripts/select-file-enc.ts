@@ -41,35 +41,39 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 				const ffmpeg = createFFmpeg({ log: true });
 				
 				async function ffmpegconv() {
-						if(input.files == null) return;
-						os.toast('Start const ffmpegconv');
-						console.log('Start const ffmpegconv');
-						var infilename = Array.from(input.files[0].name);
-						let video = ref(null);
-						var outfilename = 'out.mp4';
-						os.toast('Start await beffile');
+					if (input.files == null) return;
+					
+					if (!ffmpeg.isLoaded()) {
+						os.toast('Loading FFmpeg.wasm-core');
+						console.log('Loading FFmpeg.wasm-core');
+						//ここでストップ
+						await ffmpeg.load();
+					}
+
+
+					os.toast('Start const ffmpegconv');
+					console.log('Start const ffmpegconv');
+					var infilename = Array.from(input.files[0].name);
+					let video = ref(null);
+					var outfilename = 'out.mp4';
+					os.toast('Start await beffile');
 						
-						console.log('Start await beffile');
-						const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
+					console.log('Start await beffile');
+					const befFile = new Uint8Array(await readFromBlobOrFile(input.files[0]));
 
-						if (!ffmpeg.isLoaded()) {
-							os.toast('Loading FFmpeg.wasm-core');
-							console.log('Loading FFmpeg.wasm-core');
-							//ここでストップ
-							 await ffmpeg.load();
-						}
 
-						os.toast('Set ffmpeg files');
-						console.log('Set ffmpeg files');
-						ffmpeg.FS('writeFile', 'input.mov', await fetchFile(infilename[0]));
-						os.toast('Converting')
-						await ffmpeg.run('-i', `input.mov`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`);
-						os.toast('Converted')
-						const aftFile = ffmpeg.FS('readFile', outfilename);
-						os.toast('Uploading')
-						video.value = URL.createObjectURL(new Blob([aftFile.buffer], { type: 'video/mp4' }));
-						os.upload(video, defaultStore.state.uploadFolder).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
-					};
+
+					os.toast('Set ffmpeg files');
+					console.log('Set ffmpeg files');
+					ffmpeg.FS('writeFile', 'input.mov', await fetchFile(infilename[0]));
+					os.toast('Converting')
+					await ffmpeg.run('-i', `input.mov`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`);
+					os.toast('Converted')
+					const aftFile = ffmpeg.FS('readFile', outfilename);
+					os.toast('Uploading')
+					video.value = URL.createObjectURL(new Blob([aftFile.buffer], { type: 'video/mp4' }));
+					os.upload(video, defaultStore.state.uploadFolder).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
+				};
 					
 
 				//const promises = Array.from(input.files).map(file => os.upload(file, defaultStore.state.uploadFolder));
