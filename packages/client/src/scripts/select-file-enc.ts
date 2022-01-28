@@ -60,7 +60,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 
 						os.toast('Set ffmpeg files');
 						console.log('Set ffmpeg files');
-						ffmpeg.FS('writeFile', infilename, await fetchFile(befFile));
+						ffmpeg.FS('writeFile', infilename[0], await fetchFile(befFile));
 						os.toast('Converting')
 						await ffmpeg.run('-i', `video.mov`, '-c:v', 'copy', '-c:a', 'copy', `video.mp4`);
 						os.toast('Converted')
