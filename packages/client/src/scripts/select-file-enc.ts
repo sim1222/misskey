@@ -55,7 +55,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 						if (!ffmpeg.isLoaded()) {
 							os.toast('Loading FFmpeg.wasm-core');
 							console.log('Loading FFmpeg.wasm-core');
-							 ffmpeg.load();
+							 await ffmpeg.load();
 						}
 
 						os.toast('Set ffmpeg files');
