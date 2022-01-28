@@ -7,7 +7,7 @@
 - 新規登録ボタンがない
 - ぬるきゃごしか存在しない
 - AdminとModeratorのタグがねこ<br>
-ちなみにここの元々Bookmark部分<br>
+(ちなみにここのBookmarkアイコン部分がねこ)<br>
 ![image](https://user-images.githubusercontent.com/89781396/151149621-ad573eb5-eb0c-4de9-8850-b4a2900551e7.png)
 ![image](https://user-images.githubusercontent.com/89781396/151149177-aaeea1a1-bd59-4312-b2d3-3b143154bc46.png)
 ## 導入方法
