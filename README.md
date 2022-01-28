@@ -5,7 +5,7 @@
 ちなみにこの部分の色<img src=https://user-images.githubusercontent.com/89781396/148686895-f1662508-9fe5-47fd-be51-3d61f5220a2c.png>
 - デフォルトのテーマがNcat.の配色
 - 新規登録ボタンがない
-- ぬるきゃごしか存在しない
+- 日本語が[ぬるきゃご](https://github.com/nullnyat/Ncat-lang)
 - AdminとModeratorのタグがねこ<br>
 (ちなみにここのBookmarkアイコン部分がねこ)<br>
 ![image](https://user-images.githubusercontent.com/89781396/151149621-ad573eb5-eb0c-4de9-8850-b4a2900551e7.png)

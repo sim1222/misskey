@@ -14,11 +14,36 @@ const merge = (...args) => args.reduce((a, c) => ({
 }), {});
 
 const languages = [
+	'ar-SA',
+	'cs-CZ',
+	'da-DK',
+	'de-DE',
+	'en-US',
+	'eo-UY',
+	'es-ES',
+	'fr-FR',
+	'id-ID',
+	'it-IT',
 	'ja-JP',
+	'ja-KS',
+	'kab-KAB',
+	'kn-IN',
+	'ko-KR',
+	'nl-NL',
+	'no-NO',
+	'pl-PL',
+	'pt-PT',
+	'ru-RU',
+	'ug-CN',
+	'uk-UA',
+	'zh-CN',
+	'zh-TW',
 ];
 
 const primaries = {
+	'en': 'US',
 	'ja': 'JP',
+	'zh': 'CN',
 };
 
 // 何故か文字列にバックスペース文字が混入することがあり、YAMLが壊れるので取り除く
