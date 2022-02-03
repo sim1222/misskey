@@ -19,8 +19,8 @@
 									<MkUserName class="name" :user="user" :nowrap="true"/>
 									<div class="bottom">
 										<span class="username"><MkAcct :user="user" :detail="true" /></span>
-										<span v-if="user.isAdmin" :title="$ts.isAdmin" style="color: var(--badge);"><img style="height: 20px; transform: translateY(4px);" src="https://s3.nca10.net/misskey/4433f6ad-4261-4302-9856-dcbc71395099"/></span>
-								<span v-if="!user.isAdmin && user.isModerator" :title="$ts.isModerator" style="color: var(--badge);"><img style="height: 20px; transform: translateY(4px);" src="https://s3.nca10.net/misskey/4433f6ad-4261-4302-9856-dcbc71395099"/></span>
+										<span v-if="user.isAdmin" :title="$ts.isAdmin" style="color: var(--badge);"><img style="height: 20px; transform: translateY(4px);" src="https://s3.nca10.net/misskey/cb40a22b-cccf-490d-b224-bffa359a3462.png"/></span>
+								<span v-if="!user.isAdmin && user.isModerator" :title="$ts.isModerator" style="color: var(--badge);"><img style="height: 20px; transform: translateY(4px);" src="https://s3.nca10.net/misskey/cb40a22b-cccf-490d-b224-bffa359a3462.png"/></span>
 										<span v-if="user.isLocked" :title="$ts.isLocked"><i class="fas fa-lock"></i></span>
 										<span v-if="user.isBot" :title="$ts.isBot"><i class="fas fa-robot"></i></span>
 									</div>
