@@ -9,4 +9,3 @@
 - AdminとModeratorのタグがねこ<br>
 ## 導入方法
 [MisskeyHub](https://misskey-hub.net/docs/install.html)をみてね
-test
