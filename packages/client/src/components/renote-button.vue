@@ -75,7 +75,6 @@ export default defineComponent({
 						visibility: 'followers'
 					});
 				}
-			}]);
 			},{
 				text: i18n.ts.quote,
 				icon: 'fas fa-quote-right',
