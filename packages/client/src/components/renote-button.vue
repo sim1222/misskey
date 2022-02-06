@@ -66,7 +66,17 @@ export default defineComponent({
 						renoteId: props.note.id
 					});
 				}
-			}, {
+			},{
+				text: i18n.ts.renoteFollowersOnly,
+				icon: 'fas fa-unlock',
+				action: () => {
+					os.api('notes/create', {
+						renoteId: props.note.id,
+						visibility: 'followers'
+					});
+				}
+			}]);
+			},{
 				text: i18n.ts.quote,
 				icon: 'fas fa-quote-right',
 				action: () => {
