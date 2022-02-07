@@ -5,7 +5,7 @@
 ちなみにこの部分の色<img src=https://user-images.githubusercontent.com/89781396/148686895-f1662508-9fe5-47fd-be51-3d61f5220a2c.png>
 - デフォルトのテーマがNcat.の配色
 - 新規登録ボタンがない
-- 日本語が[ぬるきゃご](https://github.com/nullnyat/Ncat-lang)
+- 日本語がぬるきゃご
 - AdminとModeratorのタグがねこ<br>
 ## 導入方法
 [MisskeyHub](https://misskey-hub.net/docs/install.html)をみてね
