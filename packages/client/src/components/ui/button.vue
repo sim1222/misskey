@@ -146,14 +146,16 @@ export default defineComponent({
 	line-height: 22px;
 	box-shadow: none;
 	text-decoration: none;
-	background: var(--buttonBg);
+	background: none;
+	border: solid 2px var(--accent);
 	border-radius: 5px;
 	overflow: clip;
 	box-sizing: border-box;
 	transition: background 0.1s ease;
 
 	&:not(:disabled):hover {
-		background: var(--buttonHoverBg);
+		text-shadow: -6px 0px 15px rgba(150, 204, 231, 0.83),
+                  6px 0px 15px rgba(150, 204, 231, 0.83);
 	}
 
 	&:not(:disabled):active {
