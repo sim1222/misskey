@@ -193,19 +193,19 @@ defineExpose<WidgetComponentExpose>({
 
 			&:nth-child(1) {
 				> .meter > .val {
-					background: #f7796c;
+					background: #96CCE7;
 				}
 			}
 
 			&:nth-child(2) {
 				> .meter > .val {
-					background: #a1de41;
+					background: #CECEFF;
 				}
 			}
 
 			&:nth-child(3) {
 				> .meter > .val {
-					background: #41ddde;
+					background: #B0E7CB;
 				}
 			}
 		}
