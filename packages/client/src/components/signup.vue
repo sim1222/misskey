@@ -36,7 +36,7 @@
 		</MkInput>
 		<MkInput v-model="password" class="_formBlock" type="password" :autocomplete="Math.random()" required data-cy-signup-password @update:modelValue="onChangePassword">
 			<template #label>{{ $ts.password }}</template>
-			<template #prefix><i class="fas fa-lock"></i></template>
+			<template #prefix><i style="color: #96CCE7;" class="fas fa-lock"></i></template>
 			<template #caption>
 				<span v-if="passwordStrength == 'low'" style="color: var(--error)"><i class="fas fa-exclamation-triangle fa-fw"></i> {{ $ts.weakPassword }}</span>
 				<span v-if="passwordStrength == 'medium'" style="color: var(--warn)"><i class="fas fa-check fa-fw"></i> {{ $ts.normalPassword }}</span>
@@ -45,7 +45,7 @@
 		</MkInput>
 		<MkInput v-model="retypedPassword" class="_formBlock" type="password" :autocomplete="Math.random()" required data-cy-signup-password-retype @update:modelValue="onChangePasswordRetype">
 			<template #label>{{ $ts.password }} ({{ $ts.retype }})</template>
-			<template #prefix><i class="fas fa-lock"></i></template>
+			<template #prefix><i style="color: #96CCE7;" class="fas fa-lock"></i></template>
 			<template #caption>
 				<span v-if="passwordRetypeState == 'match'" style="color: var(--success)"><i class="fas fa-check fa-fw"></i> {{ $ts.passwordMatched }}</span>
 				<span v-if="passwordRetypeState == 'not-match'" style="color: var(--error)"><i class="fas fa-exclamation-triangle fa-fw"></i> {{ $ts.passwordNotMatched }}</span>

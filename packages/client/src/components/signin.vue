@@ -8,7 +8,7 @@
 				<template #suffix>@{{ host }}</template>
 			</MkInput>
 			<MkInput v-if="!user || user && !user.usePasswordLessLogin" v-model="password" class="_formBlock" :placeholder="$ts.password" type="password" :with-password-toggle="true" required data-cy-signin-password>
-				<template #prefix><i class="fas fa-lock"></i></template>
+				<template #prefix><i style="color: #96CCE7;" class="fas fa-lock"></i></template>
 				<template #caption><button class="_textButton" type="button" @click="resetPassword">{{ $ts.forgotPassword }}</button></template>
 			</MkInput>
 			<MkButton class="_formBlock" type="submit" primary :disabled="signing" style="margin: 0 auto;">{{ signing ? $ts.loggingIn : $ts.login }}</MkButton>
@@ -27,7 +27,7 @@
 				<p style="margin-bottom:0;">{{ $ts.twoStepAuthentication }}</p>
 				<MkInput v-if="user && user.usePasswordLessLogin" v-model="password" type="password" :with-password-toggle="true" required>
 					<template #label>{{ $ts.password }}</template>
-					<template #prefix><i class="fas fa-lock"></i></template>
+					<template #prefix><i style="color: #96CCE7;" class="fas fa-lock"></i></template>
 				</MkInput>
 				<MkInput v-model="token" type="text" pattern="^[0-9]{6}$" autocomplete="off" spellcheck="false" required>
 					<template #label>{{ $ts.token }}</template>

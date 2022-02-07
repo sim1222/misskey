@@ -2,7 +2,7 @@
 <MkSpacer v-if="token" :content-max="700" :margin-min="16" :margin-max="32">
 	<div class="_formRoot">
 		<FormInput v-model="password" type="password" class="_formBlock">
-			<template #prefix><i class="fas fa-lock"></i></template>
+			<template #prefix><i style="color: #96CCE7;" class="fas fa-lock"></i></template>
 			<template #label>{{ i18n.ts.newPassword }}</template>
 		</FormInput>
 		
