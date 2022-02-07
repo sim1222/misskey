@@ -121,15 +121,12 @@ export default defineComponent({
 	margin: 2px;
 	padding: 0 6px;
 	border-radius: 4px;
-	box-shadow: 0px 0px 4px 2px var(--bg) inset;
-  background-color: var(--accent);
 
 	&.canToggle {
-		box-shadow: 0px 0px 4px 0px var(--accent) inset;
-    background-color: var(--bg);
+		background: rgba(0, 0, 0, 0.05);
 
 		&:hover {
-			background: var(--bg);
+			background: rgba(0, 0, 0, 0.1);
 		}
 	}
 
@@ -139,11 +136,6 @@ export default defineComponent({
 
 	&.reacted {
 		background: var(--accent);
-
-		&.canToggle {
-			box-shadow: 0px 0px 4px 0px var(--accent) inset;
-			background-color: var(--bg);
-		}
 
 		&:hover {
 			background: var(--accent);
