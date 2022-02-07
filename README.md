@@ -1,5 +1,5 @@
 ## これってなに？
-僕用のmisskeyインスタンス用のリポジトリです。
+NullCat用のmisskeyインスタンス用のリポジトリです。
 
 ## 大きな変更点
 - ノートのインスタンス情報の色が`#bfe0f0` [変更方法](https://github.com/nullnyat/nca10.net/blob/Ncat/explanation/instancecolor.md)
