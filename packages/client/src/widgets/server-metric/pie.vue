@@ -14,7 +14,7 @@
 		:stroke-dashoffset="strokeDashoffset"
 		fill="none"
 		stroke-width="0.1"
-		:stroke="`hsl(248%, 80%, 70%)`"
+		:stroke="color"
 	/>
 	<text x="50%" y="50%" dy="0.05" text-anchor="middle">{{ (value * 100).toFixed(0) }}%</text>
 </svg>
@@ -29,6 +29,7 @@ const props = defineProps<{
 
 const r = 0.45;
 
+const color = `hsl(248%, 80%, 70%)`;
 const strokeDashoffset = $computed(() => (1 - props.value) * (Math.PI * (r * 2)));
 </script>
 
