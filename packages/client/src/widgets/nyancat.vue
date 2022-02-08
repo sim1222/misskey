@@ -1,6 +1,6 @@
 <template>
 <MkContainer :naked="widgetProps.transparent" :show-header="false">
-	<iframe ref="live2d" class="kjhasfa" src="https://raw.githubusercontent.com/Gowee/nyancat-svg/main/nyancat.svg" @click="touched"></iframe>
+	<iframe class="kjhasfa" src="https://raw.githubusercontent.com/Gowee/nyancat-svg/main/nyancat.svg">
 </MkContainer>
 </template>
 
@@ -9,7 +9,7 @@ import { onMounted, onUnmounted, reactive, ref } from 'vue';
 import { GetFormResultType } from '@/scripts/form';
 import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
 
-const name = 'ai';
+const name = 'nyancat';
 
 const widgetPropsDef = {
 	transparent: {
@@ -32,29 +32,6 @@ const { widgetProps, configure } = useWidgetPropsManager(name,
 	emit,
 );
 
-const live2d = ref<HTMLIFrameElement>();
-
-const touched = () => {
-	//if (this.live2d) this.live2d.changeExpression('gurugurume');
-};
-
-onMounted(() => {
-	const onMousemove = (ev: MouseEvent) => {
-		const iframeRect = live2d.value.getBoundingClientRect();
-		live2d.value.contentWindow.postMessage({
-			type: 'moveCursor',
-			body: {
-				x: ev.clientX - iframeRect.left,
-				y: ev.clientY - iframeRect.top,
-			}
-		}, '*');
-	};
-
-	window.addEventListener('mousemove', onMousemove, { passive: true });
-	onUnmounted(() => {
-		window.removeEventListener('mousemove', onMousemove);
-	});
-});
 
 defineExpose<WidgetComponentExpose>({
 	name,
@@ -64,7 +41,7 @@ defineExpose<WidgetComponentExpose>({
 </script>
 
 <style lang="scss" scoped>
-.dedjhjmo {
+.kjhasfa {
 	width: 100%;
 	height: 350px;
 	border: none;
