@@ -3,7 +3,7 @@
 	<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
 		<defs>
 			<linearGradient :id="cpuGradientId" x1="0" x2="0" y1="1" y2="0">
-				<stop offset="0%" stop-color= "#96CCE7"></stop>
+				<stop offset="0%" stop-color="#96CCE7"></stop>
 				<stop offset="100%" stop-color="#FF9D9D"></stop>
 			</linearGradient>
 			<mask :id="cpuMaskId" x="0" y="0" :width="viewBoxX" :height="viewBoxY">
