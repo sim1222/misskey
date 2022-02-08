@@ -170,20 +170,6 @@ export default defineComponent({
 		border-radius: 999px;
 	}
 
-	&.primary {
-		font-weight: bold;
-		color: var(--fgOnAccent) !important;
-		background: var(--accent);
-
-		&:not(:disabled):hover {
-			background: var(--X8);
-		}
-
-		&:not(:disabled):active {
-			background: var(--X8);
-		}
-	}
-
 	&.gradate {
 		font-weight: bold;
 		color: var(--fgOnAccent) !important;
@@ -199,19 +185,12 @@ export default defineComponent({
 	}
 
 	&.danger {
-		color: #ff2a2a;
-
-		&.primary {
-			color: #fff;
-			background: #ff2a2a;
+		border-color: #FF9D9D;
 
 			&:not(:disabled):hover {
-				background: #ff4242;
-			}
-
-			&:not(:disabled):active {
-				background: #d42e2e;
-			}
+		text-shadow: -6px 0px 15px rgba(255, 157, 157, 0.83),
+                  6px 0px 15px rgba(255, 157, 157, 0.83);
+	
 		}
 	}
 
