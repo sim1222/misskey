@@ -1,6 +1,6 @@
 <template>
 <MkContainer :naked="widgetProps.transparent" :show-header="false">
-	<iframe class="kjhasfa" src="https://raw.githubusercontent.com/Gowee/nyancat-svg/main/nyancat.svg">
+	<img class="kjhasfa" src="https://raw.githubusercontent.com/Gowee/nyancat-svg/main/nyancat.svg">
 </MkContainer>
 </template>
 
