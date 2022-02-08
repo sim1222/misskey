@@ -5,7 +5,7 @@
 		<XTimeline class="tl"/>
 		<div class="shape1"></div>
 		<div class="shape2"></div>
-		<img src="/client-assets/misskey.svg" class="misskey"/>
+		<img src="/client-assets/nca10.net.svg" class="misskey"/>
 		<div class="emojis">
 			<MkEmoji :normal="true" :no-style="true" emoji="👍"/>
 			<MkEmoji :normal="true" :no-style="true" emoji="❤"/>
@@ -27,7 +27,7 @@
 					<div class="desc" v-html="meta.description || $ts.headlineMisskey"></div>
 				</div>
 				<div class="action">
-					<MkButton inline data-cy-signin @click="signin()">{{ $ts.login }}</MkButton>
+					<MkButton inline data-cy-signin @click="signin()"><i class="fas fa-lock"></i></MkButton>
 				</div>
 				<div v-if="onlineUsersCount && stats" class="status">
 					<div>
@@ -295,7 +295,7 @@ export default defineComponent({
 
 					> .online {
 						::v-deep(b) {
-							color: #41b781;
+							color: #B0E7CB;
 						}
 
 						::v-deep(span) {

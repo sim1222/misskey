@@ -11,7 +11,7 @@
 			<MkEmoji :normal="true" :no-style="true" emoji="🍮"/>
 		</div>
 		<div class="main">
-			<img src="/client-assets/misskey.svg" class="misskey"/>
+			<img src="/client-assets/nca10.net.svg" class="misskey"/>
 			<div class="form _panel">
 				<div class="bg">
 					<div class="fade"></div>
@@ -24,7 +24,7 @@
 						<div class="desc" v-html="meta.description || $ts.headlineMisskey"></div>
 					</div>
 					<div class="action">
-						<MkButton inline @click="signin()">{{ $ts.login }}</MkButton>
+						<MkButton inline @click="signin()"><i class="fas fa-lock"></i></MkButton>
 					</div>
 					<div v-if="onlineUsersCount && stats" class="status">
 						<div>
@@ -266,7 +266,7 @@ export default defineComponent({
 
 						> .online {
 							::v-deep(b) {
-								color: #41b781;
+								color: #B0E7CB;
 							}
 
 							::v-deep(span) {

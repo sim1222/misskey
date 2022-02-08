@@ -49,7 +49,7 @@ import { menuDef } from '@/menu';
 import { openAccountMenu } from '@/account';
 import MkButton from '@/components/ui/button.vue';
 import { StickySidebar } from '@/scripts/sticky-sidebar';
-//import MisskeyLogo from '@assets/client/misskey.svg';
+//import MisskeyLogo from '@assets/client/nca10.net.svg';
 
 export default defineComponent({
 	components: {
