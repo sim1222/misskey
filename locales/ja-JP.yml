@@ -828,6 +828,7 @@ overridedDeviceKind: "デバイスダイブ"
 smartphone: "スマーホフォン"
 tablet: "タブレッド"
 auto: "自動"
+themeColor: "テーマカラー"
 
 _emailUnavailable:
   used: "既に使用されてるよ"
