@@ -68,7 +68,7 @@ export default defineComponent({
 				}
 			},{
 				text: i18n.ts.renoteHomeOnly,
-				icon: 'fas fa-unlock',
+				icon: 'fas fa-home',
 				action: () => {
 					os.api('notes/create', {
 						renoteId: props.note.id,
