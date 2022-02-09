@@ -38,11 +38,7 @@
 	</FormSlot>
 
 	<FormSwitch v-model="profile.isCat" class="_formBlock">{{ i18n.ts.flagAsCat }}<template #caption>{{ i18n.ts.flagAsCatDescription }}</template></FormSwitch>
-<<<<<<< HEAD
-=======
 	<FormSwitch v-model="profile.showTimelineReplies" class="_formBlock">{{ i18n.ts.flagShowTimelineReplies }}<template #caption>{{ i18n.ts.flagShowTimelineRepliesDescription }}</template></FormSwitch>
-	<FormSwitch v-model="profile.isBot" class="_formBlock">{{ i18n.ts.flagAsBot }}<template #caption>{{ i18n.ts.flagAsBotDescription }}</template></FormSwitch>
->>>>>>> upstream/master
 
 	<FormSwitch v-model="profile.alwaysMarkNsfw" class="_formBlock">{{ i18n.ts.alwaysMarkSensitive }}</FormSwitch>
 </div>
