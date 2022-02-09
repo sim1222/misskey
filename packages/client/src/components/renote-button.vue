@@ -67,6 +67,15 @@ export default defineComponent({
 					});
 				}
 			},{
+				text: i18n.ts.renoteHomeOnly,
+				icon: 'fas fa-unlock',
+				action: () => {
+					os.api('notes/create', {
+						renoteId: props.note.id,
+						visibility: 'home'
+					});
+				}
+			},{
 				text: i18n.ts.renoteFollowersOnly,
 				icon: 'fas fa-unlock',
 				action: () => {
