@@ -12,12 +12,18 @@ defineProps<{
 .jmgmzlwq {
 	font-size: 0.8em;
 	padding: 16px;
-	background: var(--infoWarnBg);
-	color: var(--infoWarnFg);
+	background: none;
+	border: solid 2px #E7E7B0;
+	color: #E7E7B0;
 
 	> a {
 		margin-left: 4px;
 		color: var(--accent);
+
+     &:hover{
+		 text-shadow: -6px 0px 15px rgba(150, 204, 231, 0.83),
+                  6px 0px 15px rgba(150, 204, 231, 0.83);
+		}
 	}
 }
 </style>
