@@ -43,7 +43,7 @@ defineExpose<WidgetComponentExpose>({
 <style lang="scss" scoped>
 .kjhasfa {
 	width: 100%;
-	height: 350px;
+	height: auto;
 	border: none;
 	pointer-events: none;
 }
