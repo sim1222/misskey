@@ -7,11 +7,11 @@
 		<div class="shape2"></div>
 		<img src="/client-assets/nca10.net.svg" class="misskey"/>
 		<div class="emojis">
-			<MkEmoji :normal="true" :no-style="true" emoji="👍"/>
-			<MkEmoji :normal="true" :no-style="true" emoji="❤"/>
-			<MkEmoji :normal="true" :no-style="true" emoji="😆"/>
-			<MkEmoji :normal="true" :no-style="true" emoji="🎉"/>
-			<MkEmoji :normal="true" :no-style="true" emoji="🍮"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="💤"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="🧬"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="💙"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="🐟"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="👾"/>
 		</div>
 		<div class="main _panel">
 			<div class="bg">
