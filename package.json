@@ -1,6 +1,7 @@
 {
 	"name": "honisskey",
-	"version": "12.106.2",
+	"version": "12.106.3",
+	"codename": "indigo",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/ThinaticSystem/honisskey.git"
