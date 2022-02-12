@@ -133,7 +133,7 @@ defineExpose<WidgetComponentExpose>({
 
 		&.isHoliday {
 			> .day {
-				color: #ef95a0;
+				color: #96CCE7;
 			}
 		}
 
