@@ -14,6 +14,7 @@
 		success: '#B0E7CB',
 		error: '#FF9D9D',
 		warn: '#E7E7B0',
+		hashtag: '#96CCE7'
 	},
 	author: '@n@nca10.net',
 }
