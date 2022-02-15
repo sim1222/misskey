@@ -151,6 +151,7 @@ defineExpose<WidgetComponentExpose>({
 			margin: 10px 0;
 			line-height: 32px;
 			font-size: 1.75em;
+			color: #96CCE7;
 		}
 	}
 
