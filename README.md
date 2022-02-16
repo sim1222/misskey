@@ -1,5 +1,5 @@
 ## これってなに？
-NullCat用のmisskeyインスタンス用のリポジトリです。
+[Misskey](https://github.com/misskey-dev/misskey)ベースのSNS
 
 ## 本家と主な違い
 - 日本語がぬるきゃご ([ぬるきゃごの導入方法と変更点](https://github.com/nullnyat/nca10.net/blob/Ncat/explanation/ncatlang.md))
