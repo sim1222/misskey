@@ -3,40 +3,40 @@
 	<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
 		<polygon
 			:points="inPolygonPoints"
-			fill="#94a029"
+			fill="#B0E7CB"
 			fill-opacity="0.5"
 		/>
 		<polyline
 			:points="inPolylinePoints"
 			fill="none"
-			stroke="#94a029"
+			stroke="#B0E7CB"
 			stroke-width="1"
 		/>
 		<circle
 			:cx="inHeadX"
 			:cy="inHeadY"
 			r="1.5"
-			fill="#94a029"
+			fill="#B0E7CB"
 		/>
 		<text x="1" y="5">NET rx <tspan>{{ bytes(inRecent) }}</tspan></text>
 	</svg>
 	<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
 		<polygon
 			:points="outPolygonPoints"
-			fill="#ff9156"
+			fill="#E7BA95"
 			fill-opacity="0.5"
 		/>
 		<polyline
 			:points="outPolylinePoints"
 			fill="none"
-			stroke="#ff9156"
+			stroke="#E7BA95"
 			stroke-width="1"
 		/>
 		<circle
 			:cx="outHeadX"
 			:cy="outHeadY"
 			r="1.5"
-			fill="#ff9156"
+			fill="#E7BA95"
 		/>
 		<text x="1" y="5">NET tx <tspan>{{ bytes(outRecent) }}</tspan></text>
 	</svg>
