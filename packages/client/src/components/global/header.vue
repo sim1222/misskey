@@ -1,40 +1,78 @@
 <template>
-<div ref="el" class="fdidabkb" :class="{ slim: narrow, thin: thin_ }" :style="{ background: bg }" @click="onClick">
-	<template v-if="info">
-		<div v-if="!hideTitle" class="titleContainer" @click="showTabsPopup">
-			<MkAvatar v-if="info.avatar" class="avatar" :user="info.avatar" :disable-preview="true" :show-indicator="true"/>
-			<i v-else-if="info.icon" class="icon" :class="info.icon"></i>
+	<div
+		ref="el"
+		class="fdidabkb"
+		:class="{ slim: narrow, thin: thin_ }"
+		:style="{ background: bg }"
+		@click="onClick"
+	>
+		<template v-if="info">
+			<div v-if="!hideTitle" class="titleContainer" @click="showTabsPopup">
+				<MkAvatar
+					v-if="info.avatar"
+					class="avatar"
+					:user="info.avatar"
+					:disable-preview="true"
+					:show-indicator="true"
+				/>
+				<i v-else-if="info.icon" class="icon" :class="info.icon"></i>
 
-			<div class="title">
-				<MkUserName v-if="info.userName" :user="info.userName" :nowrap="true" class="title"/>
-				<div v-else-if="info.title" class="title">{{ info.title }}</div>
-				<div v-if="!narrow && info.subtitle" class="subtitle">
-					{{ info.subtitle }}
-				</div>
-				<div v-if="narrow && hasTabs" class="subtitle activeTab">
-					{{ info.tabs.find(tab => tab.active)?.title }}
-					<i class="chevron fas fa-chevron-down"></i>
+				<div class="title">
+					<MkUserName v-if="info.userName" :user="info.userName" :nowrap="true" class="title" />
+					<div v-else-if="info.title" class="title">{{ info.title }}</div>
+					<div v-if="!narrow && info.subtitle" class="subtitle">{{ info.subtitle }}</div>
+					<div v-if="narrow && hasTabs" class="subtitle activeTab">
+						{{ info.tabs.find(tab => tab.active)?.title }}
+						<i class="chevron fas fa-chevron-down"></i>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div v-if="!narrow || hideTitle" class="tabs">
-			<button v-for="tab in info.tabs" v-tooltip="tab.title" class="tab _button" :class="{ active: tab.active }" @click="tab.onClick">
-				<i v-if="tab.icon" class="icon" :class="tab.icon"></i>
-				<span v-if="!tab.iconOnly" class="title">{{ tab.title }}</span>
+			<div v-if="!narrow || hideTitle" class="tabs">
+				<button
+					v-for="tab in info.tabs"
+					v-tooltip="tab.title"
+					class="tab _button"
+					:class="{ active: tab.active }"
+					@click="tab.onClick"
+				>
+					<i v-if="tab.icon" class="icon" :class="tab.icon"></i>
+					<span v-if="!tab.iconOnly" class="title">{{ tab.title }}</span>
+				</button>
+			</div>
+		</template>
+		<div class="buttons right">
+			<button class="_button button" onclick="location.reload();">
+				<i class="fa-solid fa-arrow-rotate-right"></i>
+			</button>
+			<template v-if="info && info.actions && !narrow">
+				<template v-for="action in info.actions">
+					<MkButton v-if="action.asFullButton" class="fullButton" primary @click.stop="action.handler">
+						<i :class="action.icon" style="margin-right: 6px;"></i>
+						{{ action.text }}
+					</MkButton>
+					<button
+						v-else
+						v-tooltip="action.text"
+						class="_button button"
+						:class="{ highlighted: action.highlighted }"
+						@click.stop="action.handler"
+						@touchstart="preventDrag"
+					>
+						<i :class="action.icon"></i>
+					</button>
+				</template>
+			</template>
+			<button
+				v-if="shouldShowMenu"
+				v-tooltip="$ts.menu"
+				class="_button button"
+				@click.stop="showMenu"
+				@touchstart="preventDrag"
+			>
+				<i class="fas fa-ellipsis-h"></i>
 			</button>
 		</div>
-	</template>
-	<div class="buttons right">
-		<button><i class="fas fa-redo"></i></button>
-		<template v-if="info && info.actions && !narrow">
-			<template v-for="action in info.actions">
-				<MkButton v-if="action.asFullButton" class="fullButton" primary @click.stop="action.handler"><i :class="action.icon" style="margin-right: 6px;"></i>{{ action.text }}</MkButton>
-				<button v-else v-tooltip="action.text" class="_button button" :class="{ highlighted: action.highlighted }" @click.stop="action.handler" @touchstart="preventDrag"><i :class="action.icon"></i></button>
-			</template>
-		</template>
-		<button v-if="shouldShowMenu" v-tooltip="$ts.menu" class="_button button" @click.stop="showMenu" @touchstart="preventDrag"><i class="fas fa-ellipsis-h"></i></button>
 	</div>
-</div>
 </template>
 
 <script lang="ts">
@@ -151,7 +189,7 @@ export default defineComponent({
 			onUnmounted(() => {
 				globalEvents.off('themeChanged', calcBg);
 			});
-		
+
 			if (el.value.parentElement) {
 				narrow.value = el.value.parentElement.offsetWidth < 500;
 				const ro = new ResizeObserver((entries, observer) => {
@@ -228,7 +266,7 @@ export default defineComponent({
 	> .buttons {
 		--margin: 8px;
 		display: flex;
-    align-items: center;
+		align-items: center;
 		height: var(--height);
 		margin: 0 var(--margin);
 
