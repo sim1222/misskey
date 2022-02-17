@@ -27,19 +27,19 @@ const text = $computed(() => {
 	border-radius: 120%; // Blinkのバグか知らんけど、100%ぴったりにすると何故か若干楕円でレンダリングされる
 
 	&.online {
-		background: #58d4c9;
+		background: #96E7E7;
 	}
 
 	&.active {
-		background: #e4bc48;
+		background: #E7E7B0;
 	}
 
 	&.offline {
-		background: #ea5353;
+		background: #FF9D9D;
 	}
 
 	&.unknown {
-		background: #888;
+		background: #4F5766;
 	}
 }
 </style>
