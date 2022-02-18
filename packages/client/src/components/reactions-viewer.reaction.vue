@@ -117,10 +117,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 .hkzvhatu {
 	display: inline-block;
-	height: 32px;
 	margin: 2px;
-	padding: 0 6px;
+	padding: 4px;
 	border-radius: 4px;
+	line-height: 0;
 
 	&.canToggle {
 		background: rgba(0, 0, 0, 0.05);
@@ -135,10 +135,11 @@ export default defineComponent({
 	}
 
 	&.reacted {
-		background: var(--accent);
+		border: solid rgb(10 173 255 / 50%);
+		background: rgb(3 169 244 / 25%);
 
 		&:hover {
-			background: var(--accent);
+			border-color: rgb(10 173 255 / 100%);
 		}
 
 		> span {
@@ -148,7 +149,6 @@ export default defineComponent({
 
 	> span {
 		font-size: 0.9em;
-		line-height: 32px;
 		margin: 0 0 0 4px;
 	}
 }
