@@ -80,8 +80,8 @@ export default defineComponent({
 						tension: 0,
 						borderWidth: 2,
 						borderJoinStyle: 'round',
-						borderColor: '#00E396',
-						backgroundColor: alpha('#00E396', 0.1),
+						borderColor: '#B0E7CB',
+						backgroundColor: alpha('#B0E7CB', 0.1),
 						data: []
 					}, {
 						label: 'Active',
@@ -89,8 +89,8 @@ export default defineComponent({
 						tension: 0,
 						borderWidth: 2,
 						borderJoinStyle: 'round',
-						borderColor: '#00BCD4',
-						backgroundColor: alpha('#00BCD4', 0.1),
+						borderColor: '#96CCE7',
+						backgroundColor: alpha('#96CCE7', 0.1),
 						data: []
 					}, {
 						label: 'Waiting',
@@ -98,8 +98,8 @@ export default defineComponent({
 						tension: 0,
 						borderWidth: 2,
 						borderJoinStyle: 'round',
-						borderColor: '#FFB300',
-						backgroundColor: alpha('#FFB300', 0.1),
+						borderColor: '#E7E7B0',
+						backgroundColor: alpha('#E7E7B0', 0.1),
 						yAxisID: 'y2',
 						data: []
 					}, {
@@ -108,7 +108,7 @@ export default defineComponent({
 						tension: 0,
 						borderWidth: 2,
 						borderJoinStyle: 'round',
-						borderColor: '#E53935',
+						borderColor: '#FF9D9D',
 						borderDash: [5, 5],
 						fill: false,
 						yAxisID: 'y2',
