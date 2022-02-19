@@ -135,11 +135,11 @@ export default defineComponent({
 	}
 
 	&.reacted {
-		border: solid rgb(10 173 255 / 50%);
-		background: rgb(3 169 244 / 25%);
+		border: 2px solid var(--accent);
+		background: rgb(150 204 231 / 25%);
 
 		&:hover {
-			border-color: rgb(10 173 255 / 100%);
+			border-color: rgb(150 204 231 / 100%);
 		}
 
 		> span {
