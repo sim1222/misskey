@@ -163,13 +163,13 @@ function focusDown() {
 		}
 
 		&.danger {
-			color: #ff2a2a;
+			color: #FF9D9D;
 
 			&:hover {
 				color: #fff;
 
 				&:before {
-					background: #ff4242;
+					background: #FF9D9D;
 				}
 			}
 
@@ -177,7 +177,7 @@ function focusDown() {
 				color: #fff;
 
 				&:before {
-					background: #d42e2e;
+					background: #FF9D9D;
 				}
 			}
 		}
