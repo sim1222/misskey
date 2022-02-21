@@ -6,6 +6,7 @@
 - AdminとModeratorのタグがねこ
 - RNのオプションに鍵RNとHomeRNがある
 - エラー画面がブルスク風
+- 顔文字選択機能
 
 ## 導入方法
 [MisskeyHub](https://misskey-hub.net/docs/install.html)をみてね
