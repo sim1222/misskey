@@ -7,7 +7,7 @@
 	@drop.stop="onDrop"
 >
 	<header>
-		<button v-if="!fixed" class="cancel _button" @click="cancel"><i class="fas fa-times"></i></button>	
+		<button v-if="!fixed" class="cancel _button" @click="cancel"><i class="fas fa-times"></i></button>
 		<div>
 			<span class="text-count" :class="{ over: textLength > maxTextLength }">{{ maxTextLength - textLength }}</span>
 			<span v-if="localOnly" class="local-only"><i class="fas fa-biohazard"></i></span>
@@ -85,6 +85,8 @@ import MkInfo from '@/components/ui/info.vue';
 import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import { $i, getAccounts, openAccountMenu as openAccountMenu_ } from '@/account';
+import {api} from "@/os";
+import {deckStore} from "@/ui/deck/deck-store";
 
 const modal = inject('modal');
 
@@ -354,43 +356,19 @@ function chooseFileFrom(ev) {
 }
 
 async function kao() {
-	const faces = [
-		"(=^・・^=)",
-		"v('ω')v",
-		"( ᐢ˙꒳​˙ᐢ )",
-		"(｡>﹏<｡)",
-		"(Δ・x・Δ)",
-		"(´-ω-`)",
-		"(๑•﹏•)",
-		"(。ì _ í。)",
-		"(´×ω×`)",
-		"(´+ω+｀)",
-		"(。-ω-)zzz",
-		"(＞＜)",
-		"(。>ㅿ<。)",
-		"(´；ω；｀)",
-		"ฅ^•ω•^ฅ",
-		"⊂(・﹏・⊂)",
-		"ᕦ(ò_óˇ)ᕤ",
-		"ᕙ(⇀‸↼‶)ᕗ",
-		"(･o･;)",
-		"(｡ŏ﹏ŏ)",
-		"Σ(^._.^=ﾉ)ﾉ",
-		" (๑•̀ - •́)و✧",
-		"(,,> <,,)♡",
-		"‪o(>_<)o",
-		"(っ´・ω・)っ",
-		"(´｡-ω(-ω-｡`)ｷﾞｭ",
-	].map(kao => {
-		return { value: kao, text: kao }
+	const response = await fetch("https://nullc.at/kaomoji.txt").then(value => value.text())
+
+	const faces = response.trim().split('\n').map(kao => {
+		return {
+			type: 'button' as const,
+			text: kao,
+			action() {
+				text += kao
+			},
+		}
 	})
 
-	const dialog = await os.select({
-		title: "ฅ(=✧ω✧=)ฅ",
-		items: faces,
-	})
-
-	text += dialog.result || ""
+	await os.popupMenu(faces)
 }
 
 function detachFile(id) {
@@ -783,7 +761,7 @@ onMounted(() => {
 					margin-left: 0 !important;
 				}
 			}
-			
+
 			> .local-only {
 				margin: 0 0 0 12px;
 				opacity: 0.7;
