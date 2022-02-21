@@ -32,7 +32,7 @@
 				<div v-if="onlineUsersCount && stats" class="status">
 					<div>
 						<I18n :src="$ts.nUsers" text-tag="span" class="users">
-							<template #n><b>{{ number(stats.originalUsersCount) }}</b></template>
+							<template #n><b>3</b></template>
 						</I18n>
 						<I18n :src="$ts.nNotes" text-tag="span" class="notes">
 							<template #n><b>{{ number(stats.originalNotesCount) }}</b></template>
