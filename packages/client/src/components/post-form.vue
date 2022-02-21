@@ -48,6 +48,7 @@
 			<button v-tooltip="i18n.ts.useCw" class="_button" :class="{ active: useCw }" @click="useCw = !useCw"><i class="fas fa-eye-slash"></i></button>
 			<button v-tooltip="i18n.ts.mention" class="_button" @click="insertMention"><i class="fas fa-at"></i></button>
 			<button v-tooltip="i18n.ts.hashtags" class="_button" :class="{ active: withHashtags }" @click="withHashtags = !withHashtags"><i class="fas fa-hashtag"></i></button>
+			<button v-tooltip="i18n.ts.kao" class="_button" @click="kao"><i class="fas fa-paw"></i></button>
 			<button v-tooltip="i18n.ts.emoji" class="_button" @click="insertEmoji"><i class="fas fa-laugh-squint"></i></button>
 			<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugin" class="_button" @click="showActions"><i class="fas fa-plug"></i></button>
 		</footer>
@@ -350,6 +351,46 @@ function chooseFileFrom(ev) {
 			files.push(file);
 		}
 	});
+}
+
+async function kao() {
+	const faces = [
+		"(=^・・^=)",
+		"v('ω')v",
+		"( ᐢ˙꒳​˙ᐢ )",
+		"(｡>﹏<｡)",
+		"(Δ・x・Δ)",
+		"(´-ω-`)",
+		"(๑•﹏•)",
+		"(。ì _ í。)",
+		"(´×ω×`)",
+		"(´+ω+｀)",
+		"(。-ω-)zzz",
+		"(＞＜)",
+		"(。>ㅿ<。)",
+		"(´；ω；｀)",
+		"ฅ^•ω•^ฅ",
+		"⊂(・﹏・⊂)",
+		"ᕦ(ò_óˇ)ᕤ",
+		"ᕙ(⇀‸↼‶)ᕗ",
+		"(･o･;)",
+		"(｡ŏ﹏ŏ)",
+		"Σ(^._.^=ﾉ)ﾉ",
+		" (๑•̀ - •́)و✧",
+		"(,,> <,,)♡",
+		"‪o(>_<)o",
+		"(っ´・ω・)っ",
+		"(´｡-ω(-ω-｡`)ｷﾞｭ",
+	].map(kao => {
+		return { value: kao, text: kao }
+	})
+
+	const dialog = await os.select({
+		title: "ฅ(=✧ω✧=)ฅ",
+		items: faces,
+	})
+
+	text += dialog.result || ""
 }
 
 function detachFile(id) {
