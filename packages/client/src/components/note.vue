@@ -328,7 +328,7 @@ function readPromo() {
 		line-height: 24px;
 		font-size: 90%;
 		white-space: pre;
-		color: #d28a3f;
+		color: #E7BA95;
 
 		> i {
 			margin-right: 4px;

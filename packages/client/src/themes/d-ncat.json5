@@ -6,7 +6,7 @@
 	props: {
 		bg: '#13141C',
 		fg: '#FFF',
-		link: '#96E7E7',
+		link: '#B0E7E7',
 		navBg: '@bg',
 		panel: '@bg',
 		accent: '#96CCE7',
