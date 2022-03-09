@@ -42,3 +42,6 @@ ormconfig.json
 *.blend3
 *.blend4
 *.blend5
+
+# Docker
+docker-compose.yml
