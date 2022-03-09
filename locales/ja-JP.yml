@@ -1766,7 +1766,6 @@ _notification:
   youGotMessagingMessageFromGroup: "{name}のチャットがあるよ"
   youWereFollowed: "フォローされたよ"
   youReceivedFollowRequest: "フォローリクエストが来たよ"
-  pollEnded: "アンケートの結果が出たよ"
   yourFollowRequestAccepted: "フォローリクエストが承認されたよ"
   youWereInvitedToGroup: "グループに招待されたよ"
   pollEnded: "アンケートの結果が出たよ"
