@@ -4,7 +4,8 @@
 ## 本家と主な違い
 - 日本語がぬるきゃご ([ぬるきゃごの導入方法と変更点](https://github.com/nullnyat/nca10.net/blob/Ncat/explanation/ncatlang.md))
 - AdminとModeratorのタグがねこ
-- RNのオプションに鍵RNとHomeRNがある
+- Accountがbotであることのマークの位置
+- RNのオプション追加
 - エラー画面がブルスク風
 - 顔文字選択機能
 - ボタンのUI
