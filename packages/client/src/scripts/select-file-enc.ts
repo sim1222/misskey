@@ -4,7 +4,7 @@ import { stream } from '@/stream';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
 import { DriveFile } from 'misskey-js/built/entities';
-import VideoConverter from 'convert-video';
+import { VideoConverter } from 'convert-video';
 
 function select(src: any, label: string | null, multiple: boolean): Promise<DriveFile | DriveFile[]> {
 	return new Promise((res, rej) => {
@@ -100,10 +100,10 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 	});
 }
 
-export function selectFile(src: any, label: string | null = null): Promise<DriveFile> {
+export function selectFileEnc(src: any, label: string | null = null): Promise<DriveFile> {
 	return select(src, label, false) as Promise<DriveFile>;
 }
 
-export function selectFiles(src: any, label: string | null = null): Promise<DriveFile[]> {
+export function selectFilesEnc(src: any, label: string | null = null): Promise<DriveFile[]> {
 	return select(src, label, true) as Promise<DriveFile[]>;
 }
