@@ -4,7 +4,6 @@ import { stream } from '@/stream';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
 import { DriveFile } from 'misskey-js/built/entities';
-const convert = require( 'convert-video');
 
 function select(src: any, label: string | null, multiple: boolean): Promise<DriveFile | DriveFile[]> {
 	return new Promise((res, rej) => {
@@ -16,12 +15,91 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 			input.multiple = multiple;
 			input.onchange = () => {
 
+				//ここから
+				// @ts-ignore
+				function VideoConverter (videoFileData, targetFormat) {
+					try {
+						targetFormat = targetFormat.toLowerCase();
+						let reader = new FileReader();
+						return new Promise(resolve => {
+							reader.onload = function (event) {
+								let contentType = 'video/'+targetFormat;
+
+								// @ts-ignore
+								let data = event.target.result.split(',');
+								let b64Data = data[1];
+								let blob = getBlobFromBase64Data(b64Data, contentType);
+								let blobUrl = URL.createObjectURL(blob);
+
+								let convertedVideo = {
+									name: videoFileData.name.substring(0, videoFileData.name.lastIndexOf(".")),
+									format: targetFormat,
+									data: blobUrl
+								}
+								// console.log("convertedVideo: ", convertedVideo);
+								resolve(convertedVideo);
+							}
+							reader.readAsDataURL(videoFileData);
+						});
+
+					} catch (e) {
+						console.log("Error occurred while converting : ", e);
+					}
+				}
+
+				function getBlobFromBase64Data(b64Data, contentType, sliceSize=512) {
+					const byteCharacters = atob(b64Data);
+					const byteArrays = [];
+
+					for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+						const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+						const byteNumbers = new Array(slice.length);
+						for (let i = 0; i < slice.length; i++) {
+							byteNumbers[i] = slice.charCodeAt(i);
+						}
+
+						const byteArray = new Uint8Array(byteNumbers);
+						// @ts-ignore
+						byteArrays.push(byteArray);
+					}
+
+					const blob = new Blob(byteArrays, {type: contentType});
+					return blob;
+				}
+
+				//ここまで
+
+				/*
+				MIT License
+
+				Copyright (c) 2021 Suvro Debnath
+
+				Permission is hereby granted, free of charge, to any person obtaining a copy
+				of this software and associated documentation files (the "Software"), to deal
+				in the Software without restriction, including without limitation the rights
+				to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+				copies of the Software, and to permit persons to whom the Software is
+				furnished to do so, subject to the following conditions:
+
+				The above copyright notice and this permission notice shall be included in all
+				copies or substantial portions of the Software.
+
+				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+				IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+				FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+				AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+				LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+				OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+				SOFTWARE.
+				 */
 
 				async function convertVideo(input) {
 					let sourceVideoFile = input.files[0];
 					let targetVideoFormat = 'mp4'
-					let convertedVideoDataObj = await convert(sourceVideoFile, targetVideoFormat);
+					let convertedVideoDataObj = await VideoConverter(sourceVideoFile, targetVideoFormat);
 
+					// @ts-ignore
 					let convertedVideoFile = new File([convertedVideoDataObj.data], convertedVideoDataObj.name + "." + convertedVideoDataObj.format);
 
 					os.upload(convertedVideoFile, defaultStore.state.uploadFolder, undefined, keepOriginal.value).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
