@@ -4,7 +4,7 @@ import { stream } from '@/stream';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
 import { DriveFile } from 'misskey-js/built/entities';
-import * as VideoConverter from 'convert-video';
+import { convert } from 'convert-video';
 
 function select(src: any, label: string | null, multiple: boolean): Promise<DriveFile | DriveFile[]> {
 	return new Promise((res, rej) => {
@@ -20,7 +20,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 				async function convertVideo(input) {
 					let sourceVideoFile = input.files[0];
 					let targetVideoFormat = 'mp4'
-					let convertedVideoDataObj = await VideoConverter.convert(sourceVideoFile, targetVideoFormat);
+					let convertedVideoDataObj = await convert(sourceVideoFile, targetVideoFormat);
 
 					let convertedVideoFile = new File([convertedVideoDataObj.data], convertedVideoDataObj.name + "." + convertedVideoDataObj.format);
 
