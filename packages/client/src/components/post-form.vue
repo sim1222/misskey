@@ -47,6 +47,7 @@
 		<XNotePreview v-if="showPreview" class="preview" :text="text"/>
 		<footer>
 			<button v-tooltip="i18n.ts.attachFile" class="_button" @click="chooseFileFrom"><i class="fas fa-photo-video"></i></button>
+			<button v-tooltip="i18n.ts.attachVideoFile" class="_button" @click="chooseFileFromEnc"><i class="far fa-file-video"></i></button>
 			<button v-tooltip="i18n.ts.poll" class="_button" :class="{ active: poll }" @click="togglePoll"><i class="fas fa-poll-h"></i></button>
 			<button v-tooltip="i18n.ts.useCw" class="_button" :class="{ active: useCw }" @click="useCw = !useCw"><i class="fas fa-eye-slash"></i></button>
 			<button v-tooltip="i18n.ts.mention" class="_button" @click="insertMention"><i class="fas fa-at"></i></button>
@@ -81,6 +82,7 @@ import { Autocomplete } from '@/scripts/autocomplete';
 import * as os from '@/os';
 import { stream } from '@/stream';
 import { selectFiles } from '@/scripts/select-file';
+import { selectFilesEnc } from '@/scripts/select-file-enc';
 import { defaultStore, notePostInterruptors, postFormActions } from '@/store';
 import { throttle } from 'throttle-debounce';
 import MkInfo from '@/components/ui/info.vue';
@@ -349,6 +351,14 @@ function focus() {
 
 function chooseFileFrom(ev) {
 	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(files_ => {
+		for (const file of files_) {
+			files.push(file);
+		}
+	});
+}
+
+function chooseFileFromEnc(ev) {
+	selectFilesEnc(ev.currentTarget ?? ev.target, i18n.ts.attachVideoFile).then(files_ => {
 		for (const file of files_) {
 			files.push(file);
 		}
