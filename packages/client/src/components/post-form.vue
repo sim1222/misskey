@@ -356,9 +356,36 @@ function chooseFileFrom(ev) {
 }
 
 async function kao() {
-	const response = await fetch("https://nullc.at/kaomoji.txt").then(value => value.text())
+	const list = [
+		"(=^・・^=)",
+		"v('ω')v",
+		"( ᐢ˙꒳˙ᐢ )",
+		"(｡>﹏<｡)",
+		"(Δ・x・Δ)",
+		"(´-ω-`)",
+		"(๑•﹏•)",
+		"(。ì _ í。)",
+		"(´×ω×`)",
+		"(´+ω+｀)",
+		"(。-ω-)zzz",
+		"(＞＜)",
+		"(。>ㅿ<。)",
+		"(´；ω；｀)",
+		"ฅ^•ω•^ฅ",
+		"⊂(・﹏・⊂)",
+		"ᕦ(ò_óˇ)ᕤ",
+		"ᕙ(⇀‸↼‶)ᕗ",
+		"(･o･;)",
+		"(｡ŏ﹏ŏ)",
+		"Σ(^._.^=ﾉ)ﾉ",
+		" (๑•̀ - •́)و✧",
+		"(,,> <,,)♡",
+		"‪o(>_<)o",
+		"(っ´・ω・)っ",
+		"(´｡-ω(-ω-｡`)ｷﾞｭ ",
+	]
 
-	const faces = response.trim().split('\n').map(kao => {
+	const faces = list.map(kao => {
 		return {
 			type: 'button' as const,
 			text: kao,
