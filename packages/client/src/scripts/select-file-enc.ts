@@ -95,7 +95,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 				 */
 
 				async function convertVideo(input) {
-					let sourceVideoFile = input.files[0];
+					let sourceVideoFile = input;
 					let targetVideoFormat = 'mp4'
 					let convertedVideoDataObj = await VideoConverter(sourceVideoFile, targetVideoFormat);
 
