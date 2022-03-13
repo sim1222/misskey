@@ -26,15 +26,15 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 								let contentType = 'video/'+targetFormat;
 
 								// @ts-ignore
-								let data = event.target.result.split(',');
-								let b64Data = data[1];
+								let fileData: ArrayBuffer = event.target.result.split(',');
+								let b64Data = fileData[1];
 								let blob = getBlobFromBase64Data(b64Data, contentType);
 								let blobUrl = URL.createObjectURL(blob);
 
 								let convertedVideo = {
 									name: videoFileData.name.substring(0, videoFileData.name.lastIndexOf(".")),
 									format: targetFormat,
-									data: blobUrl
+									fileData: blob
 								}
 								// console.log("convertedVideo: ", convertedVideo);
 								resolve(convertedVideo);
@@ -101,7 +101,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					let convertedVideoDataObj = await VideoConverter(sourceVideoFile, targetVideoFormat);
 					console.log('end convert video');
 					// @ts-ignore
-					let convertedVideoFile = new File([convertedVideoDataObj.data], convertedVideoDataObj.name + "." + convertedVideoDataObj.format);
+					let convertedVideoFile = new File([convertedVideoDataObj.fileData], convertedVideoDataObj.name + "." + convertedVideoDataObj.format);
 
 					os.upload(convertedVideoFile, defaultStore.state.uploadFolder, undefined, keepOriginal.value).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
 				}
