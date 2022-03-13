@@ -94,8 +94,17 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 				SOFTWARE.
 				 */
 
-				async function convertVideo(input) {
-					let sourceVideoFile = input;
+
+				Array.from(input.files).map(async file => {
+					if (file.type.indexOf('video') == -1) {
+						os.toast('It is not video file');
+						return
+					}
+
+					console.log('convert video');
+					os.toast('Try convert to mp4');
+					//convertVideo(file);
+					let sourceVideoFile = file;
 					let targetVideoFormat = 'mp4'
 					console.log('start convert video');
 					let convertedVideoDataObj = await VideoConverter(sourceVideoFile, targetVideoFormat);
@@ -104,27 +113,13 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					// @ts-ignore
 					let convertedVideoFile = new File([convertedVideoDataObj.data], convertedVideoDataObj.name + "." + convertedVideoDataObj.format);
 
-					os.upload(convertedVideoFile, defaultStore.state.uploadFolder, undefined, keepOriginal.value).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
-				}
-
-				const promises = Array.from(input.files).map(file => {
-					if (file.type.indexOf('video') !== -1) {
-						console.log('convert video');
-						os.toast('Try convert to mp4');
-						convertVideo(file);
-					} else {
-						os.toast('It is not video file');
-						os.upload(file, defaultStore.state.uploadFolder, undefined, keepOriginal.value).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
-					}
-				});
-
-
-				Promise.all(promises).then(driveFiles => {
-					res(multiple ? driveFiles : driveFiles[0]);
-				}).catch(e => {
-					os.alert({
-						type: 'error',
-						text: e
+					os.upload(convertedVideoFile, defaultStore.state.uploadFolder).then(driveFiles => {
+						res(driveFiles);
+					}).catch(e => {
+						os.alert({
+							type: 'error',
+							text: e
+						});
 					});
 				});
 
@@ -138,43 +133,6 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 			(window as any).__misskey_input_ref__ = input;
 
 			input.click();
-		};
-
-		const chooseFileFromDrive = () => {
-			os.selectDriveFile(multiple).then(files => {
-				res(files);
-			});
-		};
-
-		const chooseFileFromUrl = () => {
-			os.inputText({
-				title: i18n.ts.uploadFromUrl,
-				type: 'url',
-				placeholder: i18n.ts.uploadFromUrlDescription
-			}).then(({ canceled, result: url }) => {
-				if (canceled) return;
-
-				const marker = Math.random().toString(); // TODO: UUIDとか使う
-
-				const connection = stream.useChannel('main');
-				connection.on('urlUploadFinished', data => {
-					if (data.marker === marker) {
-						res(multiple ? [data.file] : data.file);
-						connection.dispose();
-					}
-				});
-
-				os.api('drive/files/upload-from-url', {
-					url: url,
-					folderId: defaultStore.state.uploadFolder,
-					marker
-				});
-
-				os.alert({
-					title: i18n.ts.uploadFromUrlRequested,
-					text: i18n.ts.uploadFromUrlMayTakeTime
-				});
-			});
 		};
 
 		os.popupMenu([label ? {

@@ -82,7 +82,7 @@ import { Autocomplete } from '@/scripts/autocomplete';
 import * as os from '@/os';
 import { stream } from '@/stream';
 import { selectFiles } from '@/scripts/select-file';
-import { selectFilesEnc } from '@/scripts/select-file-enc';
+import {selectFileEnc, selectFilesEnc} from '@/scripts/select-file-enc';
 import { defaultStore, notePostInterruptors, postFormActions } from '@/store';
 import { throttle } from 'throttle-debounce';
 import MkInfo from '@/components/ui/info.vue';
@@ -350,7 +350,7 @@ function focus() {
 }
 
 function chooseFileFrom(ev) {
-	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(files_ => {
+	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachVideoFile).then(files_ => {
 		for (const file of files_) {
 			files.push(file);
 		}
@@ -358,10 +358,8 @@ function chooseFileFrom(ev) {
 }
 
 function chooseFileFromEnc(ev) {
-	selectFilesEnc(ev.currentTarget ?? ev.target, i18n.ts.attachVideoFile).then(files_ => {
-		for (const file of files_) {
-			files.push(file);
-		}
+	selectFileEnc(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(files_ => {
+		files.push(files_);
 	});
 }
 
