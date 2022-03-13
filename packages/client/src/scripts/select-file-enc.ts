@@ -31,10 +31,10 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 								let blob = getBlobFromBase64Data(b64Data, contentType);
 								let blobUrl = URL.createObjectURL(blob);
 
-								let convertedVideo = {
+								let convertedVideo: any = {
 									name: videoFileData.name.substring(0, videoFileData.name.lastIndexOf(".")),
 									format: targetFormat,
-									fileData: blob
+									data: blob
 								}
 								// console.log("convertedVideo: ", convertedVideo);
 								resolve(convertedVideo);
@@ -100,13 +100,14 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 					console.log('start convert video');
 					let convertedVideoDataObj = await VideoConverter(sourceVideoFile, targetVideoFormat);
 					console.log('end convert video');
+
 					// @ts-ignore
-					let convertedVideoFile = new File([convertedVideoDataObj.fileData], convertedVideoDataObj.name + "." + convertedVideoDataObj.format);
+					let convertedVideoFile = new File([convertedVideoDataObj.data], convertedVideoDataObj.name + "." + convertedVideoDataObj.format);
 
 					os.upload(convertedVideoFile, defaultStore.state.uploadFolder, undefined, keepOriginal.value).then(res).catch(e => { os.alert({ type: 'error', text: e }) });
 				}
 
-				Array.from(input.files).map(file => {
+				const promises = Array.from(input.files).map(file => {
 					if (file.type.indexOf('video') !== -1) {
 						console.log('convert video');
 						os.toast('Try convert to mp4');
@@ -118,6 +119,14 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 				});
 
 
+				Promise.all(promises).then(driveFiles => {
+					res(multiple ? driveFiles : driveFiles[0]);
+				}).catch(e => {
+					os.alert({
+						type: 'error',
+						text: e
+					});
+				});
 
 
 				// 一応廃棄
