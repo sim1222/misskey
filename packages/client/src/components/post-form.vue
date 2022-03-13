@@ -350,7 +350,7 @@ function focus() {
 }
 
 function chooseFileFrom(ev) {
-	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachVideoFile).then(files_ => {
+	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(files_ => {
 		for (const file of files_) {
 			files.push(file);
 		}
@@ -358,7 +358,7 @@ function chooseFileFrom(ev) {
 }
 
 function chooseFileFromEnc(ev) {
-	selectFileEnc(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(files_ => {
+	selectFileEnc(ev.currentTarget ?? ev.target, i18n.ts.attachVideoFile).then(files_ => {
 		files.push(files_);
 	});
 }
