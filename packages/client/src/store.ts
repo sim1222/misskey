@@ -25,11 +25,11 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	rememberNoteVisibility: {
 		where: 'account',
-		default: false
+		default: true
 	},
 	defaultNoteVisibility: {
 		where: 'account',
-		default: 'public'
+		default: 'home'
 	},
 	defaultNoteLocalOnly: {
 		where: 'account',
@@ -82,7 +82,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	visibility: {
 		where: 'deviceAccount',
-		default: 'public' as 'public' | 'home' | 'followers' | 'specified'
+		default: 'home' as 'public' | 'home' | 'followers' | 'specified'
 	},
 	localOnly: {
 		where: 'deviceAccount',
@@ -151,11 +151,11 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	useBlurEffectForModal: {
 		where: 'device',
-		default: true
+		default: false
 	},
 	useBlurEffect: {
 		where: 'device',
-		default: true
+		default: false
 	},
 	showFixedPostForm: {
 		where: 'device',
@@ -167,7 +167,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	useReactionPickerForContextMenu: {
 		where: 'device',
-		default: false
+		default: true
 	},
 	showGapBetweenNotesInTimeline: {
 		where: 'device',
@@ -187,15 +187,15 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	reactionPickerWidth: {
 		where: 'device',
-		default: 1
+		default: 3
 	},
 	reactionPickerHeight: {
 		where: 'device',
-		default: 2
+		default: 3
 	},
 	reactionPickerUseDrawerForMobile: {
 		where: 'device',
-		default: true,
+		default: false,
 	},
 	recentlyUsedEmojis: {
 		where: 'device',
