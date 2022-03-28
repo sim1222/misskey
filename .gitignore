@@ -44,3 +44,4 @@ ormconfig.json
 *.blend5
 
 start.sh
+dev.sh
