@@ -96,7 +96,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 
 
 				Array.from(input.files).map(async file => {
-					if (file.type.indexOf('video/mp4') == -1) {
+					if (file.type.indexOf('video/mp4') === 1) {
 						os.toast('It is mp4 file');
 						os.upload(file, defaultStore.state.uploadFolder).then(driveFiles => {
 							res(driveFiles);
