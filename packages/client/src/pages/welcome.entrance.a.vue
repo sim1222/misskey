@@ -317,4 +317,29 @@ export default defineComponent({
 		}
 	}
 }
+
+._button,.mk-emoji,.text,span,._panel,.havbbuyv,.note,.fg  {
+	animation-name: wtf2;
+	animation-fill-mode: backwards;
+	animation-duration: 15s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease;
+}
+@keyframes wtf2 {
+	0% {
+		transform: scale(1, 1) translate(0px);
+	}
+	30% {
+		transform: translate(-8px, -9px);
+	}
+	60% {
+		transform: scale(1.1, 1.1) translate(10px, 10px);
+	}
+	90% {
+		transform: scale(0.9, 0.9) translate(-2px, 6px);
+	}
+	100% {
+		transform: scale(1, 1) translate(0px, 0px);
+	}
+}
 </style>
