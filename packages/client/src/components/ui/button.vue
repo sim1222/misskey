@@ -4,7 +4,7 @@
 	:type="type"
 	@click="$emit('click', $event)"
 	@mousedown="onMousedown"
-	v-on:mouseover="onMouseOver"
+	@mouseover="onMouseOver"
 >
 	<div ref="ripples" class="ripples"></div>
 	<div class="content">
