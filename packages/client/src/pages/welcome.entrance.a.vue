@@ -27,7 +27,7 @@
 					<div class="desc" v-html="meta.description || $ts.headlineMisskey"></div>
 				</div>
 				<div class="action">
-					<MkButton inline gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ $ts.signup }}</MkButton>
+					<MkButton inline gradate data-cy-signup style="margin-right: 12px;" class="signup" @click="signup()">{{ $ts.signup }}</MkButton>
 					<MkButton inline data-cy-signin @click="signin()">{{ $ts.login }}</MkButton>
 				</div>
 				<div v-if="onlineUsersCount && stats" class="status">
@@ -341,5 +341,13 @@ export default defineComponent({
 	100% {
 		transform: scale(1, 1) translate(0px, 0px);
 	}
+}
+
+.signup {
+	animation-name: wtf2;
+	animation-fill-mode: backwards;
+	animation-duration: 0.1s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease;
 }
 </style>

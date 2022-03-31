@@ -258,4 +258,12 @@ export default defineComponent({
 		transform: scale(1, 1) translate(0px, 0px);
 	}
 }
+
+.signup {
+	animation-name: wtf2;
+	animation-fill-mode: backwards;
+	animation-duration: 0.1s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease;
+}
 </style>
