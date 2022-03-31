@@ -563,27 +563,3 @@ hr {
     transform:  scaleX(1.00) scaleY(1.00) ;
   }
 }
-//2022-wtf
-.inner {
-	filter: brightness(0) !important;
-	background: #000 !important;
-}
-._button:hover {
-	animation-name: wtf;
-	animation-fill-mode: forwards;
-	animation-duration: 0.5s;
-	animation-timing-function: ease;
-	animation-iteration-count: infinite;
-}
-
-@keyframes wtf {
-	0% {
-		transform: scale(1, 1) translate(0px);
-	}
-	10% {
-		transform: scale(0, 0) translate(2px);
-	}
-	100% {
-		transform: scale(1, 1) translate(900px);
-	}
-}

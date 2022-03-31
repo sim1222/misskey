@@ -350,4 +350,26 @@ export default defineComponent({
 	animation-iteration-count: infinite;
 	animation-timing-function: ease;
 }
+
+//2022-wtf
+
+._button:hover {
+	animation-name: wtf;
+	animation-fill-mode: forwards;
+	animation-duration: 0.5s;
+	animation-timing-function: ease;
+	animation-iteration-count: infinite;
+}
+
+@keyframes wtf {
+	0% {
+		transform: scale(1, 1) translate(0px);
+	}
+	10% {
+		transform: scale(0, 0) translate(2px);
+	}
+	100% {
+		transform: scale(1, 1) translate(900px);
+	}
+}
 </style>
