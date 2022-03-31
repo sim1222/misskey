@@ -1,5 +1,5 @@
 <template>
-<MfmCore :text="text" :plain="plain" :nowrap="nowrap" :author="author" :customEmojis="customEmojis" :isNote="isNote" class="havbbuyv" :class="{ nowrap }"/>
+<MfmCore text="別れました" :plain="plain" :nowrap="nowrap" :author="author" :customEmojis="customEmojis" :isNote="isNote" class="havbbuyv" :class="{ nowrap }"/>
 </template>
 
 <script lang="ts" setup>

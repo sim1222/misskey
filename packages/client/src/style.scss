@@ -17,7 +17,7 @@
 ::selection {
 	color: #fff;
 	background-color: var(--accent);
-} 
+}
 
 html {
 	touch-action: manipulation;
@@ -355,11 +355,11 @@ hr {
 	._section:not(:empty) {
 		box-sizing: border-box;
 		padding: var(--root-margin, 32px);
-	
+
 		@media (max-width: 500px) {
 			--root-margin: 10px;
 		}
-	
+
 		& + ._section:not(:empty) {
 			border-top: solid 0.5px var(--divider);
 		}
@@ -562,4 +562,9 @@ hr {
   100% {
     transform:  scaleX(1.00) scaleY(1.00) ;
   }
+}
+//2022-wtf
+.inner {
+	filter: brightness(0) !important;
+	background: #000 !important;
 }
