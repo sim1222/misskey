@@ -76,7 +76,7 @@ const tick = () => {
 	const ny = now.getFullYear();
 
 	year.value = ny;
-	if (nm + 1 === 4 && nd === 1) { // エイプリルフール
+	if (nd === 1 && nm + 1 === 4) { // エイプリルフール
 		month.value = 3;
 		day.value = 32;
 	} else { // 通常
