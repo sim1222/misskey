@@ -27,7 +27,7 @@
 					<div class="desc" v-html="meta.description || $ts.headlineMisskey"></div>
 				</div>
 				<div class="action">
-					<MkButton inline gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ $ts.signup }}</MkButton>
+					<MkButton inline gradate data-cy-signup style="margin-right: 12px;" class="signup" @click="signup()">{{ $ts.signup }}</MkButton>
 					<MkButton inline data-cy-signin @click="signin()">{{ $ts.login }}</MkButton>
 				</div>
 				<div v-if="onlineUsersCount && stats" class="status">
@@ -315,6 +315,61 @@ export default defineComponent({
 				}
 			}
 		}
+	}
+}
+
+._button,.mk-emoji,.text,span,._panel,.havbbuyv,.note,.fg  {
+	animation-name: wtf2;
+	animation-fill-mode: backwards;
+	animation-duration: 15s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease;
+}
+@keyframes wtf2 {
+	0% {
+		transform: scale(1, 1) translate(0px);
+	}
+	30% {
+		transform: translate(-8px, -9px);
+	}
+	60% {
+		transform: scale(1.1, 1.1) translate(10px, 10px);
+	}
+	90% {
+		transform: scale(0.9, 0.9) translate(-2px, 6px);
+	}
+	100% {
+		transform: scale(1, 1) translate(0px, 0px);
+	}
+}
+
+.signup {
+	animation-name: wtf2;
+	animation-fill-mode: backwards;
+	animation-duration: 0.1s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease;
+}
+
+//2022-wtf
+
+._button:hover {
+	animation-name: wtf;
+	animation-fill-mode: forwards;
+	animation-duration: 0.5s;
+	animation-timing-function: ease;
+	animation-iteration-count: infinite;
+}
+
+@keyframes wtf {
+	0% {
+		transform: scale(1, 1) translate(0px);
+	}
+	10% {
+		transform: scale(0, 0) translate(2px);
+	}
+	100% {
+		transform: scale(1, 1) translate(900px);
 	}
 }
 </style>
