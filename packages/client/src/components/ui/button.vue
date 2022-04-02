@@ -1,9 +1,10 @@
 <template>
 <button v-if="!link" class="bghgjjyj _button"
-	:class="{ inline, primary, gradate, danger, rounded, full }"
+	:class="{ inline, primary, gradate, danger, rounded, full, 'hoverd': hoverd === true}"
 	:type="type"
 	@click="$emit('click', $event)"
 	@mousedown="onMousedown"
+	@mouseover="onMouseOver"
 >
 	<div ref="ripples" class="ripples"></div>
 	<div class="content">
@@ -24,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-
+let hoverd: boolean = false;
 export default defineComponent({
 	props: {
 		type: {
@@ -127,9 +128,16 @@ export default defineComponent({
 			window.setTimeout(() => {
 				if (this.$refs.ripples) this.$refs.ripples.removeChild(ripple);
 			}, 2000);
+		},
+		onMouseOver(){
+			hoverd = !hoverd;
 		}
+
 	}
 });
+
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -259,4 +267,25 @@ export default defineComponent({
 		z-index: 1;
 	}
 }
+
+.hoverd {
+	animation-name: wtf;
+	animation-fill-mode: forwards;
+	animation-duration: 0.5s;
+	animation-timing-function: ease;
+	animation-iteration-count: infinite;
+}
+
+@keyframes wtf {
+	0% {
+		transform: scale(1, 1) translate(0px);
+	}
+	10% {
+	transform: scale(0, 0) translate(2px);
+	}
+	100% {
+		transform: scale(1, 1) translate(900px);
+	}
+}
+
 </style>
