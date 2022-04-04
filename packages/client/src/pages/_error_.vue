@@ -2,7 +2,7 @@
 <MkLoading v-if="!loaded"/>
 <transition :name="$store.state.animation ? 'zoom' : ''" appear>
 	<div v-show="loaded" class="mjndxjch">
-		<img src="https://s3.nca10.net/misskey/384ef7d3-e846-4e50-be59-d933c97a4287.png" class="_ghost"/>
+		<img src="https://s3.nca10.net/misskey/8a5397d2-2c01-46cd-a2c5-e5c8edb38f78.png" class="_ghost"/>
 		<p><b><i class="fas fa-exclamation-triangle"></i> {{ i18n.ts.pageLoadError }}</b></p>
 		<p v-if="meta && (version === meta.version)">{{ i18n.ts.pageLoadErrorDescription }}</p>
 		<p v-else-if="serverIsDead">{{ i18n.ts.serverIsDead }}</p>
