@@ -1,7 +1,7 @@
 <template>
 <div class="ipledcug">
 	<div class="_fullinfo">
-		<img src="https://s3.nca10.net/misskey/fa9c9206-933d-4ab9-a091-dfddda1e356a.png" class="_ghost"/>
+		<img src="https://s3.nca10.net/misskey/20b71322-00a7-4f57-8eb0-947df6cc0ccb.png" class="_ghost"/>
 		<div>{{ $ts.notFoundDescription }}</div>
 	</div>
 </div>
