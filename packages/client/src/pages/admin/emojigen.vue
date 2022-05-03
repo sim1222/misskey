@@ -65,20 +65,20 @@ import FormInfo from '@/components/ui/info.vue';
 import FormRadios from '@/components/form/radios.vue';
 import FormSection from '@/components/form/section.vue';
 import FormSplit from '@/components/form/split.vue';
-import FormSuspense from '@/components/form/suspense.vue';
+import FormButton from '@/components/ui/button.vue';
 import * as os from '@/os';
 import * as symbols from '@/symbols';
 import { fetchInstance } from '@/instance';
 
 export default defineComponent({
 	components: {
-		FormSwitch,
 		FormInput,
-		FormSuspense,
 		FormTextarea,
-		FormInfo,
+		FormRadios,
 		FormSection,
 		FormSplit,
+		FormSwitch,
+		FormButton
 	},
 
 	emits: ['info'],
@@ -112,6 +112,11 @@ export default defineComponent({
 		},
 
 		emojiGenerate() {
+		//https://emoji-gen.ninja/result?text=%E7%B5%B5%E6%96%87%0A%E5%AD%97%E3%80%82&color=EC71A1FF&back_color=00000000&font=notosans-mono-bold&size_fixed=false&align=center&stretch=true&public_fg=true&locale=ja
+
+		const apiUrl = `https://emoji-gen.ninja/result?`
+		let query = {"text": this.text, "color": this.emojiColor + "FF", "back_color": "00000000", "font": this.font, "size_fixed": this.emojiSizeFixed, "align": this.emojiAlign, "stretch": this.emojiStretch, "public_fg": "false", "locale": "ja"}
+
 
 		},
 
