@@ -1,0 +1,123 @@
+<template>
+<MkSpacer :content-max="700" :margin-min="16" :margin-max="32">
+	<FormSuspense :p="init">
+		<div class="_formRoot">
+			<FormInput v-model="emojiName" class="_formBlock">
+				<template #label>{{ $ts.emojiName }}</template>
+			</FormInput>
+
+			<FormTextarea v-model="text" class="_formBlock">
+				<template #label>{{ $ts.text }}</template>
+			</FormTextarea>
+
+			<FormRadios v-model="emojiAlign" class="_formBlock">
+				<template #label>{{ $ts.emojiAlign }}</template>
+				<option value="left"><i class="fas align-left"/></option>
+				<option value="center"><i class="fas align-center"/></option>
+				<option value="right"><i class="fas align-right"/></option>
+			</FormRadios>
+
+			<FormSection>
+				<template #label>{{ $ts.emojiSizeSetting }}</template>
+				<FormSwitch v-model="emojiSizeFixed" class="_formBlock">
+					<template #label>{{ $ts.emojiSizeFixed }}</template>
+				</FormSwitch>
+
+				<FormSwitch v-model="emojiStretch" class="_formBlock">
+					<template #label>{{ $ts.emojiStretch }}</template>
+				</FormSwitch>
+			</FormSection>
+
+			<FormRadios v-model="font" class="_formBlock">
+				<template #label>{{ $ts.font }}</template>
+				<option value="notosans-mono-bold">Noto Sans Mono CJK JP Bold</option>
+				<option value="mplus-1p-black">M+ 1p black</option>
+				<option value="rounded-x-mplus-1p-black">Rounded M+ 1p black</option>
+				<option value="ipamjm">IPAmj明朝</option>
+				<option value="aoyagireisyoshimo">青柳隷書しも</option>
+				<option value="LinLibertine_RBah">LinLibertine Bold</option>
+			</FormRadios>
+
+			<FormInput v-model="emojiColor" class="_formBlock">
+				<template #prefix><i class="fas fa-palette"></i></template>
+				<template #label>{{ $ts.emojiColor }}</template>
+				<template #caption>#RRGGBB</template> <!--FFを最後に足すこと-->
+			</FormInput>
+			<!-- このあとプレビュー＋絵文字登録 -->
+
+			<FormButton primary class="_formBlock" @click="emojiGenerate">{{ $ts.emojiGenerate }}</FormButton>
+
+			<img :src="emojiUrl" class="img" :alt="emojiName"/>
+
+			<FormButton primary class="_formBlock" @click="emojiApproval">{{ $ts.emojiApproval }}</FormButton>
+
+		</div>
+	</FormSuspense>
+</MkSpacer>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import FormSwitch from '@/components/form/switch.vue';
+import FormInput from '@/components/form/input.vue';
+import FormTextarea from '@/components/form/textarea.vue';
+import FormInfo from '@/components/ui/info.vue';
+import FormRadios from '@/components/form/radios.vue';
+import FormSection from '@/components/form/section.vue';
+import FormSplit from '@/components/form/split.vue';
+import FormSuspense from '@/components/form/suspense.vue';
+import * as os from '@/os';
+import * as symbols from '@/symbols';
+import { fetchInstance } from '@/instance';
+
+export default defineComponent({
+	components: {
+		FormSwitch,
+		FormInput,
+		FormSuspense,
+		FormTextarea,
+		FormInfo,
+		FormSection,
+		FormSplit,
+	},
+
+	emits: ['info'],
+
+	data() {
+		return {
+			[symbols.PAGE_INFO]: {
+				title: this.$ts.general,
+				icon: 'fas fa-cog',
+				bg: 'var(--bg)',
+				actions: [{
+					asFullButton: true,
+					icon: 'fas fa-check',
+					text: this.$ts.save,
+					handler: this.save,
+				}],
+			},
+			emojiName: null,
+			text: null,
+			emojiAlign: 'center',
+			emojiSizeFixed: false,
+			emojiStretch: false,
+			font: 'notosans-mono-bold',
+			emojiColor: '38BA91',
+			emojiUrl: null,
+		}
+	},
+
+	methods: {
+		async init() {
+		},
+
+		emojiGenerate() {
+
+		},
+
+		emojiApproval() {
+
+		}
+	}
+});
+</script>

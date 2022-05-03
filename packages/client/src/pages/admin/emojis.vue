@@ -202,7 +202,16 @@ const menu = (ev: MouseEvent) => {
 				});
 			});
 		}
-	}], ev.currentTarget ?? ev.target);
+	},{
+		icon: 'fas fa-recycle',
+		text: i18n.ts.emojigen,
+		action: async
+
+	}
+
+
+
+	], ev.currentTarget ?? ev.target);
 };
 
 const setCategoryBulk = async () => {
@@ -298,13 +307,13 @@ defineExpose({
 		.empty {
 			margin: var(--margin);
 		}
-		
+
 		.ldhfsamy {
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
 			grid-gap: 12px;
 			margin: var(--margin) 0;
-	
+
 			> .emoji {
 				display: flex;
 				align-items: center;
