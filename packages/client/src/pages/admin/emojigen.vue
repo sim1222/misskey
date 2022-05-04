@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {defineComponent} from 'vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormInput from '@/components/form/input.vue';
 import FormTextarea from '@/components/form/textarea.vue';
@@ -69,11 +69,6 @@ import FormSection from '@/components/form/section.vue';
 import FormButton from '@/components/ui/button.vue';
 import * as os from '@/os';
 import * as symbols from '@/symbols';
-import { fetchInstance } from '@/instance';
-import {string} from "postcss-selector-parser";
-import { selectFiles } from '@/scripts/select-file';
-import {i18n} from "@/i18n";
-import {stream} from "@/stream";
 import {defaultStore} from "@/store";
 
 export default defineComponent({
@@ -95,7 +90,7 @@ export default defineComponent({
 				icon: 'fas fa-laugh',
 				bg: 'var(--bg)',
 			},
-			emojiName: null,
+			emojiName: '',
 			text: '',
 			emojiAlign: 'center',
 			emojiSizeFixed: false,
@@ -123,22 +118,24 @@ export default defineComponent({
 		},
 
 		emojiApproval() {
-			const marker = Math.random().toString();
+			const chooseFileFromPc = async () => {
 
-			os.api('drive/files/upload-from-url', {
-				url: this.emojiUrl,
-				folderId: defaultStore.state.uploadFolder,
-				marker
-			});
+				const response = await fetch(this.emojiUrl).then(res => res.blob())
 
-			os.alert({
-				title: i18n.ts.uploadFromUrlRequested,
-				text: i18n.ts.uploadFromUrlMayTakeTime
-			});
+				const file = new File([response], `${this.emojiName}.png`);
+				return await os.upload(file, defaultStore.state.uploadFolder, undefined,);
+			};
+
+			(async () => {
+				const fileId = await chooseFileFromPc().then(res => res.id);
+				await os.api('admin/emoji/add', {
+					fileId,
+					name: this.emojiName,
+				})
+			})();
 		},
-		},
-	}
-);
+	},
+});
 
 
 </script>
