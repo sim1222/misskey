@@ -48,8 +48,9 @@
 			<FormButton primary class="_formBlock" @click="emojiGenerate">{{ $ts.emojiGenerate }}</FormButton>
 
 			<FormSection>
-				<template #label>{{ $ts.theme }}</template>
+				<template #label>{{ $ts.preview }}</template>
 				<img :src="emojiUrl" class="img" :alt="emojiName"/>
+				<p>{{ emojiUrl }}</p>
 			</FormSection>
 			<FormButton primary class="_formBlock" @click="emojiApproval">{{ $ts.emojiApproval }}</FormButton>
 
