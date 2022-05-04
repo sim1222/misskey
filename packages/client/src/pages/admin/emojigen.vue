@@ -69,6 +69,11 @@ import FormButton from '@/components/ui/button.vue';
 import * as os from '@/os';
 import * as symbols from '@/symbols';
 import { fetchInstance } from '@/instance';
+import {string} from "postcss-selector-parser";
+import { selectFiles } from '@/scripts/select-file';
+import {i18n} from "@/i18n";
+import {stream} from "@/stream";
+import {defaultStore} from "@/store";
 
 export default defineComponent({
 	components: {
@@ -96,7 +101,7 @@ export default defineComponent({
 			emojiStretch: false,
 			font: 'notosans-mono-bold',
 			emojiColor: '38BA91',
-			emojiUrl: null,
+			emojiUrl: '',
 		}
 	},
 
@@ -105,17 +110,34 @@ export default defineComponent({
 		},
 
 		emojiGenerate() {
-		//https://emoji-gen.ninja/result?text=%E7%B5%B5%E6%96%87%0A%E5%AD%97%E3%80%82&color=EC71A1FF&back_color=00000000&font=notosans-mono-bold&size_fixed=false&align=center&stretch=true&public_fg=true&locale=ja
+			//https://emoji-gen.ninja/result?text=%E7%B5%B5%E6%96%87%0A%E5%AD%97%E3%80%82&color=EC71A1FF&back_color=00000000&font=notosans-mono-bold&size_fixed=false&align=center&stretch=true&public_fg=true&locale=ja
 
-		const apiUrl = `https://emoji-gen.ninja/result?`
-		let query = {"text": this.text, "color": this.emojiColor + "FF", "back_color": "00000000", "font": this.font, "size_fixed": this.emojiSizeFixed, "align": this.emojiAlign, "stretch": this.emojiStretch, "public_fg": "false", "locale": "ja"}
+			const apiUrl = `https://emoji-gen.ninja/result?`
+			let query = {"text": this.text, "color": this.emojiColor + "FF", "back_color": "00000000", "font": this.font, "size_fixed": this.emojiSizeFixed, "align": this.emojiAlign, "stretch": this.emojiStretch, "public_fg": "false", "locale": "ja"}
+
+			this.emojiUrl = apiUrl + '?' + Object.entries(query).map((e) => `${e[0]}=${e[1]}`).join('=');
+
 
 
 		},
 
 		emojiApproval() {
+			const marker = Math.random().toString();
 
-		}
+			os.api('drive/files/upload-from-url', {
+				url: this.emojiUrl,
+				folderId: defaultStore.state.uploadFolder,
+				marker
+			});
+
+			os.alert({
+				title: i18n.ts.uploadFromUrlRequested,
+				text: i18n.ts.uploadFromUrlMayTakeTime
+			});
+		},
+		},
 	}
-});
+);
+
+
 </script>
