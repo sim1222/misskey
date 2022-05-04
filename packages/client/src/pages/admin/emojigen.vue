@@ -47,8 +47,10 @@
 
 			<FormButton primary class="_formBlock" @click="emojiGenerate">{{ $ts.emojiGenerate }}</FormButton>
 
-			<img :src="emojiUrl" class="img" :alt="emojiName"/>
-
+			<FormSection>
+				<template #label>{{ $ts.theme }}</template>
+				<img :src="emojiUrl" class="img" :alt="emojiName"/>
+			</FormSection>
 			<FormButton primary class="_formBlock" @click="emojiApproval">{{ $ts.emojiApproval }}</FormButton>
 
 		</div>
@@ -61,10 +63,8 @@ import { defineComponent } from 'vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormInput from '@/components/form/input.vue';
 import FormTextarea from '@/components/form/textarea.vue';
-import FormInfo from '@/components/ui/info.vue';
 import FormRadios from '@/components/form/radios.vue';
 import FormSection from '@/components/form/section.vue';
-import FormSplit from '@/components/form/split.vue';
 import FormButton from '@/components/ui/button.vue';
 import * as os from '@/os';
 import * as symbols from '@/symbols';
@@ -76,7 +76,6 @@ export default defineComponent({
 		FormTextarea,
 		FormRadios,
 		FormSection,
-		FormSplit,
 		FormSwitch,
 		FormButton
 	},
@@ -86,15 +85,9 @@ export default defineComponent({
 	data() {
 		return {
 			[symbols.PAGE_INFO]: {
-				title: this.$ts.general,
-				icon: 'fas fa-cog',
+				title: this.$ts.emojiGen,
+				icon: 'fas fa-laugh',
 				bg: 'var(--bg)',
-				actions: [{
-					asFullButton: true,
-					icon: 'fas fa-check',
-					text: this.$ts.save,
-					handler: this.save,
-				}],
 			},
 			emojiName: null,
 			text: null,
