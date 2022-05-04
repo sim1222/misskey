@@ -12,9 +12,9 @@
 
 			<FormRadios v-model="emojiAlign" class="_formBlock">
 				<template #label>{{ $ts.emojiAlign }}</template>
-				<option value="left"><i class="fas align-left"/></option>
-				<option value="center"><i class="fas align-center"/></option>
-				<option value="right"><i class="fas align-right"/></option>
+				<option value="left"><i class="fa-solid fa-align-left"/></option>
+				<option value="center"><i class="fa-solid fa-align-center"></i></option>
+				<option value="right"><i class="fa-solid fa-align-right"/></option>
 			</FormRadios>
 
 			<FormSection>
