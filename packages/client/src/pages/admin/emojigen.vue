@@ -159,16 +159,16 @@ export default defineComponent({
 					marker
 				});
 
-				const emojiAdd = async (fileId) => {
+				const emojiAdd = (fileId) => new Promise(async resolve => {
 					await os.api('drive/files/update', {
 						fileId,
 						name: this.emojiName + '.png',
 					});
-					return await os.api('admin/emoji/add', {
+					resolve( await os.api('admin/emoji/add', {
 						fileId,
-					})
+					}));
 
-				}
+				})
 
 			});
 
