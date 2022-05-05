@@ -150,7 +150,8 @@ export default defineComponent({
 				const connection = stream.useChannel('main');
 				connection.on('urlUploadFinished', async data => {
 					if (data.marker === marker) {
-						resolve(await emojiAdd(data.file.id));
+						const fileId = await emojiAdd(data.file.id);
+						resolve(fileId);
 						connection.dispose();
 					}
 				});
@@ -161,15 +162,18 @@ export default defineComponent({
 					marker
 				});
 
-				const emojiAdd = (fileId) => new Promise(async resolve => {
+				//リネーム→登録→登録されたIDを返す
+				const emojiAdd = (fileId) => new Promise<Record<string, any> | null>(async resolve => {
 					await os.api('drive/files/update', {
 						fileId,
 						name: this.emojiName + '.png',
 					});
-					resolve( await os.api('admin/emoji/add', {
-						fileId,
-					}));
 
+					const response = await os.api('admin/emoji/add', {
+						fileId,
+					})
+
+					resolve(response);
 				})
 
 			});
