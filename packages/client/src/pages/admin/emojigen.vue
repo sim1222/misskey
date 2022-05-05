@@ -148,8 +148,8 @@ export default defineComponent({
 				const connection = stream.useChannel('main');
 				connection.on('urlUploadFinished', async data => {
 					if (data.marker === marker) {
-						connection.dispose();
 						resolve(await emojiAdd(data.file.id));
+						connection.dispose();
 					}
 				});
 
