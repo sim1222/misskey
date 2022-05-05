@@ -118,7 +118,7 @@ export default defineComponent({
 
 		},
 
-		emojiApproval() {
+		emojiApproval: function () {
 			const emojiUpload = async () => {
 				const marker = Math.random().toString(); // TODO: UUIDとか使う
 
@@ -149,9 +149,17 @@ export default defineComponent({
 			};
 
 
+			const edit = (emoji) => {
+				os.popup(import('./emoji-edit-dialog.vue'), {
+					emoji: emoji
+				});
+			};
+
+
 			(async () => {
 				await this.emojiApproval();
 				await emojiUpload();
+				edit(this.emojiName);
 			})();
 		},
 	},
