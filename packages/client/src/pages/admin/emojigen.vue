@@ -180,23 +180,29 @@ export default defineComponent({
 			});
 
 			//emoji関数 admin/emoji/listでは、idによる検索ができないため、自分のidをuntilIdに入れて1つ前のidを取得してからそれをsinceIdに指定して、絵文字情報をlist→objectで取得する
-			const emoji = async (emojiId) => {
+			const emoji = (emojiId) => new Promise(async resolve => {
 				const sinceId = await os.api('admin/emoji/list', {
 					limit: 1,
 					untilId: emojiId.id
 				})
 
-				if (!sinceId) return null;
+				if (!sinceId) {
+					resolve(null);
+					return;
+				}
 
 				const id = await os.api('admin/emoji/list', {
 					limit: 1,
 					sinceId: sinceId[0].id
 				});
 
-				if (!id) return null;
+				if (!id) {
+					resolve(null);
+					return;
+				}
 
-				return id[0];
-			}
+				resolve(id[0]);
+			});
 
 			//edit関数には、emojiのobjectを渡す
 			const edit = (emoji) => {
@@ -209,7 +215,7 @@ export default defineComponent({
 			(async () => {
 				await this.emojiGenerate()
 				const emojiId = await emojiUpload();//emojiIdはファイルID emojiUploadはファイルIDを返す
-				console.log(emojiId);
+				//console.log(emojiId.id);
 				const emojiObj = emoji(emojiId);//emojiObjはemojiオブジェクト emoji関数はemojiIdを引数に受け取りemojiオブジェクトを返す
 				console.log(emojiObj);
 				edit(emojiObj);
