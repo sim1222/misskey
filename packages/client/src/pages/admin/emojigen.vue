@@ -111,7 +111,7 @@ export default defineComponent({
 			font: 'notosans-mono-bold',
 			emojiColor: '38BA91',
 			emojiUrl: '',
-			accentColors: ['e36749', 'f29924', '98c934', '34c9a9', '34a1c9', '606df7', '8d34c9', 'e84d83']
+			accentColors: ['#e36749', '#f29924', '#98c934', '#34c9a9', '#34a1c9', '#606df7', '#8d34c9', '#e84d83']
 		}
 	},
 
@@ -210,7 +210,7 @@ export default defineComponent({
 		},
 
 		setAccentColor(color){
-			this.emojiColor = color;
+			this.emojiColor = color.replace('#', '');
 		}
 	},
 });
