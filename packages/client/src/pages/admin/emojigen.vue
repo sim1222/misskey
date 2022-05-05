@@ -150,7 +150,7 @@ export default defineComponent({
 				const connection = stream.useChannel('main');
 				connection.on('urlUploadFinished', async data => {
 					if (data.marker === marker) {
-						resolve(await emojiAdd(data.file.id));
+						resolve(await emojiAdd(data.file.id.toString()));
 						connection.dispose();
 					}
 				});
@@ -184,7 +184,7 @@ export default defineComponent({
 
 				const id = await os.api('admin/emoji/list', {
 					limit: 1,
-					sinceId: sinceId[0].id
+					sinceId: sinceId[0].id.toString()
 				});
 
 				if (!id) return null;
@@ -202,7 +202,9 @@ export default defineComponent({
 			(async () => {
 				await this.emojiGenerate()
 				const emojiId = await emojiUpload();
+				console.log(emojiId);
 				const emojiObj = emoji(emojiId);
+				console.log(emojiObj);
 				edit(emojiObj);
 			})();
 		},
