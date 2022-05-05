@@ -70,6 +70,7 @@ import FormButton from '@/components/ui/button.vue';
 import * as os from '@/os';
 import * as symbols from '@/symbols';
 import {defaultStore} from "@/store";
+import {stream} from "@/stream";
 
 export default defineComponent({
 	components: {
@@ -118,20 +119,38 @@ export default defineComponent({
 		},
 
 		emojiApproval() {
-			const chooseFileFromPc = async () => {
+			const emojiUpload = async () => {
+				const marker = Math.random().toString(); // TODO: UUIDとか使う
 
-				const response = await fetch(this.emojiUrl).then(res => res.blob())
+				const connection = stream.useChannel('main');
+				connection.on('urlUploadFinished', data => {
+					if (data.marker === marker) {
+						emojiAdd(data.file.id);
+						connection.dispose();
+					}
+				});
 
-				const file = new File([response], `${this.emojiName}.png`);
-				return await os.upload(file, defaultStore.state.uploadFolder, undefined,);
+				await os.api('drive/files/upload-from-url', {
+					url: this.emojiUrl,
+					folderId: defaultStore.state.uploadFolder,
+					marker
+				});
+
+				const emojiAdd = async (fileId) => {
+					await os.api('drive/files/update', {
+						fileId,
+						name: this.emojiName + '.png',
+					});
+					await os.api('admin/emoji/add', {
+						fileId,
+					})
+				}
+
 			};
 
+
 			(async () => {
-				const fileId = await chooseFileFromPc().then(res => res.id);
-				await os.api('admin/emoji/add', {
-					fileId,
-					name: this.emojiName,
-				})
+				await emojiUpload();
 			})();
 		},
 	},
