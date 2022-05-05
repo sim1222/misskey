@@ -195,7 +195,9 @@ export default defineComponent({
 
 			(async () => {
 				await this.emojiApproval();
-				edit(emoji(await emojiUpload()));
+				const emojiId = await emojiUpload();
+				const emojiObj = await emoji(emojiId);
+				edit(emojiObj);
 			})();
 		},
 
