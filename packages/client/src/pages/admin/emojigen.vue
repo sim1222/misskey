@@ -143,10 +143,11 @@ export default defineComponent({
 			//const strKoke = await returnKoke()
 
 
-
+			//emojiUploadでは、絵文字をdrive/files/upload-from-urlでアップロードしたあと、emojiAddでリネーム、登録をして、emojiAddの戻り値(絵文字のid)を返す
 			const emojiUpload = () => new Promise(async resolve => {
 				const marker = Math.random().toString(); // TODO: UUIDとか使う
 
+				//先にコネクションを貼って監視する
 				const connection = stream.useChannel('main');
 				connection.on('urlUploadFinished', async data => {
 					if (data.marker === marker) {
@@ -178,6 +179,7 @@ export default defineComponent({
 
 			});
 
+			//emoji関数 admin/emoji/listでは、idによる検索ができないため、自分のidをuntilIdに入れて1つ前のidを取得してからそれをsinceIdに指定して、絵文字情報をlist→objectで取得する
 			const emoji = async (emojiId) => {
 				const sinceId = await os.api('admin/emoji/list', {
 					limit: 1,
@@ -188,7 +190,7 @@ export default defineComponent({
 
 				const id = await os.api('admin/emoji/list', {
 					limit: 1,
-					sinceId: sinceId[0].id.toString()
+					sinceId: sinceId[0].id
 				});
 
 				if (!id) return null;
@@ -196,6 +198,7 @@ export default defineComponent({
 				return id[0];
 			}
 
+			//edit関数には、emojiのobjectを渡す
 			const edit = (emoji) => {
 				os.popup(import('./emoji-edit-dialog.vue'), {
 					emoji: emoji
@@ -205,9 +208,9 @@ export default defineComponent({
 
 			(async () => {
 				await this.emojiGenerate()
-				const emojiId = await emojiUpload();
+				const emojiId = await emojiUpload();//emojiIdはファイルID emojiUploadはファイルIDを返す
 				console.log(emojiId);
-				const emojiObj = emoji(emojiId);
+				const emojiObj = emoji(emojiId);//emojiObjはemojiオブジェクト emoji関数はemojiIdを引数に受け取りemojiオブジェクトを返す
 				console.log(emojiObj);
 				edit(emojiObj);
 			})();
