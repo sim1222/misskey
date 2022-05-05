@@ -170,7 +170,7 @@ export default defineComponent({
 
 				}
 
-			};
+			});
 
 			const emoji = async (emojiId) => {
 				const sinceId = await os.api('admin/emoji/list', {
