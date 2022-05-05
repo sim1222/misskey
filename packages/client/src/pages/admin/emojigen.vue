@@ -142,6 +142,8 @@ export default defineComponent({
 
 			//const strKoke = await returnKoke()
 
+
+
 			const emojiUpload = () => new Promise(async resolve => {
 				const marker = Math.random().toString(); // TODO: UUIDとか使う
 
@@ -198,7 +200,7 @@ export default defineComponent({
 
 
 			(async () => {
-				await this.emojiApproval();
+				await this.emojiGenerate()
 				const emojiId = await emojiUpload();
 				const emojiObj = emoji(emojiId);
 				edit(emojiObj);
