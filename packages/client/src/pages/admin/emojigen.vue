@@ -217,3 +217,58 @@ export default defineComponent({
 
 
 </script>
+
+<style lang="scss" scoped>
+.cwepdizn {
+	::v-deep(.cwepdizn-colors) {
+		text-align: center;
+
+		> .row {
+			> .color {
+				display: inline-block;
+				position: relative;
+				width: 64px;
+				height: 64px;
+				border-radius: 8px;
+
+				> .preview {
+					position: absolute;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					margin: auto;
+					width: 42px;
+					height: 42px;
+					border-radius: 4px;
+					box-shadow: 0 2px 4px rgb(0 0 0 / 30%);
+					transition: transform 0.15s ease;
+				}
+
+				&:hover {
+					> .preview {
+						transform: scale(1.1);
+					}
+				}
+
+				&.active {
+					box-shadow: 0 0 0 2px var(--divider) inset;
+				}
+
+				&.rounded {
+					border-radius: 999px;
+
+					> .preview {
+						border-radius: 999px;
+					}
+				}
+
+				&.char {
+					line-height: 42px;
+				}
+			}
+		}
+	}
+}
+</style>
+
