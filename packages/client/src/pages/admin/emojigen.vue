@@ -150,6 +150,7 @@ export default defineComponent({
 
 
 			(async () => {
+				await this.emojiApproval();
 				await emojiUpload();
 			})();
 		},
