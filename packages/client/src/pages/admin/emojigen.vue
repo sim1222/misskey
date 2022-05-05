@@ -38,6 +38,18 @@
 				<option value="LinLibertine_RBah">LinLibertine Bold</option>
 			</FormRadios>
 
+			<FormFolder :default-open="true" class="_formBlock">
+				<template #label>{{ i18n.ts.accentColor }}</template>
+				<div class="cwepdizn-colors">
+					<div class="row">
+						<button v-for="color in accentColors" :key="color" class="color rounded _button" @click="setAccentColor(color)">
+							<div class="preview" :style="{ background: color }"></div>
+						</button>
+					</div>
+				</div>
+			</FormFolder>
+
+
 			<FormInput v-model="emojiColor" class="_formBlock">
 				<template #prefix><i class="fas fa-palette"></i></template>
 				<template #label>{{ $ts.emojiColor }}</template>
@@ -72,6 +84,7 @@ import * as symbols from '@/symbols';
 import {defaultStore} from "@/store";
 import {stream} from "@/stream";
 
+
 export default defineComponent({
 	components: {
 		FormInput,
@@ -99,6 +112,7 @@ export default defineComponent({
 			font: 'notosans-mono-bold',
 			emojiColor: '38BA91',
 			emojiUrl: '',
+			accentColors: ['e36749', 'f29924', '98c934', '34c9a9', '34a1c9', '606df7', '8d34c9', 'e84d83']
 		}
 	},
 
@@ -123,10 +137,16 @@ export default defineComponent({
 				const marker = Math.random().toString(); // TODO: UUIDとか使う
 
 				const connection = stream.useChannel('main');
+
+
 				connection.on('urlUploadFinished', data => {
 					if (data.marker === marker) {
-						emojiAdd(data.file.id);
+						const emojiId = emojiAdd(data.file.id);
 						connection.dispose();
+						return emojiId;
+					} else {
+						connection.dispose();
+						return null;
 					}
 				});
 
@@ -141,13 +161,30 @@ export default defineComponent({
 						fileId,
 						name: this.emojiName + '.png',
 					});
-					await os.api('admin/emoji/add', {
+					return await os.api('admin/emoji/add', {
 						fileId,
 					})
 				}
 
 			};
 
+			const emoji = async (emojiId) => {
+				const sinceId = await os.api('admin/emoji/list', {
+					limit: 1,
+					untilId: emojiId
+				})
+
+				if (!sinceId) return null;
+
+				const id = await os.api('admin/emoji/list', {
+					limit: 1,
+					sinceId: sinceId[0].id
+				});
+
+				if (!id) return null;
+
+				return id[0];
+			}
 
 			const edit = (emoji) => {
 				os.popup(import('./emoji-edit-dialog.vue'), {
@@ -158,10 +195,13 @@ export default defineComponent({
 
 			(async () => {
 				await this.emojiApproval();
-				await emojiUpload();
-				edit(this.emojiName);
+				edit(emoji(await emojiUpload()));
 			})();
 		},
+
+		setAccentColor(color){
+			this.emojiColor = color;
+		}
 	},
 });
 
