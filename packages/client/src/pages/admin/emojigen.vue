@@ -133,20 +133,23 @@ export default defineComponent({
 		},
 
 		emojiApproval: function () {
-			const emojiUpload = async () => {
+
+			// const returnKoke = () => new Promise(resolve => {
+			// 	setTimeout(() => {
+			// 		resolve("Koke")
+			// 	}, 5000)
+			// })
+
+			//const strKoke = await returnKoke()
+
+			const emojiUpload = () => new Promise(async resolve => {
 				const marker = Math.random().toString(); // TODO: UUIDとか使う
 
 				const connection = stream.useChannel('main');
-
-
-				connection.on('urlUploadFinished', data => {
+				connection.on('urlUploadFinished', async data => {
 					if (data.marker === marker) {
-						const emojiId = emojiAdd(data.file.id);
 						connection.dispose();
-						return emojiId;
-					} else {
-						connection.dispose();
-						return null;
+						resolve(await emojiAdd(data.file.id));
 					}
 				});
 
@@ -164,6 +167,7 @@ export default defineComponent({
 					return await os.api('admin/emoji/add', {
 						fileId,
 					})
+
 				}
 
 			};
@@ -196,7 +200,7 @@ export default defineComponent({
 			(async () => {
 				await this.emojiApproval();
 				const emojiId = await emojiUpload();
-				const emojiObj = await emoji(emojiId);
+				const emojiObj = emoji(emojiId);
 				edit(emojiObj);
 			})();
 		},
