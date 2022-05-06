@@ -52,9 +52,8 @@
 		<FormInput v-model="emojiColor" class="_formBlock">
 			<template #prefix><i class="fas fa-palette"></i></template>
 			<template #label>{{ $ts.emojiColor }}</template>
-			<template #caption>#RRGGBB</template> <!--FFを最後に足すこと-->
+			<template #caption>#RRGGBB</template>
 		</FormInput>
-		<!-- このあとプレビュー＋絵文字登録 -->
 
 		<FormButton primary class="_formBlock" @click="emojiGenerate">{{ $ts.emojiGenerate }}</FormButton>
 
@@ -75,8 +74,8 @@ import FormInput from '@/components/form/input.vue';
 import FormTextarea from '@/components/form/textarea.vue';
 import FormRadios from '@/components/form/radios.vue';
 import FormSection from '@/components/form/section.vue';
-import FormButton from '@/components/ui/button.vue';
 import FormFolder from '@/components/form/folder.vue';
+import FormButton from '@/components/ui/button.vue';
 import * as os from '@/os';
 import * as symbols from '@/symbols';
 import {defaultStore} from "@/store";
@@ -91,7 +90,7 @@ export default defineComponent({
 		FormSection,
 		FormSwitch,
 		FormButton,
-		FormFolder
+		FormFolder,
 	},
 
 	emits: ['info'],
@@ -123,7 +122,7 @@ export default defineComponent({
 			//https://emoji-gen.ninja/result?text=%E7%B5%B5%E6%96%87%0A%E5%AD%97%E3%80%82&color=EC71A1FF&back_color=00000000&font=notosans-mono-bold&size_fixed=false&align=center&stretch=true&public_fg=true&locale=ja
 
 			const apiUrl = `https://emoji-gen.ninja/emoji`
-			let query = {"text": encodeURI(this.text), "color": this.emojiColor + "FF", "back_color": "00000000", "font": this.font, "size_fixed": this.emojiSizeFixed, "align": this.emojiAlign, "stretch": this.emojiStretch, "public_fg": "false", "locale": "ja"}
+			let query = {"text": encodeURI(this.text), "color": this.emojiColor.replace('#','') + "FF", "back_color": "00000000", "font": this.font, "size_fixed": this.emojiSizeFixed, "align": this.emojiAlign, "stretch": this.emojiStretch, "public_fg": "false", "locale": "ja"}
 
 			this.emojiUrl = apiUrl + '?' + Object.entries(query).map((e) => `${e[0]}=${e[1]}`).join('&');
 
