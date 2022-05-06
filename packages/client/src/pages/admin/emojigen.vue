@@ -38,8 +38,8 @@
 				<option value="LinLibertine_RBah">LinLibertine Bold</option>
 			</FormRadios>
 
-			<FormFolder :default-open="true" class="_formBlock">
-				<template #label>{{ $ts.accentColor }}</template>
+			<FormSection>
+				<template #label>{{ $ts.emojiColor }}</template>
 				<div class="cwepdizn-colors">
 					<div class="row">
 						<button v-for="color in accentColors" :key="color" class="color rounded _button" @click="setAccentColor(color)">
@@ -47,13 +47,13 @@
 						</button>
 					</div>
 				</div>
-			</FormFolder>
 
-			<FormInput v-model="emojiColor" class="_formBlock">
-				<template #prefix><i class="fas fa-palette"></i></template>
-				<template #label>{{ $ts.emojiColor }}</template>
-				<template #caption>#RRGGBB</template>
-			</FormInput>
+				<FormInput v-model="emojiColor" class="_formBlock">
+					<template #prefix><i class="fas fa-palette"></i></template>
+					<template #label>{{ $ts.emojiColor }}</template>
+					<template #caption>#RRGGBB</template>
+				</FormInput>
+			</FormSection>
 
 			<FormButton primary class="_formBlock" @click="emojiGenerate">{{ $ts.emojiGenerate }}</FormButton>
 
