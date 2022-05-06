@@ -1,6 +1,6 @@
 <template>
 <MkSpacer :content-max="700" :margin-min="16" :margin-max="32">
-	<div class="_formRoot">
+	<div class="cwepdizn _formRoot">
 		<FormInput v-model="emojiName" class="_formBlock">
 			<template #label>{{ $ts.emojiName }}</template>
 		</FormInput>
