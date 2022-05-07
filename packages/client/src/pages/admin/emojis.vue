@@ -202,16 +202,7 @@ const menu = (ev: MouseEvent) => {
 				});
 			});
 		}
-	},{
-		icon: 'fas fa-recycle',
-		text: i18n.ts.emojigen,
-		action: async
-
-	}
-
-
-
-	], ev.currentTarget ?? ev.target);
+	}], ev.currentTarget ?? ev.target);
 };
 
 const setCategoryBulk = async () => {
