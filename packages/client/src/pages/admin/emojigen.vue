@@ -1,70 +1,68 @@
 <template>
 <MkSpacer :content-max="700" :margin-min="16" :margin-max="32">
-	<FormSuspense>
-		<div class="cwepdizn _formRoot">
-			<FormInput v-model="emojiName" class="_formBlock">
-				<template #label>{{ $ts.emojiName }}</template>
-			</FormInput>
+	<div class="cwepdizn _formRoot">
+		<FormInput v-model="emojiName" class="_formBlock">
+			<template #label>{{ $ts.emojiName }}</template>
+		</FormInput>
 
-			<FormTextarea v-model="text" class="_formBlock">
-				<template #label>{{ $ts.text }}</template>
-			</FormTextarea>
+		<FormTextarea v-model="text" class="_formBlock">
+			<template #label>{{ $ts.text }}</template>
+		</FormTextarea>
 
-			<FormRadios v-model="emojiAlign" class="_formBlock">
-				<template #label>{{ $ts.emojiAlign }}</template>
-				<option value="left"><i class="fa-solid fa-align-left"/></option>
-				<option value="center"><i class="fa-solid fa-align-center"></i></option>
-				<option value="right"><i class="fa-solid fa-align-right"/></option>
-			</FormRadios>
+		<FormRadios v-model="emojiAlign" class="_formBlock">
+			<template #label>{{ $ts.emojiAlign }}</template>
+			<option value="left"><i class="fa-solid fa-align-left"/></option>
+			<option value="center"><i class="fa-solid fa-align-center"></i></option>
+			<option value="right"><i class="fa-solid fa-align-right"/></option>
+		</FormRadios>
 
-			<FormSection>
-				<template #label>{{ $ts.emojiSizeSetting }}</template>
-				<FormSwitch v-model="emojiSizeFixed" class="_formBlock">
-					<template #label>{{ $ts.emojiSizeFixed }}</template>
-				</FormSwitch>
+		<FormSection>
+			<template #label>{{ $ts.emojiSizeSetting }}</template>
+			<FormSwitch v-model="emojiSizeFixed" class="_formBlock">
+				<template #label>{{ $ts.emojiSizeFixed }}</template>
+			</FormSwitch>
 
-				<FormSwitch v-model="emojiStretch" class="_formBlock">
-					<template #label>{{ $ts.emojiStretch }}</template>
-				</FormSwitch>
-			</FormSection>
+			<FormSwitch v-model="emojiStretch" class="_formBlock">
+				<template #label>{{ $ts.emojiStretch }}</template>
+			</FormSwitch>
+		</FormSection>
 
-			<FormRadios v-model="font" class="_formBlock">
-				<template #label>{{ $ts.font }}</template>
-				<option value="notosans-mono-bold">Noto Sans Mono CJK JP Bold</option>
-				<option value="mplus-1p-black">M+ 1p black</option>
-				<option value="rounded-x-mplus-1p-black">Rounded M+ 1p black</option>
-				<option value="ipamjm">IPAmj明朝</option>
-				<option value="aoyagireisyoshimo">青柳隷書しも</option>
-				<option value="LinLibertine_RBah">LinLibertine Bold</option>
-			</FormRadios>
+		<FormRadios v-model="font" class="_formBlock">
+			<template #label>{{ $ts.font }}</template>
+			<option value="notosans-mono-bold">Noto Sans Mono CJK JP Bold</option>
+			<option value="mplus-1p-black">M+ 1p black</option>
+			<option value="rounded-x-mplus-1p-black">Rounded M+ 1p black</option>
+			<option value="ipamjm">IPAmj明朝</option>
+			<option value="aoyagireisyoshimo">青柳隷書しも</option>
+			<option value="LinLibertine_RBah">LinLibertine Bold</option>
+		</FormRadios>
 
-			<FormSection>
-				<template #label>{{ $ts.emojiColor }}</template>
-				<div class="cwepdizn-colors">
-					<div class="row">
-						<button v-for="color in accentColors" :key="color" class="color rounded _button" @click="setAccentColor(color)">
-							<div class="preview" :style="{ background: color }"></div>
-						</button>
-					</div>
+		<FormSection>
+			<template #label>{{ $ts.emojiColor }}</template>
+			<div class="cwepdizn-colors">
+				<div class="row">
+					<button v-for="color in accentColors" :key="color" class="color rounded _button" @click="setAccentColor(color)">
+						<div class="preview" :style="{ background: color }"></div>
+					</button>
 				</div>
+			</div>
 
-				<FormInput v-model="emojiColor" class="_formBlock">
-					<template #prefix><i class="fas fa-palette"></i></template>
-					<template #label>{{ $ts.emojiColor }}</template>
-					<template #caption>#RRGGBB</template>
-				</FormInput>
-			</FormSection>
+			<FormInput v-model="emojiColor" class="_formBlock">
+				<template #prefix><i class="fas fa-palette"></i></template>
+				<template #label>{{ $ts.emojiColor }}</template>
+				<template #caption>#RRGGBB</template>
+			</FormInput>
+		</FormSection>
 
-			<FormButton primary class="_formBlock" @click="emojiGenerate">{{ $ts.emojiGenerate }}</FormButton>
+		<FormButton primary class="_formBlock" @click="emojiGenerate">{{ $ts.emojiGenerate }}</FormButton>
 
-			<FormSection>
-				<template #label>{{ $ts.preview }}</template>
-				<img :src="emojiUrl" class="img" :alt="emojiName"/>
-				<p>{{ emojiUrl }}</p>
-			</FormSection>
-			<FormButton primary class="_formBlock" @click="emojiApproval">{{ $ts.emojiApproval }}</FormButton>
-		</div>
-	</FormSuspense>
+		<FormSection>
+			<template #label>{{ $ts.preview }}</template>
+			<img :src="emojiUrl" class="img" :alt="emojiName"/>
+			<a href="{{ emojiUrl }}"></a><p>{{ emojiUrl }}</p>
+		</FormSection>
+		<FormButton primary class="_formBlock" @click="emojiApproval">{{ $ts.emojiApproval }}</FormButton>
+	</div>
 </MkSpacer>
 </template>
 
