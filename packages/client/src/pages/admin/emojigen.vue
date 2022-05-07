@@ -59,7 +59,7 @@
 		<FormSection>
 			<template #label>{{ $ts.preview }}</template>
 			<img :src="emojiUrl" class="img" :alt="emojiName"/><br>
-			<MkLink :url="emojiUrl">{{ emojiUrl }}</MkLink>
+			<MkLink v-if="emojiUrl" :url="emojiUrl">{{ emojiUrl }}</MkLink>
 		</FormSection>
 		<FormButton primary class="_formBlock" @click="emojiApproval">{{ $ts.emojiApproval }}</FormButton>
 	</div>
