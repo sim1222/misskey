@@ -68,14 +68,12 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
-import FormFolder from '@/components/form/folder.vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormInput from '@/components/form/input.vue';
 import FormTextarea from '@/components/form/textarea.vue';
 import FormRadios from '@/components/form/radios.vue';
 import FormSection from '@/components/form/section.vue';
 import FormButton from '@/components/ui/button.vue';
-import FormSuspense from '@/components/form/suspense.vue';
 import * as os from '@/os';
 import * as symbols from '@/symbols';
 import {defaultStore} from "@/store";
@@ -84,14 +82,12 @@ import {stream} from "@/stream";
 
 export default defineComponent({
 	components: {
-		FormFolder,
 		FormInput,
 		FormTextarea,
 		FormRadios,
 		FormSection,
 		FormSwitch,
 		FormButton,
-		FormSuspense,
 	},
 
 	emits: ['info'],
