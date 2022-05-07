@@ -11,9 +11,9 @@
 
 		<FormRadios v-model="emojiAlign" class="_formBlock">
 			<template #label>{{ $ts.emojiAlign }}</template>
-			<option value="left"><i class="fa-solid fa-align-left"/></option>
-			<option value="center"><i class="fa-solid fa-align-center"></i></option>
-			<option value="right"><i class="fa-solid fa-align-right"/></option>
+			<option value="left"><i class="fas fa-align-left"/></option>
+			<option value="center"><i class="fas fa-align-center"></i></option>
+			<option value="right"><i class="fas fa-align-right"/></option>
 		</FormRadios>
 
 		<FormSection>
@@ -47,7 +47,7 @@
 				</div>
 			</div>
 
-			<FormInput v-model="emojiColor" class="_formBlock">
+			<FormInput v-model="emojiColor" class="_formBlock" :style="{ color: emojiColor }">
 				<template #prefix><i class="fas fa-palette"></i></template>
 				<template #label>{{ $ts.emojiColor }}</template>
 				<template #caption>#RRGGBB</template>
@@ -59,7 +59,7 @@
 		<FormSection>
 			<template #label>{{ $ts.preview }}</template>
 			<img :src="emojiUrl" class="img" :alt="emojiName"/>
-			<a href="{{ emojiUrl }}"><p>{{ emojiUrl }}</p></a>
+			<a :href="emojiUrl"><p>{{ emojiUrl }}</p></a>
 		</FormSection>
 		<FormButton primary class="_formBlock" @click="emojiApproval">{{ $ts.emojiApproval }}</FormButton>
 	</div>
