@@ -32,12 +32,13 @@
 		<button class="button nav _button" @click="drawerMenuShowing = true"><i class="fas fa-bars"></i><span v-if="menuIndicated" class="indicator"><i class="fas fa-circle"></i></span></button>
 		<button class="button home _button" @click="$route.name === 'index' ? top() : $router.push('/')"><i class="fas fa-home"></i></button>
 		<button class="button notifications _button" @click="$router.push('/my/notifications')"><i class="fas fa-bell"></i><span v-if="$i?.hasUnreadNotification" class="indicator"><i class="fas fa-circle"></i></span></button>
-		<button class="button widget _button" @click="widgetsShowing = true"><i class="fas fa-layer-group"></i></button>
+		<button class="button reload _button" @click="reload()"><i class="fas fa-redo"></i></button>
 		<button class="button post _button" @click="os.post()"><i class="fas fa-pencil-alt"></i></button>
 	</div>
 
 	<transition :name="$store.state.animation ? 'menuDrawer-back' : ''">
-		<div v-if="drawerMenuShowing"
+		<div
+			v-if="drawerMenuShowing"
 			class="menuDrawer-back _modalBg"
 			@click="drawerMenuShowing = false"
 			@touchstart.passive="drawerMenuShowing = false"
@@ -49,7 +50,8 @@
 	</transition>
 
 	<transition :name="$store.state.animation ? 'widgetsDrawer-back' : ''">
-		<div v-if="widgetsShowing"
+		<div
+			v-if="widgetsShowing"
 			class="widgetsDrawer-back _modalBg"
 			@click="widgetsShowing = false"
 			@touchstart.passive="widgetsShowing = false"
@@ -191,6 +193,10 @@ function onTransition() {
 }
 
 const wallpaper = localStorage.getItem('wallpaper') != null;
+
+const reload = () => {
+	location.reload();
+}
 </script>
 
 <style lang="scss" scoped>
