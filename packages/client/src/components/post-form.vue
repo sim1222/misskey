@@ -990,7 +990,7 @@ onMounted(() => {
 			}
 
 			> .text {
-				min-height: 80px;
+				min-height: 25vh;
 			}
 
 			> footer {

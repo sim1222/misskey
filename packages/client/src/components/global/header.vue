@@ -186,7 +186,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .fdidabkb {
-	--height: 60px;
+	--height: 48px;
 	display: flex;
 	position: sticky;
 	top: var(--stickyTop, 0);

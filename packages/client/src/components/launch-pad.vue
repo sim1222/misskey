@@ -1,20 +1,6 @@
 <template>
 <MkModal ref="modal" v-slot="{ type, maxHeight }" :prefer-type="preferedModalType" :anchor="anchor" :transparent-bg="true" :src="src" @click="modal.close()" @closed="emit('closed')">
 	<div class="szkkfdyq _popup _shadow" :class="{ asDrawer: type === 'drawer' }" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : '' }">
-		<div class="main">
-			<template v-for="item in items">
-				<button v-if="item.action" v-click-anime class="_button" @click="$event => { item.action($event); close(); }">
-					<i class="icon" :class="item.icon"></i>
-					<div class="text">{{ item.text }}</div>
-					<span v-if="item.indicate" class="indicator"><i class="fas fa-circle"></i></span>
-				</button>
-				<MkA v-else v-click-anime :to="item.to" @click.passive="close()">
-					<i class="icon" :class="item.icon"></i>
-					<div class="text">{{ item.text }}</div>
-					<span v-if="item.indicate" class="indicator"><i class="fas fa-circle"></i></span>
-				</MkA>
-			</template>
-		</div>
 		<div class="sub">
 			<a v-click-anime href="https://misskey-hub.net/help.html" target="_blank" @click.passive="close()">
 				<i class="fas fa-question-circle icon"></i>
@@ -28,6 +14,20 @@
 				<img src="/static-assets/favicon.png" class="icon"/>
 				<div class="text">{{ $ts.aboutMisskey }}</div>
 			</MkA>
+		</div>
+		<div class="main">
+			<template v-for="item in items">
+				<button v-if="item.action" v-click-anime class="_button" @click="$event => { item.action($event); close(); }">
+					<i class="icon" :class="item.icon"></i>
+					<div class="text">{{ item.text }}</div>
+					<span v-if="item.indicate" class="indicator"><i class="fas fa-circle"></i></span>
+				</button>
+				<MkA v-else v-click-anime :to="item.to" @click.passive="close()">
+					<i class="icon" :class="item.icon"></i>
+					<div class="text">{{ item.text }}</div>
+					<span v-if="item.indicate" class="indicator"><i class="fas fa-circle"></i></span>
+				</MkA>
+			</template>
 		</div>
 	</div>
 </MkModal>
@@ -143,9 +143,9 @@ function close() {
 	}
 
 	> .sub {
-		margin-top: 8px;
-		padding-top: 8px;
-		border-top: solid 0.5px var(--divider);
+		margin-bottom: 8px;
+		padding-bottom: 8px;
+		border-bottom: solid 0.5px var(--divider);
 	}
 }
 </style>

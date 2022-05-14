@@ -346,7 +346,7 @@ const reload = () => {
 		z-index: 1000;
 		bottom: 0;
 		left: 0;
-		padding: 16px 16px calc(env(safe-area-inset-bottom, 0px) + 16px) 16px;
+		padding: 8px 8px max(8px, calc(env(safe-area-inset-bottom, 0px)));
 		display: flex;
 		width: 100%;
 		box-sizing: border-box;
@@ -360,7 +360,7 @@ const reload = () => {
 			flex: 1;
 			padding: 0;
 			margin: auto;
-			height: 64px;
+			height: 40px;
 			border-radius: 8px;
 			background: var(--panel);
 			color: var(--fg);
