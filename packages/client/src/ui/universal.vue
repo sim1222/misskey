@@ -32,8 +32,9 @@
 		<button class="button nav _button" @click="drawerMenuShowing = true"><i class="fas fa-bars"></i><span v-if="menuIndicated" class="indicator"><i class="fas fa-circle"></i></span></button>
 		<button class="button home _button" @click="$route.name === 'index' ? top() : $router.push('/')"><i class="fas fa-home"></i></button>
 		<button class="button notifications _button" @click="$router.push('/my/notifications')"><i class="fas fa-bell"></i><span v-if="$i?.hasUnreadNotification" class="indicator"><i class="fas fa-circle"></i></span></button>
-		<button class="button reload _button" @click="reload()"><i class="fas fa-redo"></i></button>
 		<button class="button post _button" @click="os.post()"><i class="fas fa-pencil-alt"></i></button>
+		<button class="button reload _button" @click="reload()"><i class="fas fa-redo"></i></button>
+		<button class="button more _button" @click="more"><i class="fa fa-ellipsis-h"></i></button>
 	</div>
 
 	<transition :name="$store.state.animation ? 'menuDrawer-back' : ''">
@@ -193,6 +194,13 @@ function onTransition() {
 }
 
 const wallpaper = localStorage.getItem('wallpaper') != null;
+
+function more(ev: MouseEvent) {
+	os.popup(import('@/components/launch-pad.vue'), {
+		src: ev.currentTarget ?? ev.target,
+	}, {
+	}, 'closed');
+}
 
 const reload = () => {
 	location.reload();
