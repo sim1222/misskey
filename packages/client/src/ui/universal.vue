@@ -378,8 +378,6 @@ const reload = () => {
 			}
 
 			@media (max-width: 400px) {
-				height: 60px;
-
 				&:not(:last-child) {
 					margin-right: 8px;
 				}
