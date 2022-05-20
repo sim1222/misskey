@@ -171,7 +171,7 @@ export default defineComponent({
 				throw new Error("openRenoteDestination()の引数には type: 'renote' のNotificationが渡される必要があります");
 			}
 
-			os.api('users/show', {userId: renoteNotification.user.id}).then(user => {
+			os.api('users/show', {userId: renoteNotification.user.id}).then((user: misskey.entities.UserDetailed) => {
 				if (user.host != null && user.followersCount === 0) { // リモートユーザーかつローカルの人間が誰もフォローしていない（最新の投稿が取得できない）ユーザー
 					window.open(user.url, '_blank', 'rel="nofollow noopener"');
 				} else {
