@@ -60,7 +60,7 @@
 			<Mfm :text="getNoteSummary(notification.note)" :plain="true" :nowrap="!full" :custom-emojis="notification.note.emojis"/>
 			<i class="fas fa-quote-right"></i>
 		</MkA>
-		<button v-if="notification.type === 'renote'" class="_textButton" @click="openRenoteDestination(notification.user)">RN先を覗く👀</button>
+		<button v-if="notification.type === 'renote'" class="_textButton" @click="openRenoteDestination(notification)">RN先を覗く👀</button>
 		<span v-if="notification.type === 'follow'" class="text" style="opacity: 0.6;">{{ $ts.youGotNewFollower }}<div v-if="full"><MkFollowButton :user="notification.user" :full="true"/></div></span>
 		<span v-if="notification.type === 'followRequestAccepted'" class="text" style="opacity: 0.6;">{{ $ts.followRequestAccepted }}</span>
 		<span v-if="notification.type === 'receiveFollowRequest'" class="text" style="opacity: 0.6;">{{ $ts.receiveFollowRequest }}<div v-if="full && !followRequestDone"><button class="_textButton" @click="acceptFollowRequest()">{{ $ts.accept }}</button> | <button class="_textButton" @click="rejectFollowRequest()">{{ $ts.reject }}</button></div></span>
@@ -166,19 +166,23 @@ export default defineComponent({
 			}, {}, 'closed');
 		});
 
-		function openRenoteDestination(remoteUser: User): void {
-			os.api('users/show', {userId: remoteUser.id}).then(user => {
+		function openRenoteDestination(renoteNotification: misskey.entities.Notification): void {
+			if (renoteNotification.type !== 'renote') {
+				throw new Error("openRenoteDestination()の引数には type: 'renote' のNotificationが渡される必要があります");
+			}
+
+			os.api('users/show', {userId: renoteNotification.user.id}).then(user => {
 				if (user.host != null && user.followersCount === 0) { // リモートユーザーかつローカルの人間が誰もフォローしていない（最新の投稿が取得できない）ユーザー
 					window.open(user.url, '_blank', 'rel="nofollow noopener"');
 				} else {
-					os.pageWindow('/@' + user.username + (user.host ? `@${user.host}` : ''));
+					os.pageWindow(notePage(renoteNotification.note));
 				}
 			});
 		}
 
 		return {
 			getNoteSummary: (note: misskey.entities.Note) => getNoteSummary(note),
-			openRenoteDestination: (remoteUser: misskey.entities.User) => openRenoteDestination(remoteUser),
+			openRenoteDestination: (renoteNotification: misskey.entities.Notification) => openRenoteDestination(renoteNotification),
 			followRequestDone,
 			groupInviteDone,
 			notePage,
