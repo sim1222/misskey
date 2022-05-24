@@ -182,11 +182,11 @@ export default defineComponent({
 			animation: moveX 5s linear 0s infinite alternate, moveY 6.4s linear 0s infinite alternate;
 
 			@keyframes moveX {
-				from { left: 0; } to { left: calc(100vw - 480px); }
+				from { left: 0; } to { left: calc(100vw - 490px); }
 			}
 
 			@keyframes moveY {
-				from { top: 0; } to { top: calc(100vh - 510px); }
+				from { top: 0; } to { top: calc(100vh - 420px); }
 			}
 
 			@media (max-width: 1200px) {
