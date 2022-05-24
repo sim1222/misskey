@@ -199,7 +199,7 @@ export default defineComponent({
 			}
 
 			@keyframes moveY {
-				from { top: 0; } to { top: calc(100vh - 420px); }
+				from { top: 0; } to { top: calc(100vh - 430px); }
 			}
 
 			> .misskey {
