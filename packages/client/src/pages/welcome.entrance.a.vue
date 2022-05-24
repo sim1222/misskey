@@ -239,7 +239,7 @@ export default defineComponent({
 			}
 
 			@media (max-width: 1200px) {
-				margin: auto;
+				margin: 0 0 auto 0;
 			}
 
 			> .bg {
