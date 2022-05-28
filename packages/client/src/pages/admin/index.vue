@@ -2,7 +2,7 @@
 <div ref="el" class="hiyeyicy" :class="{ wide: !narrow }">
 	<div v-if="!narrow || page == null" class="nav">
 		<MkHeader :info="header"></MkHeader>
-	
+
 		<MkSpacer :content-max="700" :margin-min="16">
 			<div class="lxpfedzu">
 				<div class="banner">
@@ -121,6 +121,11 @@ export default defineComponent({
 				to: '/admin/emojis',
 				active: page.value === 'emojis',
 			}, {
+				icon: 'fas fa-kiss-wink-heart',
+				text: i18n.ts.emojiGen,
+				to: '/admin/emoji-gen',
+				active: page.value === 'emoji-gen',
+			}, {
 				icon: 'fas fa-globe',
 				text: i18n.ts.federation,
 				to: '/admin/federation',
@@ -214,6 +219,7 @@ export default defineComponent({
 				case 'overview': return defineAsyncComponent(() => import('./overview.vue'));
 				case 'users': return defineAsyncComponent(() => import('./users.vue'));
 				case 'emojis': return defineAsyncComponent(() => import('./emojis.vue'));
+				case 'emoji-gen': return defineAsyncComponent(() => import('./emoji-gen.vue'));
 				case 'federation': return defineAsyncComponent(() => import('../federation.vue'));
 				case 'queue': return defineAsyncComponent(() => import('./queue.vue'));
 				case 'files': return defineAsyncComponent(() => import('./files.vue'));
