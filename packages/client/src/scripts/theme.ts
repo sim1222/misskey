@@ -16,6 +16,7 @@ export const darkTheme: Theme = require('@/themes/_dark.json5');
 export const themeProps = Object.keys(lightTheme.props).filter(key => !key.startsWith('X'));
 
 export const builtinThemes = [
+	require('@/themes/l-nem.json5'),
 	require('@/themes/l-light.json5'),
 	require('@/themes/l-coffee.json5'),
 	require('@/themes/l-apricot.json5'),
@@ -24,6 +25,7 @@ export const builtinThemes = [
 	require('@/themes/l-cherry.json5'),
 	require('@/themes/l-sushi.json5'),
 
+	require('@/themes/d-nem.json5'),
 	require('@/themes/d-dark.json5'),
 	require('@/themes/d-persimmon.json5'),
 	require('@/themes/d-astro.json5'),
