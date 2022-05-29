@@ -1,8 +1,21 @@
 <template>
 <MkSpacer :content-max="500">
+	<FormSection>
+		<template #label>{{ $ts.preview }}</template>
+		<img v-if="previewUrl !== ''" class="preview-img" :src="previewUrl" :alt="$ts.emoji"/>
+		<div v-if="previewUrl === ''" class="preview-img"></div>
+		<FormButton primary class="_formBlock" @click="preview">{{ $ts.preview }}</FormButton>
+	</FormSection>
+
 	<FormTextarea v-model="text" class="_formBlock">
 		<template #label>{{ $ts.text }}</template>
 	</FormTextarea>
+
+	<FormRadios v-model="font" class="_formBlock">
+		<template #label>{{ $ts.fonts }}</template>
+		<option value="rounded-x-mplus-1p-black">Rounded M+ 1p black</option>
+		<option value="ipamjm">IPAmj明朝</option>
+	</FormRadios>
 
 	<FormButton primary class="_formBlock" @click="uploadEmoji">{{ $ts.generateEmoji }}</FormButton>
 </MkSpacer>
@@ -16,10 +29,14 @@ import {computed, ref} from "vue"
 import {i18n} from "@/i18n"
 import { defaultStore } from "@/store"
 import { stream } from "@/stream"
-import FormTextarea from "@/components/form/textarea.vue"
+import FormSection from "@/components/form/section.vue"
 import FormButton from "@/components/ui/button.vue"
+import FormRadios from "@/components/form/radios.vue"
+import FormTextarea from "@/components/form/textarea.vue"
 
+const font = ref("rounded-x-mplus-1p-black")
 const text = ref("")
+const previewUrl = ref("")
 
 const makeUrl = (): string => {
 	const API_URL = "https://emoji-gen.ninja/emoji"
@@ -28,7 +45,7 @@ const makeUrl = (): string => {
 		text: encodeURI(text.value),
 		color: "D55353FF",
 		back_color: "00000000",
-		font: "rounded-x-mplus-1p-black",
+		font: font.value,
 		size_fixed: false,
 		align: "center",
 		stretch: true,
@@ -37,6 +54,10 @@ const makeUrl = (): string => {
 	}
 
 	return API_URL + "?" + Object.entries(query).map(([key, value]) => `${key}=${value}`).join("&")
+}
+
+const preview = (): void => {
+	previewUrl.value = makeUrl()
 }
 
 const uploadFileFromUrlWithId = (url: string) => new Promise<string>(async resolve => {
@@ -115,3 +136,9 @@ defineExpose({
 	})),
 })
 </script>
+
+<style scoped>
+.preview-img {
+	height: 128px;
+}
+</style>
