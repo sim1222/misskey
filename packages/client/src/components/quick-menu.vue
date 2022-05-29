@@ -1,7 +1,7 @@
 <template>
 <MkModal ref="modal" v-slot="{ type, maxHeight }" :prefer-type="preferedModalType" :anchor="anchor" :transparent-bg="true" :src="src" @click="modal.close()" @closed="emit('closed')">
 	<div class="szkkfdyq _popup _shadow" :class="{ asDrawer: type === 'drawer' }" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : '' }">
-		<div class="ghredhe">
+		<div v-if="!(antennaItems.length <= 1) || !(listItems.length <= 1)" class="ghredhe">
 			<div class="column">
 				<MkMenu :items="antennaItems" @click="close"/>
 			</div>
@@ -75,7 +75,6 @@ getAccounts()
 		os.api('users/show', {
 			userIds: storedAccounts.map(x => x.id)
 		}).then(accounts => accountItems.value = accounts)
-		.then(accounts => console.log(JSON.stringify(accounts)))
 	})
 
 const switchAccount = async account => {
