@@ -204,3 +204,25 @@ export const menuDef = reactive({
 		to: '/my/messages',
 	},
 });
+
+export const quickAccessDef = reactive({
+	profile: {
+		icon: 'fas fa-user',
+		show: computed(() => $i != null),
+		to: `/@${$i?.username}`,
+	},
+	emojiGen: {
+		icon: 'fas fa-kiss-wink-heart',
+		show: computed(() => $i?.isModerator || $i?.isAdmin),
+		to: '/admin/emoji-gen',
+	},
+	controlPanel: {
+		icon: 'fas fa-door-open',
+		show: computed(() => $i?.isModerator || $i?.isAdmin),
+		to: '/admin',
+	},
+	settings: {
+		icon: 'fas fa-cog',
+		to: '/settings',
+	}
+});

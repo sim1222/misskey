@@ -196,7 +196,7 @@ function onTransition() {
 const wallpaper = localStorage.getItem('wallpaper') != null;
 
 function more(ev: MouseEvent) {
-	os.popup(import('@/components/launch-pad.vue'), {
+	os.popup(import('@/components/quick-menu.vue'), {
 		src: ev.currentTarget ?? ev.target,
 	}, {
 	}, 'closed');
