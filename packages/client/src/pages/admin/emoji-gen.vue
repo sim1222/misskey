@@ -3,8 +3,8 @@
 	<FormSection>
 		<template #label>{{ $ts.preview }}</template>
 		<img v-if="previewUrl !== ''" class="preview-img" :src="previewUrl" :alt="$ts.emoji"/>
-		<div v-if="previewUrl === ''" class="preview-img"></div>
-		<FormButton primary class="_formBlock" @click="preview">{{ $ts.preview }}</FormButton>
+		<div v-else class="preview-img"></div>
+		<FormButton class="_formBlock" @click="preview">{{ $ts.preview }}</FormButton>
 	</FormSection>
 
 	<FormTextarea v-model="text" class="_formBlock">
