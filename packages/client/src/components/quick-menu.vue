@@ -65,70 +65,70 @@ const quickAccessItems = Object.keys(quickAccessDef).map(k => quickAccessDef[k])
 	indicate: def.indicated,
 }));
 
-const antennaItems: Ref<MenuItem[]> = ref([])
-const listItems: Ref<MenuItem[]> = ref([])
-const accountItems: Ref<UserDetailed[]> = ref([])
+const antennaItems: Ref<MenuItem[]> = ref([]);
+const listItems: Ref<MenuItem[]> = ref([]);
+const accountItems: Ref<UserDetailed[]> = ref([]);
 
 onMounted(async () => {
-	antennaItems.value = await getItemsOfAntennas()
-	listItems.value = await getItemsOfLists()
-	accountItems.value = await getItemsOfAccounts()
-})
+	antennaItems.value = await getItemsOfAntennas();
+	listItems.value = await getItemsOfLists();
+	accountItems.value = await getItemsOfAccounts();
+});
 
 const getItemsOfAntennas = async (): Promise<MenuItem[]> => {
-	const antennas = await os.api('antennas/list')
-	if (!antennas.length) return []
+	const antennas = await os.api('antennas/list');
+	if (!antennas.length) return [];
 
 	const items = antennas.map(antenna => ({
 		type: 'link' as const,
 		text: antenna.name,
 		indicate: antenna.hasUnreadNote,
 		to: `/timeline/antenna/${antenna.id}`,
-	}))
+	}));
 
 	return [{
 		type: 'label' as const,
 		text: i18n.ts.antennas,
-	}, ...items]
-}
+	}, ...items];
+};
 
 const getItemsOfLists = async (): Promise<MenuItem[]> => {
-	const lists = await os.api('users/lists/list')
-	if (!lists.length) return []
+	const lists = await os.api('users/lists/list');
+	if (!lists.length) return [];
 
 	const items = lists.map(list => ({
 		type: 'link' as const,
 		text: list.name,
 		to: `/timeline/list/${list.id}`,
-	}))
+	}));
 
 	return [{
 		type: 'label' as const,
 		text: i18n.ts.lists,
-	}, ...items]
-}
+	}, ...items];
+};
 
 const getItemsOfAccounts = async (): Promise<UserDetailed[]> => {
-	const accounts = await getAccounts()
-	const accountsWithoutCurrentUser = accounts.filter(account => account.id !== $i?.id)
+	const accounts = await getAccounts();
+	const accountsWithoutCurrentUser = accounts.filter(account => account.id !== $i?.id);
 
 	const items = await os.api('users/show', {
 		userIds: accountsWithoutCurrentUser.map(account => account.id)
-	})
+	});
 
-	return items
-}
+	return items;
+};
 
 const switchAccount = async (account): Promise<void> => {
-	const storedAccounts = await getAccounts()
-	const token = storedAccounts.find(x => x.id === account.id)?.token
-	
-	login(token)
-}
+	const storedAccounts = await getAccounts();
+	const token = storedAccounts.find(x => x.id === account.id)?.token;
+
+	login(token);
+};
 
 const close = (): void => {
-	modal.close()
-}
+	modal.close();
+};
 </script>
 
 <style lang="scss" scoped>
