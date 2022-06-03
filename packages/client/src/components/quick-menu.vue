@@ -1,5 +1,5 @@
 <template>
-<MkModal ref="modal" v-slot="{ type, maxHeight }" :prefer-type="preferedModalType" :anchor="anchor" :transparent-bg="true" :src="src" @click="modal.close()" @closed="emit('closed')">
+<MkModal v-if="!isLoading" ref="modal" v-slot="{ type, maxHeight }" :prefer-type="preferedModalType" :anchor="anchor" :transparent-bg="true" :src="src" @click="modal.close()" @closed="emit('closed')">
 	<div class="szkkfdyq _popup _shadow" :class="{ asDrawer: type === 'drawer' }" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : '' }">
 		<div v-if="antennaItems.length || listItems.length" class="ghredhe">
 			<div class="column">
@@ -47,6 +47,8 @@ const props = withDefaults(defineProps<{
 	anchor: () => ({ x: 'right', y: 'center' }),
 });
 
+const isLoading = ref<boolean>(true);
+
 const emit = defineEmits<{
 	(ev: 'closed'): void;
 }>();
@@ -70,9 +72,13 @@ const listItems: Ref<MenuItem[]> = ref([]);
 const accountItems: Ref<UserDetailed[]> = ref([]);
 
 onMounted(async () => {
-	antennaItems.value = await getItemsOfAntennas();
-	listItems.value = await getItemsOfLists();
-	accountItems.value = await getItemsOfAccounts();
+	const results = await Promise.all([getItemsOfAntennas(), getItemsOfLists(), getItemsOfAccounts()]);
+
+	antennaItems.value = results[0];
+	listItems.value = results[1];
+	accountItems.value = results[2];
+
+	isLoading.value = false;
 });
 
 const getItemsOfAntennas = async (): Promise<MenuItem[]> => {
