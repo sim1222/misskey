@@ -995,6 +995,7 @@ _serverDisconnectedBehavior:
   reload: "自動でリロード"
   dialog: "ダイアログで警告"
   quiet: "控えめに警告"
+  indicate: "ナビゲーションバーで警告"
 
 _channel:
   create: "チャンネルを作成"

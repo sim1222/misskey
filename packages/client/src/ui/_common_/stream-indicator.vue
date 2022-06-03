@@ -1,5 +1,5 @@
 <template>
-<div v-if="hasDisconnected && $store.state.serverDisconnectedBehavior === 'quiet'" class="nsbbhtug" @click="resetDisconnected">
+<div v-if="hasDisconnected && ($store.state.serverDisconnectedBehavior === 'quiet' || $store.state.serverDisconnectedBehavior === 'indicate' && !isMobile)" class="nsbbhtug" @click="resetDisconnected">
 	<div>{{ $ts.disconnectedFromServer }}</div>
 	<div class="command">
 		<button class="_textButton" @click="reload">{{ $ts.reload }}</button>
@@ -9,8 +9,15 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted } from 'vue';
+import { onUnmounted, ref } from 'vue';
 import { stream } from '@/stream';
+
+const MOBILE_THRESHOLD = 500;
+const isMobile = ref(window.innerWidth <= MOBILE_THRESHOLD);
+
+window.addEventListener('resize', () => {
+	isMobile.value = window.innerWidth <= MOBILE_THRESHOLD;
+});
 
 let hasDisconnected = $ref(false);
 

@@ -34,6 +34,7 @@
 			<option value="reload">{{ $ts._serverDisconnectedBehavior.reload }}</option>
 			<option value="dialog">{{ $ts._serverDisconnectedBehavior.dialog }}</option>
 			<option value="quiet">{{ $ts._serverDisconnectedBehavior.quiet }}</option>
+			<option value="indicate">{{ $ts._serverDisconnectedBehavior.indicate }}</option>
 		</FormSelect>
 	</FormSection>
 

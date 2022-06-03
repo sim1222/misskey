@@ -980,6 +980,7 @@ _serverDisconnectedBehavior:
   reload: "Automatically reload"
   dialog: "Show warning dialog"
   quiet: "Show unobtrusive warning"
+  indicate: "Show warning indicator"
 _channel:
   create: "Create channel"
   edit: "Edit channel"

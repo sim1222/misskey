@@ -33,7 +33,7 @@
 		<button class="button home _button" @click="$route.name === 'index' ? top() : $router.push('/')"><i class="fas fa-home"></i></button>
 		<button class="button notifications _button" @click="$router.push('/my/notifications')"><i class="fas fa-bell"></i><span v-if="$i?.hasUnreadNotification" class="indicator"><i class="fas fa-circle"></i></span></button>
 		<button class="button post _button" @click="os.post()"><i class="fas fa-pencil-alt"></i></button>
-		<button class="button reload _button" @click="reload()"><i class="fas fa-redo"></i></button>
+		<button class="button reload _button" @click="reload()"><i class="fas fa-redo"></i><span v-if="hasDisconnected" class="indicator"><i class="fas fa-circle"></i></span></button>
 		<button class="button more _button" @click="more"><i class="fa fa-ellipsis-h"></i></button>
 	</div>
 
@@ -81,6 +81,7 @@ import { menuDef } from '@/menu';
 import { useRoute } from 'vue-router';
 import { i18n } from '@/i18n';
 import { $i } from '@/account';
+import { stream } from '@/stream';
 const XWidgets = defineAsyncComponent(() => import('./universal.widgets.vue'));
 const XSidebar = defineAsyncComponent(() => import('@/ui/_common_/sidebar.vue'));
 
@@ -110,6 +111,13 @@ const menuIndicated = computed(() => {
 	}
 	return false;
 });
+
+const hasDisconnected = ref(false);
+
+stream.on('_disconnected_', async () => {
+	if (defaultStore.state.serverDisconnectedBehavior !== 'indicate') return;
+	hasDisconnected.value = true;
+})
 
 const drawerMenuShowing = ref(false);
 
