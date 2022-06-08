@@ -1,20 +1,6 @@
 <template>
 <MkModal ref="modal" v-slot="{ type, maxHeight }" :prefer-type="preferedModalType" :anchor="anchor" :transparent-bg="true" :src="src" @click="modal.close()" @closed="emit('closed')">
 	<div class="szkkfdyq _popup _shadow" :class="{ asDrawer: type === 'drawer' }" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : '' }">
-		<div class="sub">
-			<a v-click-anime href="https://misskey-hub.net/help.html" target="_blank" @click.passive="close()">
-				<i class="fas fa-question-circle icon"></i>
-				<div class="text">{{ $ts.help }}</div>
-			</a>
-			<MkA v-click-anime to="/about" @click.passive="close()">
-				<i class="fas fa-info-circle icon"></i>
-				<div class="text">{{ $t('aboutX', { x: instanceName }) }}</div>
-			</MkA>
-			<MkA v-click-anime to="/about-misskey" @click.passive="close()">
-				<img src="/static-assets/favicon.png" class="icon"/>
-				<div class="text">{{ $ts.aboutMisskey }}</div>
-			</MkA>
-		</div>
 		<div class="main">
 			<template v-for="item in items">
 				<button v-if="item.action" v-click-anime class="_button" @click="$event => { item.action($event); close(); }">
@@ -28,6 +14,20 @@
 					<span v-if="item.indicate" class="indicator"><i class="fas fa-circle"></i></span>
 				</MkA>
 			</template>
+		</div>
+		<div class="sub">
+			<a v-click-anime href="https://misskey-hub.net/help.html" target="_blank" @click.passive="close()">
+				<i class="fas fa-question-circle icon"></i>
+				<div class="text">{{ $ts.help }}</div>
+			</a>
+			<MkA v-click-anime to="/about" @click.passive="close()">
+				<i class="fas fa-info-circle icon"></i>
+				<div class="text">{{ $t('aboutX', { x: instanceName }) }}</div>
+			</MkA>
+			<MkA v-click-anime to="/about-misskey" @click.passive="close()">
+				<img src="/static-assets/favicon.png" class="icon"/>
+				<div class="text">{{ $ts.aboutMisskey }}</div>
+			</MkA>
 		</div>
 	</div>
 </MkModal>
@@ -143,9 +143,9 @@ function close() {
 	}
 
 	> .sub {
-		margin-bottom: 8px;
-		padding-bottom: 8px;
-		border-bottom: solid 0.5px var(--divider);
+		margin-top: 8px;
+		padding-top: 8px;
+		border-top: solid 0.5px var(--divider);
 	}
 }
 </style>

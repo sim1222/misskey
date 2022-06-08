@@ -56,11 +56,61 @@ export const menuDef = reactive({
 		icon: 'fas fa-search',
 		action: () => search(),
 	},
+	lists: {
+		title: 'lists',
+		icon: 'fas fa-list-ul',
+		show: computed(() => $i != null),
+		active: computed(() => router.currentRoute.value.path.startsWith('/timeline/list/') || router.currentRoute.value.path === '/my/lists' || router.currentRoute.value.path.startsWith('/my/lists/')),
+		action: (ev) => {
+			const items = ref([{
+				type: 'pending'
+			}]);
+			os.api('users/lists/list').then(lists => {
+				const _items = [...lists.map(list => ({
+					type: 'link',
+					text: list.name,
+					to: `/timeline/list/${list.id}`
+				})), null, {
+					type: 'link',
+					to: '/my/lists',
+					text: i18n.ts.manageLists,
+					icon: 'fas fa-cog',
+				}];
+				items.value = _items;
+			});
+			os.popupMenu(items, ev.currentTarget ?? ev.target);
+		},
+	},
 	groups: {
 		title: 'groups',
 		icon: 'fas fa-users',
 		show: computed(() => $i != null),
 		to: '/my/groups',
+	},
+	antennas: {
+		title: 'antennas',
+		icon: 'fas fa-satellite',
+		show: computed(() => $i != null),
+		active: computed(() => router.currentRoute.value.path.startsWith('/timeline/antenna/') || router.currentRoute.value.path === '/my/antennas' || router.currentRoute.value.path.startsWith('/my/antennas/')),
+		action: (ev) => {
+			const items = ref([{
+				type: 'pending'
+			}]);
+			os.api('antennas/list').then(antennas => {
+				const _items = [...antennas.map(antenna => ({
+					type: 'link',
+					text: antenna.name,
+					to: `/timeline/antenna/${antenna.id}`
+				})), null, {
+					type: 'link',
+					to: '/my/antennas',
+					text: i18n.ts.manageAntennas,
+					icon: 'fas fa-cog',
+				}];
+				items.value = _items;
+			});
+			os.popupMenu(items, ev.currentTarget ?? ev.target);
+		},
 	},
 	mentions: {
 		title: 'mentions',
@@ -68,6 +118,13 @@ export const menuDef = reactive({
 		show: computed(() => $i != null),
 		indicated: computed(() => $i != null && $i.hasUnreadMentions),
 		to: '/my/mentions',
+	},
+	messages: {
+		title: 'directNotes',
+		icon: 'fas fa-envelope',
+		show: computed(() => $i != null),
+		indicated: computed(() => $i != null && $i.hasUnreadSpecifiedNotes),
+		to: '/my/messages',
 	},
 	favorites: {
 		title: 'favorites',
@@ -100,6 +157,11 @@ export const menuDef = reactive({
 		title: 'federation',
 		icon: 'fas fa-globe',
 		to: '/federation',
+	},
+	emojis: {
+		title: 'emojis',
+		icon: 'fas fa-laugh',
+		to: '/emojis',
 	},
 	scratchpad: {
 		title: 'scratchpad',
@@ -140,68 +202,6 @@ export const menuDef = reactive({
 				}
 			}*/], ev.currentTarget ?? ev.target);
 		},
-	},
-	emojis: {
-		title: 'emojis',
-		icon: 'fas fa-laugh',
-		to: '/emojis',
-	},
-	antennas: {
-		title: 'antennas',
-		icon: 'fas fa-satellite',
-		show: computed(() => $i != null),
-		active: computed(() => router.currentRoute.value.path.startsWith('/timeline/antenna/') || router.currentRoute.value.path === '/my/antennas' || router.currentRoute.value.path.startsWith('/my/antennas/')),
-		action: (ev) => {
-			const items = ref([{
-				type: 'pending'
-			}]);
-			os.api('antennas/list').then(antennas => {
-				const _items = [...antennas.map(antenna => ({
-					type: 'link',
-					text: antenna.name,
-					to: `/timeline/antenna/${antenna.id}`
-				})), null, {
-					type: 'link',
-					to: '/my/antennas',
-					text: i18n.ts.manageAntennas,
-					icon: 'fas fa-cog',
-				}];
-				items.value = _items;
-			});
-			os.popupMenu(items, ev.currentTarget ?? ev.target);
-		},
-	},
-	lists: {
-		title: 'lists',
-		icon: 'fas fa-list-ul',
-		show: computed(() => $i != null),
-		active: computed(() => router.currentRoute.value.path.startsWith('/timeline/list/') || router.currentRoute.value.path === '/my/lists' || router.currentRoute.value.path.startsWith('/my/lists/')),
-		action: (ev) => {
-			const items = ref([{
-				type: 'pending'
-			}]);
-			os.api('users/lists/list').then(lists => {
-				const _items = [...lists.map(list => ({
-					type: 'link',
-					text: list.name,
-					to: `/timeline/list/${list.id}`
-				})), null, {
-					type: 'link',
-					to: '/my/lists',
-					text: i18n.ts.manageLists,
-					icon: 'fas fa-cog',
-				}];
-				items.value = _items;
-			});
-			os.popupMenu(items, ev.currentTarget ?? ev.target);
-		},
-	},
-	messages: {
-		title: 'directNotes',
-		icon: 'fas fa-envelope',
-		show: computed(() => $i != null),
-		indicated: computed(() => $i != null && $i.hasUnreadSpecifiedNotes),
-		to: '/my/messages',
 	},
 });
 
