@@ -105,6 +105,10 @@ export const defaultStore = markRaw(new Storage('base', {
 		}
 	},
 
+	windowSize: {
+		where: 'device',
+		default: 512,
+	},
 	overridedDeviceKind: {
 		where: 'device',
 		default: null as null | 'smartphone' | 'tablet' | 'desktop',

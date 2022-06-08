@@ -1,7 +1,8 @@
 <template>
-<XWindow ref="window"
-	:initial-width="500"
-	:initial-height="500"
+<XWindow
+	ref="window"
+	:initial-width="width"
+	:initial-height="height"
 	:can-resize="true"
 	:close-button="true"
 	:contextmenu="contextmenu"
@@ -40,6 +41,7 @@ import { resolve } from '@/router';
 import { url } from '@/config';
 import * as symbols from '@/symbols';
 import * as os from '@/os';
+import { defaultStore } from '@/store';
 
 export default defineComponent({
 	components: {
@@ -81,6 +83,8 @@ export default defineComponent({
 
 	data() {
 		return {
+			width: defaultStore.state.windowSize,
+			height: defaultStore.state.windowSize,
 			pageInfo: null,
 			path: this.initialPath,
 			component: this.initialComponent,

@@ -62,6 +62,13 @@
 			<option value="large"><span style="font-size: 18px;">Aa</span></option>
 			<option value="veryLarge"><span style="font-size: 20px;">Aa</span></option>
 		</FormRadios>
+
+		<FormRadios v-model="windowSize" class="_formBlock">
+			<template #label>{{ $ts.windowSize }}</template>
+			<option :value="512">512px</option>
+			<option :value="768">768px</option>
+			<option :value="1024">1024px</option>
+		</FormRadios>
 	</FormSection>
 
 	<FormSection>
@@ -83,7 +90,7 @@
 	</FormSelect>
 
 	<FormSelect v-model="defaultNavigationBehaviour">
-		<template #label>{{ $ts.defaultdefaultNavigationBehaviour }}</template>
+		<template #label>{{ $ts.defaultNavigationBehaviour }}</template>
 		<option value="page">{{ $ts.showInPage }}</option>
 		<option value="sideView">{{ $ts.openInSideView }}</option>
 		<option value="window">{{ $ts.openInWindow }}</option>
@@ -139,6 +146,7 @@ export default defineComponent({
 	},
 
 	computed: {
+		windowSize: defaultStore.makeGetterSetter('windowSize'),
 		overridedDeviceKind: defaultStore.makeGetterSetter('overridedDeviceKind'),
 		serverDisconnectedBehavior: defaultStore.makeGetterSetter('serverDisconnectedBehavior'),
 		reduceAnimation: defaultStore.makeGetterSetter('animation', v => !v, v => !v),
