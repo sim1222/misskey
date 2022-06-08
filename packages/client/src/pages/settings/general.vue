@@ -49,7 +49,8 @@
 		<FormSwitch v-model="disableShowingAnimatedImages" class="_formBlock">{{ $ts.disableShowingAnimatedImages }}</FormSwitch>
 		<FormSwitch v-model="squareAvatars" class="_formBlock">{{ $ts.squareAvatars }}</FormSwitch>
 		<FormSwitch v-model="useSystemFont" class="_formBlock">{{ $ts.useSystemFont }}</FormSwitch>
-		<FormSwitch v-model="useOsNativeEmojis" class="_formBlock">{{ $ts.useOsNativeEmojis }}
+		<FormSwitch v-model="useOsNativeEmojis" class="_formBlock">
+			{{ $ts.useOsNativeEmojis }}
 			<div><Mfm :key="useOsNativeEmojis" text="🍮🍦🍭🍩🍰🍫🍬🥞🍪"/></div>
 		</FormSwitch>
 		<FormSwitch v-model="disableDrawer" class="_formBlock">{{ $ts.disableDrawer }}</FormSwitch>
@@ -81,10 +82,12 @@
 		<option value="force">{{ $ts._nsfw.force }}</option>
 	</FormSelect>
 
-	<FormGroup>
-		<template #label>{{ $ts.defaultNavigationBehaviour }}</template>
-		<FormSwitch v-model="defaultSideView">{{ $ts.openInSideView }}</FormSwitch>
-	</FormGroup>
+	<FormSelect v-model="defaultNavigationBehaviour">
+		<template #label>{{ $ts.defaultdefaultNavigationBehaviour }}</template>
+		<option value="page">{{ $ts.showInPage }}</option>
+		<option value="sideView">{{ $ts.openInSideView }}</option>
+		<option value="window">{{ $ts.openInWindow }}</option>
+	</FormSelect>
 
 	<FormLink to="/settings/deck" class="_formBlock">{{ $ts.deck }}</FormLink>
 
@@ -151,7 +154,7 @@ export default defineComponent({
 		nsfw: defaultStore.makeGetterSetter('nsfw'),
 		disablePagesScript: defaultStore.makeGetterSetter('disablePagesScript'),
 		showFixedPostForm: defaultStore.makeGetterSetter('showFixedPostForm'),
-		defaultSideView: defaultStore.makeGetterSetter('defaultSideView'),
+		defaultNavigationBehaviour: defaultStore.makeGetterSetter('defaultNavigationBehaviour'),
 		instanceTicker: defaultStore.makeGetterSetter('instanceTicker'),
 		enableInfiniteScroll: defaultStore.makeGetterSetter('enableInfiniteScroll'),
 		useReactionPickerForContextMenu: defaultStore.makeGetterSetter('useReactionPickerForContextMenu'),

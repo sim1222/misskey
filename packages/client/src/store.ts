@@ -205,9 +205,9 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'device',
 		default: [] as string[]
 	},
-	defaultSideView: {
+	defaultNavigationBehaviour: {
 		where: 'device',
-		default: false
+		default: 'page' as 'page' | 'sideView' | 'window'
 	},
 	menuDisplay: {
 		where: 'device',

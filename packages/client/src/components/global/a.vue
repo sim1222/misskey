@@ -104,8 +104,10 @@ function nav() {
 	if (navHook) {
 		navHook(props.to);
 	} else {
-		if (defaultStore.state.defaultSideView && sideViewHook && props.to !== '/') {
+		if (defaultStore.state.defaultNavigationBehaviour === 'sideView' && sideViewHook && props.to !== '/') {
 			return sideViewHook(props.to);
+		} else if (defaultStore.state.defaultNavigationBehaviour === 'window' && props.to !== '/') {
+			return os.pageWindow(props.to);
 		}
 
 		if (router.currentRoute.value.path === props.to) {
