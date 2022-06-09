@@ -82,6 +82,7 @@ import { useRoute } from 'vue-router';
 import { i18n } from '@/i18n';
 import { $i } from '@/account';
 import { stream } from '@/stream';
+import { globalEvents } from '@/events'
 const XWidgets = defineAsyncComponent(() => import('./universal.widgets.vue'));
 const XSidebar = defineAsyncComponent(() => import('@/ui/_common_/sidebar.vue'));
 
@@ -97,6 +98,10 @@ window.addEventListener('resize', () => {
 const pageInfo = ref();
 const widgetsEl = $ref<HTMLElement>();
 const widgetsShowing = ref(false);
+
+globalEvents.on('showWidgets', () => {
+	widgetsShowing.value = true;
+});
 
 let sideEl = $ref<InstanceType<typeof XSideView>>();
 
@@ -207,6 +212,9 @@ function more(ev: MouseEvent) {
 	os.popup(import('@/components/quick-menu.vue'), {
 		src: ev.currentTarget ?? ev.target,
 	}, {
+		showWidgets: () => {
+			widgetsShowing.value = true;
+		},
 	}, 'closed');
 }
 

@@ -6,6 +6,7 @@ import { ui } from '@/config';
 import { $i } from './account';
 import { unisonReload } from '@/scripts/unison-reload';
 import { router } from './router';
+import { globalEvents } from '@/events'
 
 export const menuDef = reactive({
 	notifications: {
@@ -86,6 +87,13 @@ export const menuDef = reactive({
 		icon: 'fas fa-users',
 		show: computed(() => $i != null),
 		to: '/my/groups',
+	},
+	widgets: {
+		title: 'widgets',
+		icon: 'fas fa-layer-group',
+		action: () => {
+			globalEvents.emit('showWidgets');
+		},
 	},
 	antennas: {
 		title: 'antennas',
