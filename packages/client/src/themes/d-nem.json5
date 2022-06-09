@@ -29,6 +29,7 @@
 		panel: 'rgb(37, 34, 34)',
 		navHoverFg: 'rgb(79, 63, 63)',
 		navActive: 'rgb(255, 226, 226)',
+		navHighlighted: '@navActive',
 		navIndicator: 'rgb(159, 137, 137)',
 		mention: 'rgb(159, 137, 137)',
 		mentionMe: 'rgb(159, 137, 137)',

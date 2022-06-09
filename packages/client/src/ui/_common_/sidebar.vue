@@ -160,7 +160,7 @@ function more(ev: MouseEvent) {
 			}
 
 			&:hover, &.active {
-				color: var(--navActive);
+				color: var(--navHighlighted);
 
 				&:before {
 					content: "";
