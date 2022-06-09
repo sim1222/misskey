@@ -7,7 +7,7 @@
 	base: 'dark',
 
 	props: {
-		accent: 'rgb(114, 99, 99)',
+		accent: 'rgb(159, 137, 137)',
 		accentDarken: 'rgb(135, 110, 110)',
 		accentLighten: 'rgb(182, 165, 165)',
 		accentedBg: 'rgba(159, 137, 137, 0.15)',
@@ -15,7 +15,6 @@
 		acrylicBg: 'rgba(0, 0, 0, 0)',
 		bg: 'rgb(30, 27, 26)',
 		fg: 'rgb(197, 171, 171)',
-		fgTransparentWeak: 'rgba(127, 102, 102, 0.75)',
 		fgTransparent: 'rgba(127, 102, 102, 0.5)',
 		fgHighlighted: 'rgb(119, 95, 95)',
 		fgOnAccent: 'rgb(255, 255, 255)',
@@ -29,8 +28,8 @@
 		panel: 'rgb(37, 34, 34)',
 		navHoverFg: 'rgb(79, 63, 63)',
 		navActive: 'rgb(255, 226, 226)',
-		navHighlighted: '@navActive',
 		navIndicator: 'rgb(159, 137, 137)',
+		reactionActive: 'rgb(114, 99, 99)',
 		mention: 'rgb(159, 137, 137)',
 		mentionMe: 'rgb(159, 137, 137)',
 		renote: '@fg',

@@ -135,7 +135,7 @@ export default defineComponent({
 	}
 
 	&.reacted {
-		background: var(--accent);
+		background: var(--reactionActive);
 
 		&:hover {
 			background: var(--accent);
