@@ -91,7 +91,7 @@ export const menuDef = reactive({
 	widgets: {
 		title: 'widgets',
 		icon: 'fas fa-layer-group',
-		show: ui === 'default',
+		show: ui === 'default' || ui === null,
 		action: () => {
 			globalEvents.emit('showWidgets');
 		},
