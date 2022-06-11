@@ -69,20 +69,20 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, provide, onMounted, computed, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import XCommon from './_common_/common.vue';
+import XSideView from './classic.side.vue';
 import { instanceName } from '@/config';
 import { StickySidebar } from '@/scripts/sticky-sidebar';
 import XDrawerMenu from '@/ui/_common_/sidebar-for-mobile.vue';
-import XCommon from './_common_/common.vue';
-import XSideView from './classic.side.vue';
 import * as os from '@/os';
 import * as symbols from '@/symbols';
 import { defaultStore } from '@/store';
 import { menuDef } from '@/menu';
-import { useRoute } from 'vue-router';
 import { i18n } from '@/i18n';
 import { $i } from '@/account';
 import { stream } from '@/stream';
-import { globalEvents } from '@/events'
+import { globalEvents } from '@/events';
 const XWidgets = defineAsyncComponent(() => import('./universal.widgets.vue'));
 const XSidebar = defineAsyncComponent(() => import('@/ui/_common_/sidebar.vue'));
 
@@ -122,7 +122,7 @@ const hasDisconnected = ref(false);
 stream.on('_disconnected_', async () => {
 	if (defaultStore.state.serverDisconnectedBehavior !== 'indicate') return;
 	hasDisconnected.value = true;
-})
+});
 
 const drawerMenuShowing = ref(false);
 
@@ -136,13 +136,13 @@ document.documentElement.style.overflowY = 'scroll';
 if (defaultStore.state.widgets.length === 0) {
 	defaultStore.set('widgets', [{
 		name: 'calendar',
-		id: 'a', place: 'right', data: {}
+		id: 'a', place: 'right', data: {},
 	}, {
 		name: 'notifications',
-		id: 'b', place: 'right', data: {}
+		id: 'b', place: 'right', data: {},
 	}, {
 		name: 'trends',
-		id: 'c', place: 'right', data: {}
+		id: 'c', place: 'right', data: {},
 	}]);
 }
 
@@ -181,13 +181,13 @@ const onContextmenu = (ev) => {
 		text: i18n.ts.openInSideView,
 		action: () => {
 			sideEl.navigate(path);
-		}
+		},
 	}, {
 		icon: 'fas fa-window-maximize',
 		text: i18n.ts.openInWindow,
 		action: () => {
 			os.pageWindow(path);
-		}
+		},
 	}], ev);
 };
 
@@ -209,18 +209,14 @@ function onTransition() {
 const wallpaper = localStorage.getItem('wallpaper') != null;
 
 function more(ev: MouseEvent) {
-	os.popup(import('@/components/quick-menu.vue'), {
+	os.popup(defineAsyncComponent(() => import('@/components/quick-menu.vue')), {
 		src: ev.currentTarget ?? ev.target,
-	}, {
-		showWidgets: () => {
-			widgetsShowing.value = true;
-		},
-	}, 'closed');
+	}, {}, 'closed');
 }
 
 const reload = () => {
 	location.reload();
-}
+};
 </script>
 
 <style lang="scss" scoped>
