@@ -13,7 +13,7 @@ if (localStorage.getItem('accounts') != null) {
 }
 //#endregion
 
-import { computed, createApp, watch, markRaw, version as vueVersion, defineAsyncComponent } from 'vue';
+import {computed, createApp, watch, markRaw, version as vueVersion, defineAsyncComponent, ref} from 'vue';
 import compareVersions from 'compare-versions';
 import JSON5 from 'json5';
 
@@ -343,6 +343,11 @@ for (const plugin of ColdDeviceStorage.get('plugins').filter(p => p.active)) {
 	import('./plugin').then(({ install }) => {
 		install(plugin);
 	});
+}
+
+if (!$i) {
+	const wallpaper = ref(localStorage.getItem('wallpaper'));
+	wallpaper.value = "https://simkey.net/files/c2f30819-64f7-42df-91b6-0e7fb122a413";
 }
 
 if ($i) {
