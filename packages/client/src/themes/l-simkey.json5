@@ -1,18 +1,15 @@
 {
 	id: '80b5d38c-c281-403b-9fc5-3bb4f1dc19b8',
-
 	name: 'simkey Vivid Light',
 	author: 'sim1222',
-
 	base: 'light',
-
 	props: {
-		bg: '#fafafa',
+		bg: 'rgba(250, 250, 250, 0.7)',
 		fg: '#444',
 		cwBg: '#b1b9c1',
 		cwFg: '#fff',
 		link: '#ff9400',
-		panel: '#fff',
+		panel: 'rgba(255, 255, 255, 0.6)',
 		accent: '#81c08b',
 		header: ':alpha<0.7<@panel',
 		infoBg: '#e5f5ff',

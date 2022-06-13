@@ -563,3 +563,8 @@ hr {
     transform:  scaleX(1.00) scaleY(1.00) ;
   }
 }
+
+//パネルブラー
+.panel, ._popup, ._window, .dnpfarvg {
+	backdrop-filter: var(--blur, blur(8px));
+}
