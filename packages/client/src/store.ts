@@ -29,7 +29,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	defaultNoteVisibility: {
 		where: 'account',
-		default: 'home'
+		default: 'public'
 	},
 	defaultNoteLocalOnly: {
 		where: 'account',
@@ -82,7 +82,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	visibility: {
 		where: 'deviceAccount',
-		default: 'home' as 'public' | 'home' | 'followers' | 'specified'
+		default: 'public' as 'public' | 'home' | 'followers' | 'specified'
 	},
 	localOnly: {
 		where: 'deviceAccount',
@@ -147,15 +147,15 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	disableDrawer: {
 		where: 'device',
-		default: false
+		default: true
 	},
 	useBlurEffectForModal: {
 		where: 'device',
-		default: false
+		default: true
 	},
 	useBlurEffect: {
 		where: 'device',
-		default: false
+		default: true
 	},
 	showFixedPostForm: {
 		where: 'device',
@@ -191,7 +191,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	reactionPickerHeight: {
 		where: 'device',
-		default: 3
+		default: 4
 	},
 	reactionPickerUseDrawerForMobile: {
 		where: 'device',
