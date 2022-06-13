@@ -567,4 +567,5 @@ hr {
 //パネルブラー
 ._panel, ._popup, ._window, .dnpfarvg, .sqadhkmv {
 	backdrop-filter: var(--blur, blur(8px));
+	-webkit-backdrop-filter: var(--blur, blur(8px))
 }
