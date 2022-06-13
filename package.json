@@ -1,6 +1,6 @@
 {
 	"name": "misskey",
-	"version": "12.111.0-nem-v1",
+	"version": "12.111.1-nem-v01",
 	"codename": "indigo",
 	"repository": {
 		"type": "git",
