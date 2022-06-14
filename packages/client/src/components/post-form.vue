@@ -609,43 +609,27 @@ async function insertEmoji(ev: MouseEvent) {
 	os.openEmojiPicker(ev.currentTarget ?? ev.target, {}, textareaEl);
 }
 
-async function insertKaomoji() {
+async function insertKaomoji(): Promise<void> {
 	const faces = [
-		"(=^・・^=)",
-		"v('ω')v",
-		"( ᐢ˙꒳˙ᐢ )",
-		"(｡>﹏<｡)",
-		"(Δ・x・Δ)",
-		"(´-ω-`)",
-		"(๑•﹏•)",
-		"(。ì _ í。)",
-		"(´×ω×`)",
-		"(´+ω+｀)",
-		"(。-ω-)zzz",
-		"(＞＜)",
-		"(。>ㅿ<。)",
-		"(´；ω；｀)",
-		"ฅ^•ω•^ฅ",
-		"⊂(・﹏・⊂)",
-		"ᕦ(ò_óˇ)ᕤ",
-		"ᕙ(⇀‸↼‶)ᕗ",
-		"(･o･;)",
-		"(｡ŏ﹏ŏ)",
-		"Σ(^._.^=ﾉ)ﾉ",
-		" (๑•̀ - •́)و✧",
-		"(,,> <,,)♡",
-		"o(>_<)o",
-		"(っ´・ω・)っ",
-		"(´｡-ω(-ω-｡`)ｷﾞｭ ",
-	].map(face => {
-		return {
-			type: "button" as const,
-			text: face,
-			action() {
-				text += face
-			},
-		}
-	});
+		'( ᐢ˙꒳˙ᐢ )',
+		'(´・-・。)',
+		'( ；꒳​；  )',
+		'(´；ω；｀)',
+		'(｡>﹏<｡)',
+		'(。>ㅿ<。)',
+		'(。ì _ í。)',
+		'(｡ŏ﹏ŏ)',
+		'(,,> <,,)♡',
+		'(=^・・^=)',
+		'ฅ(^•ω•^ฅ',
+		'ヾ(・ω・`;)ﾉ',
+	].map(face => ({
+		type: 'button' as const,
+		text: face,
+		action(): void {
+			text += face;
+		},
+	}));
 
 	await os.popupMenu(faces);
 }
