@@ -622,7 +622,12 @@ async function insertKaomoji(): Promise<void> {
 		'(,,> <,,)♡',
 		'(=^・・^=)',
 		'ฅ(^•ω•^ฅ',
+		'ヾ(・ω・*)',
 		'ヾ(・ω・`;)ﾉ',
+		'(っ˘꒳˘ｃ)',
+		'(っ＾ω＾c)',
+		'( ´ ｡•ω•｡)っ',
+		'(´･ωゞ)',
 	].map(face => ({
 		type: 'button' as const,
 		text: face,
