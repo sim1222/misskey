@@ -183,7 +183,7 @@ defineExpose({
 	}
 
 	> .tl {
-		background: var(--bg);
+		// background: var(--bg);
 		border-radius: var(--radius);
 		overflow: clip;
 	}

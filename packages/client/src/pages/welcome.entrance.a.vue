@@ -15,7 +15,7 @@
 		</div>
 		<div class="main _panel">
 			<div class="bg">
-				<div class="fade"></div>
+				<!-- <div class="fade"></div> -->
 			</div>
 			<div class="fg">
 				<h1>
@@ -327,6 +327,8 @@ export default defineComponent({
 		}
 	}
 }
-
+._panel {
+	background: var(--panel);
+}
 
 </style>

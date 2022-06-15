@@ -71,8 +71,8 @@ function onMousedown(evt: Event) {
 <style lang="scss" scoped>
 .nvlagfpb {
 	position: absolute;
-	backdrop-filter: var(--blur, blur(8px));
-	-webkit-backdrop-filter: var(--blur, blur(8px));
+	// backdrop-filter: var(--blur, blur(8px));
+	// -webkit-backdrop-filter: var(--blur, blur(8px));
 }
 
 .fade-enter-active, .fade-leave-active {
