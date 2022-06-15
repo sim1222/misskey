@@ -2,7 +2,7 @@
 <div v-if="meta" class="rsqzvsbo">
 	<div class="top">
 		<MkFeaturedPhotos class="bg"/>
-		<div class="fade"></div>
+		<!-- <div class="fade"></div> -->
 		<div class="emojis">
 			<MkEmoji :normal="true" :no-style="true" emoji="👍"/>
 			<MkEmoji :normal="true" :no-style="true" emoji="❤"/>
@@ -311,6 +311,10 @@ export default defineComponent({
 			}
 		}
 	}
+}
+
+._panel {
+	background: var(--panel);
 }
 
 </style>

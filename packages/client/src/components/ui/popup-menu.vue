@@ -27,6 +27,8 @@ let modal = $ref<InstanceType<typeof MkModal>>();
 
 <style lang="scss" scoped>
 .sfhdhdhq {
+	// backdrop-filter: var(--blur, blur(8px));
+	// -webkit-backdrop-filter: var(--blur, blur(8px));
 	&.drawer {
 		border-radius: 24px;
 		border-bottom-right-radius: 0;

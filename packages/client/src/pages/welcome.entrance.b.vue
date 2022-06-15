@@ -245,5 +245,8 @@ export default defineComponent({
 	}
 }
 
+._panel {
+	background: var(--panel);
+}
 
 </style>
