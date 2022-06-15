@@ -108,7 +108,7 @@ const align = () => {
 	if (popover == null) return;
 
 	const srcRect = props.src.getBoundingClientRect();
-	
+
 	const width = popover.offsetWidth;
 	const height = popover.offsetHeight;
 
@@ -238,7 +238,7 @@ onMounted(() => {
 		fixed.value = (type.value === 'drawer') || (getFixedContainer(props.src) != null);
 
 		await nextTick();
-		
+
 		align();
 	}, { immediate: true });
 
@@ -376,6 +376,8 @@ defineExpose({
 	&.popup {
 		> .content {
 			position: absolute;
+			backdrop-filter: var(--blur, blur(8px));
+			-webkit-backdrop-filter: var(--blur, blur(8px));
 
 			&.fixed {
 				position: fixed;
