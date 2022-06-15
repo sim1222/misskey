@@ -261,6 +261,8 @@ hr {
 	background: var(--panel);
 	border-radius: var(--radius);
 	overflow: clip;
+	backdrop-filter: var(--blur, blur(8px));
+	-webkit-backdrop-filter: var(--blur, blur(8px));
 }
 
 ._block {
@@ -342,12 +344,16 @@ hr {
 	background: var(--panel);
 	border-radius: var(--radius);
 	contain: content;
+	backdrop-filter: var(--blur, blur(8px));
+	-webkit-backdrop-filter: var(--blur, blur(8px));
 }
 
 ._popup {
 	background: var(--popup);
 	border-radius: var(--radius);
 	contain: content;
+	backdrop-filter: var(--blur, blur(8px));
+	-webkit-backdrop-filter: var(--blur, blur(8px));
 }
 
 // TODO: 廃止
@@ -565,7 +571,7 @@ hr {
 }
 
 //パネルブラー
-._panel, ._popup, ._window, .dnpfarvg, .sqadhkmv {
-	backdrop-filter: var(--blur, blur(8px));
-	-webkit-backdrop-filter: var(--blur, blur(8px))
-}
+//.dnpfarvg, .sqadhkmv {
+//	backdrop-filter: var(--blur, blur(8px));
+//	-webkit-backdrop-filter: var(--blur, blur(8px))
+//}

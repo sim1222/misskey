@@ -1,6 +1,6 @@
 {
 	"name": "misskey",
-	"version": "12.111.1-simkey-v6",
+	"version": "12.111.1-simkey-v7",
 	"codename": "indigo",
 	"repository": {
 		"type": "git",
