@@ -571,7 +571,7 @@ hr {
 }
 
 //パネルブラー
-//.dnpfarvg, .sqadhkmv {
-//	backdrop-filter: var(--blur, blur(8px));
-//	-webkit-backdrop-filter: var(--blur, blur(8px));
-//}
+.dnpfarvg, .sqadhkmv {
+	backdrop-filter: var(--blur, blur(8px));
+	-webkit-backdrop-filter: var(--blur, blur(8px));
+}
