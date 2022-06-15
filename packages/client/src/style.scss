@@ -258,10 +258,10 @@ hr {
 }
 
 ._panel {
-	background: var(--panel);
+	//background: var(--panel);
 	border-radius: var(--radius);
 	overflow: clip;
-	backdrop-filter: var(--blur, blur(8px));
+	//backdrop-filter: var(--blur, blur(8px));
 	-webkit-backdrop-filter: var(--blur, blur(8px));
 }
 
