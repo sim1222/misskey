@@ -344,8 +344,6 @@ hr {
 	background: var(--panel);
 	border-radius: var(--radius);
 	contain: content;
-	backdrop-filter: var(--blur, blur(8px));
-	-webkit-backdrop-filter: var(--blur, blur(8px));
 }
 
 ._popup {

@@ -379,6 +379,8 @@ export default defineComponent({
 	position: fixed;
 	top: 0;
 	left: 0;
+	backdrop-filter: var(--blur, blur(8px));
+	-webkit-backdrop-filter: var(--blur, blur(8px));
 
 	> .body {
 		overflow: hidden;
