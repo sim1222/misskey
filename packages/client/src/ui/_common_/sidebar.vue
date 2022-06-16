@@ -88,6 +88,9 @@ function more(ev: MouseEvent) {
 	width: $nav-width;
 	box-sizing: border-box;
 
+	backdrop-filter: var(--blur, blur(8px));
+	-webkit-backdrop-filter: var(--blur, blur(8px));
+
 	> div {
 		position: fixed;
 		top: 0;

@@ -81,6 +81,9 @@ export default defineComponent({
 	$avatar-size: 32px;
 	$avatar-margin: 8px;
 
+	backdrop-filter: var(--blur, blur(8px));
+	-webkit-backdrop-filter: var(--blur, blur(8px));
+
 	> div {
 
 		> .divider {

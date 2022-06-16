@@ -32,6 +32,9 @@
 		if (lang == null || !supportedLangs.includes(lang)) {
 			if (supportedLangs.includes(navigator.language)) {
 				lang = navigator.language;
+				if (lang === 'ja-JP') {
+					lang = 'ja-NY';
+				}
 			} else {
 				lang = supportedLangs.find(x => x.split('-')[0] === navigator.language);
 
