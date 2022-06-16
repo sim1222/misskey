@@ -48,32 +48,139 @@
 		</I18n>
 		<div>{{ $ts._tutorial.step7_3 }}</div>
 	</div>
-
+	<div v-else-if="tutorial === 7" class="_content">
+		<div>{{ $ts._tutorial.step8_1 }}</div>
+		<div>{{ $ts._tutorial.step8_2 }}</div>
+		<div>{{ $ts._tutorial.step8_3 }}</div>
+		<div>{{ $ts._tutorial.step8_4 }}</div>
+		<FormSwitch v-model="useBlurEffect" class="_formBlock">{{ i18n.ts.useBlurEffect }}</FormSwitch>
+		<FormSwitch v-model="useBlurEffectForModal" class="_formBlock">{{ i18n.ts.useBlurEffectForModal }}</FormSwitch>
+		<template v-if="darkMode">
+			<FormSelect v-model="darkThemeId" class="_formBlock">
+				<template #label>{{ $ts.themeForDarkMode }}</template>
+				<template #prefix><i class="fas fa-moon"></i></template>
+				<optgroup :label="$ts.darkThemes">
+					<option v-for="x in darkThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
+				</optgroup>
+				<optgroup :label="$ts.lightThemes">
+					<option v-for="x in lightThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
+				</optgroup>
+			</FormSelect>
+			<FormSelect v-model="lightThemeId" class="_formBlock">
+				<template #label>{{ $ts.themeForLightMode }}</template>
+				<template #prefix><i class="fas fa-sun"></i></template>
+				<optgroup :label="$ts.lightThemes">
+					<option v-for="x in lightThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
+				</optgroup>
+				<optgroup :label="$ts.darkThemes">
+					<option v-for="x in darkThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
+				</optgroup>
+			</FormSelect>
+		</template>
+		<template v-else>
+			<FormSelect v-model="lightThemeId" class="_formBlock">
+				<template #label>{{ $ts.themeForLightMode }}</template>
+				<template #prefix><i class="fas fa-sun"></i></template>
+				<optgroup :label="$ts.lightThemes">
+					<option v-for="x in lightThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
+				</optgroup>
+				<optgroup :label="$ts.darkThemes">
+					<option v-for="x in darkThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
+				</optgroup>
+			</FormSelect>
+			<FormSelect v-model="darkThemeId" class="_formBlock">
+				<template #label>{{ $ts.themeForDarkMode }}</template>
+				<template #prefix><i class="fas fa-moon"></i></template>
+				<optgroup :label="$ts.darkThemes">
+					<option v-for="x in darkThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
+				</optgroup>
+				<optgroup :label="$ts.lightThemes">
+					<option v-for="x in lightThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
+				</optgroup>
+			</FormSelect>
+		</template>
+	</div>
 	<div class="_footer navigation">
 		<div class="step">
 			<button class="arrow _button" :disabled="tutorial === 0" @click="tutorial--">
 				<i class="fas fa-chevron-left"></i>
 			</button>
-			<span>{{ tutorial + 1 }} / 7</span>
-			<button class="arrow _button" :disabled="tutorial === 6" @click="tutorial++">
+			<span>{{ tutorial + 1 }} / 8</span>
+			<button class="arrow _button" :disabled="tutorial === 7" @click="tutorial++">
 				<i class="fas fa-chevron-right"></i>
 			</button>
 		</div>
-		<MkButton v-if="tutorial === 6" class="ok" primary @click="tutorial = -1"><i class="fas fa-check"></i> {{ $ts.gotIt }}</MkButton>
+		<MkButton v-if="tutorial === 7" class="ok" primary @click="tutorial = -1"><i class="fas fa-check"></i> {{ $ts.gotIt }}</MkButton>
 		<MkButton v-else class="ok" primary @click="tutorial++"><i class="fas fa-check"></i> {{ $ts.next }}</MkButton>
 	</div>
 </div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, onActivated, ref, watch } from 'vue';
 import MkButton from '@/components/ui/button.vue';
-import { defaultStore } from '@/store';
+import { defaultStore, ColdDeviceStorage } from '@/store';
+import { i18n } from '@/i18n';
+import FormSwitch from '@/components/form/switch.vue';
+import FormSelect from '@/components/form/select.vue';
+import { fetchThemes, getThemes } from '@/theme-store';
+import { getBuiltinThemesRef } from '@/scripts/theme';
+import { uniqueBy } from '@/scripts/array';
+import { isDeviceDarkmode } from '@/scripts/is-device-darkmode';
 
 const tutorial = computed({
 	get() { return defaultStore.reactiveState.tutorial.value || 0; },
 	set(value) { defaultStore.set('tutorial', value); }
 });
+
+const useBlurEffectForModal = computed(defaultStore.makeGetterSetter('useBlurEffectForModal'));
+const useBlurEffect = computed(defaultStore.makeGetterSetter('useBlurEffect'));
+
+const installedThemes = ref(getThemes());
+const builtinThemes = getBuiltinThemesRef();
+const instanceThemes = [];
+
+const themes = computed(() => uniqueBy([...instanceThemes, ...builtinThemes.value, ...installedThemes.value], theme => theme.id));
+const darkThemes = computed(() => themes.value.filter(t => t.base === 'dark' || t.kind === 'dark'));
+const lightThemes = computed(() => themes.value.filter(t => t.base === 'light' || t.kind === 'light'));
+const darkTheme = ColdDeviceStorage.ref('darkTheme');
+const darkThemeId = computed({
+	get() {
+		return darkTheme.value.id;
+	},
+	set(id) {
+		ColdDeviceStorage.set('darkTheme', themes.value.find(x => x.id === id));
+	}
+});
+const lightTheme = ColdDeviceStorage.ref('lightTheme');
+const lightThemeId = computed({
+	get() {
+		return lightTheme.value.id;
+	},
+	set(id) {
+		ColdDeviceStorage.set('lightTheme', themes.value.find(x => x.id === id));
+	}
+});
+
+const darkMode = computed(defaultStore.makeGetterSetter('darkMode'));
+const syncDeviceDarkMode = computed(ColdDeviceStorage.makeGetterSetter('syncDeviceDarkMode'));
+
+watch(syncDeviceDarkMode, () => {
+	if (syncDeviceDarkMode.value) {
+		defaultStore.set('darkMode', isDeviceDarkmode());
+	}
+});
+
+onActivated(() => {
+	fetchThemes().then(() => {
+		installedThemes.value = getThemes();
+	});
+});
+
+fetchThemes().then(() => {
+	installedThemes.value = getThemes();
+});
+
 </script>
 
 <style lang="scss" scoped>
