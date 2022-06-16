@@ -74,6 +74,7 @@
 		codeNumber: '#cfff9e',
 		codeBoolean: '#c59eff',
 		htmlThemeColor: '@bg',
+		splashSpinner: '@accent',
 		X2: ':darken<2<@panel',
 		X3: 'rgba(255, 255, 255, 0.05)',
 		X4: 'rgba(255, 255, 255, 0.1)',

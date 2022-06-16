@@ -23,9 +23,10 @@ html {
 	bottom: 0;
 	left: 0;
 	margin: auto;
-	width: 64px;
-	height: 64px;
+	width: 96px;
+	height: 96px;
 	pointer-events: none;
+	animation: splashIcon 0.5s cubic-bezier(0, 0, 0, 1);
 }
 
 #splashSpinner {
@@ -37,9 +38,11 @@ html {
 	margin: auto;
 	display: inline-block;
 	width: 28px;
-	height: 28px;
+	height: 0px;
 	transform: translateY(70px);
-	color: var(--accent);
+	color: var(--splashSpinner);
+	opacity: 0;
+	animation: fadeIn 0.5s linear 0.5s normal forwards;
 }
 #splashSpinner > .spinner {
 	position: absolute;
@@ -60,11 +63,29 @@ html {
 	animation: splashSpinner 0.5s linear infinite;
 }
 
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
 @keyframes splashSpinner {
 	0% {
 		transform: rotate(0deg);
 	}
 	100% {
 		transform: rotate(360deg);
+	}
+}
+
+@keyframes splashIcon {
+	0% {
+		transform: scale(0.5) rotate(-15deg);
+	}
+	100% {
+		transform: scale(1) rotate(0deg);
 	}
 }

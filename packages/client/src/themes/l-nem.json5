@@ -37,6 +37,7 @@
 		driveFolderBg: 'rgba(159, 137, 137, 0.3)',
 		messageBg: 'rgb(255, 255, 255)',
 		htmlThemeColor: 'rgb(255, 255, 255)',
+		splashSpinner: '#D55355',
 		X8: 'rgb(170, 151, 151)',
 		X9: 'rgb(148, 123, 123)',
 		X10: 'rgba(159, 137, 137, 0.4)',
