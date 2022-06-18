@@ -58,7 +58,10 @@ export function createAiScriptEnv(opts) {
 				});
 				init.headers = typedHeaders;
 			}
+
 			const response = await fetch(url.value, init);
+
+			// Parsing Section
 			const contentType = response.headers.get('Content-Type');
 			if (contentType === null) {
 				return utils.jsToVal(await response.text());
@@ -70,6 +73,7 @@ export function createAiScriptEnv(opts) {
 				const parser = new DOMParser();
 				return utils.jsToVal(parser.parseFromString((await response.text()), 'application/xml'));
 			}
+			// Content-Type不明
 			return utils.jsToVal(await response.text());
 		}),
 	};
