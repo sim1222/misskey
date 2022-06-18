@@ -39,7 +39,7 @@ export function createAiScriptEnv(opts) {
 			utils.assertString(key);
 			return utils.jsToVal(JSON.parse(localStorage.getItem('aiscript:' + opts.storageKey + ':' + key.value)));
 		}),
-		'Mk:restApi': values.FN_NATIVE(async ([url, method, body, headers]) => {
+		'Mk:fetch': values.FN_NATIVE(async ([url, method, body, headers]) => {
 			const init: {method?: string, body?: string, headers?: Headers} = new Object();
 			utils.assertString(url);
 			if (method) {
