@@ -66,10 +66,10 @@ export function createAiScriptEnv(opts) {
 			if (contentType === null) {
 				return utils.jsToVal(await response.text());
 			}
-			if (contentType.includes('application/json')) {
+			if (contentType.includes('json')) {
 				return utils.jsToVal(await response.json());
 			}
-			if (contentType.includes('application/xml') || contentType.includes('text/xml')) {
+			if (contentType.includes('xml')) {
 				const parser = new DOMParser();
 				return utils.jsToVal(parser.parseFromString((await response.text()), 'application/xml'));
 			}
