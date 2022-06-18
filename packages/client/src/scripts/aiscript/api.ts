@@ -31,21 +31,37 @@ export function createAiScriptEnv(opts) {
 			return utils.jsToVal(res);
 		}),
 		'Mk:restApi': values.FN_NATIVE(async ([url, method, body, headers]) => {
+			const init: {method?: string, body?: string, headers?: Headers} = new Object();
 			utils.assertString(url);
-			utils.assertString(method);
-			utils.assertString(body);
-			utils.assertObject(headers);
-
-			const typedHeaders = new Headers();
-			headers.value.forEach((value, key) => {
-				typedHeaders.set(key, utils.valToString(value));
-			});
-			const response = await fetch(url.value, {
-				method: method.value,
-				headers: typedHeaders,
-				body: body.value,
-			});
-			return utils.jsToVal(response.json());
+			if (method) {
+				utils.assertString(method);
+				init.method = method.value;
+			}
+			if (body) {
+				utils.assertString(body);
+				init.body = body.value;
+			}
+			if (headers) {
+				utils.assertObject(headers);
+				const typedHeaders = new Headers();
+				headers.value.forEach((value, key) => {
+					typedHeaders.set(key, utils.valToString(value));
+				});
+				init.headers = typedHeaders;
+			}
+			const response = await fetch(url.value, init);
+			const contentType = response.headers.get('Content-Type');
+			if (contentType === null) {
+				return utils.jsToVal(await response.text());
+			}
+			if (contentType.includes('application/json')) {
+				return utils.jsToVal(await response.json());
+			}
+			if (contentType.includes('application/xml') || contentType.includes('text/xml')) {
+				const parser = new DOMParser();
+				return utils.jsToVal(parser.parseFromString((await response.text()), 'application/xml'));
+			}
+			return utils.jsToVal(await response.text());
 		}),
 		'Mk:save': values.FN_NATIVE(([key, value]) => {
 			utils.assertString(key);
