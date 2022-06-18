@@ -30,6 +30,23 @@ export function createAiScriptEnv(opts) {
 			const res = await os.api(ep.value, utils.valToJs(param), token ? token.value : (opts.token || null));
 			return utils.jsToVal(res);
 		}),
+		'Mk:restApi': values.FN_NATIVE(async ([url, method, body, headers]) => {
+			utils.assertString(url);
+			utils.assertString(method);
+			utils.assertString(body);
+			utils.assertObject(headers);
+
+			const typedHeaders = new Headers();
+			headers.value.forEach((value, key) => {
+				typedHeaders.set(key, utils.valToString(value));
+			});
+			const response = await fetch(url.value, {
+				method: method.value,
+				headers: typedHeaders,
+				body: body.value,
+			});
+			return utils.jsToVal(response.json());
+		}),
 		'Mk:save': values.FN_NATIVE(([key, value]) => {
 			utils.assertString(key);
 			localStorage.setItem('aiscript:' + opts.storageKey + ':' + key.value, JSON.stringify(utils.valToJs(value)));
