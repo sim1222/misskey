@@ -30,6 +30,15 @@ export function createAiScriptEnv(opts) {
 			const res = await os.api(ep.value, utils.valToJs(param), token ? token.value : (opts.token || null));
 			return utils.jsToVal(res);
 		}),
+		'Mk:save': values.FN_NATIVE(([key, value]) => {
+			utils.assertString(key);
+			localStorage.setItem('aiscript:' + opts.storageKey + ':' + key.value, JSON.stringify(utils.valToJs(value)));
+			return values.NULL;
+		}),
+		'Mk:load': values.FN_NATIVE(([key]) => {
+			utils.assertString(key);
+			return utils.jsToVal(JSON.parse(localStorage.getItem('aiscript:' + opts.storageKey + ':' + key.value)));
+		}),
 		'Mk:restApi': values.FN_NATIVE(async ([url, method, body, headers]) => {
 			const init: {method?: string, body?: string, headers?: Headers} = new Object();
 			utils.assertString(url);
@@ -62,15 +71,6 @@ export function createAiScriptEnv(opts) {
 				return utils.jsToVal(parser.parseFromString((await response.text()), 'application/xml'));
 			}
 			return utils.jsToVal(await response.text());
-		}),
-		'Mk:save': values.FN_NATIVE(([key, value]) => {
-			utils.assertString(key);
-			localStorage.setItem('aiscript:' + opts.storageKey + ':' + key.value, JSON.stringify(utils.valToJs(value)));
-			return values.NULL;
-		}),
-		'Mk:load': values.FN_NATIVE(([key]) => {
-			utils.assertString(key);
-			return utils.jsToVal(JSON.parse(localStorage.getItem('aiscript:' + opts.storageKey + ':' + key.value)));
 		}),
 	};
 }
