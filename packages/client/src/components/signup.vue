@@ -1,6 +1,7 @@
 <template>
 <form class="qlvuhzng _formRoot" autocomplete="new-password" @submit.prevent="onSubmit">
 	<template v-if="meta">
+		<div class="_formBlock">過去にこのインスタンスを訪れたことがある場合は、<a href="/flush" target="_blank" class="_link">Local Storageを削除</a>してください</div>
 		<MkInput v-if="meta.disableRegistration" v-model="invitationCode" class="_formBlock" type="text" spellcheck="false" required>
 			<template #label>{{ $ts.invitationCode }}</template>
 			<template #prefix><i class="fas fa-key"></i></template>

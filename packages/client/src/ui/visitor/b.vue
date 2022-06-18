@@ -6,7 +6,7 @@
 		<XKanban class="kanban" full/>
 	</div>
 
-	<div class="main">
+	<div class="main" :class="{ 'noroot': !root }">
 		<XKanban v-if="narrow && !root" class="banner" :powered-by="root"/>
 
 		<div class="contents">
@@ -161,6 +161,14 @@ export default defineComponent({
 </style>
 
 <style lang="scss" scoped>
+.noroot {
+	background: rgba(0, 0, 0, 0.6);
+	&.transparent {
+		-webkit-backdrop-filter: var(--blur, blur(12px));
+		backdrop-filter: var(--blur, blur(12px));
+	}
+}
+
 .tray-enter-active,
 .tray-leave-active {
 	opacity: 1;
