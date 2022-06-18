@@ -18,7 +18,7 @@
 		</div>
 	</div>
 
-	<div class="main">
+	<div class="main" :class="{ 'noroot': $route.path === '/' }">
 		<div ref="contents" class="contents" :class="{ wallpaper }">
 			<header v-show="$route.path !== '/'" ref="header" class="header">
 				<XHeader :info="pageInfo"/>
@@ -131,6 +131,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+
+.noroot {
+	background: rgba(0, 0, 0, 0.6);
+	
+		&.transparent {
+			-webkit-backdrop-filter: var(--blur, blur(12px));
+			backdrop-filter: var(--blur, blur(12px));
+		}
+}
+
 .mk-app {
 	min-height: 100vh;
 
