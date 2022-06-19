@@ -43,6 +43,7 @@ export function createAiScriptEnv(opts) {
 			utils.assertString(resource);
 			const response = init ? await fetch(resource.value, utils.valToJs(init)) : await fetch(resource.value);
 			const returnObject = {
+				status: response.status,
 				headers: new Object(),
 				body: await response.text(),
 			};
