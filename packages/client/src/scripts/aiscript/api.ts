@@ -49,7 +49,15 @@ export function createAiScriptEnv(opts) {
 					return await fetch(resource.value);
 				}
 			})();
-			return utils.jsToVal(await response.text());
+			const returnObject = {
+				headers: new Object(),
+				body: await response.text(),
+			};
+			response.headers.forEach((value, key) => {
+				returnObject.headers[key] = value;
+			});
+			console.log(returnObject)
+			return utils.jsToVal(returnObject);
 		}),
 	};
 }
