@@ -41,14 +41,7 @@ export function createAiScriptEnv(opts) {
 		}),
 		'Mk:fetch': values.FN_NATIVE(async ([resource, init]) => {
 			utils.assertString(resource);
-			const response = await (async () => {
-				if (init) {
-					utils.assertObject(init);
-					return await fetch(resource.value, utils.valToJs(init));
-				} else {
-					return await fetch(resource.value);
-				}
-			})();
+			const response = init ? await fetch(resource.value, utils.valToJs(init)) : await fetch(resource.value);
 			const returnObject = {
 				headers: new Object(),
 				body: await response.text(),
@@ -56,7 +49,6 @@ export function createAiScriptEnv(opts) {
 			response.headers.forEach((value, key) => {
 				returnObject.headers[key] = value;
 			});
-			console.log(returnObject)
 			return utils.jsToVal(returnObject);
 		}),
 	};
