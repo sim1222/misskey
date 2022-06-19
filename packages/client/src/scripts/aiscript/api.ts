@@ -39,27 +39,16 @@ export function createAiScriptEnv(opts) {
 			utils.assertString(key);
 			return utils.jsToVal(JSON.parse(localStorage.getItem('aiscript:' + opts.storageKey + ':' + key.value)));
 		}),
-		'Mk:fetch': values.FN_NATIVE(async ([url, method, body, headers]) => {
-			const init: {method?: string, body?: string, headers?: Headers} = new Object();
-			utils.assertString(url);
-			if (method) {
-				utils.assertString(method);
-				init.method = method.value;
-			}
-			if (body) {
-				utils.assertString(body);
-				init.body = body.value;
-			}
-			if (headers) {
-				utils.assertObject(headers);
-				const typedHeaders = new Headers();
-				headers.value.forEach((value, key) => {
-					typedHeaders.set(key, utils.valToString(value));
-				});
-				init.headers = typedHeaders;
-			}
-
-			const response = await fetch(url.value, init);
+		'Mk:fetch': values.FN_NATIVE(async ([resource, init]) => {
+			utils.assertString(resource);
+			const response = await (async () => {
+				if (init) {
+					utils.assertObject(init);
+					return await fetch(resource.value, utils.valToJs(init));
+				} else {
+					return await fetch(resource.value);
+				}
+			})();
 
 			// Parsing Section
 			const contentType = response.headers.get('Content-Type');
