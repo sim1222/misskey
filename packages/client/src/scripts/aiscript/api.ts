@@ -49,20 +49,6 @@ export function createAiScriptEnv(opts) {
 					return await fetch(resource.value);
 				}
 			})();
-
-			// Parsing Section
-			const contentType = response.headers.get('Content-Type');
-			if (contentType === null) {
-				return utils.jsToVal(await response.text());
-			}
-			if (contentType.includes('json')) {
-				return utils.jsToVal(await response.json());
-			}
-			if (contentType.includes('xml')) {
-				const parser = new DOMParser();
-				return utils.jsToVal(parser.parseFromString((await response.text()), 'application/xml'));
-			}
-			// Content-Type不明
 			return utils.jsToVal(await response.text());
 		}),
 	};
