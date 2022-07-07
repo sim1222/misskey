@@ -73,8 +73,8 @@
 </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, onUnmounted, watch } from 'vue';
+<script lang="ts" setup>
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import * as misskey from 'misskey-js';
 import XReactionIcon from './reaction-icon.vue';
 import MkFollowButton from './follow-button.vue';
@@ -87,122 +87,93 @@ import * as os from '@/os';
 import { stream } from '@/stream';
 import { useTooltip } from '@/scripts/use-tooltip';
 
-export default defineComponent({
-	components: {
-		XReactionIcon, MkFollowButton,
-	},
-
-	props: {
-		notification: {
-			type: Object,
-			required: true,
-		},
-		withTime: {
-			type: Boolean,
-			required: false,
-			default: false,
-		},
-		full: {
-			type: Boolean,
-			required: false,
-			default: false,
-		},
-	},
-
-	setup(props) {
-		const elRef = ref<HTMLElement>(null);
-		const reactionRef = ref(null);
-
-		onMounted(() => {
-			if (!props.notification.isRead) {
-				const readObserver = new IntersectionObserver((entries, observer) => {
-					if (!entries.some(entry => entry.isIntersecting)) return;
-					stream.send('readNotification', {
-						id: props.notification.id,
-					});
-					observer.disconnect();
-				});
-
-				readObserver.observe(elRef.value);
-
-				const connection = stream.useChannel('main');
-				connection.on('readAllNotifications', () => readObserver.disconnect());
-
-				watch(props.notification.isRead, () => {
-					readObserver.disconnect();
-				});
-
-				onUnmounted(() => {
-					readObserver.disconnect();
-					connection.dispose();
-				});
-			}
-		});
-
-		const followRequestDone = ref(false);
-		const groupInviteDone = ref(false);
-
-		const acceptFollowRequest = () => {
-			followRequestDone.value = true;
-			os.api('following/requests/accept', { userId: props.notification.user.id });
-		};
-
-		const rejectFollowRequest = () => {
-			followRequestDone.value = true;
-			os.api('following/requests/reject', { userId: props.notification.user.id });
-		};
-
-		const acceptGroupInvitation = () => {
-			groupInviteDone.value = true;
-			os.apiWithDialog('users/groups/invitations/accept', { invitationId: props.notification.invitation.id });
-		};
-
-		const rejectGroupInvitation = () => {
-			groupInviteDone.value = true;
-			os.api('users/groups/invitations/reject', { invitationId: props.notification.invitation.id });
-		};
-
-		useTooltip(reactionRef, (showing) => {
-			os.popup(XReactionTooltip, {
-				showing,
-				reaction: props.notification.reaction ? props.notification.reaction.replace(/^:(\w+):$/, ':$1@.:') : props.notification.reaction,
-				emojis: props.notification.note.emojis,
-				targetElement: reactionRef.value.$el,
-			}, {}, 'closed');
-		});
-
-		function openRenoteDestination(renoteNotification: misskey.entities.Notification): void {
-			if (renoteNotification.type !== 'renote') {
-				throw new Error("openRenoteDestination()の引数には type: 'renote' のNotificationが渡される必要があります");
-			}
-
-			os.api('users/show', {userId: renoteNotification.user.id}).then((user: misskey.entities.UserDetailed) => {
-				if (user.host != null && user.followersCount === 0) { // リモートユーザーかつローカルの人間が誰もフォローしていない（最新の投稿が取得できない）ユーザー
-					if (user.url === null) { throw new Error('User page URL is Null') };
-					window.open(user.url, '_blank', 'rel="nofollow noopener"');
-				} else {
-					os.pageWindow(notePage(renoteNotification.note));
-				}
-			});
-		}
-
-		return {
-			getNoteSummary: (note: misskey.entities.Note) => getNoteSummary(note),
-			openRenoteDestination: (renoteNotification: misskey.entities.Notification) => openRenoteDestination(renoteNotification),
-			followRequestDone,
-			groupInviteDone,
-			notePage,
-			userPage,
-			acceptFollowRequest,
-			rejectFollowRequest,
-			acceptGroupInvitation,
-			rejectGroupInvitation,
-			elRef,
-			reactionRef,
-			i18n,
-		};
-	},
+const props = withDefaults(defineProps<{
+	notification: misskey.entities.Notification;
+	withTime?: boolean;
+	full?: boolean;
+}>(), {
+	withTime: false,
+	full: false,
 });
+
+const elRef = ref<HTMLElement>(null);
+const reactionRef = ref(null);
+
+let readObserver: IntersectionObserver | undefined;
+let connection;
+
+onMounted(() => {
+	if (!props.notification.isRead) {
+		readObserver = new IntersectionObserver((entries, observer) => {
+			if (!entries.some(entry => entry.isIntersecting)) return;
+			stream.send('readNotification', {
+				id: props.notification.id,
+			});
+			observer.disconnect();
+		});
+
+		readObserver.observe(elRef.value);
+
+		connection = stream.useChannel('main');
+		connection.on('readAllNotifications', () => readObserver.disconnect());
+
+		watch(props.notification.isRead, () => {
+			readObserver.disconnect();
+		});
+	}
+});
+
+onUnmounted(() => {
+	if (readObserver) readObserver.disconnect();
+	if (connection) connection.dispose();
+});
+
+const followRequestDone = ref(false);
+const groupInviteDone = ref(false);
+
+const acceptFollowRequest = () => {
+	followRequestDone.value = true;
+	os.api('following/requests/accept', { userId: props.notification.user.id });
+};
+
+const rejectFollowRequest = () => {
+	followRequestDone.value = true;
+	os.api('following/requests/reject', { userId: props.notification.user.id });
+};
+
+const acceptGroupInvitation = () => {
+	groupInviteDone.value = true;
+	os.apiWithDialog('users/groups/invitations/accept', { invitationId: props.notification.invitation.id });
+};
+
+const rejectGroupInvitation = () => {
+	groupInviteDone.value = true;
+	os.api('users/groups/invitations/reject', { invitationId: props.notification.invitation.id });
+};
+
+useTooltip(reactionRef, (showing) => {
+	os.popup(XReactionTooltip, {
+		showing,
+		reaction: props.notification.reaction ? props.notification.reaction.replace(/^:(\w+):$/, ':$1@.:') : props.notification.reaction,
+		emojis: props.notification.note.emojis,
+		targetElement: reactionRef.value.$el,
+	}, {}, 'closed');
+});
+
+function openRenoteDestination(renoteNotification: misskey.entities.Notification): void {
+	if (renoteNotification.type !== 'renote') {
+		throw new Error("openRenoteDestination()の引数には type: 'renote' のNotificationが渡される必要があります");
+	}
+
+	os.api('users/show', {userId: renoteNotification.user.id}).then((user: misskey.entities.UserDetailed) => {
+		if (user.host != null && user.followersCount === 0) { // リモートユーザーかつローカルの人間が誰もフォローしていない（最新の投稿が取得できない）ユーザー
+			if (user.url === null) { throw new Error('User page URL is Null') };
+			window.open(user.url, '_blank', 'rel="nofollow noopener"');
+		} else {
+			os.pageWindow(notePage(renoteNotification.note));
+		}
+	});
+}
 </script>
 
 <style lang="scss" scoped>

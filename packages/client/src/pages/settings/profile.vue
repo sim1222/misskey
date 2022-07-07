@@ -55,8 +55,6 @@
 
 	<FormSwitch v-model="profile.isCat" class="_formBlock">{{ i18n.ts.flagAsCat }}<template #caption>{{ i18n.ts.flagAsCatDescription }}</template></FormSwitch>
 	<FormSwitch v-model="profile.showTimelineReplies" class="_formBlock">{{ i18n.ts.flagShowTimelineReplies }}<template #caption>{{ i18n.ts.flagShowTimelineRepliesDescription }} {{ i18n.ts.reflectMayTakeTime }}</template></FormSwitch>
-
-	<FormSwitch v-model="profile.alwaysMarkNsfw" class="_formBlock">{{ i18n.ts.alwaysMarkSensitive }}</FormSwitch>
 </div>
 </template>
 
@@ -73,10 +71,10 @@ import FormSlot from '@/components/form/slot.vue';
 import { host } from '@/config';
 import { selectFile } from '@/scripts/select-file';
 import * as os from '@/os';
-import * as symbols from '@/symbols';
 import { i18n } from '@/i18n';
 import { $i } from '@/account';
 import { langmap } from '@/scripts/langmap';
+import { definePageMetadata } from '@/scripts/page-metadata';
 
 const profile = reactive({
 	name: $i.name,
@@ -87,7 +85,6 @@ const profile = reactive({
 	isBot: $i.isBot,
 	isCat: $i.isCat,
 	showTimelineReplies: $i.showTimelineReplies,
-	alwaysMarkNsfw: $i.alwaysMarkNsfw,
 });
 
 watch(() => profile, () => {
@@ -125,7 +122,6 @@ function save() {
 		isBot: !!profile.isBot,
 		isCat: !!profile.isCat,
 		showTimelineReplies: !!profile.showTimelineReplies,
-		alwaysMarkNsfw: !!profile.alwaysMarkNsfw,
 	});
 }
 
@@ -175,12 +171,13 @@ function changeBanner(ev) {
 	});
 }
 
-defineExpose({
-	[symbols.PAGE_INFO]: {
-		title: i18n.ts.profile,
-		icon: 'fas fa-user',
-		bg: 'var(--bg)',
-	},
+const headerActions = $computed(() => []);
+
+const headerTabs = $computed(() => []);
+
+definePageMetadata({
+	title: i18n.ts.profile,
+	icon: 'fas fa-user',
 });
 </script>
 
@@ -190,7 +187,7 @@ defineExpose({
 	background-size: cover;
 	background-position: center;
 	border-radius: 10px;
-	overflow: clip;
+	overflow: hidden; overflow: clip;
 
 	> .avatar {
 		display: inline-block;
