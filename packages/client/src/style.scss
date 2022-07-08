@@ -39,14 +39,6 @@ html {
 		scrollbar-color: var(--scrollbarHandle) inherit;
 		scrollbar-width: thin;
 
-		&:hover {
-			scrollbar-color: var(--scrollbarHandleHover) inherit;
-		}
-
-		&:active {
-			scrollbar-color: var(--accent) inherit;
-		}
-
 		&::-webkit-scrollbar {
 			width: 6px;
 			height: 6px;
@@ -260,7 +252,7 @@ hr {
 ._panel {
 	// background: var(--panel);
 	border-radius: var(--radius);
-	overflow: clip;
+	overflow: hidden; overflow: clip;
 	backdrop-filter: var(--blur, blur(8px));
 	-webkit-backdrop-filter: var(--blur, blur(8px));
 }
@@ -340,18 +332,10 @@ hr {
 	}
 }
 
-._window {
-	background: var(--panel);
-	border-radius: var(--radius);
-	contain: content;
-}
-
 ._popup {
 	background: var(--popup);
 	border-radius: var(--radius);
 	contain: content;
-	backdrop-filter: var(--blur, blur(8px));
-	-webkit-backdrop-filter: var(--blur, blur(8px));
 }
 
 // TODO: 廃止
@@ -415,6 +399,16 @@ hr {
 	> *:not(:last-child) {
 		margin-bottom: 8px;
 	}
+}
+
+._beta {
+	margin-left: 0.7em;
+	font-size: 65%;
+	padding: 2px 3px;
+	color: var(--accent);
+	border: solid 1px var(--accent);
+	border-radius: 4px;
+	vertical-align: top;
 }
 
 ._table {
@@ -566,20 +560,4 @@ hr {
   100% {
     transform:  scaleX(1.00) scaleY(1.00) ;
   }
-}
-
-//パネルブラー
-// .dnpfarvg, .sqadhkmv {
-// 	backdrop-filter: var(--blur, blur(8px));
-// 	-webkit-backdrop-filter: var(--blur, blur(8px));
-// }
-
-.widget._panel {
-	backdrop-filter: var(--blur, blur(8px));
-	-webkit-backdrop-filter: var(--blur, blur(8px));
-}
-
-.qglefbjs._panel {
-	backdrop-filter: none var(--blur, blur(8px));
-	-webkit-backdrop-filter: none var(--blur, blur(8px));
 }

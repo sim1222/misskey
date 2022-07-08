@@ -13,7 +13,7 @@ if (localStorage.getItem('accounts') != null) {
 }
 //#endregion
 
-import {computed, createApp, watch, markRaw, version as vueVersion, defineAsyncComponent, ref} from 'vue';
+import { computed, createApp, watch, markRaw, version as vueVersion, defineAsyncComponent } from 'vue';
 import compareVersions from 'compare-versions';
 import JSON5 from 'json5';
 
@@ -21,7 +21,6 @@ import widgets from '@/widgets';
 import directives from '@/directives';
 import components from '@/components';
 import { version, ui, lang, host } from '@/config';
-import { router } from '@/router';
 import { applyTheme } from '@/scripts/theme';
 import { isDeviceDarkmode } from '@/scripts/is-device-darkmode';
 import { i18n } from '@/i18n';
@@ -170,11 +169,10 @@ fetchInstanceMetaPromise.then(() => {
 
 const app = createApp(
 	window.location.search === '?zen' ? defineAsyncComponent(() => import('@/ui/zen.vue')) :
-	!$i                               ? defineAsyncComponent(() => import('@/ui/visitor.vue')) :
-	ui === 'deck'                     ? defineAsyncComponent(() => import('@/ui/deck.vue')) :
-	ui === 'desktop'                  ? defineAsyncComponent(() => import('@/ui/desktop.vue')) :
-	ui === 'classic'                  ? defineAsyncComponent(() => import('@/ui/classic.vue')) :
-	defineAsyncComponent(() => import('@/ui/universal.vue'))
+	!$i ? defineAsyncComponent(() => import('@/ui/visitor.vue')) :
+	ui === 'deck' ? defineAsyncComponent(() => import('@/ui/deck.vue')) :
+	ui === 'classic' ? defineAsyncComponent(() => import('@/ui/classic.vue')) :
+	defineAsyncComponent(() => import('@/ui/universal.vue')),
 );
 
 if (_DEV_) {
@@ -189,13 +187,9 @@ app.config.globalProperties = {
 	$ts: i18n.ts,
 };
 
-app.use(router);
-
 widgets(app);
 directives(app);
 components(app);
-
-await router.isReady();
 
 const splash = document.getElementById('splash');
 // 念のためnullチェック(HTMLが古い場合があるため(そのうち消す))
@@ -293,16 +287,6 @@ fetchInstanceMetaPromise.then(() => {
 	}
 });
 
-// shortcut
-document.addEventListener('keydown', makeHotkey({
-	'd': () => {
-		defaultStore.set('darkMode', !defaultStore.state.darkMode);
-	},
-	'p|n': post,
-	's': search,
-	//TODO: 'h|/': help
-}));
-
 watch(defaultStore.reactiveState.useBlurEffectForModal, v => {
 	document.documentElement.style.setProperty('--modalBgFilter', v ? 'blur(4px)' : 'none');
 }, { immediate: true });
@@ -345,11 +329,21 @@ for (const plugin of ColdDeviceStorage.get('plugins').filter(p => p.active)) {
 	});
 }
 
+const hotkeys = {
+	'd': (): void => {
+		defaultStore.set('darkMode', !defaultStore.state.darkMode);
+	},
+	's': search,
+};
+
 if (!$i) {
 	localStorage.setItem('wallpaper', 'https://simkey.net/files/c2f30819-64f7-42df-91b6-0e7fb122a413');
 }
 
 if ($i) {
+	// only add post shortcuts if logged in
+	hotkeys['p|n'] = post;
+
 	if ($i.isDeleted) {
 		alert({
 			type: 'warning',
@@ -444,3 +438,6 @@ if ($i) {
 		signout();
 	});
 }
+
+// shortcut
+document.addEventListener('keydown', makeHotkey(hotkeys));
