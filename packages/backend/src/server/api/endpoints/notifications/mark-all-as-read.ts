@@ -29,4 +29,5 @@ export default define(meta, paramDef, async (ps, user) => {
 
 	// 全ての通知を読みましたよというイベントを発行
 	publishMainStream(user.id, 'readAllNotifications');
+	pushNotification(user.id, 'readAllNotifications', undefined);
 });

@@ -20,14 +20,30 @@ export const meta = {
 } as const;
 
 export const paramDef = {
+	oneOf: [
+		{
 			type: 'object',
 			properties: {
 				notificationId: { type: 'string', format: 'misskey:id' },
 			},
 			required: ['notificationId'],
+		},
+		{
+			type: 'object',
+			properties: {
+				notificationIds: {
+					type: 'array',
+					items: { type: 'string', format: 'misskey:id' },
+					maxItems: 100,
+				},
+			},
+			required: ['notificationIds'],
+		},
+	],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
 export default define(meta, paramDef, async (ps, user) => {
-	return readNotification(user.id, [ps.notificationId]);
+	if ('notificationId' in ps) return readNotification(user.id, [ps.notificationId]);
+	return readNotification(user.id, ps.notificationIds);
 });

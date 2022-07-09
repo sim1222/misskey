@@ -60,8 +60,6 @@ export async function pushNotification<T extends keyof pushNotificationsTypes>(u
 			},
 		};
 
-		//console.log(`send: ${subscription.endpoint?.substring(0, 64)}`);
-		//console.log(`send: ${type} ${JSON.stringify(body)}`);
 		push.sendNotification(pushSubscription, JSON.stringify({
 			type,
 			body: type === 'notification' ? truncateNotification(body as Packed<'Notification'>) : body,
@@ -69,9 +67,9 @@ export async function pushNotification<T extends keyof pushNotificationsTypes>(u
 		}), {
 			proxy: config.proxy,
 		}).catch((err: any) => {
-			//console.log(err.statusCode);
-			//console.log(err.headers);
-			//console.log(err.body);
+			//swLogger.info(err.statusCode);
+			//swLogger.info(err.headers);
+			//swLogger.info(err.body);
 
 			if (err.statusCode === 410) {
 				SwSubscriptions.delete({

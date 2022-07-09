@@ -38,8 +38,10 @@ export async function readNotificationByQuery(
 
 function postReadAllNotifications(userId: User['id']) {
 	publishMainStream(userId, 'readAllNotifications');
+	return pushNotification(userId, 'readAllNotifications', undefined);
 }
 
 function postReadNotifications(userId: User['id'], notificationIds: Notification['id'][]) {
 	publishMainStream(userId, 'readNotifications', notificationIds);
+	return pushNotification(userId, 'readNotifications', { notificationIds });
 }
