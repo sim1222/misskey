@@ -1,10 +1,10 @@
 {
 	"name": "misskey",
-	"version": "12.112.3-simkey-v1",
+	"version": "12.113.0-simkey-v1",
 	"codename": "indigo",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/sim1222/misskey.git"
+		"url": "https://github.com/misskey-dev/misskey.git"
 	},
 	"private": true,
 	"scripts": {
