@@ -193,13 +193,7 @@ function openRenoteDestination(renoteNotification: misskey.entities.Notification
 
 	&.max-width_500px {
 		padding: 12px;
-		font-size: 0.8em;
-	}
-
-	&:after {
-		content: "";
-		display: block;
-		clear: both;
+		font-size: 0.85em;
 	}
 
 	> .head {
