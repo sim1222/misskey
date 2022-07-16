@@ -167,7 +167,7 @@ function openRenoteDestination(renoteNotification: misskey.entities.Notification
 
 	os.api('users/show', {userId: renoteNotification.user.id}).then((user: misskey.entities.UserDetailed) => {
 		if (user.host != null && user.followersCount === 0) { // リモートユーザーかつローカルの人間が誰もフォローしていない（最新の投稿が取得できない）ユーザー
-			if (user.url === null) { throw new Error('User page URL is Null') };
+			if (user.url === null) { throw new Error('User page URL is Null'); };
 			window.open(user.url, '_blank', 'rel="nofollow noopener"');
 		} else {
 			os.pageWindow(notePage(renoteNotification.note));
