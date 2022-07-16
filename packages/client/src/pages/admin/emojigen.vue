@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import { computed, defineComponent } from 'vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormInput from '@/components/form/input.vue';
 import FormTextarea from '@/components/form/textarea.vue';
@@ -76,10 +76,15 @@ import FormSection from '@/components/form/section.vue';
 import FormButton from '@/components/ui/button.vue';
 import MkLink from '@/components/link.vue';
 import * as os from '@/os';
-import * as symbols from '@/symbols';
-import {defaultStore} from "@/store";
-import {stream} from "@/stream";
+import { defaultStore } from '@/store';
+import { stream } from '@/stream';
+import { definePageMetadata } from '@/scripts/page-metadata';
+import { i18n } from '@/i18n';
 
+definePageMetadata(computed(() => ({
+	title: i18n.ts.emojiGen,
+	icon: 'fas fa-laugh',
+})));
 
 export default defineComponent({
 	components: {
@@ -96,11 +101,6 @@ export default defineComponent({
 
 	data() {
 		return {
-			[symbols.PAGE_INFO]: {
-				title: this.$ts.emojiGen,
-				icon: 'fas fa-laugh',
-				bg: 'var(--bg)',
-			},
 			emojiName: '',
 			text: '',
 			emojiAlign: 'center',
@@ -109,8 +109,8 @@ export default defineComponent({
 			font: 'notosans-mono-bold',
 			emojiColor: '38BA91',
 			emojiUrl: '',
-			accentColors: ['#e36749', '#f29924', '#98c934', '#34c9a9', '#34a1c9', '#606df7', '#8d34c9', '#e84d83']
-		}
+			accentColors: ['#e36749', '#f29924', '#98c934', '#34c9a9', '#34a1c9', '#606df7', '#8d34c9', '#e84d83'],
+		};
 	},
 
 	methods: {
@@ -120,17 +120,13 @@ export default defineComponent({
 		emojiGenerate() {
 			//https://emoji-gen.ninja/result?text=%E7%B5%B5%E6%96%87%0A%E5%AD%97%E3%80%82&color=EC71A1FF&back_color=00000000&font=notosans-mono-bold&size_fixed=false&align=center&stretch=true&public_fg=true&locale=ja
 
-			const apiUrl = `https://emoji-gen.ninja/emoji`
-			let query = {"text": encodeURI(this.text), "color": this.emojiColor.replace('#','') + "FF", "back_color": "00000000", "font": this.font, "size_fixed": this.emojiSizeFixed, "align": this.emojiAlign, "stretch": !this.emojiStretch, "public_fg": "false", "locale": "ja"}
+			const apiUrl = 'https://emoji-gen.ninja/emoji';
+			let query = { 'text': encodeURI(this.text), 'color': this.emojiColor.replace('#','') + 'FF', 'back_color': '00000000', 'font': this.font, 'size_fixed': this.emojiSizeFixed, 'align': this.emojiAlign, 'stretch': !this.emojiStretch, 'public_fg': 'false', 'locale': 'ja' };
 
 			this.emojiUrl = apiUrl + '?' + Object.entries(query).map((e) => `${e[0]}=${e[1]}`).join('&');
-
-
-
 		},
 
 		emojiApproval: function () {
-
 			//emojiUploadでは、絵文字をdrive/files/upload-from-urlでアップロードしたあと、emojiAddでリネーム、登録をして、emojiAddの戻り値(絵文字のid)を返す
 			const emojiUpload = () => new Promise(async resolve => {
 				const marker = Math.random().toString(); // TODO: UUIDとか使う
@@ -148,7 +144,7 @@ export default defineComponent({
 				await os.api('drive/files/upload-from-url', {
 					url: this.emojiUrl,
 					folderId: defaultStore.state.uploadFolder,
-					marker
+					marker,
 				});
 
 				//リネーム→登録→登録されたIDを返す
@@ -160,18 +156,18 @@ export default defineComponent({
 
 					const response = await os.api('admin/emoji/add', {
 						fileId,
-					})
+					});
 
 					resolve(response);
-				})
+				});
 			});
 
 			//emoji関数 admin/emoji/listでは、idによる検索ができないため、自分のidをuntilIdに入れて1つ前のidを取得してからそれをsinceIdに指定して、絵文字情報をlist→objectで取得する
 			const emoji = (emojiId) => new Promise<Record<string, any> | null>(async resolve => {
 				const sinceId = await os.api('admin/emoji/list', {
 					limit: 1,
-					untilId: emojiId.id
-				})
+					untilId: emojiId.id,
+				});
 
 				if (!sinceId) {
 					resolve(null);
@@ -180,7 +176,7 @@ export default defineComponent({
 
 				const id = await os.api('admin/emoji/list', {
 					limit: 1,
-					sinceId: sinceId[0].id
+					sinceId: sinceId[0].id,
 				});
 
 				if (!id) {
@@ -194,25 +190,23 @@ export default defineComponent({
 			//edit関数には、emojiのobjectを渡す
 			const edit = (emoji) => {
 				os.popup(import('./emoji-edit-dialog.vue'), {
-					emoji: emoji
+					emoji: emoji,
 				});
 			};
 
-
 			(async () => {
-				await this.emojiGenerate()
+				await this.emojiGenerate();
 				const emojiId = await emojiUpload();//emojiIdはファイルID emojiUploadはファイルIDを返す
 				const emojiObj = await emoji(emojiId);//emojiObjはemojiオブジェクト emoji関数はemojiIdを引数に受け取りemojiオブジェクトを返す
 				edit(emojiObj);
 			})();
 		},
 
-		setAccentColor(color){
+		setAccentColor(color) {
 			this.emojiColor = color.replace('#', '');
-		}
+		},
 	},
 });
-
 
 </script>
 
