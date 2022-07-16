@@ -172,6 +172,7 @@ import { getAccountFromId } from '@/scripts/get-account-from-id';
 		window.location.search === '?zen' ? defineAsyncComponent(() => import('@/ui/zen.vue')) :
 		!$i ? defineAsyncComponent(() => import('@/ui/visitor.vue')) :
 		ui === 'deck' ? defineAsyncComponent(() => import('@/ui/deck.vue')) :
+		ui === 'deckold' ? defineAsyncComponent(() => import('@/ui/deckold.vue')) :
 		ui === 'classic' ? defineAsyncComponent(() => import('@/ui/classic.vue')) :
 		defineAsyncComponent(() => import('@/ui/universal.vue')),
 	);
