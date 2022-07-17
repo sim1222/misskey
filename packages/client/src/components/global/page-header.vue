@@ -26,6 +26,9 @@
 		</div>
 	</template>
 	<div class="buttons right">
+		<button v-tooltip.noDelay="i18n.ts.reload" class="_button button" onclick="location.reload();">
+			<i class="fa-solid fa-arrow-rotate-right"></i>
+		</button>
 		<template v-for="action in actions">
 			<button v-tooltip.noDelay="action.text" class="_button button" :class="{ highlighted: action.highlighted }" @click.stop="action.handler" @touchstart="preventDrag"><i :class="action.icon"></i></button>
 		</template>
