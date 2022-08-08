@@ -37,6 +37,7 @@ const languages = [
 	'sk-SK',
 	'ug-CN',
 	'uk-UA',
+	'vi-VN',
 	'zh-CN',
 	'zh-TW',
 ];
