@@ -72,7 +72,6 @@ export const defaultStore = markRaw(new Storage('base', {
 			'drive',
 			'followRequests',
 			'-',
-			'featured',
 			'explore',
 			'announcements',
 			'search',
@@ -87,6 +86,17 @@ export const defaultStore = markRaw(new Storage('base', {
 	localOnly: {
 		where: 'deviceAccount',
 		default: false,
+	},
+	statusbars: {
+		where: 'deviceAccount',
+		default: [] as {
+			name: string;
+			id: string;
+			type: string;
+			size: 'verySmall' | 'small' | 'medium' | 'large' | 'veryLarge';
+			black: boolean;
+			props: Record<string, any>;
+		}[],
 	},
 	widgets: {
 		where: 'deviceAccount',
@@ -213,6 +223,10 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'device',
 		default: 'page' as 'page' | 'sideView' | 'window',
 	},
+	defaultSideView: {
+		where: 'device',
+		default: false,
+	},
 	menuDisplay: {
 		where: 'device',
 		default: 'sideFull' as 'sideFull' | 'sideIcon' | 'top',
@@ -236,6 +250,10 @@ export const defaultStore = markRaw(new Storage('base', {
 	themeInitial: {
 		where: 'device',
 		default: true,
+	},
+	numberOfPageCache: {
+		where: 'device',
+		default: 5,
 	},
 	aiChanMode: {
 		where: 'device',
@@ -294,6 +312,14 @@ export class ColdDeviceStorage {
 	}
 
 	public static set<T extends keyof typeof ColdDeviceStorage.default>(key: T, value: typeof ColdDeviceStorage.default[T]): void {
+		// 呼び出し側のバグ等で undefined が来ることがある
+		// undefined を文字列として localStorage に入れると参照する際の JSON.parse でコケて不具合の元になるため無視
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (value === undefined) {
+			console.error(`attempt to store undefined value for key '${key}'`);
+			return;
+		}
+
 		localStorage.setItem(PREFIX + key, JSON.stringify(value));
 
 		for (const watcher of this.watchers) {

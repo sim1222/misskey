@@ -28,12 +28,7 @@
 				<i v-if="isMyRenote" class="fas fa-ellipsis-h dropdownIcon"></i>
 				<MkTime :time="note.createdAt"/>
 			</button>
-			<span v-if="note.visibility !== 'public'" class="visibility">
-				<i v-if="note.visibility === 'home'" class="fas fa-home"></i>
-				<i v-else-if="note.visibility === 'followers'" class="fas fa-unlock"></i>
-				<i v-else-if="note.visibility === 'specified'" class="fas fa-envelope"></i>
-			</span>
-			<span v-if="note.localOnly" class="localOnly"><i class="fas fa-biohazard"></i></span>
+			<MkVisibility :note="note"/>
 		</div>
 	</div>
 	<article class="article" @contextmenu.stop="onContextmenu">
@@ -46,7 +41,7 @@
 					<Mfm v-if="appearNote.cw != ''" class="text" :text="appearNote.cw" :author="appearNote.user" :i="$i" :custom-emojis="appearNote.emojis"/>
 					<XCwButton v-model="showContent" :note="appearNote"/>
 				</p>
-				<div v-show="appearNote.cw == null || showContent" class="content" :class="{ collapsed }">
+				<div v-show="appearNote.cw == null || showContent" class="content" :class="{ collapsed, isLong }">
 					<div class="text">
 						<span v-if="appearNote.isHidden" style="opacity: 0.5">({{ i18n.ts.private }})</span>
 						<MkA v-if="appearNote.replyId" class="reply" :to="`/notes/${appearNote.replyId}`"><i class="fas fa-reply"></i></MkA>
@@ -66,8 +61,11 @@
 					<XPoll v-if="appearNote.poll" ref="pollViewer" :note="appearNote" class="poll"/>
 					<MkUrlPreview v-for="url in urls" :key="url" :url="url" :compact="true" :detail="false" class="url-preview"/>
 					<div v-if="appearNote.renote" class="renote"><XNoteSimple :note="appearNote.renote"/></div>
-					<button v-if="collapsed" class="fade _button" @click="collapsed = false">
+					<button v-if="isLong && collapsed" class="fade _button" @click="collapsed = false">
 						<span>{{ i18n.ts.showMore }}</span>
+					</button>
+					<button v-else-if="isLong && !collapsed" class="showLess _button" @click="collapsed = true">
+						<span>{{ i18n.ts.showLess }}</span>
 					</button>
 				</div>
 				<MkA v-if="appearNote.channel && !inChannel" class="channel" :to="`/channels/${appearNote.channel.id}`"><i class="fas fa-satellite-dish"></i> {{ appearNote.channel.name }}</MkA>
@@ -105,7 +103,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { computed, inject, onMounted, onUnmounted, reactive, ref, Ref } from 'vue';
 import * as mfm from 'mfm-js';
 import * as misskey from 'misskey-js';
 import MkNoteSub from './MkNoteSub.vue';
@@ -118,6 +116,7 @@ import XPoll from './poll.vue';
 import XRenoteButton from './renote-button.vue';
 import MkUrlPreview from '@/components/url-preview.vue';
 import MkInstanceTicker from '@/components/instance-ticker.vue';
+import MkVisibility from '@/components/visibility.vue';
 import { pleaseLogin } from '@/scripts/please-login';
 import { focusPrev, focusNext } from '@/scripts/focus';
 import { checkWordMute } from '@/scripts/check-word-mute';
@@ -166,10 +165,11 @@ const reactButton = ref<HTMLElement>();
 let appearNote = $computed(() => isRenote ? note.renote as misskey.entities.Note : note);
 const isMyRenote = $i && ($i.id === note.userId);
 const showContent = ref(false);
-const collapsed = ref(appearNote.cw == null && appearNote.text != null && (
+const isLong = (appearNote.cw == null && appearNote.text != null && (
 	(appearNote.text.split('\n').length > 9) ||
 	(appearNote.text.length > 500)
 ));
+const collapsed = ref(appearNote.cw == null && isLong);
 const isDeleted = ref(false);
 const muted = ref(checkWordMute(appearNote, $i, defaultStore.state.mutedWords));
 const translation = ref(null);
@@ -225,6 +225,8 @@ function undoReact(note): void {
 	});
 }
 
+const currentClipPage = inject<Ref<misskey.entities.Clip> | null>('currentClipPage', null);
+
 function onContextmenu(ev: MouseEvent): void {
 	const isLink = (el: HTMLElement) => {
 		if (el.tagName === 'A') return true;
@@ -239,12 +241,12 @@ function onContextmenu(ev: MouseEvent): void {
 		ev.preventDefault();
 		react();
 	} else {
-		os.contextMenu(getNoteMenu({ note: note, translating, translation, menuButton }), ev).then(focus);
+		os.contextMenu(getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClipPage }), ev).then(focus);
 	}
 }
 
 function menu(viaKeyboard = false): void {
-	os.popupMenu(getNoteMenu({ note: note, translating, translation, menuButton }), menuButton.value, {
+	os.popupMenu(getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClipPage }), menuButton.value, {
 		viaKeyboard,
 	}).then(focus);
 }
@@ -404,14 +406,6 @@ function readPromo() {
 					margin-right: 4px;
 				}
 			}
-
-			> .visibility {
-				margin-left: 8px;
-			}
-
-			> .localOnly {
-				margin-left: 8px;
-			}
 		}
 	}
 
@@ -452,6 +446,24 @@ function readPromo() {
 				}
 
 				> .content {
+					&.isLong {
+						> .showLess {
+							width: 100%;
+							margin-top: 1em;
+							position: sticky;
+							bottom: 1em;
+
+							> span {
+								display: inline-block;
+								background: var(--popup);
+								padding: 6px 10px;
+								font-size: 0.8em;
+								border-radius: 999px;
+								box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
+							}
+						}
+					}
+
 					&.collapsed {
 						position: relative;
 						max-height: 9em;
@@ -564,6 +576,13 @@ function readPromo() {
 
 	&.max-width_500px {
 		font-size: 0.9em;
+
+		> .article {
+			> .avatar {
+				width: 50px;
+				height: 50px;
+			}
+		}
 	}
 
 	&.max-width_450px {
@@ -580,8 +599,8 @@ function readPromo() {
 
 			> .avatar {
 				margin: 0 10px 8px 0;
-				width: 50px;
-				height: 50px;
+				width: 46px;
+				height: 46px;
 				top: calc(14px + var(--stickyTop, 0px));
 			}
 		}
@@ -602,8 +621,6 @@ function readPromo() {
 	}
 
 	&.max-width_300px {
-		font-size: 0.825em;
-
 		> .article {
 			> .avatar {
 				width: 44px;

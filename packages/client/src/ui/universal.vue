@@ -2,36 +2,26 @@
 <div class="dkgtipfy" :class="{ wallpaper }">
 	<XSidebar v-if="!isMobile" class="sidebar"/>
 
-	<div class="contents" :style="{ background: pageInfo?.bg }" @contextmenu.stop="onContextmenu">
-		<main>
-			<div class="content">
-				<MkStickyContainer>
-					<template #header><MkHeader v-if="pageInfo && !pageInfo.hideHeader" :info="pageInfo"/></template>
-					<router-view v-slot="{ Component }">
-						<transition :name="$store.state.animation ? 'page' : ''" mode="out-in" @enter="onTransition">
-							<keep-alive :include="['MkTimelinePage']">
-								<component :is="Component" :ref="changePage"/>
-							</keep-alive>
-						</transition>
-					</router-view>
-				</MkStickyContainer>
+	<MkStickyContainer class="contents">
+		<template #header><XStatusBars :class="$style.statusbars"/></template>
+		<main style="min-width: 0;" :style="{ background: pageMetadata?.value?.bg }" @contextmenu.stop="onContextmenu">
+			<div :class="$style.content">
+				<RouterView/>
 			</div>
-			<div class="spacer"></div>
+			<div :class="$style.spacer"></div>
 		</main>
-	</div>
-
-	<XSideView v-if="isDesktop" ref="sideEl" class="side"/>
+	</MkStickyContainer>
 
 	<div v-if="isDesktop" ref="widgetsEl" class="widgets">
 		<XWidgets @mounted="attachSticky"/>
 	</div>
 
-	<button class="widgetButton _button" :class="{ show: true }" @click="widgetsShowing = true"><i class="fas fa-layer-group"></i></button>
+	<button v-if="!isDesktop && !isMobile" class="widgetButton _button" @click="widgetsShowing = true"><i class="fas fa-layer-group"></i></button>
 
 	<div v-if="isMobile" class="buttons">
 		<button class="button nav _button" @click="drawerMenuShowing = true"><i class="fas fa-bars"></i><span v-if="menuIndicated" class="indicator"><i class="fas fa-circle"></i></span></button>
-		<button class="button home _button" @click="$route.name === 'index' ? top() : $router.push('/')"><i class="fas fa-home"></i></button>
-		<button class="button notifications _button" @click="$router.push('/my/notifications')"><i class="fas fa-bell"></i><span v-if="$i?.hasUnreadNotification" class="indicator"><i class="fas fa-circle"></i></span></button>
+		<button class="button home _button" @click="mainRouter.currentRoute.value.name === 'index' ? top() : mainRouter.push('/')"><i class="fas fa-home"></i></button>
+		<button class="button notifications _button" @click="mainRouter.push('/my/notifications')"><i class="fas fa-bell"></i><span v-if="$i?.hasUnreadNotification" class="indicator"><i class="fas fa-circle"></i></span></button>
 		<button class="button post _button" @click="os.post()"><i class="fas fa-pencil-alt"></i></button>
 		<button class="button reload _button" @click="reload()"><i class="fas fa-redo"></i><span v-if="hasDisconnected" class="indicator"><i class="fas fa-circle"></i></span></button>
 		<button class="button more _button" @click="more"><i class="fa fa-ellipsis-h"></i></button>
@@ -68,51 +58,56 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, provide, onMounted, computed, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { defineAsyncComponent, provide, onMounted, computed, ref, watch, ComputedRef } from 'vue';
 import XCommon from './_common_/common.vue';
-import XSideView from './classic.side.vue';
 import { instanceName } from '@/config';
 import { StickySidebar } from '@/scripts/sticky-sidebar';
-import XDrawerMenu from '@/ui/_common_/sidebar-for-mobile.vue';
+import XDrawerMenu from '@/ui/_common_/navbar-for-mobile.vue';
 import * as os from '@/os';
-import * as symbols from '@/symbols';
 import { defaultStore } from '@/store';
-import { menuDef } from '@/menu';
+import { navbarItemDef } from '@/navbar';
 import { i18n } from '@/i18n';
 import { $i } from '@/account';
-import { stream } from '@/stream';
+import { Router } from '@/nirax';
+import { mainRouter } from '@/router';
+import { PageMetadata, provideMetadataReceiver, setPageMetadata } from '@/scripts/page-metadata';
+import { deviceKind } from '@/scripts/device-kind';
 import { globalEvents } from '@/events';
 const XWidgets = defineAsyncComponent(() => import('./universal.widgets.vue'));
-const XSidebar = defineAsyncComponent(() => import('@/ui/_common_/sidebar.vue'));
+const XSidebar = defineAsyncComponent(() => import('@/ui/_common_/navbar.vue'));
+const XStatusBars = defineAsyncComponent(() => import('@/ui/_common_/statusbars.vue'));
 
 const DESKTOP_THRESHOLD = 1100;
 const MOBILE_THRESHOLD = 500;
 
+// デスクトップでウィンドウを狭くしたときモバイルUIが表示されて欲しいことはあるので deviceKind === 'desktop' の判定は行わない
 const isDesktop = ref(window.innerWidth >= DESKTOP_THRESHOLD);
-const isMobile = ref(window.innerWidth <= MOBILE_THRESHOLD);
+const isMobile = ref(deviceKind === 'smartphone' || window.innerWidth <= MOBILE_THRESHOLD);
 window.addEventListener('resize', () => {
-	isMobile.value = window.innerWidth <= MOBILE_THRESHOLD;
+	isMobile.value = deviceKind === 'smartphone' || window.innerWidth <= MOBILE_THRESHOLD;
 });
 
-const pageInfo = ref();
+let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
 const widgetsEl = $ref<HTMLElement>();
-const widgetsShowing = ref(false);
+const widgetsShowing = $ref(false);
+
+provide('router', mainRouter);
+provideMetadataReceiver((info) => {
+	console.log(info);
+	pageMetadata = info;
+	if (pageMetadata.value) {
+		document.title = `${pageMetadata.value.title} | ${instanceName}`;
+	}
+});
 
 globalEvents.on('showWidgets', () => {
 	widgetsShowing.value = true;
 });
 
-let sideEl = $ref<InstanceType<typeof XSideView>>();
-
-provide('sideViewHook', isDesktop.value ? (url) => {
-	sideEl.navigate(url);
-} : null);
-
 const menuIndicated = computed(() => {
-	for (const def in menuDef) {
+	for (const def in navbarItemDef) {
 		if (def === 'notifications') continue; // 通知は下にボタンとして表示されてるから
-		if (menuDef[def].indicated) return true;
+		if (navbarItemDef[def].indicated) return true;
 	}
 	return false;
 });
@@ -126,8 +121,7 @@ stream.on('_disconnected_', async () => {
 
 const drawerMenuShowing = ref(false);
 
-const route = useRoute();
-watch(route, () => {
+mainRouter.on('change', () => {
 	drawerMenuShowing.value = false;
 });
 
@@ -154,14 +148,6 @@ onMounted(() => {
 	}
 });
 
-const changePage = (page) => {
-	if (page == null) return;
-	if (page[symbols.PAGE_INFO]) {
-		pageInfo.value = page[symbols.PAGE_INFO];
-		document.title = `${pageInfo.value.title} | ${instanceName}`;
-	}
-};
-
 const onContextmenu = (ev) => {
 	const isLink = (el: HTMLElement) => {
 		if (el.tagName === 'A') return true;
@@ -172,16 +158,10 @@ const onContextmenu = (ev) => {
 	if (isLink(ev.target)) return;
 	if (['INPUT', 'TEXTAREA', 'IMG', 'VIDEO', 'CANVAS'].includes(ev.target.tagName) || ev.target.attributes['contenteditable']) return;
 	if (window.getSelection()?.toString() !== '') return;
-	const path = route.path;
+	const path = mainRouter.getCurrentPath();
 	os.contextMenu([{
 		type: 'label',
 		text: path,
-	}, {
-		icon: 'fas fa-columns',
-		text: i18n.ts.openInSideView,
-		action: () => {
-			sideEl.navigate(path);
-		},
 	}, {
 		icon: 'fas fa-window-maximize',
 		text: i18n.ts.openInWindow,
@@ -200,10 +180,6 @@ const attachSticky = (el) => {
 
 function top() {
 	window.scroll({ top: 0, behavior: 'smooth' });
-}
-
-function onTransition() {
-	if (window._scroll) window._scroll();
 }
 
 const wallpaper = localStorage.getItem('wallpaper') != null;
@@ -285,25 +261,7 @@ const reload = () => {
 	> .contents {
 		width: 100%;
 		min-width: 0;
-		background: var(--panel);
-
-		> main {
-			min-width: 0;
-
-			> .spacer {
-				height: calc(env(safe-area-inset-bottom, 0px) + 96px);
-
-				@media (min-width: ($widgets-hide-threshold + 1px)) {
-					display: none;
-				}
-			}
-		}
-	}
-
-	> .side {
-		min-width: 370px;
-		max-width: 370px;
-		border-left: solid 0.5px var(--divider);
+		background: var(--bg);
 	}
 
 	> .widgets {
@@ -316,7 +274,6 @@ const reload = () => {
 		}
 	}
 
-/*
 	> .widgetButton {
 		display: block;
 		position: fixed;
@@ -329,18 +286,6 @@ const reload = () => {
 		box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
 		font-size: 22px;
 		background: var(--panel);
-
-		&.navHidden {
-			display: none;
-		}
-
-		@media (min-width: ($widgets-hide-threshold + 1px)) {
-			display: none;
-		}
-	}*/
-
-	> .widgetButton {
-		display: none;
 	}
 
 	> .widgetsDrawer-back {
@@ -443,13 +388,28 @@ const reload = () => {
 		height: calc(var(--vh, 1vh) * 100);
 		width: 240px;
 		box-sizing: border-box;
+		contain: strict;
 		overflow: auto;
 		overscroll-behavior: contain;
-		background: var(--bg);
+		background: var(--navBg);
 	}
-
 }
 </style>
 
-<style lang="scss">
+<style lang="scss" module>
+.statusbars {
+	position: sticky;
+	top: 0;
+	left: 0;
+}
+
+.spacer {
+	$widgets-hide-threshold: 1090px;
+
+	height: calc(env(safe-area-inset-bottom, 0px) + 96px);
+
+	@media (min-width: ($widgets-hide-threshold + 1px)) {
+		display: none;
+	}
+}
 </style>
