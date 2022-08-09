@@ -78,6 +78,15 @@ const XWidgets = defineAsyncComponent(() => import('./universal.widgets.vue'));
 const XSidebar = defineAsyncComponent(() => import('@/ui/_common_/navbar.vue'));
 const XStatusBars = defineAsyncComponent(() => import('@/ui/_common_/statusbars.vue'));
 
+mainRouter.navHook = (path, flag): boolean => {
+	if (flag === 'forcePage') return false;
+	if (defaultStore.state.defaultNavigationBehaviour === 'window') {
+		os.pageWindow(path);
+		return true;
+	}
+	return false;
+};
+
 const DESKTOP_THRESHOLD = 1100;
 const MOBILE_THRESHOLD = 500;
 

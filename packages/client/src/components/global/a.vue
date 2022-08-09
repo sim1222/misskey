@@ -12,7 +12,6 @@ import { url } from '@/config';
 import { popout as popout_ } from '@/scripts/popout';
 import { i18n } from '@/i18n';
 import { useRouter } from '@/router';
-import { defaultStore } from '@/store';
 
 const props = withDefaults(defineProps<{
 	to: string;
@@ -95,10 +94,6 @@ function nav(ev: MouseEvent) {
 	}
 
 	if (ev.shiftKey) {
-		return openWindow();
-	}
-
-	if (defaultStore.state.defaultNavigationBehaviour === 'window' && props.to !== '/') {
 		return openWindow();
 	}
 
