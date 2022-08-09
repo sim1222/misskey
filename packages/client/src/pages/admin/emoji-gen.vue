@@ -24,7 +24,6 @@
 <script lang="ts" setup>
 import { v4 as uuid } from 'uuid';
 import { computed, defineAsyncComponent, ref } from 'vue';
-import * as symbols from '@/symbols';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
@@ -33,6 +32,7 @@ import FormSection from '@/components/form/section.vue';
 import FormButton from '@/components/ui/button.vue';
 import FormRadios from '@/components/form/radios.vue';
 import FormTextarea from '@/components/form/textarea.vue';
+import { definePageMetadata } from '@/scripts/page-metadata';
 
 const font = ref('rounded-x-mplus-1p-black');
 const text = ref('');
@@ -128,13 +128,10 @@ const uploadEmoji = async () => {
 	os.popup(defineAsyncComponent(() => import('./emoji-edit-dialog.vue')), { emoji });
 };
 
-defineExpose({
-	[symbols.PAGE_INFO]: computed(() => ({
-		title: i18n.ts.emojiGen,
-		icon: 'fas fa-kiss-wink-heart',
-		bg: 'var(--bg)',
-	})),
-});
+definePageMetadata(computed(() => ({
+	title: i18n.ts.emojiGen,
+	icon: 'fas fa-kiss-wink-heart',
+})));
 </script>
 
 <style scoped>

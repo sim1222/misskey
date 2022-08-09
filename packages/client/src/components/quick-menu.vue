@@ -3,10 +3,10 @@
 	<div class="szkkfdyq _popup _shadow" :class="{ asDrawer: type === 'drawer' }" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : '' }">
 		<div v-if="antennaItems.length || listItems.length" class="ghredhe">
 			<div class="column">
-				<MkMenu :items="antennaItems" @click="close"/>
+				<MkMenu :as-not-popup="true" :items="antennaItems" @click="close"/>
 			</div>
 			<div class="column">
-				<MkMenu :items="listItems" @click="close"/>
+				<MkMenu :as-not-popup="true" :items="listItems" @click="close"/>
 			</div>
 		</div>
 		<div class="quick-access">
@@ -29,16 +29,16 @@
 </template>
 
 <script lang="ts" setup>
+import { onMounted, Ref, ref } from 'vue';
+import { UserDetailed } from 'misskey-js/built/entities';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
-import { onMounted, Ref, ref } from 'vue';
-import { quickAccessDef } from '@/menu';
+import { quickAccessDef } from '@/navbar';
 import { deviceKind } from '@/scripts/device-kind';
 import { MenuItem } from '@/types/menu';
 import MkModal from '@/components/ui/modal.vue';
 import MkMenu from '@/components/ui/menu.vue';
 import { $i, getAccounts, login } from '@/account';
-import { UserDetailed } from 'misskey-js/built/entities';
 
 const props = withDefaults(defineProps<{
 	src?: HTMLElement;
@@ -119,7 +119,7 @@ const getItemsOfAccounts = async (): Promise<UserDetailed[]> => {
 	const accountsWithoutCurrentUser = accounts.filter(account => account.id !== $i?.id);
 
 	const items = await os.api('users/show', {
-		userIds: accountsWithoutCurrentUser.map(account => account.id)
+		userIds: accountsWithoutCurrentUser.map(account => account.id),
 	});
 
 	return items;

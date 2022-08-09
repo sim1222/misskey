@@ -2,8 +2,8 @@
 <div>
 	<div
 		ref="itemsEl" v-hotkey="keymap"
-		class="rrevdjwt _popup _shadow"
-		:class="{ center: align === 'center', asDrawer }"
+		class="rrevdjwt"
+		:class="{ center: align === 'center', asDrawer, _popup: !asNotPopup, _shadow: !asNotPopup }"
 		:style="{ width: (width && !asDrawer) ? width + 'px' : '', maxHeight: maxHeight ? maxHeight + 'px' : '' }"
 		@contextmenu.self="e => e.preventDefault()"
 	>
@@ -69,6 +69,7 @@ const props = defineProps<{
 	items: MenuItem[];
 	viaKeyboard?: boolean;
 	asDrawer?: boolean;
+	asNotPopup?: boolean;
 	align?: 'center' | string;
 	width?: number;
 	maxHeight?: number;

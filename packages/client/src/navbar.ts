@@ -65,14 +65,6 @@ export const navbarItemDef = reactive({
 		to: '/my/groups',
 	},
 	*/
-	widgets: {
-		title: 'widgets',
-		icon: 'fas fa-layer-group',
-		show: ui === 'default' || ui === null,
-		action: () => {
-			globalEvents.emit('showWidgets');
-		},
-	},
 	antennas: {
 		title: 'antennas',
 		icon: 'fas fa-satellite',
@@ -139,6 +131,14 @@ export const navbarItemDef = reactive({
 		icon: 'fas fa-refresh',
 		action: (ev) => {
 			location.reload();
+		},
+	},
+	widgets: {
+		title: 'widgets',
+		icon: 'fas fa-layer-group',
+		show: ui === 'default' || ui === null,
+		action: () => {
+			globalEvents.emit('showWidgets');
 		},
 	},
 });

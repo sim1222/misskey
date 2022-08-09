@@ -68,6 +68,7 @@ import { defaultStore } from '@/store';
 import { navbarItemDef } from '@/navbar';
 import { i18n } from '@/i18n';
 import { $i } from '@/account';
+import { stream } from '@/stream';
 import { Router } from '@/nirax';
 import { mainRouter } from '@/router';
 import { PageMetadata, provideMetadataReceiver, setPageMetadata } from '@/scripts/page-metadata';
@@ -89,7 +90,7 @@ window.addEventListener('resize', () => {
 
 let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
 const widgetsEl = $ref<HTMLElement>();
-const widgetsShowing = $ref(false);
+const widgetsShowing = ref(false);
 
 provide('router', mainRouter);
 provideMetadataReceiver((info) => {
