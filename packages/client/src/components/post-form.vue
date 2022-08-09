@@ -625,25 +625,11 @@ async function insertEmoji(ev: MouseEvent) {
 }
 
 async function insertKaomoji(): Promise<void> {
-	const faces = [
-		'( ᐢ˙꒳˙ᐢ )',
-		'(´・-・。)',
-		'( ；꒳​；  )',
-		'(´；ω；｀)',
-		'(｡>﹏<｡)',
-		'(。>ㅿ<。)',
-		'(。ì _ í。)',
-		'(｡ŏ﹏ŏ)',
-		'(,,> <,,)♡',
-		'(=^・・^=)',
-		'ฅ(^•ω•^ฅ',
-		'ヾ(・ω・*)',
-		'ヾ(・ω・`;)ﾉ',
-		'(っ˘꒳˘ｃ)',
-		'(っ＾ω＾c)',
-		'( ´ ｡•ω•｡)っ',
-		'(´･ωゞ)',
-	].map(face => ({
+	const faces: string[] = await fetch('https://emoji-worker.adzuki.workers.dev/list')
+		.then(res => res.json())
+		.then(res => res.value);
+
+	const items = faces.map(face => ({
 		type: 'button' as const,
 		text: face,
 		action(): void {
@@ -651,7 +637,7 @@ async function insertKaomoji(): Promise<void> {
 		},
 	}));
 
-	await os.popupMenu(faces);
+	await os.popupMenu(items);
 }
 
 function showActions(ev) {
