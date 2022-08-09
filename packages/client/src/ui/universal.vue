@@ -80,7 +80,7 @@ const XStatusBars = defineAsyncComponent(() => import('@/ui/_common_/statusbars.
 
 mainRouter.navHook = (path, flag): boolean => {
 	if (flag === 'forcePage') return false;
-	if (defaultStore.state.defaultNavigationBehaviour === 'window') {
+	if (defaultStore.state.defaultNavigationBehaviour === 'window' && path !== '/') {
 		os.pageWindow(path);
 		return true;
 	}
