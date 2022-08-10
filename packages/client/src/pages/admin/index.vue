@@ -24,6 +24,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, inject, nextTick, onMounted, onUnmounted, provide, watch } from 'vue';
+import { $i } from '../../account';
 import { i18n } from '@/i18n';
 import MkSuperMenu from '@/components/MkSuperMenu.vue';
 import MkInfo from '@/components/MkInfo.vue';
@@ -137,7 +138,7 @@ const menuDef = $computed(() => [{
 		to: '/admin/abuses',
 		active: currentPage?.route.name === 'abuses',
 	}],
-}, {
+}, ...($i?.isAdmin ? [{
 	title: i18n.ts.settings,
 	items: [{
 		icon: 'fas fa-cog',
@@ -185,7 +186,7 @@ const menuDef = $computed(() => [{
 		to: '/admin/other-settings',
 		active: currentPage?.route.name === 'other-settings',
 	}],
-}, {
+}] : []), {
 	title: i18n.ts.info,
 	items: [{
 		icon: 'fas fa-database',
