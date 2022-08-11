@@ -88,6 +88,9 @@ export default defineComponent({
 				margin: 0 0 0 auto;
 				max-width: max-content;
 				border-radius: 16px;
+				-webkit-backdrop-filter: var(--blur, blur(15px));
+				backdrop-filter: var(--blur, blur(15px));
+				background: var(--panel);
 
 				> .richcontent {
 					min-width: 250px;
