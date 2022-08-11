@@ -215,13 +215,15 @@ function showMenu(ev) {
 
 			margin: 0 0 auto 0;
 			animation: moveX 5s linear 0s infinite alternate, moveY 6.4s linear 0s infinite alternate;
+			-webkit-backdrop-filter: var(--blur, blur(15px));
+			backdrop-filter: var(--blur, blur(15px));
 
 			@keyframes moveX {
-				from { left: 0; } to { left: calc(100vw - 490px); }
+				from { left: 0; } to { left: calc(100vw - 500px); }
 			}
 
 			@keyframes moveY {
-				from { top: 0; } to { top: calc(100vh - 430px); }
+				from { top: 0; } to { top: calc(100vh - 510px); }
 			}
 
 			@media (max-width: 1200px) {
@@ -231,8 +233,10 @@ function showMenu(ev) {
 			> .icon {
 				width: 85px;
 				margin-top: -47px;
-				border-radius: 100%;
+				border-radius: 20%;
 				vertical-align: bottom;
+				background: var(--panel);
+				box-shadow: 0 12px 32px rgb(0 0 0 / 25%);
 			}
 
 			> .menu {
