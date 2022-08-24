@@ -336,6 +336,8 @@ hr {
 	background: var(--popup);
 	border-radius: var(--radius);
 	contain: content;
+	-webkit-backdrop-filter: var(--blur, blur(15px));
+	backdrop-filter: var(--blur, blur(15px));
 }
 
 // TODO: 廃止
