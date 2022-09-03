@@ -309,6 +309,10 @@ export const routes = [{
 		name: 'emojis',
 		component: page(() => import('./pages/admin/emojis.vue')),
 	}, {
+		path: '/emojigen',
+		name: 'emojigen',
+		component: page(() => import('./pages/admin/emojigen.vue')),
+	}, {
 		path: '/queue',
 		name: 'queue',
 		component: page(() => import('./pages/admin/queue.vue')),
