@@ -101,11 +101,12 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .popup-enter-active, .popup-leave-active {
-	transition: opacity 0.3s, transform 0.3s !important;
+	transition: opacity 0.3s, height 0.2s, transform 0.3s !important;
 }
 .popup-enter-from, .popup-leave-to {
 	opacity: 0;
 	transform: scale(0.9);
+	height: 0;
 }
 
 .fxxzrfni {

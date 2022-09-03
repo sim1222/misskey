@@ -54,163 +54,158 @@
 			</FormInput>
 		</FormSection>
 
-		<FormButton primary class="_formBlock" @click="emojiGenerate">{{ $ts.emojiGenerate }}</FormButton>
+		<FormButton primary class="_formBlock" @click="preview">{{ $ts.emojiGenerate }}</FormButton>
 
 		<FormSection>
 			<template #label>{{ $ts.preview }}</template>
-			<p><img :src="emojiUrl" class="img" :alt="emojiName"/></p>
-			<MkLink v-if="emojiUrl" :url="emojiUrl">{{ emojiUrl }}</MkLink>
+			<p><img :src="previewUrl" class="img" :alt="emojiName"/></p>
 		</FormSection>
-		<FormButton primary class="_formBlock" @click="emojiApproval">{{ $ts.emojiApproval }}</FormButton>
+		<FormButton primary class="_formBlock" @click="uploadEmoji">{{ $ts.emojiApproval }}</FormButton>
 	</div>
 </MkSpacer>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
-import FormSwitch from '@/components/form/switch.vue';
-import FormInput from '@/components/form/input.vue';
-import FormTextarea from '@/components/form/textarea.vue';
-import FormRadios from '@/components/form/radios.vue';
-import FormSection from '@/components/form/section.vue';
-import FormButton from '@/components/ui/button.vue';
-import MkLink from '@/components/link.vue';
+<script lang="ts" setup>
+import { v4 as uuid } from 'uuid';
+import { computed, defineAsyncComponent, ref } from 'vue';
 import * as os from '@/os';
+import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
 import { stream } from '@/stream';
+import FormSection from '@/components/form/section.vue';
+import FormInput from '@/components/form/input.vue';
+import FormSwitch from '@/components/form/switch.vue';
+import FormButton from '@/components/ui/button.vue';
+import FormRadios from '@/components/form/radios.vue';
+import FormTextarea from '@/components/form/textarea.vue';
 import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
+
+const font = ref('rounded-x-mplus-1p-black');
+const text = ref('');
+const emojiName = ref('');
+const emojiAlign = ref('center');
+const emojiSizeFixed = ref(false);
+const emojiStretch = ref(true);
+const emojiColor = ref('90ee90');
+const previewUrl = ref('');
+const accentColors = [
+	'#ff00ff',
+	'#ff0080',
+	'#D55353',
+	'#ff8080',
+	'#ff8040',
+	'#ffff80',
+	'#80ff80',
+	'#90ee90',
+	'#80ffff',
+	'#0080ff',
+	'#8080ff',
+];
+
+const makeUrl = (): string => {
+	const API_URL = 'https://emoji-gen.ninja/emoji';
+
+	const query = {
+		text: encodeURI(text.value),
+		color: emojiColor.value + 'FF',
+		back_color: '00000000',
+		font: font.value,
+		size_fixed: !emojiSizeFixed.value ? 'true' : 'false',
+		align: 'center',
+		stretch: !emojiStretch.value ? 'true' : 'false',
+		public_fg: 'false',
+		locale: 'ja',
+	};
+
+	return API_URL + '?' + Object.entries(query).map(([key, value]) => `${key}=${value}`).join('&');
+};
+
+const preview = (): void => {
+	previewUrl.value = makeUrl();
+};
+
+const setAccentColor = (color) => {
+	emojiColor.value = color.replace('#', '');
+};
+
+const uploadFileFromUrlWithId = (url: string) => new Promise<string>(async resolve => {
+	const marker = uuid();
+
+	// 先にコネクションを貼り、アップロードが完了したかどうかを監視する
+	const connection = stream.useChannel('main');
+
+	connection.on('urlUploadFinished', async response => {
+		if (response.marker === marker) {
+			resolve(response.file.id);
+			connection.dispose();
+		}
+	});
+
+	// 絵文字をアップロード
+	await os.api('drive/files/upload-from-url', {
+		url,
+		folderId: defaultStore.state.uploadFolder,
+		marker,
+	});
+});
+
+const getEmojiObject = emojiId => new Promise<Record<string, any> | null>(async resolve => {
+	const sinceId = await os.api('admin/emoji/list', {
+		limit: 1,
+		untilId: emojiId.id,
+	});
+
+	if (!sinceId || !sinceId[0] || !sinceId[0].id) {
+		resolve(null);
+		return;
+	}
+
+	const id = await os.api('admin/emoji/list', {
+		limit: 1,
+		sinceId: sinceId[0].id,
+	});
+
+	if (!id || !id[0]) {
+		resolve(null);
+		return;
+	}
+
+	resolve(id[0]);
+});
+
+const uploadEmoji = async () => {
+	const emojiUrl = makeUrl();
+	const fileId = await uploadFileFromUrlWithId(emojiUrl);
+
+	// ドライブにアップロードされたファイルをリネーム
+	await os.api('drive/files/update', {
+		fileId,
+		name: uuid() + '.png',
+	});
+
+	const emojiId = await os.api('admin/emoji/add', { fileId });
+	const emoji = await getEmojiObject(emojiId);
+
+	if (!emoji) {
+		os.alert({
+			type: 'error',
+			text: i18n.ts.failedToUploadEmoji,
+		});
+	}
+
+	os.popup(defineAsyncComponent(() => import('./emoji-edit-dialog.vue')), { emoji });
+};
 
 definePageMetadata(computed(() => ({
 	title: i18n.ts.emojiGen,
-	icon: 'fas fa-laugh',
+	icon: 'fas fa-kiss-wink-heart',
 })));
-
-export default defineComponent({
-	components: {
-		FormInput,
-		FormTextarea,
-		FormRadios,
-		FormSection,
-		FormSwitch,
-		FormButton,
-		MkLink,
-	},
-
-	emits: ['info'],
-
-	data() {
-		return {
-			emojiName: '',
-			text: '',
-			emojiAlign: 'center',
-			emojiSizeFixed: false,
-			emojiStretch: false,
-			font: 'notosans-mono-bold',
-			emojiColor: '38BA91',
-			emojiUrl: '',
-			accentColors: ['#e36749', '#f29924', '#98c934', '#34c9a9', '#34a1c9', '#606df7', '#8d34c9', '#e84d83'],
-		};
-	},
-
-	methods: {
-		async init() {
-		},
-
-		emojiGenerate() {
-			//https://emoji-gen.ninja/result?text=%E7%B5%B5%E6%96%87%0A%E5%AD%97%E3%80%82&color=EC71A1FF&back_color=00000000&font=notosans-mono-bold&size_fixed=false&align=center&stretch=true&public_fg=true&locale=ja
-
-			const apiUrl = 'https://emoji-gen.ninja/emoji';
-			let query = { 'text': encodeURI(this.text), 'color': this.emojiColor.replace('#','') + 'FF', 'back_color': '00000000', 'font': this.font, 'size_fixed': this.emojiSizeFixed, 'align': this.emojiAlign, 'stretch': !this.emojiStretch, 'public_fg': 'false', 'locale': 'ja' };
-
-			this.emojiUrl = apiUrl + '?' + Object.entries(query).map((e) => `${e[0]}=${e[1]}`).join('&');
-		},
-
-		emojiApproval: function () {
-			//emojiUploadでは、絵文字をdrive/files/upload-from-urlでアップロードしたあと、emojiAddでリネーム、登録をして、emojiAddの戻り値(絵文字のid)を返す
-			const emojiUpload = () => new Promise(async resolve => {
-				const marker = Math.random().toString(); // TODO: UUIDとか使う
-
-				//先にコネクションを貼って監視する
-				const connection = stream.useChannel('main');
-				connection.on('urlUploadFinished', async data => {
-					if (data.marker === marker) {
-						const fileId = await emojiAdd(data.file.id);
-						resolve(fileId);
-						connection.dispose();
-					}
-				});
-
-				await os.api('drive/files/upload-from-url', {
-					url: this.emojiUrl,
-					folderId: defaultStore.state.uploadFolder,
-					marker,
-				});
-
-				//リネーム→登録→登録されたIDを返す
-				const emojiAdd = (fileId) => new Promise<Record<string, any> | null>(async resolve => {
-					await os.api('drive/files/update', {
-						fileId,
-						name: this.emojiName + '.png',
-					});
-
-					const response = await os.api('admin/emoji/add', {
-						fileId,
-					});
-
-					resolve(response);
-				});
-			});
-
-			//emoji関数 admin/emoji/listでは、idによる検索ができないため、自分のidをuntilIdに入れて1つ前のidを取得してからそれをsinceIdに指定して、絵文字情報をlist→objectで取得する
-			const emoji = (emojiId) => new Promise<Record<string, any> | null>(async resolve => {
-				const sinceId = await os.api('admin/emoji/list', {
-					limit: 1,
-					untilId: emojiId.id,
-				});
-
-				if (!sinceId) {
-					resolve(null);
-					return;
-				}
-
-				const id = await os.api('admin/emoji/list', {
-					limit: 1,
-					sinceId: sinceId[0].id,
-				});
-
-				if (!id) {
-					resolve(null);
-					return;
-				}
-
-				resolve(id[0]);
-			});
-
-			//edit関数には、emojiのobjectを渡す
-			const edit = (emoji) => {
-				os.popup(import('./emoji-edit-dialog.vue'), {
-					emoji: emoji,
-				});
-			};
-
-			(async () => {
-				await this.emojiGenerate();
-				const emojiId = await emojiUpload();//emojiIdはファイルID emojiUploadはファイルIDを返す
-				const emojiObj = await emoji(emojiId);//emojiObjはemojiオブジェクト emoji関数はemojiIdを引数に受け取りemojiオブジェクトを返す
-				edit(emojiObj);
-			})();
-		},
-
-		setAccentColor(color) {
-			this.emojiColor = color.replace('#', '');
-		},
-	},
-});
-
 </script>
 
 <style lang="scss" scoped>
+.preview-img {
+	height: 128px;
+}
 .cwepdizn {
 	::v-deep(.cwepdizn-colors) {
 		text-align: center;
@@ -263,4 +258,3 @@ export default defineComponent({
 	}
 }
 </style>
-

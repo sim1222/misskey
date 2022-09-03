@@ -490,9 +490,9 @@ function onDragover(ev) {
 		switch (ev.dataTransfer.effectAllowed) {
 			case 'all':
 			case 'uninitialized':
-			case 'copy': 
-			case 'copyLink': 
-			case 'copyMove': 
+			case 'copy':
+			case 'copyLink':
+			case 'copyMove':
 				ev.dataTransfer.dropEffect = 'copy';
 				break;
 			case 'linkMove':
@@ -769,7 +769,7 @@ onMounted(() => {
 					margin-left: 0 !important;
 				}
 			}
-			
+
 			> .local-only {
 				margin: 0 0 0 12px;
 				opacity: 0.7;
@@ -910,6 +910,7 @@ onMounted(() => {
 			max-width: 100%;
 			min-width: 100%;
 			min-height: 90px;
+			height: 250px;
 
 			&.withCw {
 				padding-top: 8px;
