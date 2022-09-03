@@ -180,7 +180,7 @@ const uploadEmoji = async () => {
 	// ドライブにアップロードされたファイルをリネーム
 	await os.api('drive/files/update', {
 		fileId,
-		name: uuid() + '.png',
+		name: emojiName.value + '.png',
 	});
 
 	const emojiId = await os.api('admin/emoji/add', { fileId });
