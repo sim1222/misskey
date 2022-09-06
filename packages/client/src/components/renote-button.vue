@@ -60,7 +60,7 @@ const renote = (viaKeyboard = false) => {
 				renoteId: props.note.id,
 			});
 		},
-	}, {
+			}, {
 		text: i18n.ts.quote,
 		icon: 'fas fa-quote-right',
 		action: () => {
@@ -68,6 +68,24 @@ const renote = (viaKeyboard = false) => {
 				renote: props.note,
 			});
 		},
+	},{
+		text: i18n.ts.renoteFollowersOnly,
+		icon: 'fas fa-unlock',
+		action: () => {
+			os.api('notes/create', {
+				renoteId: props.note.id,
+				visibility: 'followers'
+			});
+		}
+	},{
+		text: i18n.ts.renoteHomeOnly,
+		icon: 'fas fa-home',
+		action: () => {
+			os.api('notes/create', {
+				renoteId: props.note.id,
+				visibility: 'home'
+			});
+		}
 	}], buttonRef.value, {
 		viaKeyboard,
 	});
