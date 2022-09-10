@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent } from 'vue';
 import XColumn from './column.vue';
-import XNotifications from '@/components/MKNotifications.vue';
+import XNotifications from '@/components/MkNotifications.vue';
 import * as os from '@/os';
 import { updateColumn } from './deck-store';
 import { Column } from './deck-store';
