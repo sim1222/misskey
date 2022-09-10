@@ -22,7 +22,7 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue';
 import XColumn from './column.vue';
-import XTimeline from '@/components/timeline.vue';
+import XTimeline from '@/components/MKTimeline.vue';
 import * as os from '@/os';
 import { removeColumn, updateColumn, Column } from './deck-store';
 import { $i } from '@/account';

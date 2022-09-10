@@ -75,7 +75,7 @@ import { stream } from '@/stream';
 import FormSection from '@/components/form/section.vue';
 import FormInput from '@/components/form/input.vue';
 import FormSwitch from '@/components/form/switch.vue';
-import FormButton from '@/components/ui/button.vue';
+import FormButton from '@/components/MkButton.vue';
 import FormRadios from '@/components/form/radios.vue';
 import FormTextarea from '@/components/form/textarea.vue';
 import { definePageMetadata } from '@/scripts/page-metadata';
@@ -180,7 +180,7 @@ const uploadEmoji = async () => {
 	// ドライブにアップロードされたファイルをリネーム
 	await os.api('drive/files/update', {
 		fileId,
-		name: uuid() + '.png',
+		name: emojiName.value + '.png',
 	});
 
 	const emojiId = await os.api('admin/emoji/add', { fileId });

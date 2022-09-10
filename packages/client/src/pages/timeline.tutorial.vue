@@ -118,7 +118,7 @@
 
 <script lang="ts" setup>
 import { computed, onActivated, ref, watch } from 'vue';
-import MkButton from '@/components/ui/button.vue';
+import MkButton from '@/components/MkButton.vue';
 import { i18n } from '@/i18n';
 import { defaultStore, ColdDeviceStorage } from '@/store';
 import FormSwitch from '@/components/form/switch.vue';
