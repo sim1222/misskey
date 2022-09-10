@@ -13,7 +13,7 @@
 import { } from 'vue';
 import XColumn from './column.vue';
 import { addColumnWidget, Column, removeColumnWidget, setColumnWidgets, updateColumnWidget } from './deck-store';
-import XWidgets from '@/components/widgets.vue';
+import XWidgets from '@/components/MKWidgets.vue';
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
