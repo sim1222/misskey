@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { } from 'vue';
 import XColumn from './column.vue';
-import XTimeline from '@/components/MKTimeline.vue';
+import XTimeline from '@/components/MkTimeline.vue';
 import * as os from '@/os';
 import { updateColumn, Column } from './deck-store';
 import { i18n } from '@/i18n';
