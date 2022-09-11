@@ -207,11 +207,18 @@ function reply(viaKeyboard = false): void {
 function react(viaKeyboard = false): void {
 	pleaseLogin();
 	blur();
-	reactionPicker.show(reactButton.value, reaction => {
+	reactionPicker.show(reactButton.value, results => {
 		os.api('notes/reactions/create', {
 			noteId: appearNote.id,
-			reaction: reaction,
+			reaction: results.reaction,
 		});
+		console.log(results)
+		if (results.withRenote) {
+			os.api('notes/create', {
+				renoteId: appearNote.id,
+				isRenote: true,
+			});
+		}
 	}, () => {
 		focus();
 	});
