@@ -1,7 +1,6 @@
 <template>
 <div class="omfetrab" :class="['s' + size, 'w' + width, 'h' + height, { asDrawer }]" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : undefined }">
 	<input ref="search" v-model.trim="q" class="search" data-prevent-emoji-insert :class="{ filled: q != null && q != '' }" :placeholder="i18n.ts.search" type="search" @paste.stop="paste" @keyup.enter="done()">
-	<MkSwitch v-if="props.asReactionPicker" v-model="withRenote" class="withRenote">{{ i18n.ts.reactWithRenote }}</MkSwitch>
 	<div ref="emojis" class="emojis">
 		<section class="result">
 			<div v-if="searchResultCustom.length > 0" class="body">
@@ -75,6 +74,7 @@
 		<button class="_button tab" :class="{ active: tab === 'unicode' }" @click="tab = 'unicode'"><i class="fas fa-leaf fa-fw"></i></button>
 		<button class="_button tab" :class="{ active: tab === 'tags' }" @click="tab = 'tags'"><i class="fas fa-hashtag fa-fw"></i></button>
 	</div>
+	<MkSwitch v-if="props.asReactionPicker" v-model="withRenote" class="withRenote">{{ i18n.ts.reactWithRenote }}</MkSwitch>
 </div>
 </template>
 
@@ -457,7 +457,6 @@ defineExpose({
 	}
 
 	> .withRenote {
-		order: 1;
 		padding: 12px;
 	}
 
