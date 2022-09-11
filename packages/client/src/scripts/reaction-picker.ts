@@ -4,7 +4,7 @@ import { popup } from '@/os';
 class ReactionPicker {
 	private src: Ref<HTMLElement | null> = ref(null);
 	private manualShowing = ref(false);
-	private onChosen?: ({ reaction: string, withRenote: boolean }) => void;
+	private onChosen?: (reaction: string, withRenote: boolean) => void;
 	private onClosed?: () => void;
 
 	constructor() {
