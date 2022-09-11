@@ -837,6 +837,8 @@ emojiColor: "カラーコード"
 colorPicker: "カラーピッカー"
 emojiApproval: "絵文字を登録"
 deckOld: "旧デッキ"
+pakuruConfirm: "パクりますか？"
+pakuru: "パクる"
 
 
 _emailUnavailable:

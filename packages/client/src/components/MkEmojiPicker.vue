@@ -74,6 +74,7 @@
 		<button class="_button tab" :class="{ active: tab === 'unicode' }" @click="tab = 'unicode'"><i class="fas fa-leaf fa-fw"></i></button>
 		<button class="_button tab" :class="{ active: tab === 'tags' }" @click="tab = 'tags'"><i class="fas fa-hashtag fa-fw"></i></button>
 	</div>
+	<MkSwitch v-if="props.asReactionPicker" v-model="withRenote" class="withRenote">{{ i18n.ts.reactWithRenote }}</MkSwitch>
 </div>
 </template>
 
@@ -90,6 +91,7 @@ import { deviceKind } from '@/scripts/device-kind';
 import { emojiCategories, instance } from '@/instance';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
+import MkSwitch from '@/components/form/switch.vue';
 
 const props = withDefaults(defineProps<{
 	showPinned?: boolean;
@@ -101,10 +103,11 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-	(ev: 'chosen', v: string): void;
+	(ev: 'chosen', v: { reaction: string, withRenote: boolean } | string): void;
 }>();
 
 const search = ref<HTMLInputElement>();
+const withRenote = ref<boolean>(true);
 const emojis = ref<HTMLDivElement>();
 
 const {
@@ -278,6 +281,7 @@ function focus() {
 function reset() {
 	if (emojis.value) emojis.value.scrollTop = 0;
 	q.value = '';
+	withRenote.value = false; // 毎回Renoteをfalseに戻す
 }
 
 function getKey(emoji: string | Misskey.entities.CustomEmoji | UnicodeEmojiDef): string {
@@ -294,7 +298,7 @@ function chosen(emoji: any, ev?: MouseEvent) {
 	}
 
 	const key = getKey(emoji);
-	emit('chosen', key);
+	emit('chosen', (props.asReactionPicker) ? { reaction: key, withRenote: withRenote.value } : key);
 
 	// 最近使った絵文字更新
 	if (!pinned.value.includes(key)) {
@@ -450,6 +454,10 @@ defineExpose({
 			z-index: 2;
 			box-shadow: 0px -1px 0 0px var(--divider);
 		}
+	}
+
+	> .withRenote {
+		padding: 12px;
 	}
 
 	> .tabs {

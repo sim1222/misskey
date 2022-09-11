@@ -6,7 +6,6 @@
 			<p><img :src="previewUrl" class="img" :alt="emojiName" /></p>
 		</FormSection>
 		<FormButton primary class="_formBlock" @click="uploadEmoji">{{ $ts.emojiApproval }}</FormButton>
-		<!-- <FormButton primary class="_formBlock" @click="preview">{{ $ts.emojiGenerate }}</FormButton> -->
 		<FormSection>
 			<template #label>{{ $ts.settings }}</template>
 			<FormInput v-model="emojiName" class="_formBlock">
