@@ -1,7 +1,7 @@
 <template>
 <div class="omfetrab" :class="['s' + size, 'w' + width, 'h' + height, { asDrawer }]" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : undefined }">
 	<input ref="search" v-model.trim="q" class="search" data-prevent-emoji-insert :class="{ filled: q != null && q != '' }" :placeholder="i18n.ts.search" type="search" @paste.stop="paste" @keyup.enter="done()">
-	<MkSwitch v-model="withRenote">{{ i18n.ts.reactWithRenote }}</MkSwitch>
+	<MkSwitch v-if="props.asReactionPicker" v-model="withRenote" class="withRenote">{{ i18n.ts.reactWithRenote }}</MkSwitch>
 	<div ref="emojis" class="emojis">
 		<section class="result">
 			<div v-if="searchResultCustom.length > 0" class="body">
@@ -281,6 +281,7 @@ function focus() {
 function reset() {
 	if (emojis.value) emojis.value.scrollTop = 0;
 	q.value = '';
+	withRenote.value = false; // 毎回Renoteをfalseに戻す
 }
 
 function getKey(emoji: string | Misskey.entities.CustomEmoji | UnicodeEmojiDef): string {
@@ -455,8 +456,8 @@ defineExpose({
 		}
 	}
 
-	> .renote {
-		width: 100%;
+	> .withRenote {
+		order: 1;
 	}
 
 	> .tabs {

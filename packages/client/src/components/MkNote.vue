@@ -212,7 +212,6 @@ function react(viaKeyboard = false): void {
 			noteId: appearNote.id,
 			reaction: results.reaction,
 		});
-		console.log(results)
 		if (results.withRenote) {
 			os.api('notes/create', {
 				renoteId: appearNote.id,
