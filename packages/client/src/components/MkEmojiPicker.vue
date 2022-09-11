@@ -1,6 +1,8 @@
 <template>
 <div class="omfetrab" :class="['s' + size, 'w' + width, 'h' + height, { asDrawer }]" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : undefined }">
 	<input ref="search" v-model.trim="q" class="search" data-prevent-emoji-insert :class="{ filled: q != null && q != '' }" :placeholder="i18n.ts.search" type="search" @paste.stop="paste" @keyup.enter="done()">
+	<MkSwitch class="_formBlock" v-model="withRenote">renote
+	</MkSwitch>
 	<div ref="emojis" class="emojis">
 		<section class="result">
 			<div v-if="searchResultCustom.length > 0" class="body">
@@ -90,6 +92,7 @@ import { deviceKind } from '@/scripts/device-kind';
 import { emojiCategories, instance } from '@/instance';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
+import MkSwitch from '@/components/form/switch.vue';
 
 const props = withDefaults(defineProps<{
 	showPinned?: boolean;
@@ -101,10 +104,11 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-	(ev: 'chosen', v: string): void;
+	(ev: 'chosen', v: { reaction: string, withRenote: boolean }): void;
 }>();
 
 const search = ref<HTMLInputElement>();
+const withRenote = ref<boolean>(true);
 const emojis = ref<HTMLDivElement>();
 
 const {
@@ -294,7 +298,7 @@ function chosen(emoji: any, ev?: MouseEvent) {
 	}
 
 	const key = getKey(emoji);
-	emit('chosen', key);
+	emit('chosen', { reaction: key, withRenote: withRenote.value });
 
 	// 最近使った絵文字更新
 	if (!pinned.value.includes(key)) {
@@ -450,6 +454,10 @@ defineExpose({
 			z-index: 2;
 			box-shadow: 0px -1px 0 0px var(--divider);
 		}
+	}
+
+	> .renote {
+		width: 100%;
 	}
 
 	> .tabs {
