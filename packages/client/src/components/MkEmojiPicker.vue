@@ -458,6 +458,7 @@ defineExpose({
 
 	> .withRenote {
 		order: 1;
+		padding: 12px;
 	}
 
 	> .tabs {
