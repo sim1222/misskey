@@ -103,7 +103,7 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-	(ev: 'chosen', v: { reaction: string, withRenote: boolean }): void;
+	(ev: 'chosen', v: { reaction: string, withRenote: boolean } | string): void;
 }>();
 
 const search = ref<HTMLInputElement>();
@@ -298,7 +298,7 @@ function chosen(emoji: any, ev?: MouseEvent) {
 	}
 
 	const key = getKey(emoji);
-	emit('chosen', { reaction: key, withRenote: withRenote.value });
+	emit('chosen', (props.asReactionPicker) ? { reaction: key, withRenote: withRenote.value } : key);
 
 	// 最近使った絵文字更新
 	if (!pinned.value.includes(key)) {
