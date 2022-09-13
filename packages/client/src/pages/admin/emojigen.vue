@@ -1,76 +1,109 @@
 <template>
-<MkSpacer :content-max="700" :margin-min="16" :margin-max="32">
-	<div class="cwepdizn _formRoot">
-		<FormSection>
-			<template #label>{{ $ts.preview }}</template>
-			<p><img :src="previewUrl" class="img" :alt="emojiName" /></p>
-		</FormSection>
-		<FormButton primary class="_formBlock" @click="uploadEmoji">{{ $ts.emojiApproval }}</FormButton>
-		<FormSection>
-			<template #label>{{ $ts.settings }}</template>
-			<FormInput v-model="emojiName" class="_formBlock">
-				<template #label>{{ $ts.emojiName }}</template>
-			</FormInput>
+<MkStickyContainer>
+	<template #header><XHeader v-model:tab="tab" :tabs="headerTabs" /></template>
+		<MkSpacer :content-max="700" :margin-min="16" :margin-max="32">
+			<div class="cwepdizn _formRoot">
+				<div v-if="tab === 'string'" class="local">
+					<FormSection>
+						<template #label>{{ $ts.preview }}</template>
+						<p><img :src="previewUrl" class="img" :alt="emojiName" /></p>
+					</FormSection>
+					<FormButton primary class="_formBlock" @click="uploadEmoji('url')">{{ $ts.emojiApproval }}</FormButton>
+					<FormSection>
+						<template #label>{{ $ts.settings }}</template>
+						<FormInput v-model="emojiName" class="_formBlock">
+							<template #label>{{ $ts.emojiName }}</template>
+						</FormInput>
 
-			<FormTextarea v-model="text" class="_formBlock">
-				<template #label>{{ $ts.text }}</template>
-			</FormTextarea>
+						<FormTextarea v-model="text" class="_formBlock">
+							<template #label>{{ $ts.text }}</template>
+						</FormTextarea>
 
-			<FormRadios v-model="emojiAlign" class="_formBlock">
-				<template #label>{{ $ts.emojiAlign }}</template>
-				<option value="left"><i class="fas fa-align-left"/></option>
-				<option value="center"><i class="fas fa-align-center"></i></option>
-				<option value="right"><i class="fas fa-align-right"/></option>
-			</FormRadios>
+						<FormRadios v-model="emojiAlign" class="_formBlock">
+							<template #label>{{ $ts.emojiAlign }}</template>
+							<option value="left"><i class="fas fa-align-left"/></option>
+							<option value="center"><i class="fas fa-align-center"></i></option>
+							<option value="right"><i class="fas fa-align-right"/></option>
+						</FormRadios>
 
-			<FormFolder :default-open="false" class="_formBlock">
-				<template #label>{{ $ts.emojiSizeSetting }}</template>
-				<FormSection>
-					<FormSwitch v-model="emojiSizeFixed" class="_formBlock">
-						<template #label>{{ $ts.emojiSizeFixed }}</template>
-					</FormSwitch>
+						<FormFolder :default-open="false" class="_formBlock">
+							<template #label>{{ $ts.emojiSizeSetting }}</template>
+							<FormSection>
+								<FormSwitch v-model="emojiSizeFixed" class="_formBlock">
+									<template #label>{{ $ts.emojiSizeFixed }}</template>
+								</FormSwitch>
 
-					<FormSwitch v-model="emojiStretch" class="_formBlock">
-						<template #label>{{ $ts.emojiStretch }}</template>
-					</FormSwitch>
-				</FormSection>
-			</FormFolder>
+								<FormSwitch v-model="emojiStretch" class="_formBlock">
+									<template #label>{{ $ts.emojiStretch }}</template>
+								</FormSwitch>
+							</FormSection>
+						</FormFolder>
 
-			<FormFolder :default-open="false" class="_formBlock">
-				<template #label>{{ $ts._pages.font }}</template>
-				<FormRadios v-model="font" class="_formBlock">
-					<option value="notosans-mono-bold">Noto Sans Mono CJK JP Bold</option>
-					<option value="mplus-1p-black">M+ 1p black</option>
-					<option value="rounded-x-mplus-1p-black">Rounded M+ 1p black</option>
-					<option value="ipamjm">IPAmj明朝</option>
-					<option value="aoyagireisyoshimo">青柳隷書しも</option>
-					<option value="LinLibertine_RBah">LinLibertine Bold</option>
-				</FormRadios>
-			</FormFolder>
+						<FormFolder :default-open="false" class="_formBlock">
+							<template #label>{{ $ts._pages.font }}</template>
+							<FormRadios v-model="font" class="_formBlock">
+								<option value="notosans-mono-bold">Noto Sans Mono CJK JP Bold</option>
+								<option value="mplus-1p-black">M+ 1p black</option>
+								<option value="rounded-x-mplus-1p-black">Rounded M+ 1p black</option>
+								<option value="ipamjm">IPAmj明朝</option>
+								<option value="aoyagireisyoshimo">青柳隷書しも</option>
+								<option value="LinLibertine_RBah">LinLibertine Bold</option>
+							</FormRadios>
+						</FormFolder>
 
 
-			<FormFolder :default-open="false" class="_formBlock">
-				<template #label>{{ $ts.emojiColor }}</template>
-				<FormSection>
-					<div class="cwepdizn-colors">
-						<div class="row">
-							<button v-for="color in accentColors" :key="color" class="color rounded _button" @click="setAccentColor(color)">
-								<div class="preview" :style="{ background: color }"></div>
-							</button>
+						<FormFolder :default-open="false" class="_formBlock">
+							<template #label>{{ $ts.emojiColor }}</template>
+							<FormSection>
+								<div class="cwepdizn-colors">
+									<div class="row">
+										<button v-for="color in accentColors" :key="color" class="color rounded _button" @click="setAccentColor(color)">
+											<div class="preview" :style="{ background: color }"></div>
+										</button>
+									</div>
+								</div>
+
+								<FormInput v-model="emojiColor" class="_formBlock" :style="{ color: '#' + emojiColor }">
+									<template #prefix><i class="fas fa-palette"></i></template>
+									<template #label @click="colorPick()">{{ $ts.emojiColor }}</template>
+									<template #caption>#RRGGBB</template>
+								</FormInput>
+								<FormButton @click="colorPick()">{{ $ts.colorPicker }}</FormButton>
+							</FormSection>
+						</FormFolder>
+					</FormSection>
+				</div>
+
+				<div v-else-if="tab === 'misetehoshii'" class="remote">
+					<FormSection>
+						<template #label>{{ $ts.preview }}</template>
+						<canvas class="preview__content" ref="canvas" width="64" height="30" />
+					</FormSection>
+					<FormButton primary class="_formBlock" @click="uploadEmoji('')">{{ $ts.emojiApproval }}</FormButton>
+					<FormSection>
+						<template #label>{{ $ts.settings }}</template>
+						<FormInput v-model="emojiName" class="_formBlock">
+							<template #label>{{ $ts.emojiName }}</template>
+						</FormInput>
+
+						<FormTextarea v-model="text" value="見せてほしい" class="_formBlock">
+							<template #label>{{ $ts.text }}</template>
+						</FormTextarea>
+
+						<FormRadios v-model="backColor" class="_formBlock">
+							<template #label>{{ $ts._theme.color }}</template>
+							<option v-for="c in backColors" v-bind:value="c">{{c}}</option>
+						</FormRadios>
+					</FormSection>
+					<FormSection>
+						<template #label>見せてほしいメーカー</template>
+						<div>Powered by <MkLink url="https://github.com/melt-adzuki/misetehoshii">misetehoshii</MkLink>
 						</div>
-					</div>
-
-					<FormInput v-model="emojiColor" class="_formBlock" :style="{ color: '#' + emojiColor }">
-						<template #prefix><i class="fas fa-palette"></i></template>
-						<template #label @click="colorPick()">{{ $ts.emojiColor }}</template>
-						<template #caption>#RRGGBB</template>
-					</FormInput>
-					<FormButton @click="colorPick()">{{ $ts.colorPicker }}</FormButton>
-				</FormSection>
-			</FormFolder>
-		</FormSection>
-	</div>
-</MkSpacer>
+					</FormSection>
+				</div>
+			</div>
+		</MkSpacer>
+</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -80,6 +113,10 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
 import { stream } from '@/stream';
+import { uploadFile } from '@/scripts/upload';
+import XHeader from './_header_.vue';
+import MkTab from '@/components/MkTab.vue';
+import MkLink from '@/components/MkLink.vue';
 import FormSection from '@/components/form/section.vue';
 import FormInput from '@/components/form/input.vue';
 import FormSwitch from '@/components/form/switch.vue';
@@ -88,6 +125,22 @@ import FormRadios from '@/components/form/radios.vue';
 import FormTextarea from '@/components/form/textarea.vue';
 import FormFolder from '@/components/form/folder.vue';
 import { definePageMetadata } from '@/scripts/page-metadata';
+import { buttonImages } from "misetehoshii/src/assets";
+import { draw } from "misetehoshii/src/canvas"
+
+definePageMetadata(computed(() => ({
+	title: i18n.ts.emojiGen,
+	icon: 'fas fa-kiss-wink-heart',
+})));
+
+const tab = ref('string');
+const headerTabs = $computed(() => [{
+	key: 'string',
+	title: 'もじもじ',
+}, {
+	key: 'misetehoshii',
+	title: '見せてほしい',
+}]);
 
 const font = ref('rounded-x-mplus-1p-black');
 const text = ref('');
@@ -111,8 +164,27 @@ const accentColors = [
 	'#8080ff',
 ];
 
-watch([font, text, emojiAlign, emojiSizeFixed, emojiStretch, emojiColor], () => {
+const backColor = ref('blue')
+const canvas = ref<HTMLCanvasElement>()
+const buttonImage = computed(() => buttonImages[backColor.value])
+const backColors = [
+	'blue',
+	'peacockGreen',
+	'green',
+	'yellow',
+	'red',
+	'pink',
+	'disabled',
+];
+
+const updateCanvas = (): void => {
+	const context = canvas.value!.getContext("2d")!
+	draw({ context, text: text.value, button: buttonImage.value })
+}
+
+watch([font, text, emojiAlign, emojiSizeFixed, emojiStretch, emojiColor, backColor], () => {
 	preview();
+	updateCanvas();
 });
 
 const colorPick = (): void => {
@@ -197,33 +269,57 @@ const getEmojiObject = emojiId => new Promise<Record<string, any> | null>(async 
 	resolve(id[0]);
 });
 
-const uploadEmoji = async () => {
-	const emojiUrl = makeUrl();
-	const fileId = await uploadFileFromUrlWithId(emojiUrl);
+const uploadEmoji = async (type: string) => {
 
-	// ドライブにアップロードされたファイルをリネーム
-	await os.api('drive/files/update', {
-		fileId,
-		name: emojiName.value + '.png',
-	});
+	if (type == 'url') {
+		const emojiUrl = makeUrl();
+		const fileId = await uploadFileFromUrlWithId(emojiUrl);
 
-	const emojiId = await os.api('admin/emoji/add', { fileId });
-	const emoji = await getEmojiObject(emojiId);
-
-	if (!emoji) {
-		os.alert({
-			type: 'error',
-			text: i18n.ts.failedToUploadEmoji,
+		// ドライブにアップロードされたファイルをリネーム
+		await os.api('drive/files/update', {
+			fileId,
+			name: emojiName.value + '.png',
 		});
+
+		const emojiId = await os.api('admin/emoji/add', { fileId });
+		const emoji = await getEmojiObject(emojiId);
+
+		if (!emoji) {
+			os.alert({
+				type: 'error',
+				text: i18n.ts.failedToUploadEmoji,
+			});
+		}
+		os.popup(defineAsyncComponent(() => import('./emoji-edit-dialog.vue')), { emoji });
+	} else {
+		const canvasImg = new Promise<Blob>(resolve => {
+			canvas.value!.toBlob(blob => resolve(blob?.slice(0, blob.size, 'image/png') as Blob));
+		})
+		const file = new File([await canvasImg], emojiName.value + '.png', { type: 'image/png' });
+		const fileId = (await uploadFile(file, defaultStore.state.uploadFolder, undefined, true)).id
+
+		// ドライブにアップロードされたファイルをリネーム
+		await os.api('drive/files/update', {
+			fileId,
+			name: emojiName.value + '.png',
+		});
+
+		const emojiId = await os.api('admin/emoji/add', { fileId });
+		const emoji = await getEmojiObject(emojiId);
+
+		if (!emoji) {
+			os.alert({
+				type: 'error',
+				text: i18n.ts.failedToUploadEmoji,
+			});
+		}
+		os.popup(defineAsyncComponent(() => import('./emoji-edit-dialog.vue')), { emoji });
 	}
 
-	os.popup(defineAsyncComponent(() => import('./emoji-edit-dialog.vue')), { emoji });
+
 };
 
-definePageMetadata(computed(() => ({
-	title: i18n.ts.emojiGen,
-	icon: 'fas fa-kiss-wink-heart',
-})));
+
 </script>
 
 <style lang="scss" scoped>
