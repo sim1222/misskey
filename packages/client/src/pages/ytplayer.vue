@@ -1,13 +1,13 @@
 <template>
-  <div class="poamfof fill">
-      <transition :name="$store.state.animation ? 'fade' : ''" mode="out-in">
-          <div v-if="player.url" class="player">
-	          <iframe v-if="!fetching" :src="player.url + (player.url.match(/\?/) ? '&autoplay=1&auto_play=1' : '?autoplay=1&auto_play=1')" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen/>
-          </div>
-      </transition>
-			<MkLoading v-if="fetching" />
-      <MkError v-else-if="!player.url" @retry="ytFetch()" />
-  </div>
+	<div class="poamfof fill">
+		<transition :name="$store.state.animation ? 'fade' : ''" mode="out-in">
+			<div v-if="player.url" class="player">
+				<iframe v-if="!fetching" :src="player.url + (player.url.match(/\?/) ? '&autoplay=1&auto_play=1' : '?autoplay=1&auto_play=1')" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen/>
+			</div>
+		</transition>
+		<MkLoading v-if="fetching" />
+		<MkError v-else-if="!player.url" @retry="ytFetch()" />
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -18,8 +18,6 @@ import { lang } from '@/config';
 const props = defineProps<{
     url: string;
 }>();
-
-console.log(props.url);
 
 const requestUrl = new URL(props.url);
 
@@ -43,7 +41,7 @@ const ytFetch = () => {
 			player = info.player;
 		});
 	});
-}
+};
 
 ytFetch();
 
@@ -53,7 +51,6 @@ definePageMetadata(computed(() => props.url ? {
 	icon: 'fa-brands fa-youtube'
 } : null));
 
-console.log(await player.url);
 </script>
 
 <style lang="scss">
