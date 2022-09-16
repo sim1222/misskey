@@ -19,7 +19,8 @@
 			:type="video.type"
 		>
 	</video>
-	<i class="fas fa-eye-slash" @click="hide = true"></i>
+	<i class="fas fa-window-restore" @click="popup"></i>
+	<!-- <i class="fas fa-eye-slash" @click="hide = true"></i> -->
 </div>
 </template>
 
@@ -27,12 +28,18 @@
 import { ref } from 'vue';
 import * as misskey from 'misskey-js';
 import { defaultStore } from '@/store';
+import * as os from '@/os';
 
 const props = defineProps<{
 	video: misskey.entities.DriveFile;
 }>();
 
 const hide = ref((defaultStore.state.nsfw === 'force') ? true : props.video.isSensitive && (defaultStore.state.nsfw !== 'ignore'));
+
+function popup() {
+	os.pageWindow(`/media-player/${encodeURIComponent(props.video.id)}`);
+	hide.value = true;
+}
 </script>
 
 <style lang="scss" scoped>

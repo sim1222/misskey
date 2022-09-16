@@ -450,8 +450,8 @@ export const routes = [{
 	component: page(() => import('./pages/antenna-timeline.vue')),
 	loginRequired: true,
 }, {
-	path: '/ytplayer/:url',
-	component: page(() => import('./pages/ytplayer.vue')),
+	path: '/media-player/:url',
+	component: page(() => import('./pages/media-player.vue')),
 }, {
 	name: 'index',
 	path: '/',
