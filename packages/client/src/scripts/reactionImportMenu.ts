@@ -32,6 +32,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 			return;
 		}
 
+		console.log(id[0]);
 		resolve(id[0]);
 	});
 
@@ -63,8 +64,8 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 		if (!emojiId) return;
 		os.api('admin/emoji/copy', {
 			emojiId: emojiId,
-		}).then(emoji => os.popup(defineAsyncComponent(() => import('@/pages/admin/emoji-edit-dialog.vue')), {
-			emoji: getEmojiObject(emoji),
+		}).then(async emoji => os.popup(defineAsyncComponent(() => import('@/pages/admin/emoji-edit-dialog.vue')), {
+			emoji: await getEmojiObject(emoji),
 		}));
 	};
 
@@ -80,7 +81,13 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 		icon: 'fas fa-copy',
 		text: i18n.ts.copy,
 		action: () => {
-			copyToClipboard(reaction);
+			copyToClipboard(reaction => {
+				if (reaction.startsWith(':')) {
+					return `:${reaction.match(/(?<=:).*(?=@.*\.*(?=:))/g)[0]}:` || reaction;
+				} else {
+					return reaction;
+				}
+			});
 		},
 		}];
 	const emojiId = await getEmojiId(reaction);
