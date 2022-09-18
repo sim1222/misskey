@@ -90,7 +90,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 			});
 		},
 		}];
-	const emojiId = await getEmojiId(reaction);
+	const emojiId = await getEmojiId(reaction)? await getEmojiId(reaction) : reaction;
 	if (reaction.startsWith(':') && emojiId) {
 		menuItems.push({
 			type: 'button',
@@ -99,7 +99,9 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 			action: async () => {
 				const duplication: boolean = await os.api('meta').then(meta => {
 					const emojis = meta.emojis;
-					return emojis.some(emoji => emoji.name === reaction.match(/(?<=:).*(?=@.*\.*(?=:))/g)[0]);
+					return emojis.some((emoji) => {
+						return (emoji.name === reaction.match(/(?<=:).*(?=@.*\.*(?=:))/g)[0]);
+					});
 				});
 
 				console.log(await duplication);
