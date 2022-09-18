@@ -90,7 +90,8 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 			});
 		},
 		}];
-	const emojiId = await getEmojiId(reaction)? await getEmojiId(reaction) : reaction;
+	const emojiId = await getEmojiId(reaction) ? await getEmojiId(reaction) : reaction;
+	console.log(emojiId);
 	if (reaction.startsWith(':') && emojiId) {
 		menuItems.push({
 			type: 'button',
