@@ -114,9 +114,9 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 					os.confirm({
 						type: 'warning',
 						text: '同じ名前の絵文字が存在します。インポートしますか？',
-					}).then(canceled => {
-						console.log(canceled);
-						if (canceled) return;
+					}).then(res => {
+						console.log(res);
+						if (res.canceled) return;
 						importEmoji(reaction);
 					});
 				} else {
