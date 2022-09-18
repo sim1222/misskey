@@ -91,7 +91,8 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 		},
 		}];
 	const emojiId = await getEmojiId(reaction) ? await getEmojiId(reaction) : reaction;
-	console.log('emojiId: ', emojiId);
+	console.log('emojiId: ', await getEmojiId(reaction));
+	console.log('reaction: ', reaction);
 	if (reaction.startsWith(':') && emojiId) {
 		menuItems.push({
 			type: 'button',
