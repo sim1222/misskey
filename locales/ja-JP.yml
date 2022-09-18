@@ -896,6 +896,9 @@ shuffle: "シャッフル"
 account: "アカウント"
 move: "移動"
 deckOld: "旧デッキ"
+pakuruConfirm: "パクりますか？"
+pakuru: "パクる"
+duplicateEmoji: "同じ名前の絵文字が存在します。インポートしますか？"
 
 _sensitiveMediaDetection:
   description: "機械学習を使って自動でセンシティブなメディアを検出し、モデレーションに役立てることができます。サーバーの負荷が少し増えます。"
