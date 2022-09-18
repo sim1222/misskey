@@ -111,7 +111,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 				if (await duplication) {
 					os.confirm({
 						type: 'warning',
-						text: i18n.ts.emojiAlreadyExists,
+						text: '同じ名前の絵文字が存在します。インポートしますか？',
 					}).then(canceled => {
 						if (canceled) return;
 						importEmoji(reaction);
