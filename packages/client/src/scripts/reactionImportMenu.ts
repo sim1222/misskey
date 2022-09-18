@@ -8,6 +8,11 @@ import { MenuItem } from '@/types/menu';
 export async function openReactionImportMenu(ev: MouseEvent, reaction: string): Promise<void> {
 	if (!reaction) return;
 
+	const host = reaction.match(/(?<=@).*\.*(?=:)/g)?.[0];
+	const name = reaction.match(/(?<=:).*(?=@.*\.*(?=:))/g)?.[0];
+	const isLocal = (host === null || host === '.');
+	const isCustom = reaction.startsWith(':');
+
 	const getEmojiObject = (emojiId): Promise<Record<string, any> | null> => new Promise<Record<string, any> | null>(async resolve => {
 		const sinceId = await os.api('admin/emoji/list', {
 			limit: 1,
@@ -32,11 +37,8 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 		resolve(id[0]);
 	});
 
-	const getEmojiId = async (emojiName: string): Promise<string | null> => {
-		const isLocal = (emojiName.match(/(?<=@).*\.*(?=:)/g) === null || emojiName.match(/(?<=@).*\.*(?=:)/g)[0] === '.');
+	const getEmojiId = async (): Promise<string | null> => {
 		if (isLocal) return null;
-		const host = emojiName.match(/(?<=@).*\.*(?=:)/g)[0];
-		const name = emojiName.match(/(?<=:).*(?=@.*\.*(?=:))/g)[0];
 		if (!host || !name) return null;
 
 		const resList: Record<string, any>[] = await os.api('admin/emoji/list-remote', {
@@ -50,8 +52,8 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 		return emojiId;
 	};
 
-	const importEmoji = async (emojiName: string): Promise<void> => {
-		const emojiId = await getEmojiId(emojiName);
+	const importEmoji = async (): Promise<void> => {
+		const emojiId = await getEmojiId();
 		if (!await emojiId) return;
 		os.api('admin/emoji/copy', {
 			emojiId: emojiId,
@@ -68,13 +70,18 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 		icon: 'fas fa-copy',
 		text: i18n.ts.copy,
 		action: (): void => {
-			copyToClipboard(reaction.startsWith(':') ? `:${reaction.match(/(?<=:).*(?=@.*\.*(?=:))/g)[0]}:` : reaction);
+			copyToClipboard(isCustom ? `:${name}:` : reaction);
 		},
 	}];
 
-	const emojiId = await getEmojiId(reaction) ? await getEmojiId(reaction) : reaction;
-	if (reaction.startsWith(':') && emojiId) {
-		if (!($i?.isAdmin || $i?.isModerator)) return;
+	const emojiId = await getEmojiId() ? await getEmojiId() : reaction;
+
+	if (
+		isCustom &&
+		emojiId &&
+		($i?.isAdmin || $i?.isModerator) &&
+		!isLocal
+	) {
 		menuItems.push({
 			type: 'button',
 			icon: 'fas fa-download',
@@ -83,7 +90,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 				const duplication: boolean = await os.api('meta').then(meta => {
 					const emojis = meta.emojis;
 					return emojis.some((emoji) => {
-						return (emoji.name === reaction.match(/(?<=:).*(?=@.*\.*(?=:))/g)[0]);
+						return (emoji.name === name);
 					});
 				});
 
@@ -93,10 +100,10 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 						text: i18n.ts.duplicateEmoji,
 					}).then(res => {
 						if (res.canceled) return;
-						importEmoji(reaction);
+						importEmoji();
 					});
 				} else {
-					importEmoji(reaction);
+					importEmoji();
 				}
 			},
 		});
