@@ -1,5 +1,5 @@
 <template>
-<img v-if="customEmoji" class="mk-emoji custom" :class="{ normal, noStyle }" :src="url" :alt="alt" :title="alt" @contextmenu.stop="onContextmenu" decoding="async"/>
+<img v-if="customEmoji" class="mk-emoji custom" :class="{ normal, noStyle }" :src="url" :alt="alt" :title="alt" decoding="async"/>
 <img v-else-if="char && !useOsNativeEmojis" class="mk-emoji" :src="url" :alt="alt" :title="alt" decoding="async"/>
 <span v-else-if="char && useOsNativeEmojis">{{ char }}</span>
 <span v-else>{{ emoji }}</span>
@@ -12,7 +12,6 @@ import { getStaticImageUrl } from '@/scripts/get-static-image-url';
 import { char2filePath } from '@/scripts/twemoji-base';
 import { defaultStore } from '@/store';
 import { instance } from '@/instance';
-import { openReactionImportMenu } from '@/scripts/reactionImportMenu';
 
 const props = defineProps<{
 	emoji: string;
@@ -37,13 +36,6 @@ const url = computed(() => {
 	}
 });
 const alt = computed(() => customEmoji.value ? `:${customEmoji.value.name}:` : char.value);
-
-const onContextmenu = (e: MouseEvent) => {
-	console.log('MkEmoji: onContextmenu customEmoji=', customEmoji.value);
-	console.log('MkEmoji: onContextmenu props=', props);
-	openReactionImportMenu(e, customEmoji.value?.id ?? props.emoji);
-};
-
 </script>
 
 <style lang="scss" scoped>
