@@ -68,7 +68,6 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 		icon: 'fas fa-copy',
 		text: i18n.ts.copy,
 		action: (): void => {
-			console.log('copy');
 			copyToClipboard(reaction.startsWith(':') ? `:${reaction.match(/(?<=:).*(?=@.*\.*(?=:))/g)[0]}:` : reaction);
 		},
 	}];
