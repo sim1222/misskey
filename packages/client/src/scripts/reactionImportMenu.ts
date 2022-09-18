@@ -60,6 +60,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 	}
 
 	const importEmoji = async (emojiName: string) => {
+		console.log('importEmoji', emojiName);
 		const emojiId = await getEmojiId(emojiName);
 		console.log('emojiId: ', await emojiId);
 		if (!await emojiId) return;
@@ -114,6 +115,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 						type: 'warning',
 						text: '同じ名前の絵文字が存在します。インポートしますか？',
 					}).then(canceled => {
+						console.log(canceled);
 						if (canceled) return;
 						importEmoji(reaction);
 					});
