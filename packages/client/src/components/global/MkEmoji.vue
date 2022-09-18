@@ -39,6 +39,8 @@ const url = computed(() => {
 const alt = computed(() => customEmoji.value ? `:${customEmoji.value.name}:` : char.value);
 
 const onContextmenu = (e: MouseEvent) => {
+	console.log('MkEmoji: onContextmenu id=', customEmoji.value?.id);
+	console.log('MkEmoji: onContextmenu emoji=', props.emoji);
 	openReactionImportMenu(e, customEmoji.value?.id ?? props.emoji);
 };
 
