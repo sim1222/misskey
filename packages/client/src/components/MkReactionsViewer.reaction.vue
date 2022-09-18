@@ -93,7 +93,6 @@ useTooltip(buttonRef, async (showing) => {
 
 const onContextmenu = (e: MouseEvent) => {
 	e.preventDefault();
-	console.log('contextmenu');
 	openReactionImportMenu(e, props.reaction);
 };
 </script>

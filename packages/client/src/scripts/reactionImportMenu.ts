@@ -9,8 +9,6 @@ import { CustomEmoji } from 'misskey-js/built/entities';
 
 export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 
-	console.log('openReactionImportMenu', reaction);
-
 	const getEmojiObject = emojiId => new Promise<Record<string, any> | null>(async resolve => {
 		const sinceId = await os.api('admin/emoji/list', {
 			limit: 1,
@@ -32,7 +30,6 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 			return;
 		}
 
-		console.log(id[0]);
 		resolve(id[0]);
 	});
 
@@ -41,9 +38,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 		const isLocal = (emojiName.match(/(?<=@).*\.*(?=:)/g) == null || emojiName.match(/(?<=@).*\.*(?=:)/g)[0] == '.');
 		if (isLocal) return null;
 		const host = emojiName.match(/(?<=@).*\.*(?=:)/g)[0];
-		console.log(host)
 		const name = emojiName.match(/(?<=:).*(?=@.*\.*(?=:))/g)[0];
-		console.log(name)
 		if (!host || !name) return;
 
 
@@ -54,15 +49,12 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 		});
 
 		const emojiId = await resList.find(emoji => emoji.name == name && emoji.host == host)?.id;
-		console.log(emojiId);
 
 		return emojiId;
 	}
 
 	const importEmoji = async (emojiName: string) => {
-		console.log('importEmoji', emojiName);
 		const emojiId = await getEmojiId(emojiName);
-		console.log('emojiId: ', await emojiId);
 		if (!await emojiId) return;
 		os.api('admin/emoji/copy', {
 			emojiId: emojiId,
@@ -73,7 +65,6 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 
 	if (!($i?.isAdmin || $i?.isModerator)) return;
 	if (!reaction) return;
-	console.log('passed');
 
 	const menuItems: MenuItem[] = [{
 		type: 'label',
@@ -93,8 +84,6 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 		},
 		}];
 	const emojiId = await getEmojiId(reaction) ? await getEmojiId(reaction) : reaction;
-	console.log('emojiId: ', await getEmojiId(reaction));
-	console.log('reaction: ', reaction);
 	if (reaction.startsWith(':') && emojiId) {
 		menuItems.push({
 			type: 'button',
@@ -108,14 +97,11 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string) {
 					});
 				});
 
-				console.log(await duplication);
-
 				if (await duplication) {
 					os.confirm({
 						type: 'warning',
 						text: '同じ名前の絵文字が存在します。インポートしますか？',
 					}).then(res => {
-						console.log(res);
 						if (res.canceled) return;
 						importEmoji(reaction);
 					});
