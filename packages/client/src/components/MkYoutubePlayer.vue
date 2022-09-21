@@ -1,22 +1,28 @@
 <template>
-	<div class="poamfof fill">
+<XWindow :initial-width="640" :initial-height="402" :can-resize="true" :close-button="true">
+	<template #header>
+		<i class="icon fa-brands fa-youtube" style="margin-right: 0.5em;"></i>
+		<span>{{ title ?? 'Youtube Player' }}</span>
+	</template>
+
+	<div class="poamfof">
 		<transition :name="$store.state.animation ? 'fade' : ''" mode="out-in">
 			<div v-if="player.url" class="player">
 				<iframe v-if="!fetching" :src="player.url + (player.url.match(/\?/) ? '&autoplay=1&auto_play=1' : '?autoplay=1&auto_play=1')" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen/>
 			</div>
 		</transition>
-		<MkLoading v-if="fetching" />
-		<MkError v-else-if="!player.url" @retry="ytFetch()" />
+		<MkLoading v-if="fetching"/>
+		<MkError v-else-if="!player.url" @retry="ytFetch()"/>
 	</div>
+</XWindow>
 </template>
 
 <script lang="ts" setup>
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { computed } from 'vue';
+import XWindow from '@/components/MkWindow.vue';
 import { lang } from '@/config';
 
 const props = defineProps<{
-    url: string;
+	url: string;
 }>();
 
 const requestUrl = new URL(props.url);
@@ -24,14 +30,14 @@ const requestUrl = new URL(props.url);
 let fetching = $ref(true);
 let title = $ref<string | null>(null);
 let player = $ref({
-    url: null,
-    width: null,
-    height: null,
+	url: null,
+	width: null,
+	height: null,
 });
 
-const requestLang = (lang || 'ja-JP').replace('ja-KS', 'ja-JP');
+const requestLang = (lang ?? 'ja-JP').replace('ja-KS', 'ja-JP');
 
-const ytFetch = () => {
+const ytFetch = (): void => {
 	fetching = true;
 	fetch(`/url?url=${encodeURIComponent(requestUrl.href)}&lang=${requestLang}`).then(res => {
 		res.json().then(info => {
@@ -45,39 +51,22 @@ const ytFetch = () => {
 
 ytFetch();
 
-definePageMetadata(computed(() => props.url ? {
-	title: title?.toString() || 'Youtube Player',
-	path: `/notes/${props.url}`,
-	icon: 'fa-brands fa-youtube'
-} : null));
-
 </script>
 
 <style lang="scss">
 .poamfof {
 	position: relative;
 	overflow: hidden;
-	min-height: 64px;
+	height: 100%;
 
 	.player {
 		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		height: calc(100% - 10px);
-		width: calc(100% - 10px);
-		padding: 5px;
+		inset: 0;
 
 		iframe {
 			width: 100%;
 			height: 100%;
-			border-radius: 0 0 var(--radius) var(--radius);
 		}
 	}
-}
-
-.fill {
-	height: 100%;
 }
 </style>

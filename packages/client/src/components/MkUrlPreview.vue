@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted } from 'vue';
+import { defineAsyncComponent, onMounted, onUnmounted } from 'vue';
 import { url as local, lang } from '@/config';
 import { i18n } from '@/i18n';
 import * as os from '@/os';
@@ -108,8 +108,10 @@ function adjustTweetHeight(message: any) {
 	if (height) tweetHeight = height;
 }
 
-const openPlayer = () => {
-	os.pageWindow(`/ytplayer/${encodeURIComponent(requestUrl.href)}`);
+const openPlayer = (): void => {
+	os.popup(defineAsyncComponent(() => import('@/components/MkYoutubePlayer.vue')), {
+		url: requestUrl.href,
+	});
 };
 
 (window as any).addEventListener('message', adjustTweetHeight);
