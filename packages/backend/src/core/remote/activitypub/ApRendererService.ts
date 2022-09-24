@@ -20,6 +20,7 @@ import { MfmService } from '@/core/MfmService.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
 import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
 import type { UserKeypair } from '@/models/entities/UserKeypair.js';
+import type { UsersRepository, UserProfilesRepository, NotesRepository, DriveFilesRepository, EmojisRepository, PollsRepository } from '@/models/index.js';
 import { LdSignatureService } from './LdSignatureService.js';
 import { ApMfmService } from './ApMfmService.js';
 import type { IActivity } from './type.js';
@@ -242,7 +243,7 @@ export class ApRendererService {
 		};
 	}
 
-	public async renderLike(noteReaction: NoteReaction, note: Note) {
+	public async renderLike(noteReaction: NoteReaction, note: { uri: string | null }) {
 		const reaction = noteReaction.reaction;
 
 		const object = {
