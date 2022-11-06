@@ -14,8 +14,8 @@
 		controls
 		@contextmenu.stop
 	>
-		<source 
-			:src="video.url" 
+		<source
+			:src="video.url"
 			:type="video.type === 'video/quicktime' ? 'video/mp4' : video.type"
 		>
 	</video>
@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import * as misskey from 'misskey-js';
 import { defaultStore } from '@/store';
 
@@ -32,7 +32,12 @@ const props = defineProps<{
 	video: misskey.entities.DriveFile;
 }>();
 
+const videoEl = $ref<HTMLVideoElement | null>();
 const hide = ref((defaultStore.state.nsfw === 'force') ? true : props.video.isSensitive && (defaultStore.state.nsfw !== 'ignore'));
+
+onMounted(() => {
+	if (videoEl) videoEl.volume = 0.2;
+});
 </script>
 
 <style lang="scss" scoped>

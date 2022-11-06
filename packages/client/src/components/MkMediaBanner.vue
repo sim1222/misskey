@@ -43,7 +43,8 @@ function volumechange() {
 }
 
 onMounted(() => {
-	if (audioEl) audioEl.volume = ColdDeviceStorage.get('mediaVolume');
+	// if (audioEl) audioEl.volume = ColdDeviceStorage.get('mediaVolume');
+	if (audioEl) audioEl.volume = 0.2;
 });
 </script>
 
