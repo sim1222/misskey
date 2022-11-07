@@ -50,8 +50,6 @@
 			<button v-tooltip="i18n.ts.attachFile" class="_button" @click="chooseFileFrom"><i class="fas fa-photo-video"></i></button>
 			<button v-tooltip="i18n.ts.poll" class="_button" :class="{ active: poll }" @click="togglePoll"><i class="fas fa-poll-h"></i></button>
 			<button v-tooltip="i18n.ts.useCw" class="_button" :class="{ active: useCw }" @click="useCw = !useCw"><i class="fas fa-eye-slash"></i></button>
-			<button v-tooltip="i18n.ts.mention" class="_button" @click="insertMention"><i class="fas fa-at"></i></button>
-			<button v-tooltip="i18n.ts.hashtags" class="_button" :class="{ active: withHashtags }" @click="withHashtags = !withHashtags"><i class="fas fa-hashtag"></i></button>
 			<button v-tooltip="i18n.ts.emoji" class="_button" @click="insertEmoji"><i class="fas fa-laugh-squint"></i></button>
 			<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugin" class="_button" @click="showActions"><i class="fas fa-plug"></i></button>
 		</footer>
@@ -166,26 +164,6 @@ const draftKey = $computed((): string => {
 	}
 
 	return key;
-});
-
-const placeholder = $computed((): string => {
-	if (props.renote) {
-		return i18n.ts._postForm.quotePlaceholder;
-	} else if (props.reply) {
-		return i18n.ts._postForm.replyPlaceholder;
-	} else if (props.channel) {
-		return i18n.ts._postForm.channelPlaceholder;
-	} else {
-		const xs = [
-			i18n.ts._postForm._placeholders.a,
-			i18n.ts._postForm._placeholders.b,
-			i18n.ts._postForm._placeholders.c,
-			i18n.ts._postForm._placeholders.d,
-			i18n.ts._postForm._placeholders.e,
-			i18n.ts._postForm._placeholders.f,
-		];
-		return xs[Math.floor(Math.random() * xs.length)];
-	}
 });
 
 const submitText = $computed((): string => {

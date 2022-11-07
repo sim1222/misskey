@@ -27,8 +27,7 @@
 					<div class="desc" v-html="meta.description || i18n.ts.headlineMisskey"></div>
 				</div>
 				<div class="action">
-					<MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton>
-					<MkButton inline rounded data-cy-signin @click="signin()">{{ i18n.ts.login }}</MkButton>
+					<MkButton inline rounded gradate data-cy-signin style="margin-right: 12px;" @click="signin()">{{ i18n.ts.login }}</MkButton>
 				</div>
 			</div>
 		</div>
