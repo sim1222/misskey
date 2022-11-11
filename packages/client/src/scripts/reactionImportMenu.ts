@@ -45,6 +45,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 	const getEmojiId = async (): Promise<string | null> => {
 		if (isLocal) return null;
 		if (!host || !name) return null;
+		if (!($i?.isAdmin || $i?.isModerator)) return null;
 
 		const resList: Record<string, any>[] = await os.api('admin/emoji/list-remote', {
 			host,
