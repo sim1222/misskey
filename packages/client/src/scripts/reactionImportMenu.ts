@@ -14,6 +14,11 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 	const isCustom = reaction.startsWith(':');
 
 	const getEmojiObject = (emojiId): Promise<Record<string, any> | null> => new Promise<Record<string, any> | null>(async resolve => {
+		if (!($i?.isAdmin || $i?.isModerator)) {
+			resolve(null);
+			return;
+		}
+
 		const sinceId = await os.api('admin/emoji/list', {
 			limit: 1,
 			untilId: emojiId.id,
