@@ -17,8 +17,8 @@
 							<MkUserName class="name" :user="user" :nowrap="true"/>
 							<div class="bottom">
 								<span class="username"><MkAcct :user="user" :detail="true"/></span>
-								<span v-if="user.isAdmin" :title="i18n.ts.isAdmin" style="color: var(--badge);"><i class="fas fa-bookmark"></i></span>
-								<span v-if="!user.isAdmin && user.isModerator" :title="i18n.ts.isModerator" style="color: var(--badge);"><i class="far fa-bookmark"></i></span>
+								<span v-if="user.isAdmin" :title="i18n.ts.isAdmin"><MkEmoji emoji="〽"></MkEmoji></span>
+								<span v-if="!user.isAdmin && user.isModerator" :title="i18n.ts.isModerator"><MkEmoji emoji="〽"></MkEmoji></span>
 								<span v-if="user.isLocked" :title="i18n.ts.isLocked"><i class="fas fa-lock"></i></span>
 								<span v-if="user.isBot" :title="i18n.ts.isBot"><i class="fas fa-robot"></i></span>
 							</div>
@@ -34,8 +34,8 @@
 						<MkUserName :user="user" :nowrap="false" class="name"/>
 						<div class="bottom">
 							<span class="username"><MkAcct :user="user" :detail="true"/></span>
-							<span v-if="user.isAdmin" :title="i18n.ts.isAdmin" style="color: var(--badge);"><i class="fas fa-bookmark"></i></span>
-							<span v-if="!user.isAdmin && user.isModerator" :title="i18n.ts.isModerator" style="color: var(--badge);"><i class="far fa-bookmark"></i></span>
+							<span v-if="user.isAdmin" :title="i18n.ts.isAdmin"><MkEmoji emoji="〽"></MkEmoji></span>
+							<span v-if="!user.isAdmin && user.isModerator" :title="i18n.ts.isModerator"><MkEmoji emoji="〽"></MkEmoji></span>
 							<span v-if="user.isLocked" :title="i18n.ts.isLocked"><i class="fas fa-lock"></i></span>
 							<span v-if="user.isBot" :title="i18n.ts.isBot"><i class="fas fa-robot"></i></span>
 						</div>
@@ -119,6 +119,7 @@ import MkFolder from '@/components/MkFolder.vue';
 import MkRemoteCaution from '@/components/MkRemoteCaution.vue';
 import MkTab from '@/components/MkTab.vue';
 import MkInfo from '@/components/MkInfo.vue';
+import MkEmoji from '@/components/global/MkEmoji.vue';
 import { getScrollPosition } from '@/scripts/scroll';
 import { getUserMenu } from '@/scripts/get-user-menu';
 import number from '@/filters/number';
