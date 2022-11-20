@@ -26,15 +26,17 @@ const char = computed(() => isCustom.value ? null : props.emoji);
 const useOsNativeEmojis = computed(() => defaultStore.state.useOsNativeEmojis && !props.isReaction);
 const ce = computed(() => props.customEmojis ?? instance.emojis ?? []);
 const customEmoji = computed(() => isCustom.value ? ce.value.find(x => x.name === props.emoji.substr(1, props.emoji.length - 2)) : null);
-const url = computed(() => {
-	if (char.value) {
-		return char2filePath(char.value);
-	} else {
-		return defaultStore.state.disableShowingAnimatedImages
-			? getStaticImageUrl(customEmoji.value.url)
-			: customEmoji.value.url;
-	}
-});
+const imageSrc = defaultStore.state.disableShowingAnimatedImages
+	? getStaticImageUrl(customEmoji.value?.url)
+	: customEmoji.value?.url;
+const url = char.value ?
+	char2filePath(char.value)
+	:
+	defaultStore.state.mediaProxy ?
+		defaultStore.state.mediaProxy + '?url=' + imageSrc
+		:
+		imageSrc;
+
 const alt = computed(() => customEmoji.value ? `:${customEmoji.value.name}:` : char.value);
 </script>
 

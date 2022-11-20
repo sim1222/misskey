@@ -35,6 +35,10 @@
 			<option value="dialog">{{ i18n.ts._serverDisconnectedBehavior.dialog }}</option>
 			<option value="quiet">{{ i18n.ts._serverDisconnectedBehavior.quiet }}</option>
 		</FormSelect>
+		<FormInput v-model="mediaProxy">
+			<template #label>{{ i18n.ts.mediaProxy }}</template>
+			<template #caption>{{ i18n.ts.mediaProxyDesc }}</template>
+		</FormInput>
 	</FormSection>
 
 	<FormSection>
@@ -100,6 +104,7 @@ import FormRadios from '@/components/form/radios.vue';
 import FormRange from '@/components/form/range.vue';
 import FormSection from '@/components/form/section.vue';
 import FormLink from '@/components/form/link.vue';
+import FormInput from '@/components/form/input.vue';
 import MkLink from '@/components/MkLink.vue';
 import { langs } from '@/config';
 import { defaultStore } from '@/store';
@@ -143,6 +148,7 @@ const enableInfiniteScroll = computed(defaultStore.makeGetterSetter('enableInfin
 const useReactionPickerForContextMenu = computed(defaultStore.makeGetterSetter('useReactionPickerForContextMenu'));
 const squareAvatars = computed(defaultStore.makeGetterSetter('squareAvatars'));
 const aiChanMode = computed(defaultStore.makeGetterSetter('aiChanMode'));
+const mediaProxy = computed(defaultStore.makeGetterSetter('mediaProxy'));
 
 watch(lang, () => {
 	localStorage.setItem('lang', lang.value as string);
