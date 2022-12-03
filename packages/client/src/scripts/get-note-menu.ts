@@ -76,12 +76,6 @@ export function getNoteMenu(props: {
 		});
 	}
 
-	function toggleWatch(watch: boolean): void {
-		os.apiWithDialog(watch ? 'notes/watching/create' : 'notes/watching/delete', {
-			noteId: appearNote.id,
-		});
-	}
-
 	function toggleThreadMute(mute: boolean): void {
 		os.apiWithDialog(mute ? 'notes/thread-muting/create' : 'notes/thread-muting/delete', {
 			noteId: appearNote.id,
@@ -266,15 +260,6 @@ export function getNoteMenu(props: {
 				text: i18n.ts.clip,
 				action: () => clip(),
 			},
-			(appearNote.userId !== $i.id) ? statePromise.then(state => state.isWatching ? {
-				icon: 'fas fa-eye-slash',
-				text: i18n.ts.unwatch,
-				action: () => toggleWatch(false),
-			} : {
-				icon: 'fas fa-eye',
-				text: i18n.ts.watch,
-				action: () => toggleWatch(true),
-			}) : undefined,
 			statePromise.then(state => state.isMutedThread ? {
 				icon: 'fas fa-comment-slash',
 				text: i18n.ts.unmuteThread,
@@ -333,7 +318,7 @@ export function getNoteMenu(props: {
 				}]
 			: []
 			)]
-		.filter(x => x !== undefined);
+			.filter(x => x !== undefined);
 	} else {
 		menu = [{
 			icon: 'fas fa-copy',
@@ -350,7 +335,7 @@ export function getNoteMenu(props: {
 				window.open(appearNote.url || appearNote.uri, '_blank');
 			},
 		} : undefined]
-		.filter(x => x !== undefined);
+			.filter(x => x !== undefined);
 	}
 
 	if (noteActions.length > 0) {

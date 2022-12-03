@@ -1,6 +1,6 @@
 <template>
 <div class="hpaizdrt" :style="bg">
-	<img v-if="instance.faviconUrl" class="icon" :src="instance.faviconUrl"/>
+	<img v-if="instance.faviconUrl" class="icon" :src="faviconUrl"/>
 	<span class="name">{{ instance.name }}</span>
 </div>
 </template>
@@ -9,6 +9,7 @@
 import { } from 'vue';
 import { instanceName } from '@/config';
 import { instance as Instance } from '@/instance';
+import { defaultStore } from '@/store';
 
 const props = defineProps<{
 	instance?: {
@@ -24,6 +25,11 @@ const instance = props.instance ?? {
 	name: instanceName,
 	themeColor: (document.querySelector('meta[name="theme-color-orig"]') as HTMLMetaElement)?.content
 };
+
+const faviconUrl = defaultStore.state.mediaProxy ?
+	defaultStore.state.mediaProxy + '?url=' + instance.faviconUrl
+	:
+	instance.faviconUrl;
 
 const themeColor = instance.themeColor ?? '#777777';
 
