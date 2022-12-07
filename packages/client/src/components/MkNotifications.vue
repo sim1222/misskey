@@ -10,7 +10,7 @@
 	<template #default="{ items: notifications }">
 		<XList v-slot="{ item: notification }" class="elsfgstc" :items="notifications" :no-gap="true">
 			<XNote v-if="['reply', 'quote', 'mention'].includes(notification.type)" :key="notification.id" :note="notification.note"/>
-			<XNotification v-else :key="notification.id" :notification="notification" :with-time="true" :full="true" class="_panel notification"/>
+			<XNotification v-else :key="notification.id" :notification="notification" :with-time="true" :full="true" class="_panel blur notification"/>
 		</XList>
 	</template>
 </MkPagination>

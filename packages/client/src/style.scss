@@ -253,8 +253,6 @@ hr {
 	// background: var(--panel);
 	border-radius: var(--radius);
 	overflow: clip;
-	backdrop-filter: var(--blur, blur(8px));
-	-webkit-backdrop-filter: var(--blur, blur(8px));
 }
 
 ._block {
@@ -336,8 +334,6 @@ hr {
 	background: var(--popup);
 	border-radius: var(--radius);
 	contain: content;
-	-webkit-backdrop-filter: var(--blur, blur(15px));
-	backdrop-filter: var(--blur, blur(15px));
 }
 
 // TODO: 廃止
@@ -562,4 +558,9 @@ hr {
   100% {
     transform:  scaleX(1.00) scaleY(1.00) ;
   }
+}
+
+.blur {
+	backdrop-filter: var(--blur, blur(15px) saturate(1.3) brightness(1.1));
+	-webkit-backdrop-filter: var(--blur, blur(15px) saturate(1.3) brightness(1.1));
 }

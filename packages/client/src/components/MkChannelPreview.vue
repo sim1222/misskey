@@ -1,5 +1,5 @@
 <template>
-<MkA :to="`/channels/${channel.id}`" class="eftoefju _panel" tabindex="-1">
+<MkA :to="`/channels/${channel.id}`" class="eftoefju _panel blur" tabindex="-1">
 	<div class="banner" :style="bannerStyle">
 		<div class="fade"></div>
 		<div class="name"><i class="fas fa-satellite-dish"></i> {{ channel.name }}</div>

@@ -1,6 +1,6 @@
 <template>
 <div class="mvcprjjd" :class="{ iconOnly }">
-	<div class="body">
+	<div class="body blur">
 		<div class="top">
 			<div class="banner" :style="{ backgroundImage: `url(${ $instance.bannerUrl })` }"></div>
 			<button v-click-anime v-tooltip.noDelay.right="$instance.name ?? i18n.ts.instance" class="item _button instance" @click="openInstanceMenu">
@@ -180,8 +180,6 @@ function more(ev: MouseEvent) {
 		contain: strict;
 		display: flex;
 		flex-direction: column;
-		backdrop-filter: var(--blur, blur(8px));
-		-webkit-backdrop-filter: var(--blur, blur(8px));
 	}
 
 	&:not(.iconOnly) {

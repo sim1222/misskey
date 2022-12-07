@@ -3,7 +3,7 @@
 	<template #header><MkPageHeader :actions="headerActions"/></template>
 		<MkSpacer :content-max="800">
 		<div v-if="clip">
-			<div class="okzinsic _panel">
+			<div class="okzinsic _panel blur">
 				<div v-if="clip.description" class="description">
 					<Mfm :text="clip.description" :is-note="false" :i="$i"/>
 				</div>
@@ -48,7 +48,7 @@ watch(() => props.clipId, async () => {
 	});
 }, {
 	immediate: true,
-}); 
+});
 
 provide('currentClipPage', $$(clip));
 

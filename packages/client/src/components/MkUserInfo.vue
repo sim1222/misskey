@@ -1,5 +1,5 @@
 <template>
-<div class="_panel vjnjpkug">
+<div class="_panel blur vjnjpkug">
 	<div class="banner" :style="user.bannerUrl ? `background-image: url(${user.bannerUrl})` : ''"></div>
 	<MkAvatar class="avatar" :user="user" :disable-preview="true" :show-indicator="true"/>
 	<div class="title">
@@ -82,7 +82,7 @@ defineProps<{
 			opacity: 0.7;
 		}
 	}
-	
+
 	> .followed {
 		position: absolute;
 		top: 12px;
@@ -93,7 +93,7 @@ defineProps<{
 		font-size: 0.7em;
 		border-radius: 6px;
 	}
-	
+
 	> .description {
 		padding: 16px;
 		font-size: 0.8em;
@@ -102,7 +102,7 @@ defineProps<{
 		> .mfm {
 			display: -webkit-box;
 			-webkit-line-clamp: 3;
-			-webkit-box-orient: vertical;  
+			-webkit-box-orient: vertical;
 			overflow: hidden;
 		}
 	}

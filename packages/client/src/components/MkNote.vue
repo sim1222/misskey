@@ -651,4 +651,8 @@ function readPromo() {
 	text-align: center;
 	opacity: 0.7;
 }
+
+.selecting {
+	
+}
 </style>

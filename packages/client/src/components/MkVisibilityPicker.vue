@@ -1,6 +1,6 @@
 <template>
 <MkModal ref="modal" :z-priority="'high'" :src="src" @click="modal.close()" @closed="emit('closed')">
-	<div class="gqyayizv _popup">
+	<div class="gqyayizv _popup blur">
 		<button key="public" class="_button" :class="{ active: v === 'public' }" data-index="1" @click="choose('public')">
 			<div><i class="fas fa-globe"></i></div>
 			<div>

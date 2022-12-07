@@ -4,7 +4,7 @@
 
 	<FormSection>
 		<template #label>{{ i18n.ts.manage }}</template>
-		<div v-for="plugin in plugins" :key="plugin.id" class="_formBlock _panel" style="padding: 20px;">
+		<div v-for="plugin in plugins" :key="plugin.id" class="_formBlock _panel blur" style="padding: 20px;">
 			<span style="display: flex;"><b>{{ plugin.name }}</b><span style="margin-left: auto;">v{{ plugin.version }}</span></span>
 
 			<FormSwitch class="_formBlock" :model-value="plugin.active" @update:modelValue="changeActive(plugin, $event)">{{ i18n.ts.makeActive }}</FormSwitch>

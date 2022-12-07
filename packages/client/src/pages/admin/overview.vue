@@ -5,14 +5,14 @@
 			<div v-if="stats" class="container stats">
 				<div class="title">Stats</div>
 				<div class="body">
-					<div class="number _panel">
+					<div class="number _panel blur">
 						<div class="label">Users</div>
 						<div class="value _monospace">
 							{{ number(stats.originalUsersCount) }}
 							<MkNumberDiff v-if="usersComparedToThePrevDay != null" v-tooltip="i18n.ts.dayOverDayChanges" class="diff" :value="usersComparedToThePrevDay"><template #before>(</template><template #after>)</template></MkNumberDiff>
 						</div>
 					</div>
-					<div class="number _panel">
+					<div class="number _panel blur">
 						<div class="label">Notes</div>
 						<div class="value _monospace">
 							{{ number(stats.originalNotesCount) }}
@@ -53,23 +53,23 @@
 			<div class="container env">
 				<div class="title">Enviroment</div>
 				<div class="body">
-					<div class="number _panel">
+					<div class="number _panel blur">
 						<div class="label">Misskey</div>
 						<div class="value _monospace">{{ version }}</div>
 					</div>
-					<div v-if="serverInfo" class="number _panel">
+					<div v-if="serverInfo" class="number _panel blur">
 						<div class="label">Node.js</div>
 						<div class="value _monospace">{{ serverInfo.node }}</div>
 					</div>
-					<div v-if="serverInfo" class="number _panel">
+					<div v-if="serverInfo" class="number _panel blur">
 						<div class="label">PostgreSQL</div>
 						<div class="value _monospace">{{ serverInfo.psql }}</div>
 					</div>
-					<div v-if="serverInfo" class="number _panel">
+					<div v-if="serverInfo" class="number _panel blur">
 						<div class="label">Redis</div>
 						<div class="value _monospace">{{ serverInfo.redis }}</div>
 					</div>
-					<div class="number _panel">
+					<div class="number _panel blur">
 						<div class="label">Vue</div>
 						<div class="value _monospace">{{ vueVersion }}</div>
 					</div>
@@ -92,14 +92,14 @@
 			<div v-if="stats" class="container federationStats">
 				<div class="title">Federation</div>
 				<div class="body">
-					<div class="number _panel">
+					<div class="number _panel blur">
 						<div class="label">Sub</div>
 						<div class="value _monospace">
 							{{ number(federationSubActive) }}
 							<MkNumberDiff v-tooltip="i18n.ts.dayOverDayChanges" class="diff" :value="federationSubActiveDiff"><template #before>(</template><template #after>)</template></MkNumberDiff>
 						</div>
 					</div>
-					<div class="number _panel">
+					<div class="number _panel blur">
 						<div class="label">Pub</div>
 						<div class="value _monospace">
 							{{ number(federationPubActive) }}

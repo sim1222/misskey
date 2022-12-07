@@ -1,6 +1,6 @@
 <template>
 <div class="iltifgqe">
-	<div class="editor _panel _gap">
+	<div class="editor _panel blur _gap">
 		<PrismEditor v-model="code" class="_code code" :highlight="highlighter" :line-numbers="false"/>
 		<MkButton style="position: absolute; top: 8px; right: 8px;" primary @click="run()"><i class="fas fa-play"></i></MkButton>
 	</div>

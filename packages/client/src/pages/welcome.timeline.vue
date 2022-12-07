@@ -2,7 +2,7 @@
 <div class="civpbkhh">
 	<div ref="scroll" class="scrollbox" v-bind:class="{ scroll: isScrolling }">
 		<div v-for="note in notes" class="note">
-			<div class="content _panel">
+			<div class="content _panel blur">
 				<div class="body">
 					<MkA v-if="note.replyId" class="reply" :to="`/notes/${note.replyId}`"><i class="fas fa-reply"></i></MkA>
 					<Mfm v-if="note.text" :text="note.text" :author="note.user" :i="$i" :custom-emojis="note.emojis"/>

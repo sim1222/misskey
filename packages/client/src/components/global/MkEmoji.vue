@@ -36,6 +36,8 @@ const url = char.value ?
 		defaultStore.state.mediaProxy + '?url=' + imageSrc
 		:
 		imageSrc;
+console.log(imageSrc);
+console.log(url);
 
 const alt = computed(() => customEmoji.value ? `:${customEmoji.value.name}:` : char.value);
 </script>

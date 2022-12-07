@@ -11,7 +11,7 @@
 			</template>
 			<template #default="{items}">
 				<div class="mk-follow-requests">
-					<div v-for="req in items" :key="req.id" class="user _panel">
+					<div v-for="req in items" :key="req.id" class="user _panel blur">
 						<MkAvatar class="avatar" :user="req.follower" :show-indicator="true"/>
 						<div class="body">
 							<div class="name">

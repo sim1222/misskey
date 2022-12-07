@@ -1,6 +1,6 @@
 <template>
 <div class="_formRoot rsljpzjq">
-	<div v-adaptive-border class="rfqxtzch _panel _formBlock">
+	<div v-adaptive-border class="rfqxtzch _panel blur _formBlock">
 		<div class="toggle">
 			<div class="toggleWrapper">
 				<input id="dn" v-model="darkMode" type="checkbox" class="dn"/>

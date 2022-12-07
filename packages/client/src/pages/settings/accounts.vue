@@ -3,7 +3,7 @@
 	<FormSuspense :p="init">
 		<FormButton primary @click="addAccount"><i class="fas fa-plus"></i> {{ i18n.ts.addAccount }}</FormButton>
 
-		<div v-for="account in accounts" :key="account.id" class="_panel _button lcjjdxlm" @click="menu(account, $event)">
+		<div v-for="account in accounts" :key="account.id" class="_panel blur _button lcjjdxlm" @click="menu(account, $event)">
 			<div class="avatar">
 				<MkAvatar :user="account" class="avatar"/>
 			</div>

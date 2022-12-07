@@ -1,6 +1,6 @@
 <template>
 <!-- sectionを利用しているのは、deck.vue側でcolumnに対してfirst-of-typeを効かせるため -->
-<section v-hotkey="keymap" class="dnpfarvg _panel _narrow_"
+<section v-hotkey="keymap" class="dnpfarvg _panel blur _narrow_"
 	:class="{ paged: isMainColumn, naked, active, isStacked, draghover, dragging, dropready }"
 	:style="{ '--deckColumnHeaderHeight': deckStore.reactiveState.columnHeaderHeight.value + 'px' }"
 	@dragover.prevent.stop="onDragover"
@@ -296,8 +296,6 @@ function onDrop(ev) {
 
 	&.naked {
 		background: var(--acrylicBg) !important;
-		-webkit-backdrop-filter: var(--blur, blur(10px));
-		backdrop-filter: var(--blur, blur(10px));
 
 		> header {
 			background: transparent;

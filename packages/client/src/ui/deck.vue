@@ -27,7 +27,7 @@
 					@parent-focus="moveFocus(ids[0], $event)"
 				/>
 			</template>
-			<div v-if="layout.length === 0" class="intro _panel">
+			<div v-if="layout.length === 0" class="intro _panel blur">
 				<div>{{ i18n.ts._deck.introduction }}</div>
 				<MkButton primary class="add" @click="addColumn">{{ i18n.ts._deck.addColumn }}</MkButton>
 				<div>{{ i18n.ts._deck.introduction2 }}</div>

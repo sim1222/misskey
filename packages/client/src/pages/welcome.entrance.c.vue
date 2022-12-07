@@ -12,7 +12,7 @@
 		</div>
 		<div class="main">
 			<img src="/client-assets/misskey.svg" class="misskey"/>
-			<div class="form _panel">
+			<div class="form _panel blur">
 				<div class="bg">
 					<div class="fade"></div>
 				</div>

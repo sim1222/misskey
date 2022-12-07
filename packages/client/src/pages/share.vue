@@ -13,7 +13,7 @@
 			:reply="reply"
 			:renote="renote"
 			:initial-visible-users="visibleUsers"
-			class="_panel"
+			class="_panel blur"
 			@posted="state = 'posted'"
 		/>
 		<MkButton v-else-if="state === 'posted'" primary class="close" @click="close()">{{ i18n.ts.close }}</MkButton>

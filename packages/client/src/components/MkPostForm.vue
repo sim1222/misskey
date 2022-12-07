@@ -41,7 +41,11 @@
 		</div>
 		<MkInfo v-if="hasNotSpecifiedMentions" warn class="hasNotSpecifiedMentions">{{ i18n.ts.notSpecifiedMentionWarning }} - <button class="_textButton" @click="addMissingMention()">{{ i18n.ts.add }}</button></MkInfo>
 		<input v-show="useCw" ref="cwInputEl" v-model="cw" class="cw" :placeholder="i18n.ts.annotation" @keydown="onKeydown">
-		<textarea ref="textareaEl" v-model="text" class="text" :class="{ withCw: useCw }" :disabled="posting" :placeholder="placeholder" data-cy-post-form-text @keydown="onKeydown" @paste="onPaste" @compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd"/>
+		<div>
+			<textarea ref="textareaEl" v-model="text" class="text" :class="{ withCw: useCw }" :disabled="posting" :placeholder="placeholder" data-cy-post-form-text @keydown="onKeydown" @paste="onPaste" @compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd"/>
+			<i class="caret"></i>
+		</div>
+		<div ref="mask" class="mask"></div>
 		<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" class="hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
 		<XPostFormAttaches class="attaches" :files="files" @updated="updateFiles" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName"/>
 		<XPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
@@ -869,28 +873,50 @@ onMounted(() => {
 			margin: 0 20px 16px 20px;
 		}
 
-		> .cw,
-		> .hashtags,
-		> .text {
-			display: block;
-			box-sizing: border-box;
-			padding: 0 24px;
-			margin: 0;
-			width: 100%;
+		> div {
+			> .cw,
+			> .hashtags,
+			> .text {
+				display: block;
+				box-sizing: border-box;
+				padding: 0 24px;
+				margin: 0;
+				width: 100%;
+				font-size: 16px;
+				border: none;
+				border-radius: 0;
+				background: transparent;
+				color: var(--fg);
+				font-family: inherit;
+
+				&:focus {
+					outline: none;
+				}
+
+				&:disabled {
+					opacity: 0.5;
+				}
+			}
+			> .caret {
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 2px;
+				height: 1rem;
+				border: none;
+				border-radius: 1px;
+				background-color: #0c7ac9;
+				font-size: 16px;
+			}
+		}
+
+		> .mask {
+			visibility: hidden;
+			width: auto;
+			display: inline-block;
+			position: fixed;
+			overflow: auto;
 			font-size: 16px;
-			border: none;
-			border-radius: 0;
-			background: transparent;
-			color: var(--fg);
-			font-family: inherit;
-
-			&:focus {
-				outline: none;
-			}
-
-			&:disabled {
-				opacity: 0.5;
-			}
 		}
 
 		> .cw {

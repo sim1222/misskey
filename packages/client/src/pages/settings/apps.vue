@@ -8,7 +8,7 @@
 			</div>
 		</template>
 		<template #default="{items}">
-			<div v-for="token in items" :key="token.id" class="_panel bfomjevm">
+			<div v-for="token in items" :key="token.id" class="_panel blur bfomjevm">
 				<img v-if="token.iconUrl" class="icon" :src="token.iconUrl" alt=""/>
 				<div class="body">
 					<div class="name">{{ token.name }}</div>

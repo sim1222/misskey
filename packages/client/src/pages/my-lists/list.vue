@@ -18,7 +18,7 @@
 					<div class="_title">{{ i18n.ts.members }}</div>
 					<div class="_content">
 						<div class="users">
-							<div v-for="user in users" :key="user.id" class="user _panel">
+							<div v-for="user in users" :key="user.id" class="user _panel blur">
 								<MkAvatar :user="user" class="avatar" :show-indicator="true"/>
 								<div class="body">
 									<MkUserName :user="user" class="name"/>

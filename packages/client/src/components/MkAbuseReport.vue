@@ -1,5 +1,5 @@
 <template>
-<div class="bcekxzvu _gap _panel">
+<div class="bcekxzvu _gap _panel blur">
 	<div class="target">
 		<MkA v-user-preview="report.targetUserId" class="info" :to="`/user-info/${report.targetUserId}`">
 			<MkAvatar class="avatar" :user="report.targetUser" :show-indicator="true" :disable-link="true"/>

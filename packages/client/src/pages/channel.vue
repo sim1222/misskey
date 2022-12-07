@@ -3,7 +3,7 @@
 	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
 	<MkSpacer :content-max="700">
 		<div v-if="channel">
-			<div class="wpgynlbz _panel _gap" :class="{ hide: !showBanner }">
+			<div class="wpgynlbz _panel blur _gap" :class="{ hide: !showBanner }">
 				<XChannelFollowButton :channel="channel" :full="true" class="subscribe"/>
 				<button class="_button toggle" @click="() => showBanner = !showBanner">
 					<template v-if="showBanner"><i class="fas fa-angle-up"></i></template>
@@ -23,7 +23,7 @@
 				</div>
 			</div>
 
-			<XPostForm v-if="$i" :channel="channel" class="post-form _panel _gap" fixed/>
+			<XPostForm v-if="$i" :channel="channel" class="post-form _panel blur _gap" fixed/>
 
 			<XTimeline :key="channelId" class="_gap" src="channel" :channel="channelId" @before="before" @after="after"/>
 		</div>
@@ -105,12 +105,12 @@ definePageMetadata(computed(() => channel ? {
 		color: #fff;
 		background: rgba(0, 0, 0, 0.5);
 		border-radius: 100%;
-		
+
 		> i {
 			vertical-align: middle;
 		}
 	}
-	
+
 	> .banner {
 		position: relative;
 		height: 200px;
