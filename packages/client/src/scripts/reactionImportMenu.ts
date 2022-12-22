@@ -99,7 +99,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 				const duplication: boolean = await os.api('meta').then(meta => {
 					const emojis = meta.emojis;
 					return emojis.some((emoji) => {
-						return (emoji === name);
+						return (emoji.name === name);
 					});
 				});
 				console.log(name);
