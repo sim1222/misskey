@@ -102,6 +102,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 						return (emoji === name);
 					});
 				});
+				console.log(name);
 				if (duplication) {
 					os.api('notes/reactions/create', {
 						noteId: noteId,
@@ -109,6 +110,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 					});
 				} else {
 					await importEmoji(true);
+					console.log('endImport');
 					os.api('notes/reactions/create', {
 						noteId: noteId,
 						reaction: name,
