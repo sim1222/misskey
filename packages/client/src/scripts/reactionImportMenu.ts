@@ -5,7 +5,7 @@ import * as os from '@/os';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
 import { MenuItem } from '@/types/menu';
 
-export async function openReactionImportMenu(ev: MouseEvent, reaction: string): Promise<void> {
+export async function openReactionImportMenu(ev: MouseEvent, reaction: string, noteId: string): Promise<void> {
 	if (!reaction) return;
 
 	const host = reaction.match(/(?<=@).*\.*(?=:)/g)?.[0];
@@ -58,14 +58,17 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 		return emojiId;
 	};
 
-	const importEmoji = async (): Promise<void> => {
+	const importEmoji = async (skip: boolean): Promise<void> => {
 		const emojiId = await getEmojiId();
 		if (!await emojiId) return;
 		os.api('admin/emoji/copy', {
 			emojiId: emojiId,
-		}).then(async emoji => os.popup(defineAsyncComponent(() => import('@/pages/admin/emoji-edit-dialog.vue')), {
-			emoji: await getEmojiObject(emoji),
-		}));
+		}).then(async emoji => {
+			if (skip) return;
+			os.popup(defineAsyncComponent(() => import('@/pages/admin/emoji-edit-dialog.vue')), {
+				emoji: await getEmojiObject(emoji),
+			});
+		});
 	};
 
 	const menuItems: MenuItem[] = [{
@@ -90,6 +93,30 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 	) {
 		menuItems.push({
 			type: 'button',
+			icon: 'fas fa-check',
+			text: 'リアクションする',
+			action: async () => {
+				const duplication: boolean = await os.api('meta').then(meta => {
+					const emojis = meta.emojis;
+					return emojis.some((emoji) => {
+						return (emoji === name);
+					});
+				});
+				if (duplication) {
+					os.api('notes/reactions/create', {
+						noteId: noteId,
+						reaction: name,
+					});
+				} else {
+					await importEmoji(true);
+					os.api('notes/reactions/create', {
+						noteId: noteId,
+						reaction: name,
+					});
+				}
+			},
+		}, {
+			type: 'button',
 			icon: 'fas fa-download',
 			text: i18n.ts.import,
 			action: async () => {
@@ -106,10 +133,10 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string): 
 						text: i18n.ts.duplicateEmoji,
 					}).then(res => {
 						if (res.canceled) return;
-						importEmoji();
+						importEmoji(false);
 					});
 				} else {
-					importEmoji();
+					importEmoji(false);
 				}
 			},
 		});
