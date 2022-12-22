@@ -102,8 +102,6 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 						return (emoji.name === name);
 					});
 				});
-				console.log(name);
-				console.log(duplication);
 				if (await duplication) {
 					os.api('notes/reactions/create', {
 						noteId: noteId,
@@ -116,7 +114,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 								noteId: noteId,
 								reaction: `:${name}:`,
 							});
-						}, 1000);
+						}, 1000); // インポートしてからバックエンドに浸透するのが遅いので1秒待つ
 					});
 				}
 			},
