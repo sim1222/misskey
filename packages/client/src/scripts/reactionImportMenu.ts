@@ -116,7 +116,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 								noteId: noteId,
 								reaction: `:${name}:`,
 							});
-						}, 100);
+						}, 300);
 					});
 				}
 			},
