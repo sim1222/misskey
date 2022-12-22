@@ -111,10 +111,12 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 					});
 				} else {
 					await importEmoji(true).then(() => {
-						os.api('notes/reactions/create', {
-							noteId: noteId,
-							reaction: `:${name}:`,
-						});
+						setTimeout(() => {
+							os.api('notes/reactions/create', {
+								noteId: noteId,
+								reaction: `:${name}:`,
+							});
+						}, 100);
 					});
 				}
 			},
