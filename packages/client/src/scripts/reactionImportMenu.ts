@@ -103,16 +103,17 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 					});
 				});
 				console.log(name);
-				if (duplication) {
+				console.log(duplication);
+				if (await duplication) {
 					os.api('notes/reactions/create', {
 						noteId: noteId,
-						reaction: name,
+						reaction: `:${name}:`,
 					});
 				} else {
 					await importEmoji(true).then(() => {
 						os.api('notes/reactions/create', {
 							noteId: noteId,
-							reaction: name,
+							reaction: `:${name}:`,
 						});
 					});
 				}
