@@ -109,11 +109,11 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 						reaction: name,
 					});
 				} else {
-					await importEmoji(true);
-					console.log('endImport');
-					os.api('notes/reactions/create', {
-						noteId: noteId,
-						reaction: name,
+					await importEmoji(true).then(() => {
+						os.api('notes/reactions/create', {
+							noteId: noteId,
+							reaction: name,
+						});
 					});
 				}
 			},
