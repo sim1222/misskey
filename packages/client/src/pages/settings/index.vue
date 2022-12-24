@@ -168,6 +168,11 @@ const menuDef = computed(() => [{
 		text: i18n.ts.other,
 		to: '/settings/other',
 		active: currentPage?.route.name === 'other',
+	}, {
+		icon: 'fas fa-flask',
+		text: 'Experimental Features',
+		to: '/settings/experimental-features',
+		active: currentPage?.route.name === 'experimental-features',
 	}],
 }, {
 	items: [{
