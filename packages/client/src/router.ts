@@ -178,6 +178,10 @@ export const routes = [{
 		name: 'other',
 		component: page(() => import('./pages/settings/other.vue')),
 	}, {
+		path: '/experimental-features',
+		name: 'experimental-features',
+		component: page(() => import('./pages/settings/experimental-features.vue')),
+	}, {
 		path: '/',
 		component: page(() => import('./pages/_empty_.vue')),
 	}],
