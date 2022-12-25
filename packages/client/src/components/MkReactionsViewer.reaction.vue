@@ -5,7 +5,7 @@
 	v-ripple="canToggle"
 	class="hkzvhatu _button"
 	:class="{ reacted: note.myReaction == reaction, canToggle }"
-	@click="toggleReaction()"
+	@click="toggleReaction"
 	@contextmenu.stop="onContextmenu"
 >
 	<XReactionIcon class="icon" :reaction="reaction" :custom-emojis="note.emojis"/>
@@ -34,8 +34,10 @@ const buttonRef = ref<HTMLElement>();
 
 const canToggle = computed(() => !props.reaction.match(/@\w/) && $i);
 
-const toggleReaction = () => {
-	if (!canToggle.value) return;
+const toggleReaction = (e: MouseEvent) => {
+	if (!canToggle.value) {
+		openReactionImportMenu(e, props.reaction, props.note.id);
+	}
 
 	const oldReaction = props.note.myReaction;
 	if (oldReaction) {
