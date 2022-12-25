@@ -253,8 +253,8 @@ export function getNoteMenu(props: {
 				action: translate,
 			} : undefined,
 			{
-				icon: ',',
-				text: i18n.ts.showState,
+				icon: 'fas fa-kiss-wink-heart',
+				text: i18n.ts._simkey.reactionList,
 				action: () => reactionList(),
 			},
 			null,
