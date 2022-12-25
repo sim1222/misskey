@@ -114,7 +114,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 								noteId: noteId,
 								reaction: `:${name}:`,
 							});
-						}, 1000); // インポートしてからバックエンドに浸透するのが遅いので1秒待つ
+						}, 2000); // インポートしてからバックエンドに浸透するのが遅いので2秒待つ
 					});
 				}
 			},
