@@ -1,12 +1,12 @@
 <template>
 <div class="_formRoot">
 	<div class="yellowBorder"/>
-	<div style="text-align: center;">自己責任で使用してください</div>
+	<div style="text-align: center;">{{ i18n.ts._simkey.ownRisk }}</div>
 	<MkSpacer></MkSpacer>
 
 	<FormInput v-model="mediaProxy">
-		<template #label>{{ "ローカルメディアプロキシ" }}</template>
-		<template #caption>{{ "クライアント側でメディアプロキシを指定します" }}</template>
+		<template #label>{{ i18n.ts._simkey.localMediaProxy }}</template>
+		<template #caption>{{ i18n.ts._simkey.localMediaProxyInfo }}</template>
 	</FormInput>
 
 	<FormButton danger class="_formBlock" @click="reset()"><i class="fas fa-redo"></i> {{ i18n.ts.default }}</FormButton>
@@ -27,7 +27,7 @@ const mediaProxy = computed(defaultStore.makeGetterSetter('mediaProxy'));
 const reset = ():void => {
 	os.confirm({
 		type: 'warning',
-		text: 'リセットしてもよろしいですか？',
+		text: i18n.ts._simkey.confirmReset,
 	}).then(res => {
 		if (res.canceled) return;
 		mediaProxy.value = '';
@@ -39,7 +39,7 @@ const headerActions = $computed(() => []);
 const headerTabs = $computed(() => []);
 
 definePageMetadata({
-	title: 'Experimental Features',
+	title: i18n.ts._simkey.experimentalFeatures,
 	icon: 'fas fa-music',
 });
 </script>

@@ -20,21 +20,21 @@
 						</FormTextarea>
 
 						<FormRadios v-model="emojiAlign" class="_formBlock">
-							<template #label>{{ $ts.emojiAlign }}</template>
+							<template #label>{{ $ts._simkey.emojiAlign }}</template>
 							<option value="left"><i class="fas fa-align-left"/></option>
 							<option value="center"><i class="fas fa-align-center"></i></option>
 							<option value="right"><i class="fas fa-align-right"/></option>
 						</FormRadios>
 
 						<FormFolder :default-open="false" class="_formBlock">
-							<template #label>{{ $ts.emojiSizeSetting }}</template>
+							<template #label>{{ $ts._simkey.emojiSizeSetting }}</template>
 							<FormSection>
 								<FormSwitch v-model="emojiSizeFixed" class="_formBlock">
-									<template #label>{{ $ts.emojiSizeFixed }}</template>
+									<template #label>{{ $ts._simkey.emojiSizeFixed }}</template>
 								</FormSwitch>
 
 								<FormSwitch v-model="emojiStretch" class="_formBlock">
-									<template #label>{{ $ts.emojiStretch }}</template>
+									<template #label>{{ $ts._simkey.emojiStretch }}</template>
 								</FormSwitch>
 							</FormSection>
 						</FormFolder>
@@ -53,7 +53,7 @@
 
 
 						<FormFolder :default-open="false" class="_formBlock">
-							<template #label>{{ $ts.emojiColor }}</template>
+							<template #label>{{ $ts._simkey.emojiColor }}</template>
 							<FormSection>
 								<div class="cwepdizn-colors">
 									<div class="row">
@@ -65,10 +65,10 @@
 
 								<FormInput v-model="emojiColor" class="_formBlock" :style="{ color: '#' + emojiColor }">
 									<template #prefix><i class="fas fa-palette"></i></template>
-									<template #label @click="colorPick()">{{ $ts.emojiColor }}</template>
+									<template #label @click="colorPick()">{{ $ts._simkey.emojiColor }}</template>
 									<template #caption>#RRGGBB</template>
 								</FormInput>
-								<FormButton @click="colorPick()">{{ $ts.colorPicker }}</FormButton>
+								<FormButton @click="colorPick()">{{ $ts._simkey.colorPicker }}</FormButton>
 							</FormSection>
 						</FormFolder>
 					</FormSection>
@@ -79,7 +79,7 @@
 						<template #label>{{ $ts.preview }}</template>
 						<canvas class="preview__content" ref="canvas" width="64" height="30" />
 					</FormSection>
-					<FormButton primary class="_formBlock" @click="uploadEmoji('')">{{ $ts.emojiApproval }}</FormButton>
+					<FormButton primary class="_formBlock" @click="uploadEmoji('')">{{ $ts._simkey.emojiApproval }}</FormButton>
 					<FormSection>
 						<template #label>{{ $ts.settings }}</template>
 						<FormInput v-model="emojiName" class="_formBlock">
@@ -129,17 +129,17 @@ import { buttonImages } from "misetehoshii/src/assets";
 import { draw } from "misetehoshii/src/canvas"
 
 definePageMetadata(computed(() => ({
-	title: i18n.ts.emojiGen,
+	title: i18n.ts._simkey.emojiGen,
 	icon: 'fas fa-kiss-wink-heart',
 })));
 
 const tab = ref('string');
 const headerTabs = $computed(() => [{
 	key: 'string',
-	title: 'もじもじ',
+	title: i18n.ts._simkey.emojiNormal,
 }, {
 	key: 'misetehoshii',
-	title: '見せてほしい',
+	title: i18n.ts._simkey.emojiIfilter,
 }]);
 
 const font = ref('rounded-x-mplus-1p-black');

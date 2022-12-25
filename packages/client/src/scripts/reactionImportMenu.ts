@@ -133,7 +133,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 				if (await duplication) {
 					os.confirm({
 						type: 'warning',
-						text: i18n.ts.duplicateEmoji,
+						text: i18n.ts._simkey.duplicateEmoji,
 					}).then(res => {
 						if (res.canceled) return;
 						importEmoji(false);

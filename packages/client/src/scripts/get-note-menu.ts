@@ -36,7 +36,7 @@ export function getNoteMenu(props: {
 	function pakuru(): void {
 		os.confirm({
 			type: 'question',
-			text: i18n.ts.pakuruConfirm,
+			text: i18n.ts._simkey.pakuruConfirm,
 		}).then(({ canceled }) => {
 			if (canceled) return;
 			const postData = {
@@ -224,7 +224,7 @@ export function getNoteMenu(props: {
 			),
 			{
 				icon: 'fas fa-copy',
-				text: i18n.ts.pakuru,
+				text: i18n.ts._simkey.pakuru,
 				action: pakuru,
 			},
 			{
