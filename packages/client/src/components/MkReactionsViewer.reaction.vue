@@ -37,6 +37,7 @@ const canToggle = computed(() => !props.reaction.match(/@\w/) && $i);
 const toggleReaction = (e: MouseEvent) => {
 	if (!canToggle.value) {
 		openReactionImportMenu(e, props.reaction, props.note.id);
+		return;
 	}
 
 	const oldReaction = props.note.myReaction;
