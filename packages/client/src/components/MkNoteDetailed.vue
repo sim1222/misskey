@@ -5,7 +5,7 @@
 	ref="el"
 	v-hotkey="keymap"
 	v-size="{ max: [500, 450, 350, 300] }"
-	class="lxwezrsl _block"
+	class="lxwezrsl _block blur"
 	:tabindex="!isDeleted ? '-1' : null"
 	:class="{ renote: isRenote }"
 >

@@ -1,6 +1,6 @@
 <template>
 <div
-	class="pemppnzi _block"
+	class="pemppnzi _block blur"
 	@dragover.stop="onDragover"
 	@drop.stop="onDrop"
 >
