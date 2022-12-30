@@ -116,9 +116,9 @@ const onContextmenu = (e: MouseEvent) => {
 		}
 	}
 
-	&:not(.canToggle) {
-		cursor: default;
-	}
+	//&:not(.canToggle) {
+	//	cursor: default;
+	//}
 
 	&.reacted {
 		background: var(--accent);
