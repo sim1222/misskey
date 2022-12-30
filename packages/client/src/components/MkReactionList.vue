@@ -16,7 +16,7 @@
 					</MkA>
 				</div>
 			</FormFolder>
-			<MkError v-if="tes.length === 0"/>
+			<MkError v-if="tes.length === 0 && !fetching"/>
 		</MkStickyContainer>
 	</MkModalWindow>
 </div>
@@ -54,6 +54,7 @@ const isDeleted = ref();
 const reactions = ref([] as NoteReaction[]);
 const users = ref([] as UserLite[]);
 const tes = ref([] as reactionUsers);
+const fetching = ref(true);
 
 const initialReactions = new Set(Object.keys(props.note.reactions));
 
@@ -62,6 +63,7 @@ onMounted(async () => {
 		noteId: props.note.id,
 		limit: 100,
 	});
+	fetching.value = false;
 
 	for (const [reaction, count] of Object.entries(props.note.reactions)) {
 		const users = await os.apiGet('notes/reactions', {
