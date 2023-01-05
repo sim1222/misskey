@@ -94,7 +94,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 		menuItems.push({
 			type: 'button',
 			icon: 'fas fa-check',
-			text: 'リアクションする',
+			text: 'リアクションする', //todo
 			action: async () => {
 				const duplication: boolean = await os.api('meta').then(meta => {
 					const emojis = meta.emojis;
@@ -108,6 +108,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 						reaction: `:${name}:`,
 					});
 				} else {
+					os.toast('絵文字をインポートしました');
 					await importEmoji(true).then(() => {
 						setTimeout(() => {
 							os.api('notes/reactions/create', {
