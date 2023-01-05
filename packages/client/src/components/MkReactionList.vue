@@ -3,7 +3,7 @@
 	<MkModalWindow ref="dialog" :width="800" class="window" @close="dialog?.close()" @click="dialog?.close()" @closed="$emit('closed')">
 		<template #header>リアクションリスト</template>
 		<MkStickyContainer class="container">
-			<FormFolder v-for="x in tes" class="_gap">
+			<FormFolder v-for="x in reactUsers" class="_gap">
 				<template #label>
 					<MkReactionIcon :reaction="x.type" :custom-emojis="note.emojis"/>
 					{{ x.type.replace("@.", "") }}
@@ -16,27 +16,22 @@
 					</MkA>
 				</div>
 			</FormFolder>
-			<MkError v-if="tes.length === 0 && !fetching"/>
+			<MkError v-if="reactUsers.length === 0 && !fetching"/>
 		</MkStickyContainer>
 	</MkModalWindow>
 </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import * as misskey from 'misskey-js';
 import { NoteReaction, UserLite } from 'misskey-js/built/entities';
-import { useNoteCapture } from '@/scripts/use-note-capture';
-import MkFolder from '@/components/MkFolder.vue';
 import FormFolder from '@/components/form/folder.vue';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
 import MkReactionIcon from '@/components/MkReactionIcon.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import * as os from '@/os';
-import XDetails from '@/components/MkReactionsViewer.details.vue';
 import XReaction from '@/components/MkReactionsViewer.reaction.vue';
-import MkModal from '@/components/MkModal.vue';
-import NotFound from "@/pages/not-found.vue";
 
 const props = defineProps<{
 	note: misskey.entities.Note;
@@ -50,10 +45,8 @@ type reactionUsers = {
 
 const dialog = $ref<InstanceType<typeof MkModalWindow>>();
 const el = ref<HTMLElement>();
-const isDeleted = ref();
 const reactions = ref([] as NoteReaction[]);
-const users = ref([] as UserLite[]);
-const tes = ref([] as reactionUsers);
+const reactUsers = ref([] as reactionUsers);
 const fetching = ref(true);
 
 const initialReactions = new Set(Object.keys(props.note.reactions));
@@ -71,7 +64,7 @@ onMounted(async () => {
 			type: reaction,
 			limit: 100,
 		});
-		tes.value.push({
+		reactUsers.value.push({
 			type: reaction,
 			count: count,
 			users: users.map(x => x.user),
@@ -79,17 +72,7 @@ onMounted(async () => {
 	}
 });
 
-const reload = defineEmits()
-
-const getUsers = async (reaction: string) => {
-	const reactions = await os.apiGet('notes/reactions', {
-		noteId: props.note.id,
-		type: reaction,
-		limit: 100,
-	});
-	return reactions.map(x => x.user);
-};
-
+// TODO: リアルタイム更新
 // useNoteCapture({
 // 	rootEl: el,
 // 	note: $$(props.note),
