@@ -1,7 +1,7 @@
 <template>
-<XColumn :menu="menu" :column="column" :is-stacked="isStacked" @parent-focus="$event => emit('parent-focus', $event)">
+<XColumn :func="{ handler: setAntenna, title: $ts.selectAntenna }" :column="column" :is-stacked="isStacked" @parent-focus="$event => emit('parent-focus', $event)">
 	<template #header>
-		<i class="ti ti-antenna"></i><span style="margin-left: 8px;">{{ column.name }}</span>
+		<i class="fas fa-satellite"></i><span style="margin-left: 8px;">{{ column.name }}</span>
 	</template>
 
 	<XTimeline v-if="column.antennaId" ref="timeline" src="antenna" :antenna="column.antennaId" @after="() => emit('loaded')"/>
@@ -11,9 +11,9 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue';
 import XColumn from './column.vue';
-import { updateColumn, Column } from './deck-store';
 import XTimeline from '@/components/MkTimeline.vue';
 import * as os from '@/os';
+import { updateColumn, Column } from './deck-store';
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
@@ -26,7 +26,7 @@ const emit = defineEmits<{
 	(ev: 'parent-focus', direction: 'up' | 'down' | 'left' | 'right'): void;
 }>();
 
-let timeline = $shallowRef<InstanceType<typeof XTimeline>>();
+let timeline = $ref<InstanceType<typeof XTimeline>>();
 
 onMounted(() => {
 	if (props.column.antennaId == null) {
@@ -39,22 +39,15 @@ async function setAntenna() {
 	const { canceled, result: antenna } = await os.select({
 		title: i18n.ts.selectAntenna,
 		items: antennas.map(x => ({
-			value: x, text: x.name,
+			value: x, text: x.name
 		})),
-		default: props.column.antennaId,
+		default: props.column.antennaId
 	});
 	if (canceled) return;
 	updateColumn(props.column.id, {
-		antennaId: antenna.id,
+		antennaId: antenna.id
 	});
 }
-
-const menu = [{
-	icon: 'ti ti-pencil',
-	text: i18n.ts.selectAntenna,
-	action: setAntenna,
-}];
-
 /*
 function focus() {
 	timeline.focus();
@@ -65,3 +58,6 @@ defineExpose({
 });
 */
 </script>
+
+<style lang="scss" scoped>
+</style>

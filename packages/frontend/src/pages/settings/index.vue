@@ -170,7 +170,7 @@ const menuDef = computed(() => [{
 		to: '/settings/other',
 		active: currentPage?.route.name === 'other',
 	}, {
-		icon: 'fas fa-flask',
+		icon: 'ti ti-flask',
 		text: i18n.ts._simkey.experimentalFeatures,
 		to: '/settings/experimental-features',
 		active: currentPage?.route.name === 'experimental-features',

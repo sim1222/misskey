@@ -1,9 +1,9 @@
 <template>
 <div v-if="hasDisconnected && $store.state.serverDisconnectedBehavior === 'quiet'" class="nsbbhtug" @click="resetDisconnected">
-	<div>{{ i18n.ts.disconnectedFromServer }}</div>
+	<div>{{ $ts.disconnectedFromServer }}</div>
 	<div class="command">
-		<button class="_textButton" @click="reload">{{ i18n.ts.reload }}</button>
-		<button class="_textButton">{{ i18n.ts.doNothing }}</button>
+		<button class="_textButton" @click="reload">{{ $ts.reload }}</button>
+		<button class="_textButton">{{ $ts.doNothing }}</button>
 	</div>
 </div>
 </template>
@@ -11,7 +11,6 @@
 <script lang="ts" setup>
 import { onUnmounted } from 'vue';
 import { stream } from '@/stream';
-import { i18n } from '@/i18n';
 
 let hasDisconnected = $ref(false);
 
@@ -38,8 +37,8 @@ onUnmounted(() => {
 .nsbbhtug {
 	position: fixed;
 	z-index: 16385;
-	bottom: calc(var(--minBottomSpacing) + var(--margin));
-	right: var(--margin);
+	bottom: 8px;
+	right: 8px;
 	margin: 0;
 	padding: 6px 12px;
 	font-size: 0.9em;

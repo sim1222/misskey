@@ -23,22 +23,20 @@
 
 					<FormRadios v-model="emojiAlign" class="_formBlock">
 						<template #label>{{ $ts._simkey.emojiAlign }}</template>
-						<option value="left"><i class="fas fa-align-left" /></option>
-						<option value="center"><i class="fas fa-align-center"></i></option>
-						<option value="right"><i class="fas fa-align-right" /></option>
+						<option value="left"><i class="ti ti-align-left" /></option>
+						<option value="center"><i class="ti ti-align-center"></i></option>
+						<option value="right"><i class="ti ti-align-right" /></option>
 					</FormRadios>
 
 					<FormFolder :default-open="false" class="_formBlock">
 						<template #label>{{ $ts._simkey.emojiSizeSetting }}</template>
-						<FormSection>
-							<FormSwitch v-model="emojiSizeFixed" class="_formBlock">
-								<template #label>{{ $ts._simkey.emojiSizeFixed }}</template>
-							</FormSwitch>
+						<FormSwitch v-model="emojiSizeFixed" class="_formBlock">
+							<template #label>{{ $ts._simkey.emojiSizeFixed }}</template>
+						</FormSwitch>
 
-							<FormSwitch v-model="emojiStretch" class="_formBlock">
-								<template #label>{{ $ts._simkey.emojiStretch }}</template>
-							</FormSwitch>
-						</FormSection>
+						<FormSwitch v-model="emojiStretch" class="_formBlock">
+							<template #label>{{ $ts._simkey.emojiStretch }}</template>
+						</FormSwitch>
 					</FormFolder>
 
 					<FormFolder :default-open="false" class="_formBlock">
@@ -53,26 +51,23 @@
 						</FormRadios>
 					</FormFolder>
 
-
 					<FormFolder :default-open="false" class="_formBlock">
 						<template #label>{{ $ts._simkey.emojiColor }}</template>
-						<FormSection>
-							<div class="cwepdizn-colors">
-								<div class="row">
-									<button v-for="color in accentColors" :key="color" class="color rounded _button"
-										@click="setAccentColor(color)">
-										<div class="preview" :style="{ background: color }"></div>
-									</button>
-								</div>
+						<div class="cwepdizn-colors">
+							<div class="row">
+								<button v-for="color in accentColors" :key="color" class="color rounded _button"
+									@click="setAccentColor(color)">
+									<div class="preview" :style="{ background: color }"></div>
+								</button>
 							</div>
+						</div>
 
-							<FormInput v-model="emojiColor" class="_formBlock" :style="{ color: '#' + emojiColor }">
-								<template #prefix><i class="fas fa-palette"></i></template>
-								<template #label @click="colorPick()">{{ $ts._simkey.emojiColor }}</template>
-								<template #caption>#RRGGBB</template>
-							</FormInput>
-							<FormButton @click="colorPick()">{{ $ts._simkey.colorPicker }}</FormButton>
-						</FormSection>
+						<FormInput v-model="emojiColor" class="_formBlock" :style="{ color: '#' + emojiColor }">
+							<template #prefix><i class="ti ti-palette"></i></template>
+							<template #label @click="colorPick()">{{ $ts._simkey.emojiColor }}</template>
+							<template #caption>#RRGGBB</template>
+						</FormInput>
+						<FormButton @click="colorPick()">{{ $ts._simkey.colorPicker }}</FormButton>
 					</FormFolder>
 				</FormSection>
 			</div>

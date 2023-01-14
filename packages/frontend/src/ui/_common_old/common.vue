@@ -1,5 +1,6 @@
 <template>
-<component :is="popup.component"
+<component
+	:is="popup.component"
 	v-for="popup in popups"
 	:key="popup.id"
 	v-bind="popup.props"
@@ -8,72 +9,123 @@
 
 <XUpload v-if="uploads.length > 0"/>
 
+<TransitionGroup
+	tag="div" :class="$style.notifications"
+	:move-class="$store.state.animation ? $style.transition_notification_move : ''"
+	:enter-active-class="$store.state.animation ? $style.transition_notification_enterActive : ''"
+	:leave-active-class="$store.state.animation ? $style.transition_notification_leaveActive : ''"
+	:enter-from-class="$store.state.animation ? $style.transition_notification_enterFrom : ''"
+	:leave-to-class="$store.state.animation ? $style.transition_notification_leaveTo : ''"
+>
+	<XNotification v-for="notification in notifications" :key="notification.id" :notification="notification" :class="$style.notification"/>
+</TransitionGroup>
+
 <XStreamIndicator/>
 
 <div v-if="pendingApiRequestsCount > 0" id="wait"></div>
 
 <div v-if="dev" id="devTicker"><span>DEV BUILD</span></div>
+
+<div v-if="$i && $i.isBot" id="botWarn"><span>{{ i18n.ts.loggedInAsBot }}</span></div>
 </template>
 
-<script lang="ts">
-import { defineAsyncComponent, defineComponent } from 'vue';
+<script lang="ts" setup>
+import { defineAsyncComponent, nextTick } from 'vue';
+import * as misskey from 'misskey-js';
+import { swInject } from './sw-inject';
+import XNotification from './notification.vue';
 import { popup, popups, pendingApiRequestsCount } from '@/os';
 import { uploads } from '@/scripts/upload';
 import * as sound from '@/scripts/sound';
 import { $i } from '@/account';
-import { swInject } from './sw-inject';
 import { stream } from '@/stream';
-import * as misskey from 'misskey-js';
+import { i18n } from '@/i18n';
 
-export default defineComponent({
-	components: {
-		XStreamIndicator: defineAsyncComponent(() => import('./stream-indicator.vue')),
-		XUpload: defineAsyncComponent(() => import('./upload.vue')),
-	},
+const XStreamIndicator = defineAsyncComponent(() => import('./stream-indicator.vue'));
+const XUpload = defineAsyncComponent(() => import('./upload.vue'));
 
-	setup() {
-		let notifications = $ref<misskey.entities.Notification[]>([]);
+const dev = _DEV_;
 
-		const onNotification = notification => {
-			if ($i.mutingNotificationTypes.includes(notification.type)) return;
+let notifications = $ref<misskey.entities.Notification[]>([]);
 
-			if (document.visibilityState === 'visible') {
-				stream.send('readNotification', {
-					id: notification.id,
-				});
+function onNotification(notification) {
+	if ($i.mutingNotificationTypes.includes(notification.type)) return;
 
-				notifications.unshift(notification);
-				window.setTimeout(() => {
-					if (notifications.length > 3) notifications.pop();
-				}, 500);
+	if (document.visibilityState === 'visible') {
+		stream.send('readNotification', {
+			id: notification.id,
+		});
 
-				window.setTimeout(() => {
-					notifications = notifications.filter(x => x.id !== notification.id);
-				}, 6000);
-			}
+		notifications.unshift(notification);
+		window.setTimeout(() => {
+			if (notifications.length > 3) notifications.pop();
+		}, 500);
 
-			sound.play('notification');
-		};
+		window.setTimeout(() => {
+			notifications = notifications.filter(x => x.id !== notification.id);
+		}, 6000);
+	}
 
-		if ($i) {
-			const connection = stream.useChannel('main', null, 'UI');
-			connection.on('notification', onNotification);
+	sound.play('notification');
+}
 
-			//#region Listen message from SW
-			if ('serviceWorker' in navigator) {
-				swInject();
-			}
-		}
+if ($i) {
+	const connection = stream.useChannel('main', null, 'UI');
+	connection.on('notification', onNotification);
 
-		return {
-			uploads,
-			popups,
-			pendingApiRequestsCount,
-			dev: _DEV_,
-		};
-	},
-});
+	//#region Listen message from SW
+	if ('serviceWorker' in navigator) {
+		swInject();
+	}
+}
 </script>
+
+<style lang="scss" module>
+.transition_notification_move,
+.transition_notification_enterActive,
+.transition_notification_leaveActive {
+	transition: opacity 0.3s, transform 0.3s !important;
+}
+.transition_notification_enterFrom,
+.transition_notification_leaveTo {
+	opacity: 0;
+	transform: translateX(-250px);
+}
+
+.notifications {
+	position: fixed;
+	z-index: 3900000;
+	left: 0;
+	width: 250px;
+	top: 32px;
+	padding: 0 32px;
+	pointer-events: none;
+	container-type: inline-size;
+}
+
+.notification {
+	& + .notification {
+		margin-top: 8px;
+	}
+}
+
+@media (max-width: 500px) {
+	.notifications {
+		top: initial;
+		bottom: calc(var(--minBottomSpacing) + var(--margin));
+		padding: 0 var(--margin);
+		display: flex;
+		flex-direction: column-reverse;
+	}
+
+	.notification {
+		& + .notification {
+			margin-top: 0;
+			margin-bottom: 8px;
+		}
+	}
+}
+</style>
 
 <style lang="scss">
 @keyframes dev-ticker-blink {
@@ -109,6 +161,29 @@ export default defineComponent({
 		border-left-color: var(--accent);
 		border-radius: 50%;
 		animation: progress-spinner 400ms linear infinite;
+	}
+}
+
+#botWarn {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	width: 100%;
+	height: max-content;
+	text-align: center;
+	z-index: 2147483647;
+	color: #ff0;
+	background: rgba(0, 0, 0, 0.5);
+	padding: 4px 7px;
+	font-size: 14px;
+	pointer-events: none;
+	user-select: none;
+
+	> span {
+		animation: dev-ticker-blink 2s infinite;
 	}
 }
 

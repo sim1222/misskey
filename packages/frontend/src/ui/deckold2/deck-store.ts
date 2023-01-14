@@ -4,7 +4,6 @@ import { notificationTypes } from 'misskey-js';
 import { Storage } from '../../pizzax';
 import { i18n } from '@/i18n';
 import { api } from '@/os';
-import { deepClone } from '@/scripts/clone';
 
 type ColumnWidget = {
 	name: string;
@@ -25,6 +24,10 @@ export type Column = {
 	includingTypes?: typeof notificationTypes[number][];
 	tl?: 'home' | 'local' | 'social' | 'global';
 };
+
+function copy<T>(x: T): T {
+	return JSON.parse(JSON.stringify(x));
+}
 
 export const deckStore = markRaw(new Storage('deck', {
 	profile: {
@@ -51,6 +54,14 @@ export const deckStore = markRaw(new Storage('deck', {
 		where: 'deviceAccount',
 		default: true,
 	},
+	columnMargin: {
+		where: 'deviceAccount',
+		default: 12,
+	},
+	columnHeaderHeight: {
+		where: 'deviceAccount',
+		default: 42,
+	},
 }));
 
 export const loadDeck = async () => {
@@ -69,8 +80,18 @@ export const loadDeck = async () => {
 				return;
 			}
 
-			deckStore.set('columns', []);
-			deckStore.set('layout', []);
+			deckStore.set('columns', [{
+				id: 'a',
+				type: 'main',
+				name: i18n.ts._deck._columns.main,
+				width: 350,
+			}, {
+				id: 'b',
+				type: 'notifications',
+				name: i18n.ts._deck._columns.notifications,
+				width: 330,
+			}]);
+			deckStore.set('layout', [['a'], ['b']]);
 			return;
 		}
 		throw err;
@@ -125,7 +146,7 @@ export function swapColumn(a: Column['id'], b: Column['id']) {
 	const aY = deckStore.state.layout[aX].findIndex(id => id === a);
 	const bX = deckStore.state.layout.findIndex(ids => ids.indexOf(b) !== -1);
 	const bY = deckStore.state.layout[bX].findIndex(id => id === b);
-	const layout = deepClone(deckStore.state.layout);
+	const layout = copy(deckStore.state.layout);
 	layout[aX][aY] = b;
 	layout[bX][bY] = a;
 	deckStore.set('layout', layout);
@@ -133,7 +154,7 @@ export function swapColumn(a: Column['id'], b: Column['id']) {
 }
 
 export function swapLeftColumn(id: Column['id']) {
-	const layout = deepClone(deckStore.state.layout);
+	const layout = copy(deckStore.state.layout);
 	deckStore.state.layout.some((ids, i) => {
 		if (ids.includes(id)) {
 			const left = deckStore.state.layout[i - 1];
@@ -149,7 +170,7 @@ export function swapLeftColumn(id: Column['id']) {
 }
 
 export function swapRightColumn(id: Column['id']) {
-	const layout = deepClone(deckStore.state.layout);
+	const layout = copy(deckStore.state.layout);
 	deckStore.state.layout.some((ids, i) => {
 		if (ids.includes(id)) {
 			const right = deckStore.state.layout[i + 1];
@@ -165,9 +186,9 @@ export function swapRightColumn(id: Column['id']) {
 }
 
 export function swapUpColumn(id: Column['id']) {
-	const layout = deepClone(deckStore.state.layout);
+	const layout = copy(deckStore.state.layout);
 	const idsIndex = deckStore.state.layout.findIndex(ids => ids.includes(id));
-	const ids = deepClone(deckStore.state.layout[idsIndex]);
+	const ids = copy(deckStore.state.layout[idsIndex]);
 	ids.some((x, i) => {
 		if (x === id) {
 			const up = ids[i - 1];
@@ -185,9 +206,9 @@ export function swapUpColumn(id: Column['id']) {
 }
 
 export function swapDownColumn(id: Column['id']) {
-	const layout = deepClone(deckStore.state.layout);
+	const layout = copy(deckStore.state.layout);
 	const idsIndex = deckStore.state.layout.findIndex(ids => ids.includes(id));
-	const ids = deepClone(deckStore.state.layout[idsIndex]);
+	const ids = copy(deckStore.state.layout[idsIndex]);
 	ids.some((x, i) => {
 		if (x === id) {
 			const down = ids[i + 1];
@@ -205,7 +226,7 @@ export function swapDownColumn(id: Column['id']) {
 }
 
 export function stackLeftColumn(id: Column['id']) {
-	let layout = deepClone(deckStore.state.layout);
+	let layout = copy(deckStore.state.layout);
 	const i = deckStore.state.layout.findIndex(ids => ids.includes(id));
 	layout = layout.map(ids => ids.filter(_id => _id !== id));
 	layout[i - 1].push(id);
@@ -215,7 +236,7 @@ export function stackLeftColumn(id: Column['id']) {
 }
 
 export function popRightColumn(id: Column['id']) {
-	let layout = deepClone(deckStore.state.layout);
+	let layout = copy(deckStore.state.layout);
 	const i = deckStore.state.layout.findIndex(ids => ids.includes(id));
 	const affected = layout[i];
 	layout = layout.map(ids => ids.filter(_id => _id !== id));
@@ -223,7 +244,7 @@ export function popRightColumn(id: Column['id']) {
 	layout = layout.filter(ids => ids.length > 0);
 	deckStore.set('layout', layout);
 
-	const columns = deepClone(deckStore.state.columns);
+	const columns = copy(deckStore.state.columns);
 	for (const column of columns) {
 		if (affected.includes(column.id)) {
 			column.active = true;
@@ -235,9 +256,9 @@ export function popRightColumn(id: Column['id']) {
 }
 
 export function addColumnWidget(id: Column['id'], widget: ColumnWidget) {
-	const columns = deepClone(deckStore.state.columns);
+	const columns = copy(deckStore.state.columns);
 	const columnIndex = deckStore.state.columns.findIndex(c => c.id === id);
-	const column = deepClone(deckStore.state.columns[columnIndex]);
+	const column = copy(deckStore.state.columns[columnIndex]);
 	if (column == null) return;
 	if (column.widgets == null) column.widgets = [];
 	column.widgets.unshift(widget);
@@ -247,9 +268,9 @@ export function addColumnWidget(id: Column['id'], widget: ColumnWidget) {
 }
 
 export function removeColumnWidget(id: Column['id'], widget: ColumnWidget) {
-	const columns = deepClone(deckStore.state.columns);
+	const columns = copy(deckStore.state.columns);
 	const columnIndex = deckStore.state.columns.findIndex(c => c.id === id);
-	const column = deepClone(deckStore.state.columns[columnIndex]);
+	const column = copy(deckStore.state.columns[columnIndex]);
 	if (column == null) return;
 	column.widgets = column.widgets.filter(w => w.id !== widget.id);
 	columns[columnIndex] = column;
@@ -258,9 +279,9 @@ export function removeColumnWidget(id: Column['id'], widget: ColumnWidget) {
 }
 
 export function setColumnWidgets(id: Column['id'], widgets: ColumnWidget[]) {
-	const columns = deepClone(deckStore.state.columns);
+	const columns = copy(deckStore.state.columns);
 	const columnIndex = deckStore.state.columns.findIndex(c => c.id === id);
-	const column = deepClone(deckStore.state.columns[columnIndex]);
+	const column = copy(deckStore.state.columns[columnIndex]);
 	if (column == null) return;
 	column.widgets = widgets;
 	columns[columnIndex] = column;
@@ -269,9 +290,9 @@ export function setColumnWidgets(id: Column['id'], widgets: ColumnWidget[]) {
 }
 
 export function updateColumnWidget(id: Column['id'], widgetId: string, widgetData: any) {
-	const columns = deepClone(deckStore.state.columns);
+	const columns = copy(deckStore.state.columns);
 	const columnIndex = deckStore.state.columns.findIndex(c => c.id === id);
-	const column = deepClone(deckStore.state.columns[columnIndex]);
+	const column = copy(deckStore.state.columns[columnIndex]);
 	if (column == null) return;
 	column.widgets = column.widgets.map(w => w.id === widgetId ? {
 		...w,
@@ -283,9 +304,9 @@ export function updateColumnWidget(id: Column['id'], widgetId: string, widgetDat
 }
 
 export function updateColumn(id: Column['id'], column: Partial<Column>) {
-	const columns = deepClone(deckStore.state.columns);
+	const columns = copy(deckStore.state.columns);
 	const columnIndex = deckStore.state.columns.findIndex(c => c.id === id);
-	const currentColumn = deepClone(deckStore.state.columns[columnIndex]);
+	const currentColumn = copy(deckStore.state.columns[columnIndex]);
 	if (currentColumn == null) return;
 	for (const [k, v] of Object.entries(column)) {
 		currentColumn[k] = v;

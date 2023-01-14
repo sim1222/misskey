@@ -235,7 +235,7 @@ export function getNoteMenu(props: {
 				action: pakuru,
 			},
 			{
-				icon: 'fas fa-copy',
+				icon: 'ti ti-copy',
 				text: i18n.ts.copyContent,
 				action: copyContent,
 			}, {
@@ -260,7 +260,7 @@ export function getNoteMenu(props: {
 				action: translate,
 			} : undefined,
 			{
-				icon: 'fas fa-kiss-wink-heart',
+				icon: 'ti ti-mood-tongue',
 				text: i18n.ts._simkey.reactionList,
 				action: () => reactionList(),
 			},

@@ -1,53 +1,62 @@
 <template>
 <!-- sectionを利用しているのは、deck.vue側でcolumnに対してfirst-of-typeを効かせるため -->
-<section
-	v-hotkey="keymap"
-	:class="[$style.root, { [$style.paged]: isMainColumn, [$style.naked]: naked, [$style.active]: active, [$style.isStacked]: isStacked, [$style.draghover]: draghover, [$style.dragging]: dragging, [$style.dropready]: dropready }]"
-	class="blur _panel"
+<section v-hotkey="keymap" class="dnpfarvg _panel blur _narrow_"
+	:class="{ paged: isMainColumn, naked, active, isStacked, draghover, dragging, dropready }"
+	:style="{ '--deckColumnHeaderHeight': deckStore.reactiveState.columnHeaderHeight.value + 'px' }"
 	@dragover.prevent.stop="onDragover"
 	@dragleave="onDragleave"
 	@drop.prevent.stop="onDrop"
 >
-	<header
-		:class="[$style.header]"
+	<header :class="{ indicated }"
 		draggable="true"
 		@click="goTop"
 		@dragstart="onDragstart"
 		@dragend="onDragend"
 		@contextmenu.prevent.stop="onContextmenu"
 	>
-		<button v-if="isStacked && !isMainColumn" :class="$style.toggleActive" class="_button" @click="toggleActive">
-			<template v-if="active"><i class="ti ti-chevron-up"></i></template>
-			<template v-else><i class="ti ti-chevron-down"></i></template>
+		<button v-if="isStacked && !isMainColumn" class="toggleActive _button" @click="toggleActive">
+			<template v-if="active"><i class="fas fa-angle-up"></i></template>
+			<template v-else><i class="fas fa-angle-down"></i></template>
 		</button>
-		<span :class="$style.title"><slot name="header"></slot></span>
-		<button v-tooltip="i18n.ts.settings" :class="$style.menu" class="_button" @click.stop="showSettingsMenu"><i class="ti ti-dots"></i></button>
+		<div class="action">
+			<slot name="action"></slot>
+		</div>
+		<span class="header"><slot name="header"></slot></span>
+		<button v-tooltip="i18n.ts.settings" class="menu _button" @click.stop="showSettingsMenu"><i class="fas fa-ellipsis"></i></button>
 	</header>
-	<div v-show="active" ref="body" :class="$style.body">
+	<div v-show="active" ref="body">
 		<slot></slot>
 	</div>
 </section>
 </template>
 
+<script lang="ts">
+export type DeckFunc = {
+	title: string;
+	handler: (payload: MouseEvent) => void;
+	icon?: string;
+};
+</script>
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, provide, Ref, watch } from 'vue';
-import { updateColumn, swapLeftColumn, swapRightColumn, swapUpColumn, swapDownColumn, stackLeftColumn, popRightColumn, removeColumn, swapColumn, Column, deckStore } from './deck-store';
+import { onBeforeUnmount, onMounted, provide, watch } from 'vue';
+import { updateColumn, swapLeftColumn, swapRightColumn, swapUpColumn, swapDownColumn, stackLeftColumn, popRightColumn, removeColumn, swapColumn, Column , deckStore } from './deck-store';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
-import { MenuItem } from '@/types/menu';
 
 provide('shouldHeaderThin', true);
 provide('shouldOmitHeaderTitle', true);
-provide('forceSpacerMin', true);
 
 const props = withDefaults(defineProps<{
 	column: Column;
 	isStacked?: boolean;
+	func?: DeckFunc | null;
 	naked?: boolean;
-	menu?: MenuItem[];
+	indicated?: boolean;
 }>(), {
 	isStacked: false,
+	func: null,
 	naked: false,
+	indicated: false,
 });
 
 const emit = defineEmits<{
@@ -55,7 +64,7 @@ const emit = defineEmits<{
 	(ev: 'change-active-state', v: boolean): void;
 }>();
 
-let body = $shallowRef<HTMLDivElement>();
+let body = $ref<HTMLDivElement>();
 
 let dragging = $ref(false);
 watch($$(dragging), v => os.deckGlobalEvents.emit(v ? 'column.dragStart' : 'column.dragEnd'));
@@ -100,9 +109,9 @@ function toggleActive() {
 }
 
 function getMenu() {
-	let items = [{
-		icon: 'ti ti-settings',
-		text: i18n.ts._deck.configureColumn,
+	const items = [{
+		icon: 'fas fa-pencil-alt',
+		text: i18n.ts.edit,
 		action: async () => {
 			const { canceled, result } = await os.form(props.column.name, {
 				name: {
@@ -124,49 +133,44 @@ function getMenu() {
 			if (canceled) return;
 			updateColumn(props.column.id, result);
 		},
+	}, null, {
+		icon: 'fas fa-arrow-left',
+		text: i18n.ts._deck.swapLeft,
+		action: () => {
+			swapLeftColumn(props.column.id);
+		},
 	}, {
-		type: 'parent',
-		text: i18n.ts.move + '...',
-		icon: 'ti ti-arrows-move',
-		children: [{
-			icon: 'ti ti-arrow-left',
-			text: i18n.ts._deck.swapLeft,
-			action: () => {
-				swapLeftColumn(props.column.id);
-			},
-		}, {
-			icon: 'ti ti-arrow-right',
-			text: i18n.ts._deck.swapRight,
-			action: () => {
-				swapRightColumn(props.column.id);
-			},
-		}, props.isStacked ? {
-			icon: 'ti ti-arrow-up',
-			text: i18n.ts._deck.swapUp,
-			action: () => {
-				swapUpColumn(props.column.id);
-			},
-		} : undefined, props.isStacked ? {
-			icon: 'ti ti-arrow-down',
-			text: i18n.ts._deck.swapDown,
-			action: () => {
-				swapDownColumn(props.column.id);
-			},
-		} : undefined],
-	}, {
-		icon: 'ti ti-stack-2',
+		icon: 'fas fa-arrow-right',
+		text: i18n.ts._deck.swapRight,
+		action: () => {
+			swapRightColumn(props.column.id);
+		},
+	}, props.isStacked ? {
+		icon: 'fas fa-arrow-up',
+		text: i18n.ts._deck.swapUp,
+		action: () => {
+			swapUpColumn(props.column.id);
+		},
+	} : undefined, props.isStacked ? {
+		icon: 'fas fa-arrow-down',
+		text: i18n.ts._deck.swapDown,
+		action: () => {
+			swapDownColumn(props.column.id);
+		},
+	} : undefined, null, {
+		icon: 'fas fa-window-restore',
 		text: i18n.ts._deck.stackLeft,
 		action: () => {
 			stackLeftColumn(props.column.id);
 		},
 	}, props.isStacked ? {
-		icon: 'ti ti-window-maximize',
+		icon: 'fas fa-window-maximize',
 		text: i18n.ts._deck.popRight,
 		action: () => {
 			popRightColumn(props.column.id);
 		},
 	} : undefined, null, {
-		icon: 'ti ti-trash',
+		icon: 'fas fa-trash-alt',
 		text: i18n.ts.remove,
 		danger: true,
 		action: () => {
@@ -174,9 +178,13 @@ function getMenu() {
 		},
 	}];
 
-	if (props.menu) {
+	if (props.func) {
 		items.unshift(null);
-		items = props.menu.concat(items);
+		items.unshift({
+			icon: props.func.icon,
+			text: props.func.title,
+			action: props.func.handler,
+		});
 	}
 
 	return items;
@@ -241,16 +249,19 @@ function onDrop(ev) {
 }
 </script>
 
-<style lang="scss" module>
-.root {
+<style lang="scss" scoped>
+.dnpfarvg {
 	--root-margin: 10px;
-	--deckColumnHeaderHeight: 40px;
+	--deckColumnHeaderHeight: 42px;
 
 	height: 100%;
-	overflow: clip;
-	contain: strict;
+	overflow: hidden;
+	contain: content;
+	box-shadow: 0 0 8px 0 var(--shadow);
 
 	&.draghover {
+		box-shadow: 0 0 0 2px var(--focus);
+
 		&:after {
 			content: "";
 			display: block;
@@ -265,18 +276,7 @@ function onDrop(ev) {
 	}
 
 	&.dragging {
-		&:after {
-			content: "";
-			display: block;
-			position: absolute;
-			z-index: 1000;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: var(--focus);
-			opacity: 0.5;
-		}
+		box-shadow: 0 0 0 2px var(--focus);
 	}
 
 	&.dropready {
@@ -288,85 +288,104 @@ function onDrop(ev) {
 	&:not(.active) {
 		flex-basis: var(--deckColumnHeaderHeight);
 		min-height: var(--deckColumnHeaderHeight);
+
+		> header.indicated {
+			box-shadow: 4px 0px var(--accent) inset;
+		}
 	}
 
 	&.naked {
 		background: var(--acrylicBg) !important;
-		-webkit-backdrop-filter: var(--blur, blur(10px));
-		backdrop-filter: var(--blur, blur(10px));
 
-		> .header {
+		> header {
 			background: transparent;
 			box-shadow: none;
-			color: var(--fg);
+
+			> button {
+				color: var(--fg);
+			}
 		}
 	}
 
 	&.paged {
 		background: var(--bg) !important;
 	}
-}
 
-.header {
-	position: relative;
-	display: flex;
-	z-index: 2;
-	line-height: var(--deckColumnHeaderHeight);
-	height: var(--deckColumnHeaderHeight);
-	padding: 0 16px;
-	font-size: 0.9em;
-	color: var(--panelHeaderFg);
-	background: var(--panelHeaderBg);
-	box-shadow: 0 1px 0 0 var(--panelHeaderDivider);
-	cursor: pointer;
+	> header {
+		position: relative;
+		display: flex;
+		z-index: 2;
+		line-height: var(--deckColumnHeaderHeight);
+		height: var(--deckColumnHeaderHeight);
+		padding: 0 16px;
+		font-size: 0.9em;
+		color: var(--panelHeaderFg);
+		background: var(--panelHeaderBg);
+		box-shadow: 0 1px 0 0 var(--panelHeaderDivider);
+		cursor: pointer;
 
-	&, * {
-		user-select: none;
+		&, * {
+			user-select: none;
+		}
+
+		&.indicated {
+			box-shadow: 0 3px 0 0 var(--accent);
+		}
+
+		> .header {
+			display: inline-block;
+			align-items: center;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		> span:only-of-type {
+			width: 100%;
+		}
+
+		> .toggleActive,
+		> .action > ::v-deep(*),
+		> .menu {
+			z-index: 1;
+			width: var(--deckColumnHeaderHeight);
+			line-height: var(--deckColumnHeaderHeight);
+			color: var(--faceTextButton);
+
+			&:hover {
+				color: var(--faceTextButtonHover);
+			}
+
+			&:active {
+				color: var(--faceTextButtonActive);
+			}
+		}
+
+		> .toggleActive, > .action {
+			margin-left: -16px;
+		}
+
+		> .action {
+			z-index: 1;
+		}
+
+		> .action:empty {
+			display: none;
+		}
+
+		> .menu {
+			margin-left: auto;
+			margin-right: -16px;
+		}
 	}
-}
 
-.title {
-	display: inline-block;
-	align-items: center;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	width: 100%;
-}
-
-.toggleActive,
-.menu {
-	z-index: 1;
-	width: var(--deckColumnHeaderHeight);
-	line-height: var(--deckColumnHeaderHeight);
-	color: var(--faceTextButton);
-
-	&:hover {
-		color: var(--faceTextButtonHover);
+	> div {
+		height: calc(100% - var(--deckColumnHeaderHeight));
+		overflow-y: auto;
+		overflow-x: hidden; // Safari does not supports clip
+		overflow-x: clip;
+		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 	}
-
-	&:active {
-		color: var(--faceTextButtonActive);
-	}
-}
-
-.toggleActive {
-	margin-left: -16px;
-}
-
-.menu {
-	margin-left: auto;
-	margin-right: -16px;
-}
-
-.body {
-	height: calc(100% - var(--deckColumnHeaderHeight));
-	overflow-y: auto;
-	overflow-x: hidden; // Safari does not supports clip
-	overflow-x: clip;
-	-webkit-overflow-scrolling: touch;
-	box-sizing: border-box;
-	container-type: inline-size;
-	background-color: var(--bg);
 }
 </style>

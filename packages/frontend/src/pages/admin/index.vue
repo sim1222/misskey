@@ -108,7 +108,7 @@ const menuDef = $computed(() => [{
 		to: '/admin/emojis',
 		active: currentPage?.route.name === 'emojis',
 	}, {
-		icon: 'fas fa-kiss-wink-heart',
+		icon: 'ti ti-mood-tongue',
 		text: i18n.ts._simkey.emojiGen,
 		to: '/admin/emojigen',
 		active: currentPage?.route.name === 'emojigen',
