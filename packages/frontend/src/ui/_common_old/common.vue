@@ -23,6 +23,7 @@ import * as sound from '@/scripts/sound';
 import { $i } from '@/account';
 import { swInject } from './sw-inject';
 import { stream } from '@/stream';
+import * as misskey from 'misskey-js';
 
 export default defineComponent({
 	components: {
@@ -31,17 +32,24 @@ export default defineComponent({
 	},
 
 	setup() {
+		let notifications = $ref<misskey.entities.Notification[]>([]);
+
 		const onNotification = notification => {
 			if ($i.mutingNotificationTypes.includes(notification.type)) return;
 
 			if (document.visibilityState === 'visible') {
 				stream.send('readNotification', {
-					id: notification.id
+					id: notification.id,
 				});
 
-				popup(defineAsyncComponent(() => import('@/components/MkNotificationToast.vue')), {
-					notification
-				}, {}, 'closed');
+				notifications.unshift(notification);
+				window.setTimeout(() => {
+					if (notifications.length > 3) notifications.pop();
+				}, 500);
+
+				window.setTimeout(() => {
+					notifications = notifications.filter(x => x.id !== notification.id);
+				}, 6000);
 			}
 
 			sound.play('notification');

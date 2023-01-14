@@ -65,7 +65,7 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 			emojiId: emojiId,
 		}).then(async emoji => {
 			if (skip) return;
-			os.popup(defineAsyncComponent(() => import('@/pages/admin/emoji-edit-dialog.vue')), {
+			os.popup(defineAsyncComponent(() => import('@/pages/emoji-edit-dialog.vue')), {
 				emoji: await getEmojiObject(emoji),
 			});
 		});

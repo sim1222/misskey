@@ -26,7 +26,7 @@
 import { ref, onMounted } from 'vue';
 import * as misskey from 'misskey-js';
 import { NoteReaction, UserLite } from 'misskey-js/built/entities';
-import FormFolder from '@/components/form/folder.vue';
+import FormFolder from '@/components/MkFolder.vue';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
 import MkReactionIcon from '@/components/MkReactionIcon.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';

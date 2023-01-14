@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import FormInput from '@/components/form/input.vue';
+import FormInput from '@/components/MkInput.vue';
 import FormButton from '@/components/MkButton.vue';
 import { i18n } from '@/i18n';
 import * as os from '@/os';

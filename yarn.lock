@@ -6145,6 +6145,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"destyle.css@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "destyle.css@npm:3.0.2"
+  checksum: bf4c26d2f996476fb43a8b5f9144200ba421fd2f342da0e32ba5795e836c5cd78d799c56f71bf3989897f7247fbdca9d3d0e2d6b9d0e8187948e3c039af5b733
+  languageName: node
+  linkType: hard
+
 "detect-file@npm:^1.0.0":
   version: 1.0.0
   resolution: "detect-file@npm:1.0.0"
@@ -8077,7 +8084,8 @@ __metadata:
     is-file-animated: 1.0.2
     json5: 2.2.3
     matter-js: 0.18.0
-    mfm-js: 0.23.3
+    mfm-js: "git+https://github.com/sim1222/mfm.js.git"
+    misetehoshii: "https://github.com/melt-adzuki/misetehoshii"
     misskey-js: 0.0.14
     photoswipe: 5.3.4
     prismjs: 1.29.0
@@ -11566,6 +11574,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mfm-js@git+https://github.com/sim1222/mfm.js.git":
+  version: 0.23.0
+  resolution: "mfm-js@https://github.com/sim1222/mfm.js.git#commit=adba7ad3bfbd1779b46314f3eef52f301fd0d6c9"
+  dependencies:
+    twemoji-parser: 14.0.0
+  checksum: 2c3fc61503ed6382e5cb24d869034956968e9c60d8bb7929daa5c1b41a5adcb8e8974af610c00052f5c54f4eddea58a0988d4fd57097a636368bd96739895142
+  languageName: node
+  linkType: hard
+
 "mfm-js@npm:0.23.3":
   version: 0.23.3
   resolution: "mfm-js@npm:0.23.3"
@@ -11793,6 +11810,16 @@ __metadata:
     minipass: ^3.0.0
     yallist: ^4.0.0
   checksum: f1fdeac0b07cf8f30fcf12f4b586795b97be856edea22b5e9072707be51fc95d41487faec3f265b42973a304fe3a64acd91a44a3826a963e37b37bafde0212c3
+  languageName: node
+  linkType: hard
+
+"misetehoshii@https://github.com/melt-adzuki/misetehoshii":
+  version: 0.0.0
+  resolution: "misetehoshii@https://github.com/melt-adzuki/misetehoshii.git#commit=d00f51529e390808f92172000f960b4f1314f37c"
+  dependencies:
+    destyle.css: ^3.0.2
+    vue: ^3.2.37
+  checksum: d9e522e7628202f13573d638ba43ba416751929881cdd235a1881143113bf3acb1aba0af70342bcdca4601f99baf24b2d48696f821ed98036edfc247fa5451d9
   languageName: node
   linkType: hard
 
@@ -17158,7 +17185,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:3.2.45":
+"vue@npm:3.2.45, vue@npm:^3.2.37":
   version: 3.2.45
   resolution: "vue@npm:3.2.45"
   dependencies:
