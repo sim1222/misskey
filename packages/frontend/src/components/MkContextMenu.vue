@@ -1,6 +1,12 @@
 <template>
-<Transition :name="$store.state.animation ? 'fade' : ''" appear>
-	<div ref="rootEl" class="nvlagfpb" :style="{ zIndex }" @contextmenu.prevent.stop="() => {}">
+<Transition
+	appear
+	:enter-active-class="$store.state.animation ? $style.transition_fade_enterActive : ''"
+	:leave-active-class="$store.state.animation ? $style.transition_fade_leaveActive : ''"
+	:enter-from-class="$store.state.animation ? $style.transition_fade_enterFrom : ''"
+	:leave-to-class="$store.state.animation ? $style.transition_fade_leaveTo : ''"
+>
+	<div ref="rootEl" :class="$style.root" :style="{ zIndex }" @contextmenu.prevent.stop="() => {}">
 		<MkMenu :items="items" :align="'left'" @close="$emit('closed')"/>
 	</div>
 </Transition>
@@ -68,21 +74,22 @@ function onMousedown(evt: Event) {
 }
 </script>
 
-<style lang="scss" scoped>
-.nvlagfpb {
-	position: absolute;
-	backdrop-filter: var(--blur, blur(8px));
-	-webkit-backdrop-filter: var(--blur, blur(8px));
-}
-
-.fade-enter-active, .fade-leave-active {
-	transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s ease-out, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+<style lang="scss" module>
+.transition_fade_enterActive,
+.transition_fade_leaveActive {
+	transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 	transform-origin: left top;
 }
-
-.fade-enter-from, .fade-leave-to {
+.transition_fade_enterFrom,
+.transition_fade_leaveTo {
 	opacity: 0;
 	transform: scale(0.9);
 	height: 1px;
+}
+
+.root {
+	position: absolute;
+	backdrop-filter: var(--blur, blur(8px));
+	-webkit-backdrop-filter: var(--blur, blur(8px));
 }
 </style>
