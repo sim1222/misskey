@@ -29,6 +29,9 @@
 		</div>
 	</template>
 	<div :class="$style.buttonsRight">
+		<button v-tooltip.noDelay="i18n.ts.reload" class="_button" :class="$style.button" onclick="location.reload();">
+			<i class="ti ti-refresh"></i>
+		</button>
 		<template v-for="action in actions">
 			<button v-tooltip.noDelay="action.text" class="_button" :class="[$style.button, { [$style.highlighted]: action.highlighted }]" @click.stop="action.handler" @touchstart="preventDrag"><i :class="action.icon"></i></button>
 		</template>
@@ -44,6 +47,7 @@ import { scrollToTop } from '@/scripts/scroll';
 import { globalEvents } from '@/events';
 import { injectPageMetadata } from '@/scripts/page-metadata';
 import { $i } from '@/account';
+import {i18n} from "@/i18n";
 
 type Tab = {
 	key: string;
