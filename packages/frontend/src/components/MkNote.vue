@@ -4,7 +4,7 @@
 	v-show="!isDeleted"
 	ref="el"
 	v-hotkey="keymap"
-	:class="$style.root"
+	:class="[$style.root, {[$style.reacting]: reacting}]"
 	:tabindex="!isDeleted ? '-1' : null"
 >
 	<MkNoteSub v-if="appearNote.reply" :note="appearNote.reply" :class="$style.replyTo"/>
@@ -191,6 +191,7 @@ const translating = ref(false);
 const urls = appearNote.text ? extractUrlFromMfm(mfm.parse(appearNote.text)) : null;
 const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultStore.state.instanceTicker === 'remote' && appearNote.user.instance);
 const canRenote = computed(() => ['public', 'home'].includes(appearNote.visibility) || appearNote.userId === $i.id);
+const reacting = ref(false);
 
 const keymap = {
 	'r': () => reply(true),
@@ -229,6 +230,7 @@ useTooltip(renoteButton, async (showing) => {
 
 function renote(viaKeyboard = false) {
 	pleaseLogin();
+	reacting.value = true;
 	os.popupMenu([{
 		text: i18n.ts.renote,
 		icon: 'ti ti-repeat',
@@ -247,6 +249,7 @@ function renote(viaKeyboard = false) {
 		},
 	}], renoteButton.value, {
 		viaKeyboard,
+		onClosing: () => reacting.value = false,
 	});
 }
 
@@ -263,12 +266,14 @@ function reply(viaKeyboard = false): void {
 function react(viaKeyboard = false): void {
 	pleaseLogin();
 	blur();
+	reacting.value = true;
 	reactionPicker.show(reactButton.value, reaction => {
 		os.api('notes/reactions/create', {
 			noteId: appearNote.id,
 			reaction: reaction.reaction, //TODO: #43
 		});
 	}, () => {
+		reacting.value = false;
 		focus();
 	});
 }
@@ -297,14 +302,22 @@ function onContextmenu(ev: MouseEvent): void {
 		ev.preventDefault();
 		react();
 	} else {
-		os.contextMenu(getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClipPage }), ev).then(focus);
+		reacting.value = true;
+		os.contextMenu(getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClipPage }), ev).then(() => {
+			reacting.value = false;
+			focus();
+		});
 	}
 }
 
 function menu(viaKeyboard = false): void {
+	reacting.value = true;
 	os.popupMenu(getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClipPage }), menuButton.value, {
 		viaKeyboard,
-	}).then(focus);
+	}).then(() => {
+		reacting.value = false;
+		focus();
+	});
 }
 
 function showRenoteMenu(viaKeyboard = false): void {
@@ -388,6 +401,33 @@ function readPromo() {
 
 	&:hover > .article > .main > .footer > .footerButton {
 		opacity: 1;
+	}
+}
+
+.reacting {
+	&:after{
+		border: solid 2px #007aff !important;
+		box-sizing: border-box;
+		content: "";
+		pointer-events: none;
+		display: block;
+		position: absolute;
+		z-index: 10;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		margin: auto;
+		width: calc(100% - 8px);
+		height: calc(100% - 8px);
+		border-radius: var(--radius);
+		animation: blink 1s infinite;
+
+		@keyframes blink {
+			0% { opacity: 1; transform: scale(1); }
+			30% { opacity: 1; transform: scale(1); }
+			90% { opacity: 0; transform: scale(0.99); }
+		}
 	}
 }
 
