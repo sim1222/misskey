@@ -100,6 +100,10 @@
 				<button ref="menuButton" :class="$style.footerButton" class="_button" @mousedown="menu()">
 					<i class="ti ti-dots"></i>
 				</button>
+				<button v-if="appearNote.userId === $i.id && getAgo() > 0 || ago > 0" :class="$style.footerButton" class="_button" style="color: red" @click="delEdit()">
+					<i class="ti ti-edit"></i>
+					<p :class="$style.footerButtonCount">{{ ago }}</p>
+				</button>
 			</footer>
 		</div>
 	</article>
@@ -191,7 +195,31 @@ const translating = ref(false);
 const urls = appearNote.text ? extractUrlFromMfm(mfm.parse(appearNote.text)) : null;
 const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultStore.state.instanceTicker === 'remote' && appearNote.user.instance);
 const canRenote = computed(() => ['public', 'home'].includes(appearNote.visibility) || appearNote.userId === $i.id);
+
 const reacting = ref(false);
+
+const ago = ref(0);
+const getAgo = () => ago.value = (30 - (~~(((new Date().getTime()) - (new Date(appearNote.createdAt).getTime())) / 1000)));
+const agoRealTime = setInterval(() => {
+	getAgo();
+	if (ago.value < 0) clearInterval(agoRealTime);
+}, 1000);
+onUnmounted(() => clearInterval(agoRealTime));
+
+function delEdit(): void {
+	os.confirm({
+		type: 'warning',
+		text: i18n.ts.deleteAndEditConfirm,
+	}).then(({ canceled }) => {
+		if (canceled) return;
+
+		os.api('notes/delete', {
+			noteId: appearNote.id,
+		});
+
+		os.post({ initialNote: appearNote, renote: appearNote.renote, reply: appearNote.reply, channel: appearNote.channel });
+	});
+}
 
 const keymap = {
 	'r': () => reply(true),
