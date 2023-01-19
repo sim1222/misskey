@@ -189,11 +189,13 @@ const isLong = (appearNote.cw == null && appearNote.text != null && (
 ));
 const collapsed = ref(appearNote.cw == null && isLong);
 const isDeleted = ref(false);
-const muted = ref(checkWordMute(appearNote, $i, defaultStore.state.mutedWords));
+const streamerMute = defaultStore.state.streamerMode && !(['public', 'home'].includes(appearNote.visibility));
+const muted = ref(checkWordMute(appearNote, $i, defaultStore.state.mutedWords) || streamerMute);
 const translation = ref(null);
 const translating = ref(false);
 const urls = appearNote.text ? extractUrlFromMfm(mfm.parse(appearNote.text)) : null;
 const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultStore.state.instanceTicker === 'remote' && appearNote.user.instance);
+
 const canRenote = computed(() => ['public', 'home'].includes(appearNote.visibility) || appearNote.userId === $i.id);
 
 const reacting = ref(false);

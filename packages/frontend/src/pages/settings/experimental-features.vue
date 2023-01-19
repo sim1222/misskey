@@ -4,12 +4,32 @@
 	<div style="text-align: center;">{{ i18n.ts._simkey.ownRisk }}</div>
 	<MkSpacer></MkSpacer>
 
-	<FormInput v-model="mediaProxy">
+	<FormSection>
 		<template #label>{{ i18n.ts._simkey.localMediaProxy }}</template>
-		<template #caption>{{ i18n.ts._simkey.localMediaProxyInfo }}</template>
-	</FormInput>
-
-	<FormButton danger class="_formBlock" @click="reset()"><i class="fas fa-redo"></i> {{ i18n.ts.default }}</FormButton>
+		<div class="_gaps_m">
+			<div class="_gaps_s">
+				<FormInput v-model="mediaProxy">
+					<template #caption>{{ i18n.ts._simkey.localMediaProxyInfo }}</template>
+				</FormInput>
+			</div>
+		</div>
+	</FormSection>
+	<FormSection>
+		<template #label>配信者モード</template>
+		<div class="_gaps_m">
+			<div class="_gaps_s">
+				<MkSwitch v-model="streamerMode">配信者モードをオンにする</MkSwitch>
+			</div>
+		</div>
+		<p>タイムラインに公開範囲がフォロワー以下の投稿が表示されなくなります</p>
+	</FormSection>
+	<FormSection>
+		<div class="_gaps_m">
+			<div class="_gaps_s">
+				<FormButton danger class="_formBlock" @click="reset()"><i class="fas fa-redo"></i> {{ i18n.ts.default }}</FormButton>
+			</div>
+		</div>
+	</FormSection>
 </div>
 </template>
 
@@ -17,12 +37,15 @@
 import { computed, ref } from 'vue';
 import FormInput from '@/components/MkInput.vue';
 import FormButton from '@/components/MkButton.vue';
+import FormSection from '@/components/form/section.vue';
 import { i18n } from '@/i18n';
 import * as os from '@/os';
 import { defaultStore } from '@/store';
 import { definePageMetadata } from '@/scripts/page-metadata';
+import MkSwitch from "@/components/MkSwitch.vue";
 
 const mediaProxy = computed(defaultStore.makeGetterSetter('mediaProxy'));
+const streamerMode = computed(defaultStore.makeGetterSetter('streamerMode'));
 
 const reset = ():void => {
 	os.confirm({
@@ -31,6 +54,7 @@ const reset = ():void => {
 	}).then(res => {
 		if (res.canceled) return;
 		mediaProxy.value = '';
+		streamerMode.value = false;
 	});
 };
 
