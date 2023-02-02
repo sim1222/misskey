@@ -100,7 +100,7 @@
 				<button ref="menuButton" :class="$style.footerButton" class="_button" @mousedown="menu()">
 					<i class="ti ti-dots"></i>
 				</button>
-				<button v-if="appearNote.userId === $i.id && getAgo() > 0 || ago > 0" :class="$style.footerButton" class="_button" style="color: red" @click="delEdit()">
+				<button v-if="(appearNote.userId === $i?.id) && (getAgo() > 0 || ago > 0)" :class="$style.footerButton" class="_button" style="color: red" @click="delEdit()">
 					<i class="ti ti-edit"></i>
 					<p :class="$style.footerButtonCount">{{ ago }}</p>
 				</button>
