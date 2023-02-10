@@ -170,12 +170,7 @@ const menuDef = $computed(() => [{
 		text: i18n.ts.relays,
 		to: '/admin/relays',
 		active: currentPage?.route.name === 'relays',
-	}, ...($i?.isAdmin ? [{
-		icon: 'ti ti-share',
-		text: i18n.ts.integration,
-		to: '/admin/integrations',
-		active: currentPage?.route.name === 'integrations',
-	}] : []), ...($i?.isAdmin ? [{
+	}, {
 		icon: 'ti ti-ban',
 		text: i18n.ts.instanceBlocking,
 		to: '/admin/instance-block',

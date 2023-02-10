@@ -1,12 +1,12 @@
 <template>
-<XPostForm class="_panel blur mkw-postForm data-cy-mkw-postForm" :fixed="true" :autofocus="false"/>
+<MkPostForm class="_panel blur mkw-post-form data-cy-mkw-postForm" :fixed="true" :autofocus="false"/>
 </template>
 
 <script lang="ts" setup>
 import { } from 'vue';
-import { GetFormResultType } from '@/scripts/form';
 import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import XPostForm from '@/components/MkPostForm.vue';
+import { GetFormResultType } from '@/scripts/form';
+import MkPostForm from '@/components/MkPostForm.vue';
 
 const name = 'postForm';
 

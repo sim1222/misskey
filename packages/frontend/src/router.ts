@@ -71,10 +71,6 @@ export const routes = [{
 		name: 'email',
 		component: page(() => import('./pages/settings/email.vue')),
 	}, {
-		path: '/integration',
-		name: 'integration',
-		component: page(() => import('./pages/settings/integration.vue')),
-	}, {
 		path: '/security',
 		name: 'security',
 		component: page(() => import('./pages/settings/security.vue')),
@@ -408,10 +404,6 @@ export const routes = [{
 		name: 'relays',
 		component: page(() => import('./pages/admin/relays.vue')),
 	}, {
-		path: '/integrations',
-		name: 'integrations',
-		component: page(() => import('./pages/admin/integrations.vue')),
-	}, {
 		path: '/instance-block',
 		name: 'instance-block',
 		component: page(() => import('./pages/admin/instance-block.vue')),
@@ -500,6 +492,9 @@ export const routes = [{
 	path: '/clicker',
 	component: page(() => import('./pages/clicker.vue')),
 	loginRequired: true,
+}, {
+	path: '/timeline',
+	component: page(() => import('./pages/timeline.vue')),
 }, {
 	name: 'index',
 	path: '/',
