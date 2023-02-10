@@ -145,7 +145,7 @@ const menuDef = $computed(() => [{
 	}],
 }, {
 	title: i18n.ts.settings,
-	items: [ ...($i?.isAdmin ? [{
+	items: [...($i?.isAdmin ? [{
 		icon: 'ti ti-settings',
 		text: i18n.ts.general,
 		to: '/admin/settings',
@@ -175,7 +175,7 @@ const menuDef = $computed(() => [{
 		text: i18n.ts.instanceBlocking,
 		to: '/admin/instance-block',
 		active: currentPage?.route.name === 'instance-block',
-	}] : []), ...($i?.isAdmin ? [{
+	}, ...($i?.isAdmin ? [{
 		icon: 'ti ti-ghost',
 		text: i18n.ts.proxyAccount,
 		to: '/admin/proxy-account',
