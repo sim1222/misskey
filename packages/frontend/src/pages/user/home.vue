@@ -77,15 +77,15 @@
 						</dl>
 					</div>
 					<div class="status">
-						<MkA v-click-anime :to="userPage(user)" :class="{ active: page === 'index' }">
+						<MkA v-click-anime :to="userPage(user)">
 							<b>{{ number(user.notesCount) }}</b>
 							<span>{{ i18n.ts.notes }}</span>
 						</MkA>
-						<MkA v-click-anime :to="userPage(user, 'following')" :class="{ active: page === 'following' }">
+						<MkA v-click-anime :to="userPage(user, 'following')">
 							<b>{{ number(user.followingCount) }}</b>
 							<span>{{ i18n.ts.following }}</span>
 						</MkA>
-						<MkA v-click-anime :to="userPage(user, 'followers')" :class="{ active: page === 'followers' }">
+						<MkA v-click-anime :to="userPage(user, 'followers')">
 							<b>{{ number(user.followersCount) }}</b>
 							<span>{{ i18n.ts.followers }}</span>
 						</MkA>
@@ -102,6 +102,7 @@
 					<XPhotos :key="user.id" :user="user"/>
 					<XActivity :key="user.id" :user="user"/>
 				</template>
+				<XNotes :class="$style.tl" :no-gap="true" :pagination="pagination"/>
 			</div>
 		</div>
 		<div v-if="!narrow" class="sub _gaps" style="container-type: inline-size;">
@@ -135,6 +136,7 @@ import { i18n } from '@/i18n';
 import { $i } from '@/account';
 import { dateString } from '@/filters/date';
 import { confetti } from '@/scripts/confetti';
+import XNotes from '@/components/MkNotes.vue';
 
 const XPhotos = defineAsyncComponent(() => import('./index.photos.vue'));
 const XActivity = defineAsyncComponent(() => import('./index.activity.vue'));
@@ -150,6 +152,14 @@ let parallaxAnimationId = $ref<null | number>(null);
 let narrow = $ref<null | boolean>(null);
 let rootEl = $ref<null | HTMLElement>(null);
 let bannerEl = $ref<null | HTMLElement>(null);
+
+const pagination = {
+	endpoint: 'users/notes' as const,
+	limit: 10,
+	params: computed(() => ({
+		userId: props.user.id,
+	})),
+};
 
 const style = $computed(() => {
 	if (props.user.bannerUrl == null) return {};
@@ -513,5 +523,13 @@ onUnmounted(() => {
 			}
 		}
 	}
+}
+</style>
+
+<style lang="scss" module>
+.tl {
+	background: var(--bg);
+    border-radius: var(--radius);
+    overflow: clip;
 }
 </style>
