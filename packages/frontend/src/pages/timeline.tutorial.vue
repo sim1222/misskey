@@ -118,9 +118,12 @@
 	</div>
 
 	<div :class="$style.footer">
-		<template v-if="tutorial === tutorialsNumber - 1">
-			<MkPushNotificationAllowButton :class="$style.footerItem" primary show-only-to-register @click="tutorial = -1"/>
-			<MkButton :class="$style.footerItem" :primary="false" @click="tutorial = -1">{{ i18n.ts.noThankYou }}</MkButton>
+		<template v-if="tutorial === tutorialsNumber - 2">
+			<MkPushNotificationAllowButton :class="$style.footerItem" primary show-only-to-register @click="tutorial++"/>
+			<MkButton :class="$style.footerItem" :primary="false" @click="tutorial++">{{ i18n.ts.noThankYou }}</MkButton>
+		</template>
+		<template v-else-if="tutorial === tutorialsNumber - 1">
+			<MkButton :class="$style.footerItem" primary @click="tutorial = -1"><i class="ti ti-check"></i> {{ i18n.ts.gotIt }}</MkButton>
 		</template>
 		<template v-else>
 			<MkButton :class="$style.footerItem" primary @click="tutorial++"><i class="ti ti-check"></i> {{ i18n.ts.next }}</MkButton>
