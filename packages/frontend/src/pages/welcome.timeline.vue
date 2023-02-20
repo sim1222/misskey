@@ -78,14 +78,15 @@ onUpdated(() => {
 	margin: 16px 0 16px auto;
 }
 
-			> .content {
-				padding: 16px;
-				margin: 0 0 0 auto;
-				max-width: max-content;
-				border-radius: 16px;
-				-webkit-backdrop-filter: var(--blur, blur(15px));
-				backdrop-filter: var(--blur, blur(15px));
-				background: var(--panel);
+.content {
+	padding: 16px;
+	margin: 0 0 0 auto;
+	max-width: max-content;
+	border-radius: 16px;
+	-webkit-backdrop-filter: var(--blur, blur(15px));
+	backdrop-filter: var(--blur, blur(15px));
+	background: var(--panel);
+}
 
 .richcontent {
 	min-width: 250px;
