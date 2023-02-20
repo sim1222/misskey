@@ -19,7 +19,7 @@
 					</div>
 				</div>
 			</div>
-			<XTabs v-if="!narrow || hideTitle" :class="$style.tabs" :tab="tab" @update:tab="key => emit('update:tab', key)" :tabs="tabs" :root-el="el" @tab-click="onTabClick"/>
+			<XTabs v-if="!narrow || hideTitle" :class="$style.tabs" :tab="tab" :tabs="tabs" :root-el="el" @update:tab="key => emit('update:tab', key)" @tab-click="onTabClick"/>
 		</template>
 		<div v-if="(!thin_ && narrow && !hideTitle) || (actions && actions.length > 0)" :class="$style.buttonsRight">
 			<button v-tooltip.noDelay="i18n.ts.reload" class="_button" :class="$style.button" onclick="location.reload();">
@@ -31,7 +31,7 @@
 		</div>
 	</div>
 	<div v-if="(narrow && !hideTitle) && hasTabs" :class="[$style.lower, { [$style.slim]: narrow, [$style.thin]: thin_ }]">
-		<XTabs :class="$style.tabs" :tab="tab" @update:tab="key => emit('update:tab', key)" :tabs="tabs" :root-el="el" @tab-click="onTabClick"/>
+		<XTabs :class="$style.tabs" :tab="tab" :tabs="tabs" :root-el="el" @update:tab="key => emit('update:tab', key)" @tab-click="onTabClick"/>
 	</div>
 </div>
 </template>
@@ -43,7 +43,7 @@ import { scrollToTop } from '@/scripts/scroll';
 import { globalEvents } from '@/events';
 import { injectPageMetadata } from '@/scripts/page-metadata';
 import { $i, openAccountMenu as openAccountMenu_ } from '@/account';
-import XTabs, { Tab } from './MkPageHeader.tabs.vue'
+import XTabs, { Tab } from './MkPageHeader.tabs.vue';
 
 const props = withDefaults(defineProps<{
 	tabs?: Tab[];

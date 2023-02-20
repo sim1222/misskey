@@ -1,4 +1,3 @@
-import { performance } from 'perf_hooks';
 import { pipeline } from 'node:stream';
 import * as fs from 'node:fs';
 import { promisify } from 'node:util';
@@ -109,9 +108,9 @@ export class ApiCallService implements OnApplicationShutdown {
 		const [path] = await createTemp();
 		await pump(multipartData.file, fs.createWriteStream(path));
 
-		const fields = {} as Record<string, string | undefined>;
+		const fields = {} as Record<string, unknown>;
 		for (const [k, v] of Object.entries(multipartData.fields)) {
-			fields[k] = v.value;
+			fields[k] = typeof v === 'object' && 'value' in v ? v.value : undefined;
 		}
 
 		const token = fields['i'];
@@ -220,8 +219,8 @@ export class ApiCallService implements OnApplicationShutdown {
 
 			const limit = Object.assign({}, ep.meta.limit);
 
-			if (!limit.key) {
-				limit.key = ep.name;
+			if (limit.key == null) {
+				(limit as any).key = ep.name;
 			}
 
 			// TODO: 毎リクエスト計算するのもあれだしキャッシュしたい
