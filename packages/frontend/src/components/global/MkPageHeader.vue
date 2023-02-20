@@ -43,6 +43,7 @@ import { scrollToTop } from '@/scripts/scroll';
 import { globalEvents } from '@/events';
 import { injectPageMetadata } from '@/scripts/page-metadata';
 import { $i, openAccountMenu as openAccountMenu_ } from '@/account';
+import { i18n } from '@/i18n';
 import XTabs, { Tab } from './MkPageHeader.tabs.vue';
 
 const props = withDefaults(defineProps<{

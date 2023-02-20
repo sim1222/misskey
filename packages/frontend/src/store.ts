@@ -51,7 +51,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	rememberNoteVisibility: {
 		where: 'account',
-		default: true
+		default: true,
 	},
 	defaultNoteVisibility: {
 		where: 'account',
@@ -159,7 +159,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	animatedMfm: {
 		where: 'device',
-		default: false,
+		default: true,
 	},
 	advancedMfm: {
 		where: 'device',
@@ -183,7 +183,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	disableDrawer: {
 		where: 'device',
-		default: true
+		default: true,
 	},
 	useBlurEffectForModal: {
 		where: 'device',
@@ -203,7 +203,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	useReactionPickerForContextMenu: {
 		where: 'device',
-		default: true
+		default: true,
 	},
 	showGapBetweenNotesInTimeline: {
 		where: 'device',
@@ -223,11 +223,11 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	reactionPickerWidth: {
 		where: 'device',
-		default: 3
+		default: 3,
 	},
 	reactionPickerHeight: {
 		where: 'device',
-		default: 4
+		default: 4,
 	},
 	reactionPickerUseDrawerForMobile: {
 		where: 'device',
@@ -284,7 +284,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	streamerMode: {
 		where: 'device',
 		default: false,
-	}
+	},
 }));
 
 // TODO: 他のタブと永続化されたstateを同期
