@@ -39,7 +39,7 @@ function toBase62(n: number): string {
 
 export default defineConfig(({ command, mode }) => {
 	return {
-		base: '/vite/',
+		// base: '/vite/',
 
 		plugins: [
 			pluginVue({
@@ -53,7 +53,8 @@ export default defineConfig(({ command, mode }) => {
 			alias: {
 				'@/': __dirname + '/src/',
 				'/client-assets/': __dirname + '/assets/',
-				'/static-assets/': __dirname + '/../backend/assets/',
+				// '/static-assets/': __dirname + '/../backend/assets/',
+				'/static-assets/': __dirname + '/assets/',
 				'/fluent-emojis/': __dirname + '/../../fluent-emojis/dist/',
 				'/fluent-emoji/': __dirname + '/../../fluent-emojis/dist/',
 			},
@@ -104,7 +105,8 @@ export default defineConfig(({ command, mode }) => {
 				},
 			},
 			cssCodeSplit: true,
-			outDir: __dirname + '/../../built/_vite_',
+			// outDir: __dirname + '/../../built/_vite_',
+			outDir: __dirname + '/built/',
 			assetsDir: '.',
 			emptyOutDir: false,
 			sourcemap: process.env.NODE_ENV === 'development',

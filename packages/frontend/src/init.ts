@@ -173,18 +173,18 @@ if ($i && $i.token) {
 }
 //#endregion
 
-const fetchInstanceMetaPromise = fetchInstance();
+// const fetchInstanceMetaPromise = fetchInstance();
 
-fetchInstanceMetaPromise.then(() => {
-	miLocalStorage.setItem('v', instance.version);
+// fetchInstanceMetaPromise.then(() => {
+// 	miLocalStorage.setItem('v', instance.version);
 
-	// Init service worker
-	initializeSw();
-});
+// 	// Init service worker
+// 	initializeSw();
+// });
 
-try {
-	await fetchCustomEmojis();
-} catch (err) {}
+// try {
+// 	await fetchCustomEmojis();
+// } catch (err) {}
 
 const app = createApp(
 	window.location.search === '?zen' ? defineAsyncComponent(() => import('@/ui/zen.vue')) :
