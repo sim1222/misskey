@@ -424,7 +424,8 @@ importers:
       is-file-animated: 1.0.2
       json5: 2.2.3
       matter-js: 0.19.0
-      mfm-js: 0.23.3
+      mfm-js: git+https://github.com/sim1222/mfm.js.git
+      misetehoshii: https://github.com/melt-adzuki/misetehoshii
       misskey-js: 0.0.15
       photoswipe: 5.3.5
       prismjs: 1.29.0
@@ -487,7 +488,8 @@ importers:
       is-file-animated: 1.0.2
       json5: 2.2.3
       matter-js: 0.19.0
-      mfm-js: 0.23.3
+      mfm-js: github.com/sim1222/mfm.js/adba7ad3bfbd1779b46314f3eef52f301fd0d6c9
+      misetehoshii: github.com/melt-adzuki/misetehoshii/4888a5e364cf1b92d7989bc2ce8338da54e4287e
       misskey-js: 0.0.15
       photoswipe: 5.3.5
       prismjs: 1.29.0
@@ -5179,6 +5181,10 @@ packages:
   /depd/2.0.0:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /destyle.css/3.0.2:
+    resolution: {integrity: sha512-OUzuAlridP01YP0seHxx+FgwhdXF07Ls9NxnJpR8EI7ADioswoR7VKkBd/s1hNw/G4ILasLSA0k2Kw1M57r1kA==}
     dev: false
 
   /detect-file/1.0.0:
@@ -13480,6 +13486,15 @@ packages:
       readable-stream: 3.6.0
     dev: false
 
+  github.com/melt-adzuki/misetehoshii/4888a5e364cf1b92d7989bc2ce8338da54e4287e:
+    resolution: {tarball: https://codeload.github.com/melt-adzuki/misetehoshii/tar.gz/4888a5e364cf1b92d7989bc2ce8338da54e4287e}
+    name: misetehoshii
+    version: 0.0.0
+    dependencies:
+      destyle.css: 3.0.2
+      vue: 3.2.47
+    dev: false
+
   github.com/misskey-dev/browser-image-resizer/0227e860621e55cbed0aabe6dc601096a7748c4a:
     resolution: {tarball: https://codeload.github.com/misskey-dev/browser-image-resizer/tar.gz/0227e860621e55cbed0aabe6dc601096a7748c4a}
     name: browser-image-resizer
@@ -13511,4 +13526,14 @@ packages:
       loadjs: 4.2.0
       rangetouch: 2.0.1
       url-polyfill: 1.1.12
+    dev: false
+
+  github.com/sim1222/mfm.js/adba7ad3bfbd1779b46314f3eef52f301fd0d6c9:
+    resolution: {tarball: https://codeload.github.com/sim1222/mfm.js/tar.gz/adba7ad3bfbd1779b46314f3eef52f301fd0d6c9}
+    name: mfm-js
+    version: 0.23.0
+    prepare: true
+    requiresBuild: true
+    dependencies:
+      twemoji-parser: 14.0.0
     dev: false
