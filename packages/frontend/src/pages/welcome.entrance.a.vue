@@ -1,76 +1,78 @@
 <template>
-<div v-if="meta" class="rsqzvsbo">
+<div class="rsqzvsbo">
 	<div class="top">
-		<MkFeaturedPhotos class="bg"/>
-		<XTimeline class="tl"/>
+		<!-- <MkFeaturedPhotos class="bg"/> -->
+		<!-- <XTimeline class="tl"/> -->
 		<div class="shape1"></div>
 		<div class="shape2"></div>
 		<img src="/client-assets/misskey.svg" class="misskey"/>
-		<div class="emojis">
+		<!-- <div class="emojis">
 			<MkEmoji :normal="true" :no-style="true" emoji="👍"/>
 			<MkEmoji :normal="true" :no-style="true" emoji="❤"/>
 			<MkEmoji :normal="true" :no-style="true" emoji="😆"/>
 			<MkEmoji :normal="true" :no-style="true" emoji="🎉"/>
 			<MkEmoji :normal="true" :no-style="true" emoji="🍮"/>
-		</div>
+		</div> -->
 		<div class="main">
-			<img :src="$instance.iconUrl || $instance.faviconUrl || '/favicon.ico'" alt="" class="icon"/>
+			<!-- <img :src="$instance.iconUrl || $instance.faviconUrl || '/favicon.ico'" alt="" class="icon"/> -->
 			<button class="_button _acrylic menu" @click="showMenu"><i class="ti ti-dots"></i></button>
 			<div class="fg">
 				<h1>
 					<!-- 背景色によってはロゴが見えなくなるのでとりあえず無効に -->
 					<!-- <img class="logo" v-if="meta.logoImageUrl" :src="meta.logoImageUrl"><span v-else class="text">{{ instanceName }}</span> -->
-					<span class="text">{{ instanceName }}</span>
+					<span class="text">Misskey front for Moderation</span>
 				</h1>
 				<div class="about">
 					<!-- eslint-disable-next-line vue/no-v-html -->
-					<div class="desc" v-html="meta.description || i18n.ts.headlineMisskey"></div>
+					<div class="desc">
+						aaa
+					</div>
 				</div>
 				<div class="action">
-					<MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton>
-					<MkButton inline rounded data-cy-signin @click="signin()">{{ i18n.ts.login }}</MkButton>
+					<!-- <MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton> -->
+					<MkButton inline rounded gradate data-cy-signin @click="signin()">{{ i18n.ts.login }}</MkButton>
 				</div>
 			</div>
 		</div>
-		<div v-if="instances && instances.length > 0" class="federation">
-			<MarqueeText :duration="40">
-				<MkA v-for="instance in instances" :key="instance.id" :class="$style.federationInstance" :to="`/instance-info/${instance.host}`" behavior="window">
-					<!--<MkInstanceCardMini :instance="instance"/>-->
-					<img v-if="instance.iconUrl" class="icon" :src="instance.iconUrl" alt=""/>
-					<span class="name _monospace">{{ instance.host }}</span>
-				</MkA>
-			</MarqueeText>
-		</div>
+		<!-- <div v-if="instances && instances.length > 0" class="federation"> -->
+		<!-- <MarqueeText :duration="40"> -->
+		<!-- <MkA v-for="instance in instances" :key="instance.id" :class="$style.federationInstance" :to="`/instance-info/${instance.host}`" behavior="window"> -->
+		<!-- <MkInstanceCardMini :instance="instance"/> -->
+		<!-- <img v-if="instance.iconUrl" class="icon" :src="instance.iconUrl" alt=""/> -->
+		<!-- <span class="name _monospace">{{ instance.host }}</span> -->
+		<!-- </MkA> -->
+		<!-- </MarqueeText> -->
+		<!-- </div> -->
 	</div>
 </div>
 </template>
 
 <script lang="ts" setup>
 import { } from 'vue';
-import XTimeline from './welcome.timeline.vue';
-import MarqueeText from '@/components/MkMarquee.vue';
+// import XTimeline from './welcome.timeline.vue';
+// import MarqueeText from '@/components/MkMarquee.vue';
+// import { Instance } from 'misskey-js/built/entities';
 import XSigninDialog from '@/components/MkSigninDialog.vue';
 import XSignupDialog from '@/components/MkSignupDialog.vue';
 import MkButton from '@/components/MkButton.vue';
-import MkFeaturedPhotos from '@/components/MkFeaturedPhotos.vue';
-import { instanceName } from '@/config';
+// import MkFeaturedPhotos from '@/components/MkFeaturedPhotos.vue';
+// import { instanceName } from '@/config';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
-import { Instance } from 'misskey-js/built/entities';
 
-let meta = $ref<Instance>();
-let instances = $ref<any[]>();
+// let meta = $ref<Instance>();
+// let instances = $ref<any[]>();
 
-os.api('meta', { detail: true }).then(_meta => {
-	meta = _meta;
-});
+// os.api('meta', { detail: true }).then(_meta => {
+// 	meta = _meta;
+// });
 
-os.apiGet('federation/instances', {
-	sort: '+pubSub',
-	limit: 20,
-}).then(_instances => {
-	instances = _instances;
-});
+// os.apiGet('federation/instances', {
+// 	sort: '+pubSub',
+// 	limit: 20,
+// }).then(_instances => {
+// 	instances = _instances;
+// });
 
 function signin() {
 	os.popup(XSigninDialog, {
@@ -78,11 +80,11 @@ function signin() {
 	}, {}, 'closed');
 }
 
-function signup() {
-	os.popup(XSignupDialog, {
-		autoSet: true,
-	}, {}, 'closed');
-}
+// function signup() {
+// 	os.popup(XSignupDialog, {
+// 		autoSet: true,
+// 	}, {}, 'closed');
+// }
 
 function showMenu(ev) {
 	os.popupMenu([{

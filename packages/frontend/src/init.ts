@@ -26,7 +26,7 @@ import widgets from '@/widgets';
 import directives from '@/directives';
 import components from '@/components';
 import { version, ui, lang, updateLocale } from '@/config';
-import { applyTheme } from '@/scripts/theme';
+import { applyTheme, getBuiltinThemes } from '@/scripts/theme';
 import { isDeviceDarkmode } from '@/scripts/is-device-darkmode';
 import { i18n, updateI18n } from '@/i18n';
 import { confirm, alert, post, popup, toast } from '@/os';
@@ -47,6 +47,7 @@ import { deckStore } from './ui/deck/deck-store';
 import { miLocalStorage } from './local-storage';
 import { claimAchievement, claimedAchievements } from './scripts/achievements';
 import { fetchCustomEmojis } from './custom-emojis';
+import { getThemes } from './theme-store';
 
 console.info(`Misskey v${version}`);
 
@@ -169,6 +170,7 @@ if ($i && $i.token) {
 		if (_DEV_) {
 			console.log('not signed in');
 		}
+		applyTheme(await getBuiltinThemes().then(x => x.find(x => x.id === 'e2c940b5-6e9a-4c03-b738-261c720c426d')));
 	}
 }
 //#endregion
@@ -303,13 +305,13 @@ window.matchMedia('(prefers-color-scheme: dark)').addListener(mql => {
 });
 //#endregion
 
-fetchInstanceMetaPromise.then(() => {
-	if (defaultStore.state.themeInitial) {
-		if (instance.defaultLightTheme != null) ColdDeviceStorage.set('lightTheme', JSON5.parse(instance.defaultLightTheme));
-		if (instance.defaultDarkTheme != null) ColdDeviceStorage.set('darkTheme', JSON5.parse(instance.defaultDarkTheme));
-		defaultStore.set('themeInitial', false);
-	}
-});
+// fetchInstanceMetaPromise.then(() => {
+// 	if (defaultStore.state.themeInitial) {
+// 		if (instance.defaultLightTheme != null) ColdDeviceStorage.set('lightTheme', JSON5.parse(instance.defaultLightTheme));
+// 		if (instance.defaultDarkTheme != null) ColdDeviceStorage.set('darkTheme', JSON5.parse(instance.defaultDarkTheme));
+// 		defaultStore.set('themeInitial', false);
+// 	}
+// });
 
 watch(defaultStore.reactiveState.useBlurEffectForModal, v => {
 	document.documentElement.style.setProperty('--modalBgFilter', v ? 'blur(4px)' : 'none');
