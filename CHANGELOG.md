@@ -8,6 +8,38 @@
 
 You should also include the user name that made the change.
 -->
+## 13.7.4 (unreleased)
+
+### Note
+13.7.0以前から直接このバージョンにアップデートする場合は全ての通知が削除**されません。**
+
+### Bugfixes
+- 全ての通知が削除されてしまうのを修正
+
+## 13.7.3 (2023/02/23)
+
+### Note
+~~13.7.0以前から直接このバージョンにアップデートする場合は全ての通知が削除**されません。**~~
+
+### Improvements
+
+### Bugfixes
+- Client: 「キャッシュを削除」した後、ローカルのカスタム絵文字が表示されなくなるされなくなる問題を修正
+- Client: 通知設定画面で以前からグループの招待を有効化していた場合、通知の表示に失敗する問題の修正
+- Client: 通知設定画面に古いトグルが残っていた問題を修正
+
+## 13.7.2 (2023/02/23)
+
+### Note
+13.7.0以前からアップデートする場合は全ての通知が削除されます。
+
+### Improvements
+- enhance: make pwa icon maskable
+- chore(client): tweak custom emoji size
+
+### Bugfixes
+- マイグレーションが失敗することがあるのを修正
+
 ## 13.7.1 (2023/02/23)
 
 ### Improvements
@@ -435,10 +467,6 @@ You should also include the user name that made the change.
 ## 12.119.2 (2022/12/04)
 ### Bugfixes
 - Server: Backported versions mitigate isn't working @mei23
-
-## 12.119.1 (2022/12/03)
-### Bugfixes
-- Server: Mitigate AP reference chain DoS vector @skehmatics
 
 ## 12.119.0 (2022/09/10)
 
