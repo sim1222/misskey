@@ -9,10 +9,11 @@
 
 You should also include the user name that made the change.
 -->
-## 13.x.x (unreleased)
+## 13.8.0 (2023/02/26)
 
 ### Improvements
 - チャンネル内ハイライト
+- ホームタイムラインのパフォーマンスを改善
 - renoteした際の表示を改善
 - バックグラウンドで一定時間経過したらページネーションのアイテム更新をしない
 - enhance(client): MkUrlPreviewの閉じるボタンを見やすく
@@ -27,6 +28,7 @@ You should also include the user name that made the change.
 - fix(client): Android ChromeでPWAとしてインストールできない問題を修正
 - 未知のユーザーが deleteActor されたら処理をスキップする
 - fix(server): notes/createで、fileIdsと見つかったファイルの数が異なる場合はエラーにする
+- fix(server): エラーのスタックトレースは返さないように
 
 ## 13.7.5 (2023/02/24)
 
