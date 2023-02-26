@@ -1,6 +1,6 @@
 {
 	"name": "misskey",
-	"version": "13.8.0-simkey",
+	"version": "13.8.1-simkey",
 	"codename": "nasubi",
 	"repository": {
 		"type": "git",
