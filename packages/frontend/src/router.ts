@@ -217,6 +217,8 @@ export const routes = [{
 	query: {
 		q: 'query',
 		channel: 'channel',
+		type: 'type',
+		origin: 'origin',
 	},
 }, {
 	path: '/authorize-follow',

@@ -2,16 +2,40 @@
 ## 13.x.x (unreleased)
 
 ### Improvements
+- 
 
 ### Bugfixes
 -
 
 You should also include the user name that made the change.
 -->
-## 13.7.4 (unreleased)
+## 13.x.x (unreleased)
+
+### Improvements
+- チャンネル内ハイライト
+- renoteした際の表示を改善
+- バックグラウンドで一定時間経過したらページネーションのアイテム更新をしない
+- enhance(client): MkUrlPreviewの閉じるボタンを見やすく
+- Add dialog to remove follower
+- enhance(client): improve clip menu ux
+- 検索画面の統合
+- enhance(client): ノートメニューからユーザーメニューを開けるように
+- photoswipe 表示時に戻る操作をしても前の画面に戻らないように
+
+### Bugfixes
+- Windows環境でswcを使うと正しくビルドできない問題の修正
+- fix(client): Android ChromeでPWAとしてインストールできない問題を修正
+- 未知のユーザーが deleteActor されたら処理をスキップする
+- fix(server): notes/createで、fileIdsと見つかったファイルの数が異なる場合はエラーにする
+
+## 13.7.5 (2023/02/24)
 
 ### Note
 13.7.0以前から直接このバージョンにアップデートする場合は全ての通知が削除**されません。**
+
+### Improvements
+- 紛らわしいため公開範囲の「ローカルのみ」オプションの名称を「連合なし」に変更
+- Frontend: スマホ・タブレットの場合、チャンネルの投稿フォームに自動でフォーカスしないように
 
 ### Bugfixes
 - 全ての通知が削除されてしまうのを修正
