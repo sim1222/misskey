@@ -10,6 +10,7 @@
 		<template #prefix>@</template>
 		<template #suffix>@{{ host }}</template>
 		<template #caption>
+			<div><i class="ti ti-alert-triangle ti-fw"></i> {{ i18n.ts.cannotBeChangedLater }}</div>
 			<span v-if="usernameState === 'wait'" style="color:#999"><MkLoading :em="true"/> {{ i18n.ts.checking }}</span>
 			<span v-else-if="usernameState === 'ok'" style="color: var(--success)"><i class="ti ti-check ti-fw"></i> {{ i18n.ts.available }}</span>
 			<span v-else-if="usernameState === 'unavailable'" style="color: var(--error)"><i class="ti ti-alert-triangle ti-fw"></i> {{ i18n.ts.unavailable }}</span>
@@ -117,7 +118,9 @@ const shouldDisableSubmitting = $computed((): boolean => {
 		instance.enableHcaptcha && !hCaptchaResponse ||
 		instance.enableRecaptcha && !reCaptchaResponse ||
 		instance.enableTurnstile && !turnstileResponse ||
-		passwordRetypeState === 'not-match';
+		instance.emailRequiredForSignup && emailState !== 'ok' ||
+		usernameState !== 'ok' ||
+		passwordRetypeState !== 'match';
 });
 
 function onChangeUsername(): void {
