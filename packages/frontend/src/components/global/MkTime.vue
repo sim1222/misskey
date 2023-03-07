@@ -2,6 +2,7 @@
 <time :title="absolute">
 	<template v-if="invalid">{{ i18n.ts._ago.invalid }}</template>
 	<template v-else-if="mode === 'relative'">{{ relative }}</template>
+	<template v-else-if="mode === 'allRelative'">{{ allRelative }}</template>
 	<template v-else-if="mode === 'absolute'">{{ absolute }}</template>
 	<template v-else-if="mode === 'detail'">{{ absolute }} ({{ allRelative }})</template>
 </time>
@@ -14,7 +15,7 @@ import { dateTimeFormat } from '@/scripts/intl-const';
 
 const props = withDefaults(defineProps<{
 	time: Date | string | number | null;
-	mode?: 'relative' | 'absolute' | 'detail';
+	mode?: 'relative' | 'allRelative' | 'absolute' | 'detail';
 }>(), {
 	mode: 'relative',
 });
@@ -32,7 +33,7 @@ const relative = $computed<string>(() => {
 
 	const ago = (now - _time) / 1000/*ms*/;
 	return (
-		ago >= 86400 ? _time.toLocaleDateString() :
+		ago >= 86400 ? new Date(_time).toLocaleDateString() :
 		ago >= 3600 ? i18n.t('_ago.hoursAgo', { n: Math.round(ago / 3600).toString() }) :
 		ago >= 60 ? i18n.t('_ago.minutesAgo', { n: (~~(ago / 60)).toString() }) :
 		ago >= 10 ? i18n.t('_ago.secondsAgo', { n: (~~(ago % 60)).toString() }) :
@@ -41,7 +42,7 @@ const relative = $computed<string>(() => {
 });
 
 const allRelative = $computed(() => {
-	const ago = (now.getTime() - _time.getTime()) / 1000/*ms*/;
+	const ago = (now - _time) / 1000/*ms*/;
 	return (
 		ago >= 31536000 ? i18n.t('_ago.yearsAgo', { n: Math.round(ago / 31536000).toString() }) :
 		ago >= 2592000 ? i18n.t('_ago.monthsAgo', { n: Math.round(ago / 2592000).toString() }) :

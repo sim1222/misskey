@@ -63,7 +63,7 @@
 						</dl>
 						<dl class="field">
 							<dt class="name"><i class="ti ti-calendar ti-fw"></i> {{ i18n.ts.registeredDate }}</dt>
-							<dd class="value">{{ dateString(user.createdAt) }} (<MkTime :time="user.createdAt"/>)</dd>
+							<dd class="value"><MkTime :time="user.createdAt" mode="detail"/></dd>
 						</dl>
 					</div>
 					<div v-if="user.fields.length > 0" class="fields">
