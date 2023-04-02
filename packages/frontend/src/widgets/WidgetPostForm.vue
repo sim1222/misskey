@@ -1,5 +1,5 @@
 <template>
-<MkPostForm class="_panel blur mkw-post-form data-cy-mkw-postForm" :fixed="true" :autofocus="false"/>
+<MkPostForm data-cy-mkw-postForm class="_panel blur mkw-post-form" :fixed="true" :autofocus="false"/>
 </template>
 
 <script lang="ts" setup>

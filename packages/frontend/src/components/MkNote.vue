@@ -103,10 +103,14 @@
 					<i class="ti ti-ban"></i>
 				</button>
 				<button v-if="appearNote.myReaction == null" ref="reactButton" :class="$style.footerButton" class="_button" @mousedown="react()">
-					<i class="ti ti-plus"></i>
+					<i v-if="appearNote.reactionAcceptance === 'likeOnly'" class="ti ti-heart"></i>
+					<i v-else class="ti ti-plus"></i>
 				</button>
 				<button v-if="appearNote.myReaction != null" ref="reactButton" :class="$style.footerButton" class="_button" @click="undoReact(appearNote)">
 					<i class="ti ti-minus"></i>
+				</button>
+				<button v-if="defaultStore.state.showClipButtonInNoteFooter" ref="clipButton" :class="$style.footerButton" class="_button" @mousedown="clip()">
+					<i class="ti ti-paperclip"></i>
 				</button>
 				<button ref="menuButton" :class="$style.footerButton" class="_button" @mousedown="menu()">
 					<i class="ti ti-dots"></i>
@@ -154,7 +158,7 @@ import { reactionPicker } from '@/scripts/reaction-picker';
 import { extractUrlFromMfm } from '@/scripts/extract-url-from-mfm';
 import { $i } from '@/account';
 import { i18n } from '@/i18n';
-import { getNoteMenu } from '@/scripts/get-note-menu';
+import { getNoteClipMenu, getNoteMenu } from '@/scripts/get-note-menu';
 import { useNoteCapture } from '@/scripts/use-note-capture';
 import { deepClone } from '@/scripts/clone';
 import { useTooltip } from '@/scripts/use-tooltip';
@@ -195,6 +199,7 @@ const menuButton = shallowRef<HTMLElement>();
 const renoteButton = shallowRef<HTMLElement>();
 const renoteTime = shallowRef<HTMLElement>();
 const reactButton = shallowRef<HTMLElement>();
+const clipButton = shallowRef<HTMLElement>();
 let appearNote = $computed(() => isRenote ? note.renote as misskey.entities.Note : note);
 const isMyRenote = $i && ($i.id === note.userId);
 const showContent = ref(false);
@@ -362,8 +367,21 @@ function reply(viaKeyboard = false): void {
 
 function react(viaKeyboard = false): void {
 	pleaseLogin();
-	blur();
-	reacting.value = true;
+	if (appearNote.reactionAcceptance === 'likeOnly') {
+		os.api('notes/reactions/create', {
+			noteId: appearNote.id,
+			reaction: '❤️',
+		});
+		const el = reactButton.value as HTMLElement | null | undefined;
+		if (el) {
+			const rect = el.getBoundingClientRect();
+			const x = rect.left + (el.offsetWidth / 2);
+			const y = rect.top + (el.offsetHeight / 2);
+			os.popup(MkRippleEffect, { x, y }, {}, 'end');
+		}
+	} else {
+		blur();
+		reacting.value = true;
 	reactionPicker.show(reactButton.value, reaction => {
 		os.api('notes/reactions/create', {
 			noteId: appearNote.id,
@@ -374,8 +392,9 @@ function react(viaKeyboard = false): void {
 		}
 	}, () => {
 		reacting.value = false;
-		focus();
-	});
+			focus();
+		});
+	}
 }
 
 function undoReact(note): void {
@@ -418,6 +437,10 @@ function menu(viaKeyboard = false): void {
 		reacting.value = false;
 		focus();
 	});
+}
+
+async function clip() {
+	os.popupMenu(await getNoteClipMenu({ note: note, isDeleted, currentClipPage }), clipButton.value).then(focus);
 }
 
 function showRenoteMenu(viaKeyboard = false): void {
