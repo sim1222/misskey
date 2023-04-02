@@ -260,6 +260,14 @@ export default defineComponent({
 					}, genEl(token.children))];
 				}
 
+				case 'dlsite': {
+					return [h(MkLink, {
+						key: Math.random(),
+						url: token.props.url,
+						rel: 'nofollow noopener',
+					}, genEl(token.children))];
+				}
+
 				case 'mention': {
 					return [h(MkMention, {
 						key: Math.random(),
