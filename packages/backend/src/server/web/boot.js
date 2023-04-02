@@ -46,9 +46,12 @@
 		}
 
 		const res = await fetch(`/assets/locales/${lang}.${v}.json`);
-		if (res.status === 200) {
+		const fallback = await fetch(`/assets/locales/ja-JP.${v}.json`);
+
+		if (res.status === 200 && fallback.status === 200) {
+			const merged = {...await res.json(),...await fallback.json()}
 			localStorage.setItem('lang', lang);
-			localStorage.setItem('locale', await res.text());
+			localStorage.setItem('locale', JSON.stringify(merged));
 			localStorage.setItem('localeVersion', v);
 		} else {
 			await checkUpdate();
