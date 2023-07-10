@@ -49,7 +49,7 @@
 		const fallback = await fetch(`/assets/locales/ja-JP.${v}.json`);
 
 		if (res.status === 200 && fallback.status === 200) {
-			const merged = {...await res.json(),...await fallback.json()}
+			const merged = {...await fallback.json(), ...await res.json()}
 			localStorage.setItem('lang', lang);
 			localStorage.setItem('locale', JSON.stringify(merged));
 			localStorage.setItem('localeVersion', v);
