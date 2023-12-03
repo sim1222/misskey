@@ -194,6 +194,7 @@ export class NoteCreateService {
 		host: User['host'];
 		isSilenced: User['isSilenced'];
 		createdAt: User['createdAt'];
+		followersCount: User['followersCount'];
 	}, data: Option, silent = false): Promise<Note> {
 		// チャンネル外にリプライしたら対象のスコープに合わせる
 		// (クライアントサイドでやっても良い処理だと思うけどとりあえずサーバーサイドで)
@@ -409,10 +410,14 @@ export class NoteCreateService {
 		host: User['host'];
 		isSilenced: User['isSilenced'];
 		createdAt: User['createdAt'];
+		followersCount: User['followersCount'];
 	}, data: Option, silent: boolean, tags: string[], mentionedUsers: MinimumUser[]) {
 		// 統計を更新
 		this.notesChart.update(note, true);
-		this.perUserNotesChart.update(user, note, true);
+
+		if (user.followersCount) {
+			this.perUserNotesChart.update(user, note, true);
+		}
 
 		// Register host
 		if (this.userEntityService.isRemoteUser(user)) {

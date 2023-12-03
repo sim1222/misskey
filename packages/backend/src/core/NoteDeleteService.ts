@@ -48,7 +48,7 @@ export class NoteDeleteService {
 	 * @param user 投稿者
 	 * @param note 投稿
 	 */
-	async delete(user: { id: User['id']; uri: User['uri']; host: User['host']; }, note: Note, quiet = false) {
+	async delete(user: { id: User['id']; uri: User['uri']; host: User['host']; followersCount: User['followersCount']; }, note: Note, quiet = false) {
 		const deletedAt = new Date();
 
 		// この投稿を除く指定したユーザーによる指定したノートのリノートが存在しないとき
@@ -96,7 +96,10 @@ export class NoteDeleteService {
 
 			// 統計を更新
 			this.notesChart.update(note, false);
-			this.perUserNotesChart.update(user, note, false);
+
+			if (user.followersCount) {
+				this.perUserNotesChart.update(user, note, false);
+			}
 
 			if (this.userEntityService.isRemoteUser(user)) {
 				this.federatedInstanceService.registerOrFetchInstanceDoc(user.host).then(i => {

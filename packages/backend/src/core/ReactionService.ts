@@ -81,7 +81,7 @@ export class ReactionService {
 	) {
 	}
 
-	public async create(user: { id: User['id']; host: User['host']; }, note: Note, reaction?: string) {
+	public async create(user: { id: User['id']; host: User['host']; followersCount: User['followersCount']; }, note: Note, reaction?: string) {
 		// Check blocking
 		if (note.userId !== user.id) {
 			const block = await this.blockingsRepository.findOneBy({
@@ -142,7 +142,9 @@ export class ReactionService {
 			.where('id = :id', { id: note.id })
 			.execute();
 	
-		this.perUserReactionsChart.update(user, note);
+		if (user.followersCount) {
+			this.perUserReactionsChart.update(user, note);
+		}
 	
 		// カスタム絵文字リアクションだったら絵文字情報も送る
 		const decodedReaction = this.decodeReaction(reaction);
