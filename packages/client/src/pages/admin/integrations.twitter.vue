@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormInput from '@/components/form/input.vue';
 import FormButton from '@/components/MkButton.vue';
@@ -35,24 +35,24 @@ import * as os from '@/os';
 import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
 
-let uri: string = $ref('');
-let enableTwitterIntegration: boolean = $ref(false);
-let twitterConsumerKey: string | null = $ref(null);
-let twitterConsumerSecret: string | null = $ref(null);
+let uri: string = ref('');
+let enableTwitterIntegration: boolean = ref(false);
+let twitterConsumerKey: string | null = ref(null);
+let twitterConsumerSecret: string | null = ref(null);
 
 async function init() {
 	const meta = await os.api('admin/meta');
-	uri = meta.uri;
-	enableTwitterIntegration = meta.enableTwitterIntegration;
-	twitterConsumerKey = meta.twitterConsumerKey;
-	twitterConsumerSecret = meta.twitterConsumerSecret;
+	uri.value = meta.uri;
+	enableTwitterIntegration.value = meta.enableTwitterIntegration;
+	twitterConsumerKey.value = meta.twitterConsumerKey;
+	twitterConsumerSecret.value = meta.twitterConsumerSecret;
 }
 
 function save() {
 	os.apiWithDialog('admin/update-meta', {
-		enableTwitterIntegration,
-		twitterConsumerKey,
-		twitterConsumerSecret,
+		enableTwitterIntegration: enableTwitterIntegration.value,
+		twitterConsumerKey: twitterConsumerKey.value,
+		twitterConsumerSecret: twitterConsumerSecret.value,
 	}).then(() => {
 		fetchInstance();
 	});

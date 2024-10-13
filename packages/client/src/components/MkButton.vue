@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
 const props = defineProps<{
 	type?: 'button' | 'submit' | 'reset';
@@ -45,13 +45,13 @@ const emit = defineEmits<{
 	(ev: 'click', payload: MouseEvent): void;
 }>();
 
-let el = $ref<HTMLElement | null>(null);
-let ripples = $ref<HTMLElement | null>(null);
+let el = ref<HTMLElement | null>(null);
+let ripples = ref<HTMLElement | null>(null);
 
 onMounted(() => {
 	if (props.autofocus) {
 		nextTick(() => {
-			el!.focus();
+			el.value!.focus();
 		});
 	}
 });
@@ -77,7 +77,7 @@ function onMousedown(evt: MouseEvent): void {
 	ripple.style.top = (evt.clientY - rect.top - 1).toString() + 'px';
 	ripple.style.left = (evt.clientX - rect.left - 1).toString() + 'px';
 
-	ripples!.appendChild(ripple);
+	ripples.value!.appendChild(ripple);
 
 	const circleCenterX = evt.clientX - rect.left;
 	const circleCenterY = evt.clientY - rect.top;
@@ -92,7 +92,7 @@ function onMousedown(evt: MouseEvent): void {
 		ripple.style.opacity = '0';
 	}, 1000);
 	window.setTimeout(() => {
-		if (ripples) ripples.removeChild(ripple);
+		if (ripples.value) ripples.value.removeChild(ripple);
 	}, 2000);
 }
 </script>

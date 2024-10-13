@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ComputedRef, provide } from 'vue';
+import { ComputedRef, provide, ref } from 'vue';
 import XColumn from './column.vue';
 import { deckStore, Column } from '@/ui/deck/deck-store';
 import * as os from '@/os';
@@ -29,11 +29,11 @@ const emit = defineEmits<{
 	(ev: 'parent-focus', direction: 'up' | 'down' | 'left' | 'right'): void;
 }>();
 
-let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
+let pageMetadata = ref<null | ComputedRef<PageMetadata>>();
 
 provide('router', mainRouter);
 provideMetadataReceiver((info) => {
-	pageMetadata = info;
+	pageMetadata.value = info;
 });
 
 /*

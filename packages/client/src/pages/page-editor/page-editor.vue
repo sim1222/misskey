@@ -82,7 +82,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, provide, watch } from 'vue';
+import { defineAsyncComponent, computed, provide, watch, ref } from 'vue';
 import 'prismjs';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
@@ -115,51 +115,51 @@ const props = defineProps<{
 	initUser?: string;
 }>();
 
-let tab = $ref('settings');
-let author = $ref($i);
-let readonly = $ref(false);
-let page = $ref(null);
-let pageId = $ref(null);
-let currentName = $ref(null);
-let title = $ref('');
-let summary = $ref(null);
-let name = $ref(Date.now().toString());
-let eyeCatchingImage = $ref(null);
-let eyeCatchingImageId = $ref(null);
-let font = $ref('sans-serif');
-let content = $ref([]);
-let alignCenter = $ref(false);
-let hideTitleWhenPinned = $ref(false);
-let variables = $ref([]);
-let hpml = $ref(null);
-let script = $ref('');
+let tab = ref('settings');
+let author = ref($i);
+let readonly = ref(false);
+let page = ref(null);
+let pageId = ref(null);
+let currentName = ref(null);
+let title = ref('');
+let summary = ref(null);
+let name = ref(Date.now().toString());
+let eyeCatchingImage = ref(null);
+let eyeCatchingImageId = ref(null);
+let font = ref('sans-serif');
+let content = ref([]);
+let alignCenter = ref(false);
+let hideTitleWhenPinned = ref(false);
+let variables = ref([]);
+let hpml = ref(null);
+let script = ref('');
 
-provide('readonly', readonly);
+provide('readonly', readonly.value);
 provide('getScriptBlockList', getScriptBlockList);
 provide('getPageBlockList', getPageBlockList);
 
-watch($$(eyeCatchingImageId), async () => {
-	if (eyeCatchingImageId == null) {
-		eyeCatchingImage = null;
+watch((eyeCatchingImageId), async () => {
+	if (eyeCatchingImageId.value == null) {
+		eyeCatchingImage.value = null;
 	} else {
-		eyeCatchingImage = await os.api('drive/files/show', {
-			fileId: eyeCatchingImageId,
+		eyeCatchingImage.value = await os.api('drive/files/show', {
+			fileId: eyeCatchingImageId.value,
 		});
 	}
 });
 
 function getSaveOptions() {
 	return {
-		title: title.trim(),
-		name: name.trim(),
-		summary: summary,
-		font: font,
-		script: script,
-		hideTitleWhenPinned: hideTitleWhenPinned,
-		alignCenter: alignCenter,
-		content: content,
-		variables: variables,
-		eyeCatchingImageId: eyeCatchingImageId,
+		title: title.value.trim(),
+		name: name.value.trim(),
+		summary: summary.value,
+		font: font.value,
+		script: script.value,
+		hideTitleWhenPinned: hideTitleWhenPinned.value,
+		alignCenter: alignCenter.value,
+		content: content.value,
+		variables: variables.value,
+		eyeCatchingImageId: eyeCatchingImageId.value,
 	};
 }
 
@@ -183,11 +183,11 @@ function save() {
 		}
 	};
 
-	if (pageId) {
-		options.pageId = pageId;
+	if (pageId.value) {
+		options.pageId = pageId.value;
 		os.api('pages/update', options)
 		.then(page => {
-			currentName = name.trim();
+			currentName.value = name.value.trim();
 			os.alert({
 				type: 'success',
 				text: i18n.ts._pages.updated,
@@ -196,13 +196,13 @@ function save() {
 	} else {
 		os.api('pages/create', options)
 		.then(created => {
-			pageId = created.id;
-			currentName = name.trim();
+			pageId.value = created.id;
+			currentName.value = name.value.trim();
 			os.alert({
 				type: 'success',
 				text: i18n.ts._pages.created,
 			});
-			mainRouter.push(`/pages/edit/${pageId}`);
+			mainRouter.push(`/pages/edit/${pageId.value}`);
 		}).catch(onError);
 	}
 }
@@ -210,11 +210,11 @@ function save() {
 function del() {
 	os.confirm({
 		type: 'warning',
-		text: i18n.t('removeAreYouSure', { x: title.trim() }),
+		text: i18n.t('removeAreYouSure', { x: title.value.trim() }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
 		os.api('pages/delete', {
-			pageId: pageId,
+			pageId: pageId.value,
 		}).then(() => {
 			os.alert({
 				type: 'success',
@@ -226,16 +226,16 @@ function del() {
 }
 
 function duplicate() {
-	title = title + ' - copy';
-	name = name + '-copy';
+	title.value = title.value + ' - copy';
+	name.value = name.value + '-copy';
 	os.api('pages/create', getSaveOptions()).then(created => {
-		pageId = created.id;
-		currentName = name.trim();
+		pageId.value = created.id;
+		currentName.value = name.value.trim();
 		os.alert({
 			type: 'success',
 			text: i18n.ts._pages.created,
 		});
-		mainRouter.push(`/pages/edit/${pageId}`);
+		mainRouter.push(`/pages/edit/${pageId.value}`);
 	});
 }
 
@@ -248,7 +248,7 @@ async function add() {
 	if (canceled) return;
 
 	const id = uuid();
-	content.push({ id, type });
+	content.value.push({ id, type });
 }
 
 async function addVariable() {
@@ -259,7 +259,7 @@ async function addVariable() {
 
 	name = name.trim();
 
-	if (hpml.isUsedName(name)) {
+	if (hpml.value.isUsedName(name)) {
 		os.alert({
 			type: 'error',
 			text: i18n.ts._pages.variableNameIsAlreadyUsed,
@@ -268,11 +268,11 @@ async function addVariable() {
 	}
 
 	const id = uuid();
-	variables.push({ id, name, type: null });
+	variables.value.push({ id, name, type: null });
 }
 
 function removeVariable(v) {
-	variables = variables.filter(x => x.name !== v.name);
+	variables.value = variables.value.filter(x => x.name !== v.name);
 }
 
 function getPageBlockList() {
@@ -330,7 +330,7 @@ function getScriptBlockList(type: string = null) {
 		}
 	}
 
-	const userFns = variables.filter(x => x.type === 'fn');
+	const userFns = variables.value.filter(x => x.type === 'fn');
 	if (userFns.length > 0) {
 		list.unshift({
 			label: i18n.t('_pages.script.categories.fn'),
@@ -346,12 +346,12 @@ function getScriptBlockList(type: string = null) {
 
 function setEyeCatchingImage(img) {
 	selectFile(img.currentTarget ?? img.target, null).then(file => {
-		eyeCatchingImageId = file.id;
+		eyeCatchingImageId.value = file.id;
 	});
 }
 
 function removeEyeCatchingImage() {
-	eyeCatchingImageId = null;
+	eyeCatchingImageId.value = null;
 }
 
 function highlighter(code) {
@@ -359,45 +359,45 @@ function highlighter(code) {
 }
 
 async function init() {
-	hpml = new HpmlTypeChecker();
+	hpml.value = new HpmlTypeChecker();
 
-	watch($$(variables), () => {
-		hpml.variables = variables;
+	watch((variables), () => {
+		hpml.value.variables = variables.value;
 	}, { deep: true });
 
-	watch($$(content), () => {
-		hpml.pageVars = collectPageVars(content);
+	watch((content), () => {
+		hpml.value.pageVars = collectPageVars(content.value);
 	}, { deep: true });
 
 	if (props.initPageId) {
-		page = await os.api('pages/show', {
+		page.value = await os.api('pages/show', {
 			pageId: props.initPageId,
 		});
 	} else if (props.initPageName && props.initUser) {
-		page = await os.api('pages/show', {
+		page.value = await os.api('pages/show', {
 			name: props.initPageName,
 			username: props.initUser,
 		});
-		readonly = true;
+		readonly.value = true;
 	}
 
-	if (page) {
-		author = page.user;
-		pageId = page.id;
-		title = page.title;
-		name = page.name;
-		currentName = page.name;
-		summary = page.summary;
-		font = page.font;
-		script = page.script;
-		hideTitleWhenPinned = page.hideTitleWhenPinned;
-		alignCenter = page.alignCenter;
-		content = page.content;
-		variables = page.variables;
-		eyeCatchingImageId = page.eyeCatchingImageId;
+	if (page.value) {
+		author.value = page.value.user;
+		pageId.value = page.value.id;
+		title.value = page.value.title;
+		name.value = page.value.name;
+		currentName.value = page.value.name;
+		summary.value = page.value.summary;
+		font.value = page.value.font;
+		script.value = page.value.script;
+		hideTitleWhenPinned.value = page.value.hideTitleWhenPinned;
+		alignCenter.value = page.value.alignCenter;
+		content.value = page.value.content;
+		variables.value = page.value.variables;
+		eyeCatchingImageId.value = page.value.eyeCatchingImageId;
 	} else {
 		const id = uuid();
-		content = [{
+		content.value = [{
 			id,
 			type: 'text',
 			text: 'Hello World!',
@@ -407,9 +407,9 @@ async function init() {
 
 init();
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'settings',
 	title: i18n.ts._pages.pageSetting,
 	icon: 'fas fa-cog',

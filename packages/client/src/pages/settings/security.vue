@@ -38,6 +38,8 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue'
+
 import X2fa from './2fa.vue';
 import FormSection from '@/components/form/section.vue';
 import FormSlot from '@/components/form/slot.vue';
@@ -97,9 +99,9 @@ function regenerateToken() {
 	});
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.security,

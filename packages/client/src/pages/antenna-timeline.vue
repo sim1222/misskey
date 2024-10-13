@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, watch } from 'vue';
+import { computed, inject, watch, ref } from 'vue';
 import XTimeline from '@/components/MkTimeline.vue';
 import { scroll } from '@/scripts/scroll';
 import * as os from '@/os';
@@ -32,20 +32,20 @@ const props = defineProps<{
 	antennaId: string;
 }>();
 
-let antenna = $ref(null);
-let queue = $ref(0);
-let rootEl = $ref<HTMLElement>();
-let tlEl = $ref<InstanceType<typeof XTimeline>>();
-const keymap = $computed(() => ({
+let antenna = ref(null);
+let queue = ref(0);
+let rootEl = ref<HTMLElement>();
+let tlEl = ref<InstanceType<typeof XTimeline>>();
+const keymap = computed(() => ({
 	't': focus,
 }));
 
 function queueUpdated(q) {
-	queue = q;
+	queue.value = q;
 }
 
 function top() {
-	scroll(rootEl, { top: 0 });
+	scroll(rootEl.value, { top: 0 });
 }
 
 async function timetravel() {
@@ -54,7 +54,7 @@ async function timetravel() {
 	});
 	if (canceled) return;
 
-	tlEl.timetravel(date);
+	tlEl.value.timetravel(date);
 }
 
 function settings() {
@@ -62,16 +62,16 @@ function settings() {
 }
 
 function focus() {
-	tlEl.focus();
+	tlEl.value.focus();
 }
 
 watch(() => props.antennaId, async () => {
-	antenna = await os.api('antennas/show', {
+	antenna.value = await os.api('antennas/show', {
 		antennaId: props.antennaId,
 	});
 }, { immediate: true });
 
-const headerActions = $computed(() => antenna ? [{
+const headerActions = computed(() => antenna.value ? [{
 	icon: 'fas fa-calendar-alt',
 	text: i18n.ts.jumpToSpecifiedDate,
 	handler: timetravel,
@@ -81,10 +81,10 @@ const headerActions = $computed(() => antenna ? [{
 	handler: settings,
 }] : []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
-definePageMetadata(computed(() => antenna ? {
-	title: antenna.name,
+definePageMetadata(computed(() => antenna.value ? {
+	title: antenna.value.name,
 	icon: 'fas fa-satellite',
 } : null));
 </script>

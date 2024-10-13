@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import XWidgets from '@/components/MkWidgets.vue';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
@@ -17,11 +17,11 @@ const emit = defineEmits<{
 	(ev: 'mounted', el: Element): void;
 }>();
 
-let editMode = $ref(false);
-let rootEl = $ref<HTMLDivElement>();
+let editMode = ref(false);
+let rootEl = ref<HTMLDivElement>();
 
 onMounted(() => {
-	emit('mounted', rootEl);
+	emit('mounted', rootEl.value);
 });
 
 function addWidget(widget) {

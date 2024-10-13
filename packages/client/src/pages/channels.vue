@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineComponent, inject } from 'vue';
+import { computed, defineComponent, inject, ref } from 'vue';
 import MkChannelPreview from '@/components/MkChannelPreview.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -33,7 +33,7 @@ import { i18n } from '@/i18n';
 
 const router = useRouter();
 
-let tab = $ref('featured');
+let tab = ref('featured');
 
 const featuredPagination = {
 	endpoint: 'channels/featured' as const,
@@ -52,13 +52,13 @@ function create() {
 	router.push('/channels/new');
 }
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	icon: 'fas fa-plus',
 	text: i18n.ts.create,
 	handler: create,
 }]);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'featured',
 	title: i18n.ts._channel.featured,
 	icon: 'fas fa-fire-alt',

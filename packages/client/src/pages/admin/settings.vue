@@ -148,7 +148,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, computed } from 'vue';
 import XHeader from './_header_.vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormInput from '@/components/form/input.vue';
@@ -162,98 +162,98 @@ import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let name: string | null = $ref(null);
-let description: string | null = $ref(null);
-let tosUrl: string | null = $ref(null);
-let maintainerName: string | null = $ref(null);
-let maintainerEmail: string | null = $ref(null);
-let iconUrl: string | null = $ref(null);
-let bannerUrl: string | null = $ref(null);
-let backgroundImageUrl: string | null = $ref(null);
-let themeColor: any = $ref(null);
-let defaultLightTheme: any = $ref(null);
-let defaultDarkTheme: any = $ref(null);
-let enableLocalTimeline: boolean = $ref(false);
-let enableGlobalTimeline: boolean = $ref(false);
-let pinnedUsers: string = $ref('');
-let cacheRemoteFiles: boolean = $ref(false);
-let localDriveCapacityMb: any = $ref(0);
-let remoteDriveCapacityMb: any = $ref(0);
-let enableRegistration: boolean = $ref(false);
-let emailRequiredForSignup: boolean = $ref(false);
-let enableServiceWorker: boolean = $ref(false);
-let swPublicKey: any = $ref(null);
-let swPrivateKey: any = $ref(null);
-let deeplAuthKey: string = $ref('');
-let deeplIsPro: boolean = $ref(false);
+let name: string | null = ref(null);
+let description: string | null = ref(null);
+let tosUrl: string | null = ref(null);
+let maintainerName: string | null = ref(null);
+let maintainerEmail: string | null = ref(null);
+let iconUrl: string | null = ref(null);
+let bannerUrl: string | null = ref(null);
+let backgroundImageUrl: string | null = ref(null);
+let themeColor: any = ref(null);
+let defaultLightTheme: any = ref(null);
+let defaultDarkTheme: any = ref(null);
+let enableLocalTimeline: boolean = ref(false);
+let enableGlobalTimeline: boolean = ref(false);
+let pinnedUsers: string = ref('');
+let cacheRemoteFiles: boolean = ref(false);
+let localDriveCapacityMb: any = ref(0);
+let remoteDriveCapacityMb: any = ref(0);
+let enableRegistration: boolean = ref(false);
+let emailRequiredForSignup: boolean = ref(false);
+let enableServiceWorker: boolean = ref(false);
+let swPublicKey: any = ref(null);
+let swPrivateKey: any = ref(null);
+let deeplAuthKey: string = ref('');
+let deeplIsPro: boolean = ref(false);
 
 async function init() {
 	const meta = await os.api('admin/meta');
-	name = meta.name;
-	description = meta.description;
-	tosUrl = meta.tosUrl;
-	iconUrl = meta.iconUrl;
-	bannerUrl = meta.bannerUrl;
-	backgroundImageUrl = meta.backgroundImageUrl;
-	themeColor = meta.themeColor;
-	defaultLightTheme = meta.defaultLightTheme;
-	defaultDarkTheme = meta.defaultDarkTheme;
-	maintainerName = meta.maintainerName;
-	maintainerEmail = meta.maintainerEmail;
-	enableLocalTimeline = !meta.disableLocalTimeline;
-	enableGlobalTimeline = !meta.disableGlobalTimeline;
-	pinnedUsers = meta.pinnedUsers.join('\n');
-	cacheRemoteFiles = meta.cacheRemoteFiles;
-	localDriveCapacityMb = meta.driveCapacityPerLocalUserMb;
-	remoteDriveCapacityMb = meta.driveCapacityPerRemoteUserMb;
-	enableRegistration = !meta.disableRegistration;
-	emailRequiredForSignup = meta.emailRequiredForSignup;
-	enableServiceWorker = meta.enableServiceWorker;
-	swPublicKey = meta.swPublickey;
-	swPrivateKey = meta.swPrivateKey;
-	deeplAuthKey = meta.deeplAuthKey;
-	deeplIsPro = meta.deeplIsPro;
+	name.value = meta.name;
+	description.value = meta.description;
+	tosUrl.value = meta.tosUrl;
+	iconUrl.value = meta.iconUrl;
+	bannerUrl.value = meta.bannerUrl;
+	backgroundImageUrl.value = meta.backgroundImageUrl;
+	themeColor.value = meta.themeColor;
+	defaultLightTheme.value = meta.defaultLightTheme;
+	defaultDarkTheme.value = meta.defaultDarkTheme;
+	maintainerName.value = meta.maintainerName;
+	maintainerEmail.value = meta.maintainerEmail;
+	enableLocalTimeline.value = !meta.disableLocalTimeline;
+	enableGlobalTimeline.value = !meta.disableGlobalTimeline;
+	pinnedUsers.value = meta.pinnedUsers.join('\n');
+	cacheRemoteFiles.value = meta.cacheRemoteFiles;
+	localDriveCapacityMb.value = meta.driveCapacityPerLocalUserMb;
+	remoteDriveCapacityMb.value = meta.driveCapacityPerRemoteUserMb;
+	enableRegistration.value = !meta.disableRegistration;
+	emailRequiredForSignup.value = meta.emailRequiredForSignup;
+	enableServiceWorker.value = meta.enableServiceWorker;
+	swPublicKey.value = meta.swPublickey;
+	swPrivateKey.value = meta.swPrivateKey;
+	deeplAuthKey.value = meta.deeplAuthKey;
+	deeplIsPro.value = meta.deeplIsPro;
 }
 
 function save() {
 	os.apiWithDialog('admin/update-meta', {
-		name,
-		description,
-		tosUrl,
-		iconUrl,
-		bannerUrl,
-		backgroundImageUrl,
-		themeColor: themeColor === '' ? null : themeColor,
-		defaultLightTheme: defaultLightTheme === '' ? null : defaultLightTheme,
-		defaultDarkTheme: defaultDarkTheme === '' ? null : defaultDarkTheme,
-		maintainerName,
-		maintainerEmail,
-		disableLocalTimeline: !enableLocalTimeline,
-		disableGlobalTimeline: !enableGlobalTimeline,
-		pinnedUsers: pinnedUsers.split('\n'),
-		cacheRemoteFiles,
-		localDriveCapacityMb: parseInt(localDriveCapacityMb, 10),
-		remoteDriveCapacityMb: parseInt(remoteDriveCapacityMb, 10),
-		disableRegistration: !enableRegistration,
-		emailRequiredForSignup,
-		enableServiceWorker,
-		swPublicKey,
-		swPrivateKey,
-		deeplAuthKey,
-		deeplIsPro,
+		name: name.value,
+		description: description.value,
+		tosUrl: tosUrl.value,
+		iconUrl: iconUrl.value,
+		bannerUrl: bannerUrl.value,
+		backgroundImageUrl: backgroundImageUrl.value,
+		themeColor: themeColor.value === '' ? null : themeColor.value,
+		defaultLightTheme: defaultLightTheme.value === '' ? null : defaultLightTheme.value,
+		defaultDarkTheme: defaultDarkTheme.value === '' ? null : defaultDarkTheme.value,
+		maintainerName: maintainerName.value,
+		maintainerEmail: maintainerEmail.value,
+		disableLocalTimeline: !enableLocalTimeline.value,
+		disableGlobalTimeline: !enableGlobalTimeline.value,
+		pinnedUsers: pinnedUsers.value.split('\n'),
+		cacheRemoteFiles: cacheRemoteFiles.value,
+		localDriveCapacityMb: parseInt(localDriveCapacityMb.value, 10),
+		remoteDriveCapacityMb: parseInt(remoteDriveCapacityMb.value, 10),
+		disableRegistration: !enableRegistration.value,
+		emailRequiredForSignup: emailRequiredForSignup.value,
+		enableServiceWorker: enableServiceWorker.value,
+		swPublicKey: swPublicKey.value,
+		swPrivateKey: swPrivateKey.value,
+		deeplAuthKey: deeplAuthKey.value,
+		deeplIsPro: deeplIsPro.value,
 	}).then(() => {
 		fetchInstance();
 	});
 }
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	asFullButton: true,
 	icon: 'fas fa-check',
 	text: i18n.ts.save,
 	handler: save,
 }]);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.general,

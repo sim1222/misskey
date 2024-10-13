@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import XHeader from './_header_.vue';
 import MkInput from '@/components/form/input.vue';
 import MkSelect from '@/components/form/select.vue';
@@ -64,22 +64,22 @@ import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
 
-let paginationComponent = $ref<InstanceType<typeof MkPagination>>();
+let paginationComponent = ref<InstanceType<typeof MkPagination>>();
 
-let sort = $ref('+createdAt');
-let state = $ref('all');
-let origin = $ref('local');
-let searchUsername = $ref('');
-let searchHost = $ref('');
+let sort = ref('+createdAt');
+let state = ref('all');
+let origin = ref('local');
+let searchUsername = ref('');
+let searchHost = ref('');
 const pagination = {
 	endpoint: 'admin/show-users' as const,
 	limit: 10,
 	params: computed(() => ({
-		sort: sort,
-		state: state,
-		origin: origin,
-		username: searchUsername,
-		hostname: searchHost,
+		sort: sort.value,
+		state: state.value,
+		origin: origin.value,
+		username: searchUsername.value,
+		hostname: searchHost.value,
 	})),
 	offsetMode: true,
 };
@@ -106,7 +106,7 @@ async function addUser() {
 		username: username,
 		password: password,
 	}).then(res => {
-		paginationComponent.reload();
+		paginationComponent.value.reload();
 	});
 }
 
@@ -114,7 +114,7 @@ function show(user) {
 	os.pageWindow(`/user-info/${user.id}`);
 }
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	icon: 'fas fa-search',
 	text: i18n.ts.search,
 	handler: searchUser,
@@ -130,7 +130,7 @@ const headerActions = $computed(() => [{
 	handler: lookupUser,
 }]);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata(computed(() => ({
 	title: i18n.ts.users,

@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
+import { defineAsyncComponent, computed } from 'vue';
 import { notificationTypes } from 'misskey-js';
 import FormButton from '@/components/MkButton.vue';
 import FormLink from '@/components/form/link.vue';
@@ -49,9 +49,9 @@ function configure() {
 	}, 'closed');
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.notifications,

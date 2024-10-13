@@ -18,18 +18,18 @@ const CURRENT_STICKY_TOP = 'CURRENT_STICKY_TOP';
 <script lang="ts" setup>
 import { onMounted, onUnmounted, provide, inject, Ref, ref, watch } from 'vue';
 
-const rootEl = $ref<HTMLElement>();
-const headerEl = $ref<HTMLElement>();
-const bodyEl = $ref<HTMLElement>();
+const rootEl = ref<HTMLElement>();
+const headerEl = ref<HTMLElement>();
+const bodyEl = ref<HTMLElement>();
 
-let headerHeight = $ref<string | undefined>();
-let childStickyTop = $ref(0);
+let headerHeight = ref<string | undefined>();
+let childStickyTop = ref(0);
 const parentStickyTop = inject<Ref<number>>(CURRENT_STICKY_TOP, ref(0));
-provide(CURRENT_STICKY_TOP, $$(childStickyTop));
+provide(CURRENT_STICKY_TOP, (childStickyTop));
 
 const calc = () => {
-	childStickyTop = parentStickyTop.value + headerEl.offsetHeight;
-	headerHeight = headerEl.offsetHeight.toString();
+	childStickyTop.value = parentStickyTop.value + headerEl.value.offsetHeight;
+	headerHeight.value = headerEl.value.offsetHeight.toString();
 };
 
 const observer = new ResizeObserver(() => {
@@ -43,17 +43,17 @@ onMounted(() => {
 
 	watch(parentStickyTop, calc);
 
-	watch($$(childStickyTop), () => {
-		bodyEl.style.setProperty('--stickyTop', `${childStickyTop}px`);
+	watch((childStickyTop), () => {
+		bodyEl.value.style.setProperty('--stickyTop', `${childStickyTop.value}px`);
 	}, {
 		immediate: true,
 	});
 
-	headerEl.style.position = 'sticky';
-	headerEl.style.top = 'var(--stickyTop, 0)';
-	headerEl.style.zIndex = '1000';
+	headerEl.value.style.position = 'sticky';
+	headerEl.value.style.top = 'var(--stickyTop, 0)';
+	headerEl.value.style.zIndex = '1000';
 
-	observer.observe(headerEl);
+	observer.observe(headerEl.value);
 });
 
 onUnmounted(() => {

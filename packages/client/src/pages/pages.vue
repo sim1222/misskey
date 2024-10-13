@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject } from 'vue';
+import { computed, inject, ref } from 'vue';
 import MkPagePreview from '@/components/MkPagePreview.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -35,7 +35,7 @@ import { definePageMetadata } from '@/scripts/page-metadata';
 
 const router = useRouter();
 
-let tab = $ref('featured');
+let tab = ref('featured');
 
 const featuredPagesPagination = {
 	endpoint: 'pages/featured' as const,
@@ -54,13 +54,13 @@ function create() {
 	router.push('/pages/new');
 }
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	icon: 'fas fa-plus',
 	text: i18n.ts.create,
 	handler: create,
 }]);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'featured',
 	title: i18n.ts._pages.featured,
 	icon: 'fas fa-fire-alt',

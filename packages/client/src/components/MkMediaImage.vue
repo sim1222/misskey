@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
+import { watch, ref } from 'vue';
 import * as misskey from 'misskey-js';
 import { getStaticImageUrl } from '@/scripts/get-static-image-url';
 import ImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
@@ -32,7 +32,7 @@ const props = defineProps<{
 	raw?: boolean;
 }>();
 
-let hide = $ref(true);
+let hide = ref(true);
 
 const url = (props.raw || defaultStore.state.loadRawImages)
 	? props.image.url
@@ -42,7 +42,7 @@ const url = (props.raw || defaultStore.state.loadRawImages)
 
 // Plugin:register_note_view_interruptor を使って書き換えられる可能性があるためwatchする
 watch(() => props.image, () => {
-	hide = (defaultStore.state.nsfw === 'force') ? true : props.image.isSensitive && (defaultStore.state.nsfw !== 'ignore');
+	hide.value = (defaultStore.state.nsfw === 'force') ? true : props.image.isSensitive && (defaultStore.state.nsfw !== 'ignore');
 }, {
 	deep: true,
 	immediate: true,

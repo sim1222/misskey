@@ -139,7 +139,7 @@
 </template>
 
 <script lang="ts" setup>
-import { markRaw, version as vueVersion, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { markRaw, version as vueVersion, onMounted, onBeforeUnmount, nextTick, ref, shallowRef, computed } from 'vue';
 import {
 	Chart,
 	ArcElement,
@@ -196,20 +196,20 @@ Chart.register(
 	//gradient,
 );
 
-const rootEl = $ref<HTMLElement>();
-const chartEl = $ref<HTMLCanvasElement>(null);
-let stats: any = $ref(null);
-let serverInfo: any = $ref(null);
-let topSubInstancesForPie: any = $ref(null);
-let topPubInstancesForPie: any = $ref(null);
-let usersComparedToThePrevDay: any = $ref(null);
-let notesComparedToThePrevDay: any = $ref(null);
-let federationPubActive = $ref<number | null>(null);
-let federationPubActiveDiff = $ref<number | null>(null);
-let federationSubActive = $ref<number | null>(null);
-let federationSubActiveDiff = $ref<number | null>(null);
-let newUsers = $ref(null);
-let activeInstances = $shallowRef(null);
+const rootEl = ref<HTMLElement>();
+const chartEl = ref<HTMLCanvasElement>(null);
+let stats: any = ref(null);
+let serverInfo: any = ref(null);
+let topSubInstancesForPie: any = ref(null);
+let topPubInstancesForPie: any = ref(null);
+let usersComparedToThePrevDay: any = ref(null);
+let notesComparedToThePrevDay: any = ref(null);
+let federationPubActive = ref<number | null>(null);
+let federationPubActiveDiff = ref<number | null>(null);
+let federationSubActive = ref<number | null>(null);
+let federationSubActiveDiff = ref<number | null>(null);
+let newUsers = ref(null);
+let activeInstances = shallowRef(null);
 const queueStatsConnection = markRaw(stream.useChannel('queueStats'));
 const now = new Date();
 let chartInstance: Chart = null;
@@ -252,7 +252,7 @@ async function renderChart() {
 
 	const color = tinycolor(getComputedStyle(document.documentElement).getPropertyValue('--accent'));
 
-	chartInstance = new Chart(chartEl, {
+	chartInstance = new Chart(chartEl.value, {
 		type: 'bar',
 		data: {
 			//labels: new Array(props.limit).fill(0).map((_, i) => getDate(i).toLocaleString()).slice().reverse(),
@@ -394,26 +394,26 @@ onMounted(async () => {
 	renderChart();
 
 	os.api('stats', {}).then(statsResponse => {
-		stats = statsResponse;
+		stats.value = statsResponse;
 
 		os.apiGet('charts/users', { limit: 2, span: 'day' }).then(chart => {
-			usersComparedToThePrevDay = stats.originalUsersCount - chart.local.total[1];
+			usersComparedToThePrevDay.value = stats.value.originalUsersCount - chart.local.total[1];
 		});
 
 		os.apiGet('charts/notes', { limit: 2, span: 'day' }).then(chart => {
-			notesComparedToThePrevDay = stats.originalNotesCount - chart.local.total[1];
+			notesComparedToThePrevDay.value = stats.value.originalNotesCount - chart.local.total[1];
 		});
 	});
 
 	os.apiGet('charts/federation', { limit: 2, span: 'day' }).then(chart => {
-		federationPubActive = chart.pubActive[0];
-		federationPubActiveDiff = chart.pubActive[0] - chart.pubActive[1];
-		federationSubActive = chart.subActive[0];
-		federationSubActiveDiff = chart.subActive[0] - chart.subActive[1];
+		federationPubActive.value = chart.pubActive[0];
+		federationPubActiveDiff.value = chart.pubActive[0] - chart.pubActive[1];
+		federationSubActive.value = chart.subActive[0];
+		federationSubActiveDiff.value = chart.subActive[0] - chart.subActive[1];
 	});
 
 	os.apiGet('federation/stats', { limit: 10 }).then(res => {
-		topSubInstancesForPie = res.topSubInstances.map(x => ({
+		topSubInstancesForPie.value = res.topSubInstances.map(x => ({
 			name: x.host,
 			color: x.themeColor,
 			value: x.followersCount,
@@ -421,7 +421,7 @@ onMounted(async () => {
 				os.pageWindow(`/instance-info/${x.host}`);
 			},
 		})).concat([{ name: '(other)', color: '#80808080', value: res.otherFollowersCount }]);
-		topPubInstancesForPie = res.topPubInstances.map(x => ({
+		topPubInstancesForPie.value = res.topPubInstances.map(x => ({
 			name: x.host,
 			color: x.themeColor,
 			value: x.followingCount,
@@ -432,21 +432,21 @@ onMounted(async () => {
 	});
 
 	os.api('admin/server-info').then(serverInfoResponse => {
-		serverInfo = serverInfoResponse;
+		serverInfo.value = serverInfoResponse;
 	});
 
 	os.api('admin/show-users', {
 		limit: 5,
 		sort: '+createdAt',
 	}).then(res => {
-		newUsers = res;
+		newUsers.value = res;
 	});
 
 	os.api('federation/instances', {
 		sort: '+lastCommunicatedAt',
 		limit: 25,
 	}).then(res => {
-		activeInstances = res;
+		activeInstances.value = res;
 	});
 
 	nextTick(() => {
@@ -461,9 +461,9 @@ onBeforeUnmount(() => {
 	queueStatsConnection.dispose();
 });
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.dashboard,

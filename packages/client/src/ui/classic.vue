@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, markRaw, ComputedRef, ref, onMounted, provide } from 'vue';
+import { defineAsyncComponent, markRaw, ComputedRef, ref, onMounted, provide, computed } from 'vue';
 import XSidebar from './classic.sidebar.vue';
 import XCommon from './_common_/common.vue';
 import { instanceName } from '@/config';
@@ -56,26 +56,26 @@ const XWidgets = defineAsyncComponent(() => import('./classic.widgets.vue'));
 
 const DESKTOP_THRESHOLD = 1100;
 
-let isDesktop = $ref(window.innerWidth >= DESKTOP_THRESHOLD);
+let isDesktop = ref(window.innerWidth >= DESKTOP_THRESHOLD);
 
-let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
-let widgetsShowing = $ref(false);
-let fullView = $ref(false);
-let globalHeaderHeight = $ref(0);
+let pageMetadata = ref<null | ComputedRef<PageMetadata>>();
+let widgetsShowing = ref(false);
+let fullView = ref(false);
+let globalHeaderHeight = ref(0);
 const wallpaper = localStorage.getItem('wallpaper') != null;
-const showMenuOnTop = $computed(() => defaultStore.state.menuDisplay === 'top');
-let live2d = $ref<HTMLIFrameElement>();
-let widgetsLeft = $ref();
-let widgetsRight = $ref();
+const showMenuOnTop = computed(() => defaultStore.state.menuDisplay === 'top');
+let live2d = ref<HTMLIFrameElement>();
+let widgetsLeft = ref();
+let widgetsRight = ref();
 
 provide('router', mainRouter);
 provideMetadataReceiver((info) => {
-	pageMetadata = info;
-	if (pageMetadata.value) {
-		document.title = `${pageMetadata.value.title} | ${instanceName}`;
+	pageMetadata.value = info;
+	if (pageMetadata.value.value) {
+		document.title = `${pageMetadata.value.value.title} | ${instanceName}`;
 	}
 });
-provide('shouldHeaderThin', showMenuOnTop);
+provide('shouldHeaderThin', showMenuOnTop.value);
 provide('shouldSpacerMin', true);
 
 function attachSticky(el) {
@@ -104,10 +104,10 @@ function onContextmenu(ev: MouseEvent) {
 		type: 'label',
 		text: path,
 	}, {
-		icon: fullView ? 'fas fa-compress' : 'fas fa-expand',
-		text: fullView ? i18n.ts.quitFullView : i18n.ts.fullView,
+		icon: fullView.value ? 'fas fa-compress' : 'fas fa-expand',
+		text: fullView.value ? i18n.ts.quitFullView : i18n.ts.fullView,
 		action: () => {
-			fullView = !fullView;
+			fullView.value = !fullView.value;
 		},
 	}, {
 		icon: 'fas fa-window-maximize',
@@ -144,13 +144,13 @@ if (defaultStore.state.widgets.length === 0) {
 
 onMounted(() => {
 	window.addEventListener('resize', () => {
-		isDesktop = (window.innerWidth >= DESKTOP_THRESHOLD);
+		isDesktop.value = (window.innerWidth >= DESKTOP_THRESHOLD);
 	}, { passive: true });
 
 	if (defaultStore.state.aiChanMode) {
-		const iframeRect = live2d.getBoundingClientRect();
+		const iframeRect = live2d.value.getBoundingClientRect();
 		window.addEventListener('mousemove', ev => {
-			live2d.contentWindow.postMessage({
+			live2d.value.contentWindow.postMessage({
 				type: 'moveCursor',
 				body: {
 					x: ev.clientX - iframeRect.left,
@@ -159,7 +159,7 @@ onMounted(() => {
 			}, '*');
 		}, { passive: true });
 		window.addEventListener('touchmove', ev => {
-			live2d.contentWindow.postMessage({
+			live2d.value.contentWindow.postMessage({
 				type: 'moveCursor',
 				body: {
 					x: ev.touches[0].clientX - iframeRect.left,

@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import {
 	Chart,
 	ArcElement,
@@ -98,10 +98,10 @@ const props = withDefaults(defineProps<{
 	chartLimit: 90,
 });
 
-const chartSpan = $ref<'hour' | 'day'>('hour');
-const chartSrc = $ref('active-users');
-let subDoughnutEl = $ref<HTMLCanvasElement>();
-let pubDoughnutEl = $ref<HTMLCanvasElement>();
+const chartSpan = ref<'hour' | 'day'>('hour');
+const chartSrc = ref('active-users');
+let subDoughnutEl = ref<HTMLCanvasElement>();
+let pubDoughnutEl = ref<HTMLCanvasElement>();
 
 const { handler: externalTooltipHandler1 } = useChartTooltip();
 const { handler: externalTooltipHandler2 } = useChartTooltip();
@@ -156,7 +156,7 @@ function createDoughnut(chartEl, tooltip, data) {
 
 onMounted(() => {
 	os.apiGet('federation/stats', { limit: 30 }).then(fedStats => {
-		createDoughnut(subDoughnutEl, externalTooltipHandler1, fedStats.topSubInstances.map(x => ({
+		createDoughnut(subDoughnutEl.value, externalTooltipHandler1, fedStats.topSubInstances.map(x => ({
 			name: x.host,
 			color: x.themeColor,
 			value: x.followersCount,
@@ -165,7 +165,7 @@ onMounted(() => {
 			},
 		})).concat([{ name: '(other)', color: '#80808080', value: fedStats.otherFollowersCount }]));
 
-		createDoughnut(pubDoughnutEl, externalTooltipHandler2, fedStats.topPubInstances.map(x => ({
+		createDoughnut(pubDoughnutEl.value, externalTooltipHandler2, fedStats.topPubInstances.map(x => ({
 			name: x.host,
 			color: x.themeColor,
 			value: x.followingCount,

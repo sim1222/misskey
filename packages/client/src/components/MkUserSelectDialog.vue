@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import * as misskey from 'misskey-js';
 import MkInput from '@/components/form/input.vue';
 import FormSplit from '@/components/form/split.vue';
@@ -67,50 +67,50 @@ const emit = defineEmits<{
 	(ev: 'closed'): void;
 }>();
 
-let username = $ref('');
-let host = $ref('');
-let users: misskey.entities.UserDetailed[] = $ref([]);
-let recentUsers: misskey.entities.UserDetailed[] = $ref([]);
-let selected: misskey.entities.UserDetailed | null = $ref(null);
-let dialogEl = $ref();
+let username = ref('');
+let host = ref('');
+let users: misskey.entities.UserDetailed[] = ref([]);
+let recentUsers: misskey.entities.UserDetailed[] = ref([]);
+let selected: misskey.entities.UserDetailed | null = ref(null);
+let dialogEl = ref();
 
 const search = () => {
-	if (username === '' && host === '') {
-		users = [];
+	if (username.value === '' && host.value === '') {
+		users.value = [];
 		return;
 	}
 	os.api('users/search-by-username-and-host', {
-		username: username,
-		host: host,
+		username: username.value,
+		host: host.value,
 		limit: 10,
 		detail: false,
 	}).then(_users => {
-		users = _users;
+		users.value = _users;
 	});
 };
 
 const ok = () => {
-	if (selected == null) return;
-	emit('ok', selected);
-	dialogEl.close();
+	if (selected.value == null) return;
+	emit('ok', selected.value);
+	dialogEl.value.close();
 
 	// 最近使ったユーザー更新
 	let recents = defaultStore.state.recentlyUsedUsers;
-	recents = recents.filter(x => x !== selected.id);
-	recents.unshift(selected.id);
+	recents = recents.filter(x => x !== selected.value.id);
+	recents.unshift(selected.value.id);
 	defaultStore.set('recentlyUsedUsers', recents.splice(0, 16));
 };
 
 const cancel = () => {
 	emit('cancel');
-	dialogEl.close();
+	dialogEl.value.close();
 };
 
 onMounted(() => {
 	os.api('users/show', {
 		userIds: defaultStore.state.recentlyUsedUsers,
 	}).then(users => {
-		recentUsers = users;
+		recentUsers.value = users;
 	});
 });
 </script>

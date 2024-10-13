@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import MkModal from '@/components/MkModal.vue';
 import { navbarItemDef } from '@/navbar';
 import { instanceName } from '@/config';
@@ -44,7 +44,7 @@ const preferedModalType = (deviceKind === 'desktop' && props.src != null) ? 'pop
 	deviceKind === 'smartphone' ? 'drawer' :
 	'dialog';
 
-const modal = $ref<InstanceType<typeof MkModal>>();
+const modal = ref<InstanceType<typeof MkModal>>();
 
 const menu = defaultStore.state.menu;
 
@@ -58,7 +58,7 @@ const items = Object.keys(navbarItemDef).filter(k => !menu.includes(k)).map(k =>
 }));
 
 function close() {
-	modal.close();
+	modal.value.close();
 }
 </script>
 

@@ -18,6 +18,8 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
+
 import XWindow from '@/components/MkWindow.vue';
 import { lang } from '@/config';
 
@@ -27,9 +29,9 @@ const props = defineProps<{
 
 const requestUrl = new URL(props.url);
 
-let fetching = $ref(true);
-let title = $ref<string | null>(null);
-let player = $ref({
+let fetching = ref(true);
+let title = ref<string | null>(null);
+let player = ref({
 	url: null,
 	width: null,
 	height: null,
@@ -38,13 +40,13 @@ let player = $ref({
 const requestLang = (lang ?? 'ja-JP').replace('ja-KS', 'ja-JP');
 
 const ytFetch = (): void => {
-	fetching = true;
+	fetching.value = true;
 	fetch(`/url?url=${encodeURIComponent(requestUrl.href)}&lang=${requestLang}`).then(res => {
 		res.json().then(info => {
 			if (info.url == null) return;
-			title = info.title;
-			fetching = false;
-			player = info.player;
+			title.value = info.title;
+			fetching.value = false;
+			player.value = info.player;
 		});
 	});
 };

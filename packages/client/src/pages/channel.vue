@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, watch } from 'vue';
+import { computed, inject, watch, ref } from 'vue';
 import MkContainer from '@/components/MkContainer.vue';
 import XPostForm from '@/components/MkPostForm.vue';
 import XTimeline from '@/components/MkTimeline.vue';
@@ -49,8 +49,8 @@ const props = defineProps<{
 	channelId: string;
 }>();
 
-let channel = $ref(null);
-let showBanner = $ref(true);
+let channel = ref(null);
+let showBanner = ref(true);
 const pagination = {
 	endpoint: 'channels/timeline' as const,
 	limit: 10,
@@ -60,25 +60,25 @@ const pagination = {
 };
 
 watch(() => props.channelId, async () => {
-	channel = await os.api('channels/show', {
+	channel.value = await os.api('channels/show', {
 		channelId: props.channelId,
 	});
 }, { immediate: true });
 
 function edit() {
-	router.push(`/channels/${channel.id}/edit`);
+	router.push(`/channels/${channel.value.id}/edit`);
 }
 
-const headerActions = $computed(() => channel && channel.userId ? [{
+const headerActions = computed(() => channel.value && channel.value.userId ? [{
 	icon: 'fas fa-cog',
 	text: i18n.ts.edit,
 	handler: edit,
 }] : null);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
-definePageMetadata(computed(() => channel ? {
-	title: channel.name,
+definePageMetadata(computed(() => channel.value ? {
+	title: channel.value.name,
 	icon: 'fas fa-satellite-dish',
 } : null));
 </script>

@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, computed } from 'vue';
 import XTwitter from './integrations.twitter.vue';
 import XGithub from './integrations.github.vue';
 import XDiscord from './integrations.discord.vue';
@@ -35,20 +35,20 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let enableTwitterIntegration: boolean = $ref(false);
-let enableGithubIntegration: boolean = $ref(false);
-let enableDiscordIntegration: boolean = $ref(false);
+let enableTwitterIntegration: boolean = ref(false);
+let enableGithubIntegration: boolean = ref(false);
+let enableDiscordIntegration: boolean = ref(false);
 
 async function init() {
 	const meta = await os.api('admin/meta');
-	enableTwitterIntegration = meta.enableTwitterIntegration;
-	enableGithubIntegration = meta.enableGithubIntegration;
-	enableDiscordIntegration = meta.enableDiscordIntegration;
+	enableTwitterIntegration.value = meta.enableTwitterIntegration;
+	enableGithubIntegration.value = meta.enableGithubIntegration;
+	enableDiscordIntegration.value = meta.enableDiscordIntegration;
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.integration,

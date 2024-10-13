@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-import { markRaw, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { markRaw, onMounted, onBeforeUnmount, nextTick, ref, computed } from 'vue';
 import XQueue from './queue.chart.vue';
 import XHeader from './_header_.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -18,7 +18,7 @@ import * as config from '@/config';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let tab = $ref('deliver');
+let tab = ref('deliver');
 
 function clear() {
 	os.confirm({
@@ -32,7 +32,7 @@ function clear() {
 	});
 }
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	asFullButton: true,
 	icon: 'fas fa-up-right-from-square',
 	text: i18n.ts.dashboard,
@@ -41,7 +41,7 @@ const headerActions = $computed(() => [{
 	},
 }]);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'deliver',
 	title: 'Deliver',
 }, {

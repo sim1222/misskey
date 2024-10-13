@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, computed } from 'vue';
 import XHeader from './_header_.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/form/input.vue';
@@ -58,14 +58,14 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let ads: any[] = $ref([]);
+let ads: any[] = ref([]);
 
 os.api('admin/ad/list').then(adsResponse => {
-	ads = adsResponse;
+	ads.value = adsResponse;
 });
 
 function add() {
-	ads.unshift({
+	ads.value.unshift({
 		id: null,
 		memo: '',
 		place: 'square',
@@ -83,7 +83,7 @@ function remove(ad) {
 		text: i18n.t('removeAreYouSure', { x: ad.url }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
-		ads = ads.filter(x => x !== ad);
+		ads.value = ads.value.filter(x => x !== ad);
 		os.apiWithDialog('admin/ad/delete', {
 			id: ad.id,
 		});
@@ -104,14 +104,14 @@ function save(ad) {
 	}
 }
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	asFullButton: true,
 	icon: 'fas fa-plus',
 	text: i18n.ts.add,
 	handler: add,
 }]);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.ads,

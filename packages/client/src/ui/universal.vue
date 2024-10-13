@@ -85,15 +85,15 @@ window.addEventListener('resize', () => {
 	isMobile.value = deviceKind === 'smartphone' || window.innerWidth <= MOBILE_THRESHOLD;
 });
 
-let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
-const widgetsEl = $ref<HTMLElement>();
-const widgetsShowing = $ref(false);
+let pageMetadata = ref<null | ComputedRef<PageMetadata>>();
+const widgetsEl = ref<HTMLElement>();
+const widgetsShowing = ref(false);
 
 provide('router', mainRouter);
 provideMetadataReceiver((info) => {
-	pageMetadata = info;
-	if (pageMetadata.value) {
-		document.title = `${pageMetadata.value.title} | ${instanceName}`;
+	pageMetadata.value = info;
+	if (pageMetadata.value.value) {
+		document.title = `${pageMetadata.value.value.title} | ${instanceName}`;
 	}
 });
 
@@ -158,7 +158,7 @@ const onContextmenu = (ev) => {
 };
 
 const attachSticky = (el) => {
-	const sticky = new StickySidebar(widgetsEl);
+	const sticky = new StickySidebar(widgetsEl.value);
 	window.addEventListener('scroll', () => {
 		sticky.calc(window.scrollY);
 	}, { passive: true });

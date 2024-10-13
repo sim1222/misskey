@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import * as Misskey from 'misskey-js';
 import * as os from '@/os';
 import { stream } from '@/stream';
@@ -43,9 +43,9 @@ const props = withDefaults(defineProps<{
 	large: false,
 });
 
-let isFollowing = $ref(props.user.isFollowing);
-let hasPendingFollowRequestFromYou = $ref(props.user.hasPendingFollowRequestFromYou);
-let wait = $ref(false);
+let isFollowing = ref(props.user.isFollowing);
+let hasPendingFollowRequestFromYou = ref(props.user.hasPendingFollowRequestFromYou);
+let wait = ref(false);
 const connection = stream.useChannel('main');
 
 if (props.user.isFollowing == null) {
@@ -57,16 +57,16 @@ if (props.user.isFollowing == null) {
 
 function onFollowChange(user: Misskey.entities.UserDetailed) {
 	if (user.id === props.user.id) {
-		isFollowing = user.isFollowing;
-		hasPendingFollowRequestFromYou = user.hasPendingFollowRequestFromYou;
+		isFollowing.value = user.isFollowing;
+		hasPendingFollowRequestFromYou.value = user.hasPendingFollowRequestFromYou;
 	}
 }
 
 async function onClick() {
-	wait = true;
+	wait.value = true;
 
 	try {
-		if (isFollowing) {
+		if (isFollowing.value) {
 			const { canceled } = await os.confirm({
 				type: 'warning',
 				text: i18n.t('unfollowConfirm', { name: props.user.name || props.user.username }),
@@ -78,22 +78,22 @@ async function onClick() {
 				userId: props.user.id
 			});
 		} else {
-			if (hasPendingFollowRequestFromYou) {
+			if (hasPendingFollowRequestFromYou.value) {
 				await os.api('following/requests/cancel', {
 					userId: props.user.id
 				});
-				hasPendingFollowRequestFromYou = false;
+				hasPendingFollowRequestFromYou.value = false;
 			} else {
 				await os.api('following/create', {
 					userId: props.user.id
 				});
-				hasPendingFollowRequestFromYou = true;
+				hasPendingFollowRequestFromYou.value = true;
 			}
 		}
 	} catch (err) {
 		console.error(err);
 	} finally {
-		wait = false;
+		wait.value = false;
 	}
 }
 

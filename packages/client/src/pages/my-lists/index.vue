@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, computed } from 'vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkAvatars from '@/components/MkAvatars.vue';
@@ -25,7 +25,7 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const pagingComponent = $ref<InstanceType<typeof MkPagination>>();
+const pagingComponent = ref<InstanceType<typeof MkPagination>>();
 
 const pagination = {
 	endpoint: 'users/lists/list' as const,
@@ -38,12 +38,12 @@ async function create() {
 	});
 	if (canceled) return;
 	await os.apiWithDialog('users/lists/create', { name: name });
-	pagingComponent.reload();
+	pagingComponent.value.reload();
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.manageLists,

@@ -21,21 +21,21 @@ const props = withDefaults(defineProps<{
 });
 
 let ro: ResizeObserver;
-let root = $ref<HTMLElement>();
-let content = $ref<HTMLElement>();
-let margin = $ref(0);
+let root = ref<HTMLElement>();
+let content = ref<HTMLElement>();
+let margin = ref(0);
 const shouldSpacerMin = inject('shouldSpacerMin', false);
 
 const adjust = (rect: { width: number; height: number; }) => {
 	if (shouldSpacerMin || deviceKind === 'smartphone') {
-		margin = props.marginMin;
+		margin.value = props.marginMin;
 		return;
 	}
 
 	if (rect.width > (props.contentMax ?? 0) || (rect.width > 360 && window.innerWidth > 400)) {
-		margin = props.marginMax;
+		margin.value = props.marginMax;
 	} else {
-		margin = props.marginMin;
+		margin.value = props.marginMin;
 	}
 };
 
@@ -48,14 +48,14 @@ onMounted(() => {
 		});
 		*/
 		adjust({
-			width: root!.offsetWidth,
-			height: root!.offsetHeight,
+			width: root.value!.offsetWidth,
+			height: root.value!.offsetHeight,
 		});
 	});
-	ro.observe(root!);
+	ro.observe(root.value!);
 
 	if (props.contentMax) {
-		content!.style.maxWidth = `${props.contentMax}px`;
+		content.value!.style.maxWidth = `${props.contentMax}px`;
 	}
 });
 

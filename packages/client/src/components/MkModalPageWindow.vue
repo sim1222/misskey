@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ComputedRef, provide } from 'vue';
+import { ComputedRef, provide, ref, computed } from 'vue';
 import MkModal from '@/components/MkModal.vue';
 import { popout as _popout } from '@/scripts/popout';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
@@ -47,26 +47,26 @@ router.addListener('push', ctx => {
 	
 });
 
-let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
-let rootEl = $ref();
-let modal = $ref<InstanceType<typeof MkModal>>();
-let path = $ref(props.initialPath);
-let width = $ref(860);
-let height = $ref(660);
+let pageMetadata = ref<null | ComputedRef<PageMetadata>>();
+let rootEl = ref();
+let modal = ref<InstanceType<typeof MkModal>>();
+let path = ref(props.initialPath);
+let width = ref(860);
+let height = ref(660);
 const history = [];
 
 provide('router', router);
 provideMetadataReceiver((info) => {
-	pageMetadata = info;
+	pageMetadata.value = info;
 });
 provide('shouldOmitHeaderTitle', true);
 provide('shouldHeaderThin', true);
 
-const pageUrl = $computed(() => url + path);
-const contextmenu = $computed(() => {
+const pageUrl = computed(() => url + path.value);
+const contextmenu = computed(() => {
 	return [{
 		type: 'label',
-		text: path,
+		text: path.value,
 	}, {
 		icon: 'fas fa-expand-alt',
 		text: i18n.ts.showInPage,
@@ -79,14 +79,14 @@ const contextmenu = $computed(() => {
 		icon: 'fas fa-external-link-alt',
 		text: i18n.ts.openInNewTab,
 		action: () => {
-			window.open(pageUrl, '_blank');
-			modal.close();
+			window.open(pageUrl.value, '_blank');
+			modal.value.close();
 		},
 	}, {
 		icon: 'fas fa-link',
 		text: i18n.ts.copyLink,
 		action: () => {
-			copyToClipboard(pageUrl);
+			copyToClipboard(pageUrl.value);
 		},
 	}];
 });
@@ -101,17 +101,17 @@ function back() {
 }
 
 function expand() {
-	mainRouter.push(path);
-	modal.close();
+	mainRouter.push(path.value);
+	modal.value.close();
 }
 
 function popout() {
-	_popout(path, rootEl);
-	modal.close();
+	_popout(path.value, rootEl.value);
+	modal.value.close();
 }
 
 function onContextmenu(ev: MouseEvent) {
-	os.contextMenu(contextmenu, ev);
+	os.contextMenu(contextmenu.value, ev);
 }
 </script>
 

@@ -78,21 +78,21 @@ const metadata = injectPageMetadata();
 const hideTitle = inject('shouldOmitHeaderTitle', false);
 const thin_ = props.thin || inject('shouldHeaderThin', false);
 
-const el = $ref<HTMLElement | null>(null);
+const el = ref<HTMLElement | null>(null);
 const tabRefs = {};
-const tabHighlightEl = $ref<HTMLElement | null>(null);
+const tabHighlightEl = ref<HTMLElement | null>(null);
 const bg = ref(null);
-let narrow = $ref(false);
+let narrow = ref(false);
 const height = ref(0);
-const hasTabs = $computed(() => props.tabs && props.tabs.length > 0);
-const hasActions = $computed(() => props.actions && props.actions.length > 0);
-const show = $computed(() => {
-	return !hideTitle || hasTabs || hasActions;
+const hasTabs = computed(() => props.tabs && props.tabs.length > 0);
+const hasActions = computed(() => props.actions && props.actions.length > 0);
+const show = computed(() => {
+	return !hideTitle || hasTabs.value || hasActions.value;
 });
 
 const showTabsPopup = (ev: MouseEvent) => {
-	if (!hasTabs) return;
-	if (!narrow) return;
+	if (!hasTabs.value) return;
+	if (!narrow.value) return;
 	ev.preventDefault();
 	ev.stopPropagation();
 	const menu = props.tabs.map(tab => ({
@@ -111,7 +111,7 @@ const preventDrag = (ev: TouchEvent) => {
 };
 
 const onClick = () => {
-	scrollToTop(el, { behavior: 'smooth' });
+	scrollToTop(el.value, { behavior: 'smooth' });
 };
 
 function onTabMousedown(tab: Tab, ev: MouseEvent): void {
@@ -148,27 +148,27 @@ onMounted(() => {
 	watch(() => [props.tab, props.tabs], () => {
 		nextTick(() => {
 			const tabEl = tabRefs[props.tab];
-			if (tabEl && tabHighlightEl) {
+			if (tabEl && tabHighlightEl.value) {
 				// offsetWidth や offsetLeft は少数を丸めてしまうため getBoundingClientRect を使う必要がある
 				// https://developer.mozilla.org/ja/docs/Web/API/HTMLElement/offsetWidth#%E5%80%A4
 				const parentRect = tabEl.parentElement.getBoundingClientRect();
 				const rect = tabEl.getBoundingClientRect();
-				tabHighlightEl.style.width = rect.width + 'px';
-				tabHighlightEl.style.left = (rect.left - parentRect.left) + 'px';
+				tabHighlightEl.value.style.width = rect.width + 'px';
+				tabHighlightEl.value.style.left = (rect.left - parentRect.left) + 'px';
 			}
 		});
 	}, {
 		immediate: true,
 	});
 
-	if (el && el.parentElement) {
-		narrow = el.parentElement.offsetWidth < 500;
+	if (el.value && el.value.parentElement) {
+		narrow.value = el.value.parentElement.offsetWidth < 500;
 		ro = new ResizeObserver((entries, observer) => {
-			if (el.parentElement && document.body.contains(el)) {
-				narrow = el.parentElement.offsetWidth < 500;
+			if (el.value.parentElement && document.body.contains(el.value)) {
+				narrow.value = el.value.parentElement.offsetWidth < 500;
 			}
 		});
-		ro.observe(el.parentElement);
+		ro.observe(el.value.parentElement);
 	}
 });
 

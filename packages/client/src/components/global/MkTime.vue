@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted } from 'vue';
+import { onUnmounted, shallowRef, computed } from 'vue';
 import { i18n } from '@/i18n';
 
 const props = withDefaults(defineProps<{
@@ -20,9 +20,9 @@ const props = withDefaults(defineProps<{
 const _time = typeof props.time === 'string' ? new Date(props.time) : props.time;
 const absolute = _time.toLocaleString();
 
-let now = $shallowRef(new Date());
-const relative = $computed(() => {
-	const ago = (now.getTime() - _time.getTime()) / 1000/*ms*/;
+let now = shallowRef(new Date());
+const relative = computed(() => {
+	const ago = (now.value.getTime() - _time.getTime()) / 1000/*ms*/;
 	return (
 		ago >= 86400 ? _time.toLocaleDateString() :
 		ago >= 3600 ? i18n.t('_ago.hoursAgo', { n: Math.round(ago / 3600).toString() }) :
@@ -32,8 +32,8 @@ const relative = $computed(() => {
 		i18n.ts._ago.future);
 });
 
-const allRelative = $computed(() => {
-	const ago = (now.getTime() - _time.getTime()) / 1000/*ms*/;
+const allRelative = computed(() => {
+	const ago = (now.value.getTime() - _time.getTime()) / 1000/*ms*/;
 	return (
 		ago >= 31536000 ? i18n.t('_ago.yearsAgo', { n: Math.round(ago / 31536000).toString() }) :
 		ago >= 2592000 ? i18n.t('_ago.monthsAgo', { n: Math.round(ago / 2592000).toString() }) :
@@ -48,7 +48,7 @@ const allRelative = $computed(() => {
 
 function tick() {
 	// TODO: パフォーマンス向上のため、このコンポーネントが画面内に表示されている場合のみ更新する
-	now = new Date();
+	now.value = new Date();
 
 	tickId = window.setTimeout(() => {
 		window.requestAnimationFrame(tick);

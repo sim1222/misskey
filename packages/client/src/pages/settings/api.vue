@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref } from 'vue';
+import { defineAsyncComponent, ref, computed } from 'vue';
 import FormLink from '@/components/form/link.vue';
 import FormButton from '@/components/MkButton.vue';
 import * as os from '@/os';
@@ -35,9 +35,9 @@ function generateToken() {
 	}, 'closed');
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: 'API',

@@ -17,14 +17,14 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, computed } from 'vue';
 import XHeader from './_header_.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let relays: any[] = $ref([]);
+let relays: any[] = ref([]);
 
 async function addRelay() {
 	const { canceled, result: inbox } = await os.inputText({
@@ -60,20 +60,20 @@ function remove(inbox: string) {
 
 function refresh() {
 	os.api('admin/relays/list').then((relayList: any) => {
-		relays = relayList;
+		relays.value = relayList;
 	});
 }
 
 refresh();
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	asFullButton: true,
 	icon: 'fas fa-plus',
 	text: i18n.ts.addRelay,
 	handler: addRelay,
 }]);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.relays,

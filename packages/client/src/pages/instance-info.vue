@@ -115,7 +115,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, computed } from 'vue';
 import * as misskey from 'misskey-js';
 import MkChart from '@/components/MkChart.vue';
 import MkObjectView from '@/components/MkObjectView.vue';
@@ -139,12 +139,12 @@ const props = defineProps<{
 	host: string;
 }>();
 
-let tab = $ref('overview');
-let chartSrc = $ref('instance-requests');
-let meta = $ref<misskey.entities.DetailedInstanceMetadata | null>(null);
-let instance = $ref<misskey.entities.Instance | null>(null);
-let suspended = $ref(false);
-let isBlocked = $ref(false);
+let tab = ref('overview');
+let chartSrc = ref('instance-requests');
+let meta = ref<misskey.entities.DetailedInstanceMetadata | null>(null);
+let instance = ref<misskey.entities.Instance | null>(null);
+let suspended = ref(false);
+let isBlocked = ref(false);
 
 const usersPagination = {
 	endpoint: iAmModerator ? 'admin/show-users' : 'users' as const,
@@ -158,30 +158,30 @@ const usersPagination = {
 };
 
 async function fetch() {
-	instance = await os.api('federation/show-instance', {
+	instance.value = await os.api('federation/show-instance', {
 		host: props.host,
 	});
-	suspended = instance.isSuspended;
-	isBlocked = instance.isBlocked;
+	suspended.value = instance.value.isSuspended;
+	isBlocked.value = instance.value.isBlocked;
 }
 
 async function toggleBlock(ev) {
-	if (meta == null) return;
+	if (meta.value == null) return;
 	await os.api('admin/update-meta', {
-		blockedHosts: isBlocked ? meta.blockedHosts.concat([instance.host]) : meta.blockedHosts.filter(x => x !== instance.host),
+		blockedHosts: isBlocked.value ? meta.value.blockedHosts.concat([instance.value.host]) : meta.value.blockedHosts.filter(x => x !== instance.value.host),
 	});
 }
 
 async function toggleSuspend(v) {
 	await os.api('admin/federation/update-instance', {
-		host: instance.host,
-		isSuspended: suspended,
+		host: instance.value.host,
+		isSuspended: suspended.value,
 	});
 }
 
 function refreshMetadata() {
 	os.api('admin/federation/refresh-remote-instance-metadata', {
-		host: instance.host,
+		host: instance.value.host,
 	});
 	os.alert({
 		text: 'Refresh requested',
@@ -190,7 +190,7 @@ function refreshMetadata() {
 
 fetch();
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	text: `https://${props.host}`,
 	icon: 'fas fa-external-link-alt',
 	handler: () => {
@@ -198,7 +198,7 @@ const headerActions = $computed(() => [{
 	},
 }]);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'overview',
 	title: i18n.ts.overview,
 	icon: 'fas fa-info-circle',

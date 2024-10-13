@@ -15,9 +15,6 @@
 		"chokidar": "^3.3.1",
 		"lodash": "^4.17.21"
 	},
-	"optionalDependencies": {
-		"@tensorflow/tfjs-node": "3.20.0"
-	},
 	"dependencies": {
 		"@bull-board/koa": "4.3.1",
 		"@discordapp/twemoji": "14.0.2",
@@ -38,7 +35,7 @@
 		"aws-sdk": "2.1213.0",
 		"bcryptjs": "2.4.3",
 		"blurhash": "1.1.5",
-		"bull": "4.9.0",
+		"bull": "4.16.3",
 		"cacheable-lookup": "6.1.0",
 		"cbor": "8.1.0",
 		"chalk": "5.0.1",
@@ -94,7 +91,7 @@
 		"qrcode": "1.5.1",
 		"random-seed": "0.3.0",
 		"ratelimiter": "3.4.1",
-		"re2": "1.17.7",
+		"re2": "1.21.4",
 		"redis-lock": "0.1.4",
 		"reflect-metadata": "0.1.13",
 		"rename": "1.0.4",

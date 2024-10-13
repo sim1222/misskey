@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import XModalWindow from '@/components/MkModalWindow.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/form/input.vue';
@@ -42,11 +42,11 @@ const props = defineProps<{
 	emoji: any,
 }>();
 
-let dialog = $ref(null);
-let name: string = $ref(props.emoji.name);
-let category: string = $ref(props.emoji.category);
-let aliases: string = $ref(props.emoji.aliases.join(' '));
-let categories: string[] = $ref(emojiCategories);
+let dialog = ref(null);
+let name: string = ref(props.emoji.name);
+let category: string = ref(props.emoji.category);
+let aliases: string = ref(props.emoji.aliases.join(' '));
+let categories: string[] = ref(emojiCategories);
 
 const emit = defineEmits<{
 	(ev: 'done', v: { deleted?: boolean, updated?: any }): void,
@@ -60,27 +60,27 @@ function ok() {
 async function update() {
 	await os.apiWithDialog('admin/emoji/update', {
 		id: props.emoji.id,
-		name,
-		category,
-		aliases: aliases.split(' '),
+		name: name.value,
+		category: category.value,
+		aliases: aliases.value.split(' '),
 	});
 
 	emit('done', {
 		updated: {
 			id: props.emoji.id,
-			name,
-			category,
-			aliases: aliases.split(' '),
+			name: name.value,
+			category: category.value,
+			aliases: aliases.value.split(' '),
 		},
 	});
 
-	dialog.close();
+	dialog.value.close();
 }
 
 async function del() {
 	const { canceled } = await os.confirm({
 		type: 'warning',
-		text: i18n.t('removeAreYouSure', { x: name }),
+		text: i18n.t('removeAreYouSure', { x: name.value }),
 	});
 	if (canceled) return;
 
@@ -90,7 +90,7 @@ async function del() {
 		emit('done', {
 			deleted: true,
 		});
-		dialog.close();
+		dialog.value.close();
 	});
 }
 </script>

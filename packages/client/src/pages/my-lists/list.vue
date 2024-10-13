@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
+import { computed, watch, ref } from 'vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 import { mainRouter } from '@/router';
@@ -49,18 +49,18 @@ const props = defineProps<{
 	listId: string;
 }>();
 
-let list = $ref(null);
-let users = $ref([]);
+let list = ref(null);
+let users = ref([]);
 
 function fetchList() {
 	os.api('users/lists/show', {
 		listId: props.listId,
 	}).then(_list => {
-		list = _list;
+		list.value = _list;
 		os.api('users/show', {
-			userIds: list.userIds,
+			userIds: list.value.userIds,
 		}).then(_users => {
-			users = _users;
+			users.value = _users;
 		});
 	});
 }
@@ -68,47 +68,47 @@ function fetchList() {
 function addUser() {
 	os.selectUser().then(user => {
 		os.apiWithDialog('users/lists/push', {
-			listId: list.id,
+			listId: list.value.id,
 			userId: user.id,
 		}).then(() => {
-			users.push(user);
+			users.value.push(user);
 		});
 	});
 }
 
 function removeUser(user) {
 	os.api('users/lists/pull', {
-		listId: list.id,
+		listId: list.value.id,
 		userId: user.id,
 	}).then(() => {
-		users = users.filter(x => x.id !== user.id);
+		users.value = users.value.filter(x => x.id !== user.id);
 	});
 }
 
 async function renameList() {
 	const { canceled, result: name } = await os.inputText({
 		title: i18n.ts.enterListName,
-		default: list.name,
+		default: list.value.name,
 	});
 	if (canceled) return;
 
 	await os.api('users/lists/update', {
-		listId: list.id,
+		listId: list.value.id,
 		name: name,
 	});
 
-	list.name = name;
+	list.value.name = name;
 }
 
 async function deleteList() {
 	const { canceled } = await os.confirm({
 		type: 'warning',
-		text: i18n.t('removeAreYouSure', { x: list.name }),
+		text: i18n.t('removeAreYouSure', { x: list.value.name }),
 	});
 	if (canceled) return;
 
 	await os.api('users/lists/delete', {
-		listId: list.id,
+		listId: list.value.id,
 	});
 	os.success();
 	mainRouter.push('/my/lists');
@@ -116,12 +116,12 @@ async function deleteList() {
 
 watch(() => props.listId, fetchList, { immediate: true });
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
-definePageMetadata(computed(() => list ? {
-	title: list.name,
+definePageMetadata(computed(() => list.value ? {
+	title: list.value.name,
 	icon: 'fas fa-list-ul',
 } : null));
 </script>

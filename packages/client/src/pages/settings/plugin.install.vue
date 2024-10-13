@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, ref } from 'vue';
+import { defineAsyncComponent, nextTick, ref, computed } from 'vue';
 import { AiScript, parse } from '@syuilo/aiscript';
 import { serialize } from '@syuilo/aiscript/built/serializer';
 import { v4 as uuid } from 'uuid';
@@ -113,9 +113,9 @@ async function install() {
 	});
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts._plugin.install,

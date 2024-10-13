@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
+import { computed, watch, ref } from 'vue';
 import XFeatured from './explore.featured.vue';
 import XUsers from './explore.users.vue';
 import MkFolder from '@/components/MkFolder.vue';
@@ -47,27 +47,27 @@ const props = defineProps<{
 	tag?: string;
 }>();
 
-let tab = $ref('featured');
-let tagsEl = $ref<InstanceType<typeof MkFolder>>();
-let searchQuery = $ref(null);
-let searchOrigin = $ref('combined');
+let tab = ref('featured');
+let tagsEl = ref<InstanceType<typeof MkFolder>>();
+let searchQuery = ref(null);
+let searchOrigin = ref('combined');
 
 watch(() => props.tag, () => {
-	if (tagsEl) tagsEl.toggleContent(props.tag == null);
+	if (tagsEl.value) tagsEl.value.toggleContent(props.tag == null);
 });
 
 const searchPagination = {
 	endpoint: 'users/search' as const,
 	limit: 10,
-	params: computed(() => (searchQuery && searchQuery !== '') ? {
-		query: searchQuery,
-		origin: searchOrigin,
+	params: computed(() => (searchQuery.value && searchQuery.value !== '') ? {
+		query: searchQuery.value,
+		origin: searchOrigin.value,
 	} : null),
 };
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'featured',
 	icon: 'fas fa-bolt',
 	title: i18n.ts.featured,

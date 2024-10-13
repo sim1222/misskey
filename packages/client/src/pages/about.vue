@@ -103,17 +103,17 @@ const props = withDefaults(defineProps<{
 	initialTab: 'overview',
 });
 
-let stats = $ref(null);
-let tab = $ref(props.initialTab);
+let stats = ref(null);
+let tab = ref(props.initialTab);
 
 const initStats = () => os.api('stats', {
 }).then((res) => {
-	stats = res;
+	stats.value = res;
 });
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'overview',
 	title: i18n.ts.overview,
 }, {

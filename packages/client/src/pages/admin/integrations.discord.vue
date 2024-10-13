@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormInput from '@/components/form/input.vue';
 import FormButton from '@/components/MkButton.vue';
@@ -35,24 +35,24 @@ import * as os from '@/os';
 import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
 
-let uri: string = $ref('');
-let enableDiscordIntegration: boolean = $ref(false);
-let discordClientId: string | null = $ref(null);
-let discordClientSecret: string | null = $ref(null);
+let uri: string = ref('');
+let enableDiscordIntegration: boolean = ref(false);
+let discordClientId: string | null = ref(null);
+let discordClientSecret: string | null = ref(null);
 
 async function init() {
 	const meta = await os.api('admin/meta');
-	uri = meta.uri;
-	enableDiscordIntegration = meta.enableDiscordIntegration;
-	discordClientId = meta.discordClientId;
-	discordClientSecret = meta.discordClientSecret;
+	uri.value = meta.uri;
+	enableDiscordIntegration.value = meta.enableDiscordIntegration;
+	discordClientId.value = meta.discordClientId;
+	discordClientSecret.value = meta.discordClientSecret;
 }
 
 function save() {
 	os.apiWithDialog('admin/update-meta', {
-		enableDiscordIntegration,
-		discordClientId,
-		discordClientSecret,
+		enableDiscordIntegration: enableDiscordIntegration.value,
+		discordClientId: discordClientId.value,
+		discordClientSecret: discordClientSecret.value,
 	}).then(() => {
 		fetchInstance();
 	});

@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, computed } from 'vue';
 import * as misskey from 'misskey-js';
 import MkButton from '@/components/MkButton.vue';
 import { version } from '@/config';
@@ -32,29 +32,29 @@ const props = withDefaults(defineProps<{
 }>(), {
 });
 
-let loaded = $ref(false);
-let serverIsDead = $ref(false);
-let meta = $ref<misskey.entities.LiteInstanceMetadata | null>(null);
+let loaded = ref(false);
+let serverIsDead = ref(false);
+let meta = ref<misskey.entities.LiteInstanceMetadata | null>(null);
 
 os.api('meta', {
 	detail: false,
 }).then(res => {
-	loaded = true;
-	serverIsDead = false;
-	meta = res;
+	loaded.value = true;
+	serverIsDead.value = false;
+	meta.value = res;
 	localStorage.setItem('v', res.version);
 }, () => {
-	loaded = true;
-	serverIsDead = true;
+	loaded.value = true;
+	serverIsDead.value = true;
 });
 
 function reload() {
 	unisonReload();
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.error,

@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount } from 'vue';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
 import XPie from './pie.vue';
 
 const props = defineProps<{
@@ -18,10 +18,10 @@ const props = defineProps<{
 	meta: any
 }>();
 
-let usage: number = $ref(0);
+let usage: number = ref(0);
 
 function onStats(stats) {
-	usage = stats.cpu;
+	usage.value = stats.cpu;
 }
 
 onMounted(() => {

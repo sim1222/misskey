@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, onUnmounted, Ref, ref, watch } from 'vue';
+import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, onUnmounted, Ref, ref, watch, computed } from 'vue';
 import { focusPrev, focusNext } from '@/scripts/focus';
 import FormSwitch from '@/components/form/switch.vue';
 import { MenuItem, InnerMenuItem, MenuPending, MenuAction } from '@/types/menu';
@@ -78,19 +78,19 @@ const emit = defineEmits<{
 	(ev: 'close', actioned?: boolean): void;
 }>();
 
-let itemsEl = $ref<HTMLDivElement>();
+let itemsEl = ref<HTMLDivElement>();
 
-let items2: InnerMenuItem[] = $ref([]);
+let items2: InnerMenuItem[] = ref([]);
 
-let child = $ref<InstanceType<typeof XChild>>();
+let child = ref<InstanceType<typeof XChild>>();
 
-let keymap = $computed(() => ({
+let keymap = computed(() => ({
 	'up|k|shift+tab': focusUp,
 	'down|j|tab': focusDown,
 	'esc': close,
 }));
 
-let childShowingItem = $ref<MenuItem | null>();
+let childShowingItem = ref<MenuItem | null>();
 
 watch(() => props.items, () => {
 	const items: (MenuItem | MenuPending)[] = [...props.items].filter(item => item !== undefined);
@@ -101,22 +101,22 @@ watch(() => props.items, () => {
 		if (item && 'then' in item) { // if item is Promise
 			items[i] = { type: 'pending' };
 			item.then(actualItem => {
-				items2[i] = actualItem;
+				items2.value[i] = actualItem;
 			});
 		}
 	}
 
-	items2 = items as InnerMenuItem[];
+	items2.value = items as InnerMenuItem[];
 }, {
 	immediate: true,
 });
 
-let childMenu = $ref<MenuItem[] | null>();
-let childTarget = $ref<HTMLElement | null>();
+let childMenu = ref<MenuItem[] | null>();
+let childTarget = ref<HTMLElement | null>();
 
 function closeChild() {
-	childMenu = null;
-	childShowingItem = null;
+	childMenu.value = null;
+	childShowingItem.value = null;
 }
 
 function childActioned() {
@@ -125,8 +125,8 @@ function childActioned() {
 }
 
 function onGlobalMousedown(event: MouseEvent) {
-	if (childTarget && (event.target === childTarget || childTarget.contains(event.target))) return;
-	if (child && child.checkHit(event)) return;
+	if (childTarget.value && (event.target === childTarget.value || childTarget.value.contains(event.target))) return;
+	if (child.value && child.value.checkHit(event)) return;
 	closeChild();
 }
 
@@ -145,9 +145,9 @@ async function showChildren(item: MenuItem, ev: MouseEvent) {
 		os.popupMenu(item.children, ev.currentTarget ?? ev.target);
 		close();
 	} else {
-		childTarget = ev.currentTarget ?? ev.target;
-		childMenu = item.children;
-		childShowingItem = item;
+		childTarget.value = ev.currentTarget ?? ev.target;
+		childMenu.value = item.children;
+		childShowingItem.value = item;
 	}
 }
 
@@ -171,7 +171,7 @@ function focusDown() {
 onMounted(() => {
 	if (props.viaKeyboard) {
 		nextTick(() => {
-			focusNext(itemsEl.children[0], true, false);
+			focusNext(itemsEl.value.children[0], true, false);
 		});
 	}
 

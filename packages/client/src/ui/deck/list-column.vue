@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import XColumn from './column.vue';
 import { updateColumn, Column } from './deck-store';
 import XTimeline from '@/components/MkTimeline.vue';
@@ -26,7 +26,7 @@ const emit = defineEmits<{
 	(ev: 'parent-focus', direction: 'up' | 'down' | 'left' | 'right'): void;
 }>();
 
-let timeline = $ref<InstanceType<typeof XTimeline>>();
+let timeline = ref<InstanceType<typeof XTimeline>>();
 
 if (props.column.listId == null) {
 	setList();

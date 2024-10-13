@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import * as misskey from 'misskey-js';
 import XNoteHeader from '@/components/MkNoteHeader.vue';
 import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
@@ -44,15 +44,15 @@ const props = withDefaults(defineProps<{
 	depth: 1,
 });
 
-let showContent = $ref(false);
-let replies: misskey.entities.Note[] = $ref([]);
+let showContent = ref(false);
+let replies: misskey.entities.Note[] = ref([]);
 
 if (props.detail) {
 	os.api('notes/children', {
 		noteId: props.note.id,
 		limit: 5,
 	}).then(res => {
-		replies = res;
+		replies.value = res;
 	});
 }
 </script>

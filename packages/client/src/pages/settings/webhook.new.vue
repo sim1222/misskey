@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, computed } from 'vue';
 import FormInput from '@/components/form/input.vue';
 import FormSection from '@/components/form/section.vue';
 import FormSwitch from '@/components/form/switch.vue';
@@ -41,39 +41,39 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let name = $ref('');
-let url = $ref('');
-let secret = $ref('');
+let name = ref('');
+let url = ref('');
+let secret = ref('');
 
-let event_follow = $ref(true);
-let event_followed = $ref(true);
-let event_note = $ref(true);
-let event_reply = $ref(true);
-let event_renote = $ref(true);
-let event_reaction = $ref(true);
-let event_mention = $ref(true);
+let event_follow = ref(true);
+let event_followed = ref(true);
+let event_note = ref(true);
+let event_reply = ref(true);
+let event_renote = ref(true);
+let event_reaction = ref(true);
+let event_mention = ref(true);
 
 async function create(): Promise<void> {
 	const events = [];
-	if (event_follow) events.push('follow');
-	if (event_followed) events.push('followed');
-	if (event_note) events.push('note');
-	if (event_reply) events.push('reply');
-	if (event_renote) events.push('renote');
-	if (event_reaction) events.push('reaction');
-	if (event_mention) events.push('mention');
+	if (event_follow.value) events.push('follow');
+	if (event_followed.value) events.push('followed');
+	if (event_note.value) events.push('note');
+	if (event_reply.value) events.push('reply');
+	if (event_renote.value) events.push('renote');
+	if (event_reaction.value) events.push('reaction');
+	if (event_mention.value) events.push('mention');
 
 	os.apiWithDialog('i/webhooks/create', {
-		name,
-		url,
-		secret,
+		name: name.value,
+		url: url.value,
+		secret: secret.value,
 		on: events,
 	});
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: 'Create new webhook',
