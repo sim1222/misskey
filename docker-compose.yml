@@ -1,32 +1,32 @@
 version: "3"
 services:
-  #   web:
-  #     build: .
-  #     restart: always
-  #     links:
-  #       - db
-  #       - redis
-  # #      - es
-  #     ports:
-  #       - "3000:3000"
-  #     networks:
-  #       - internal_network
-  #       - external_network
-  #     volumes:
-  #       - ./files:/misskey/files
-  #       - ./.config:/misskey/.config:ro
+  web:
+    build: .
+    restart: always
+    links:
+      - db
+      - redis
+      # - es
+    ports:
+      - "3000:3000"
+    networks:
+      - internal_network
+      - external_network
+    volumes:
+      - ./files:/misskey/files
+      - ./.config:/misskey/.config:ro
   redis:
     restart: always
     image: redis:alpine
-    ports:
-      - "6379:6379"
+    networks:
+      - internal_network
     volumes:
       - ./redis:/data
   db:
     restart: always
     image: postgres:17.0-alpine
-    ports:
-      - "5432:5432"
+    networks:
+      - internal_network
     env_file:
       - .config/docker.env
     volumes:
