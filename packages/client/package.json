@@ -3,6 +3,7 @@
 	"scripts": {
 		"watch": "vite build --watch --mode development",
 		"build": "vite build",
+		"preview": "vite preview",
 		"lint": "eslint --quiet \"src/**/*.{ts,vue}\"",
 		"typecheck:vue": "vue-tsc --noEmit",
 		"typecheck:tsc": "tsc -p . --noEmit"
@@ -64,6 +65,7 @@
 		"uuid": "10.0.0",
 		"vanilla-tilt": "1.8.1",
 		"vite": "5.4.8",
+		"vite-plugin-pug": "0.4.1",
 		"vue": "3.5.12",
 		"vue-prism-editor": "2.0.0-alpha.2",
 		"vuedraggable": "4.0.1"

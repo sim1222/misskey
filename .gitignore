@@ -47,3 +47,5 @@ ormconfig.json
 *.blend5
 
 start.sh
+
+/packages/client/dist

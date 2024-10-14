@@ -1,0 +1,84 @@
+<!doctype html>
+<!---
+  _____ _         _           
+ |     |_|___ ___| |_ ___ _ _ 
+ | | | | |_ -|_ -| '_| -_| | |
+ |_|_|_|_|___|___|_,_|___|_  |
+                         |___|
+ Thank you for using Misskey!
+ If you are reading this message... how about joining the development?
+ https://github.com/misskey-dev/misskey
+ 
+-->
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="application-name" content="Misskey" />
+		<meta name="referrer" content="origin" />
+		<meta name="theme-color" content="#a7dc4e" />
+		<meta name="theme-color-orig" content="#a7dc4e" />
+		<meta property="twitter:card" content="summary" />
+		<meta property="og:site_name" content="simkey.net" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="manifest" href="/manifest.json" />
+		<link rel="prefetch" href="https://xn--931a.moe/assets/info.jpg" />
+		<link rel="prefetch" href="https://xn--931a.moe/assets/not-found.jpg" />
+		<link rel="prefetch" href="https://xn--931a.moe/assets/error.jpg" />
+
+		<link rel="stylesheet" href="/assets/fontawesome/css/all.min.css" />
+		<!-- <link rel="preload" href="/assets/app-CT9YOazo.css" as="style" /> -->
+
+		<title>✨🌎✨ A interplanetary communication platform ✨🚀✨</title>
+		<meta
+			name="description"
+			content="✨🌎✨ A interplanetary communication platform ✨🚀✨"
+		/>
+		<meta name="og:title" content="Misskey" />
+		<meta
+			name="og:description"
+			content="✨🌎✨ A interplanetary communication platform ✨🚀✨"
+		/>
+		<style>
+			{{{CLIENT_CSS}}}
+		</style>
+		<script>
+			var VERSION = "f";
+			var CLIENT_ENTRY = "{{{CLIENT_ENTRY_JS_NAME}}}";
+		</script>
+		<script type="module" src="/src/boot.js"></script>
+	</head>
+	<body>
+		<div id="splash">
+			<img id="splashIcon" src="/static-assets/splash.png" />
+			<div id="splashSpinner">
+				<svg
+					class="spinner bg"
+					viewBox="0 0 152 152"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<g transform="matrix(1,0,0,1,12,12)">
+						<circle
+							cx="64"
+							cy="64"
+							r="64"
+							style="fill: none; stroke: currentColor; stroke-width: 24px"
+						/>
+					</g>
+				</svg>
+				<svg
+					class="spinner fg"
+					viewBox="0 0 152 152"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<g transform="matrix(1,0,0,1,12,12)">
+						<path
+							d="M128,64C128,28.654 99.346,0 64,0C99.346,0 128,28.654 128,64Z"
+							style="fill: none; stroke: currentColor; stroke-width: 24px"
+						/>
+					</g>
+				</svg>
+			</div>
+		</div>
+		<script type="module" src="/src/init.ts"></script>
+	</body>
+</html>
