@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
+import { computed, watch, ref } from 'vue';
 import XUserList from '@/components/MkUserList.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import MkTab from '@/components/MkTab.vue';
@@ -71,16 +71,16 @@ const props = defineProps<{
 	tag?: string;
 }>();
 
-let origin = $ref('local');
-let tagsEl = $ref<InstanceType<typeof MkFolder>>();
-let tagsLocal = $ref([]);
-let tagsRemote = $ref([]);
+let origin = ref('local');
+let tagsEl = ref<InstanceType<typeof MkFolder>>();
+let tagsLocal = ref([]);
+let tagsRemote = ref([]);
 
 watch(() => props.tag, () => {
-	if (tagsEl) tagsEl.toggleContent(props.tag == null);
+	if (tagsEl.value) tagsEl.value.toggleContent(props.tag == null);
 });
 
-const tagUsers = $computed(() => ({
+const tagUsers = computed(() => ({
 	endpoint: 'hashtags/users' as const,
 	limit: 30,
 	params: {
@@ -124,14 +124,14 @@ os.api('hashtags/list', {
 	attachedToLocalUserOnly: true,
 	limit: 30,
 }).then(tags => {
-	tagsLocal = tags;
+	tagsLocal.value = tags;
 });
 os.api('hashtags/list', {
 	sort: '+attachedRemoteUsers',
 	attachedToRemoteUserOnly: true,
 	limit: 30,
 }).then(tags => {
-	tagsRemote = tags;
+	tagsRemote.value = tags;
 });
 </script>
 

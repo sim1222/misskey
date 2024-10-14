@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import * as misskey from 'misskey-js';
 import { ColdDeviceStorage } from '@/store';
 
@@ -35,16 +35,16 @@ const props = withDefaults(defineProps<{
 }>(), {
 });
 
-const audioEl = $ref<HTMLAudioElement | null>();
-let hide = $ref(true);
+const audioEl = ref<HTMLAudioElement | null>();
+let hide = ref(true);
 
 function volumechange() {
-	if (audioEl) ColdDeviceStorage.set('mediaVolume', audioEl.volume);
+	if (audioEl.value) ColdDeviceStorage.set('mediaVolume', audioEl.value.volume);
 }
 
 onMounted(() => {
 	// if (audioEl) audioEl.volume = ColdDeviceStorage.get('mediaVolume');
-	if (audioEl) audioEl.volume = 0.2;
+	if (audioEl.value) audioEl.value.volume = 0.2;
 });
 </script>
 

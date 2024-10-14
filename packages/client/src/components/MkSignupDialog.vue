@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import XSignup from '@/components/MkSignup.vue';
 import XModalWindow from '@/components/MkModalWindow.vue';
 import { i18n } from '@/i18n';
@@ -33,14 +33,14 @@ const emit = defineEmits<{
 	(ev: 'closed'): void;
 }>();
 
-const dialog = $ref<InstanceType<typeof XModalWindow>>();
+const dialog = ref<InstanceType<typeof XModalWindow>>();
 
 function onSignup(res) {
 	emit('done', res);
-	dialog.close();
+	dialog.value.close();
 }
 
 function onSignupEmailPending() {
-	dialog.close();
+	dialog.value.close();
 }
 </script>

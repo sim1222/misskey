@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineComponent, watch } from 'vue';
+import { computed, defineComponent, watch, ref } from 'vue';
 import XUserList from '@/components/MkUserList.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import MkInput from '@/components/form/input.vue';
@@ -62,9 +62,9 @@ const props = defineProps<{
 	tag?: string;
 }>();
 
-let tab = $ref('explore');
-let tags = $ref([]);
-let tagsRef = $ref();
+let tab = ref('explore');
+let tags = ref([]);
+let tagsRef = ref();
 
 const recentPostsPagination = {
 	endpoint: 'gallery/posts' as const,
@@ -83,7 +83,7 @@ const likedPostsPagination = {
 	limit: 5,
 };
 
-const tagUsersPagination = $computed(() => ({
+const tagUsersPagination = computed(() => ({
 	endpoint: 'hashtags/users' as const,
 	limit: 30,
 	params: {
@@ -94,10 +94,10 @@ const tagUsersPagination = $computed(() => ({
 }));
 
 watch(() => props.tag, () => {
-	if (tagsRef) tagsRef.tags.toggleContent(props.tag == null);
+	if (tagsRef.value) tagsRef.value.tags.toggleContent(props.tag == null);
 });
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	icon: 'fas fa-plus',
 	text: i18n.ts.create,
 	handler: () => {
@@ -105,7 +105,7 @@ const headerActions = $computed(() => [{
 	},
 }]);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'explore',
 	title: i18n.ts.gallery,
 	icon: 'fas fa-icons',

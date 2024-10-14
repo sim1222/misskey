@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import JSON5 from 'json5';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
@@ -24,11 +24,11 @@ import FormLink from '@/components/form/link.vue';
 import FormSection from '@/components/form/section.vue';
 import MkButton from '@/components/MkButton.vue';
 
-let scopes = $ref(null);
+let scopes = ref(null);
 
 function fetchScopes() {
 	os.api('i/registry/scopes').then(res => {
-		scopes = res.slice().sort((a, b) => a.join('/').localeCompare(b.join('/')));
+		scopes.value = res.slice().sort((a, b) => a.join('/').localeCompare(b.join('/')));
 	});
 }
 
@@ -60,9 +60,9 @@ async function createKey() {
 
 fetchScopes();
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.registry,

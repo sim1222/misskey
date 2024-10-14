@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, defineComponent, inject, markRaw, onMounted, onUnmounted } from 'vue';
+import { defineAsyncComponent, defineComponent, inject, markRaw, onMounted, onUnmounted, ref, computed } from 'vue';
 import * as Acct from 'misskey-js/built/acct';
 import MkButton from '@/components/MkButton.vue';
 import { acct } from '@/filters/user';
@@ -56,10 +56,10 @@ import { $i } from '@/account';
 
 const router = useRouter();
 
-let fetching = $ref(true);
-let moreFetching = $ref(false);
-let messages = $ref([]);
-let connection = $ref(null);
+let fetching = ref(true);
+let moreFetching = ref(false);
+let messages = ref([]);
+let connection = ref(null);
 
 const getAcct = Acct.toString;
 
@@ -69,20 +69,20 @@ function isMe(message) {
 
 function onMessage(message) {
 	if (message.recipientId) {
-		messages = messages.filter(m => !(
+		messages.value = messages.value.filter(m => !(
 			(m.recipientId === message.recipientId && m.userId === message.userId) ||
 			(m.recipientId === message.userId && m.userId === message.recipientId)));
 
-		messages.unshift(message);
+		messages.value.unshift(message);
 	} else if (message.groupId) {
-		messages = messages.filter(m => m.groupId !== message.groupId);
-		messages.unshift(message);
+		messages.value = messages.value.filter(m => m.groupId !== message.groupId);
+		messages.value.unshift(message);
 	}
 }
 
 function onRead(ids) {
 	for (const id of ids) {
-		const found = messages.find(m => m.id === id);
+		const found = messages.value.find(m => m.id === id);
 		if (found) {
 			if (found.recipientId) {
 				found.isRead = true;
@@ -133,28 +133,28 @@ async function startGroup() {
 }
 
 onMounted(() => {
-	connection = markRaw(stream.useChannel('messagingIndex'));
+	connection.value = markRaw(stream.useChannel('messagingIndex'));
 
-	connection.on('message', onMessage);
-	connection.on('read', onRead);
+	connection.value.on('message', onMessage);
+	connection.value.on('read', onRead);
 
 	os.api('messaging/history', { group: false }).then(userMessages => {
 		os.api('messaging/history', { group: true }).then(groupMessages => {
 			const _messages = userMessages.concat(groupMessages);
 			_messages.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-			messages = _messages;
-			fetching = false;
+			messages.value = _messages;
+			fetching.value = false;
 		});
 	});
 });
 
 onUnmounted(() => {
-	if (connection) connection.dispose();
+	if (connection.value) connection.value.dispose();
 });
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.messaging,

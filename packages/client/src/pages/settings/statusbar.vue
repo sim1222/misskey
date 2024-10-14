@@ -24,11 +24,11 @@ import { definePageMetadata } from '@/scripts/page-metadata';
 
 const statusbars = defaultStore.reactiveState.statusbars;
 
-let userLists = $ref();
+let userLists = ref();
 
 onMounted(() => {
 	os.api('users/lists/list').then(res => {
-		userLists = res;
+		userLists.value = res;
 	});
 });
 
@@ -42,9 +42,9 @@ async function add() {
 	});
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.statusbar,

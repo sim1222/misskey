@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount } from 'vue';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { v4 as uuid } from 'uuid';
 
 const props = defineProps<{
@@ -78,23 +78,23 @@ const props = defineProps<{
 	meta: any
 }>();
 
-let viewBoxX: number = $ref(50);
-let viewBoxY: number = $ref(30);
-let stats: any[] = $ref([]);
+let viewBoxX: number = ref(50);
+let viewBoxY: number = ref(30);
+let stats: any[] = ref([]);
 const cpuGradientId = uuid();
 const cpuMaskId = uuid();
 const memGradientId = uuid();
 const memMaskId = uuid();
-let cpuPolylinePoints: string = $ref('');
-let memPolylinePoints: string = $ref('');
-let cpuPolygonPoints: string = $ref('');
-let memPolygonPoints: string = $ref('');
-let cpuHeadX: any = $ref(null);
-let cpuHeadY: any = $ref(null);
-let memHeadX: any = $ref(null);
-let memHeadY: any = $ref(null);
-let cpuP: string = $ref('');
-let memP: string = $ref('');
+let cpuPolylinePoints: string = ref('');
+let memPolylinePoints: string = ref('');
+let cpuPolygonPoints: string = ref('');
+let memPolygonPoints: string = ref('');
+let cpuHeadX: any = ref(null);
+let cpuHeadY: any = ref(null);
+let memHeadX: any = ref(null);
+let memHeadY: any = ref(null);
+let cpuP: string = ref('');
+let memP: string = ref('');
 
 onMounted(() => {
 	props.connection.on('stats', onStats);
@@ -110,24 +110,24 @@ onBeforeUnmount(() => {
 });
 
 function onStats(connStats) {
-	stats.push(connStats);
-	if (stats.length > 50) stats.shift();
+	stats.value.push(connStats);
+	if (stats.value.length > 50) stats.value.shift();
 
-	let cpuPolylinePointsStats = stats.map((s, i) => [viewBoxX - ((stats.length - 1) - i), (1 - s.cpu) * viewBoxY]);
-	let memPolylinePointsStats = stats.map((s, i) => [viewBoxX - ((stats.length - 1) - i), (1 - (s.mem.active / props.meta.mem.total)) * viewBoxY]);
-	cpuPolylinePoints = cpuPolylinePointsStats.map(xy => `${xy[0]},${xy[1]}`).join(' ');
-	memPolylinePoints = memPolylinePointsStats.map(xy => `${xy[0]},${xy[1]}`).join(' ');
+	let cpuPolylinePointsStats = stats.value.map((s, i) => [viewBoxX.value - ((stats.value.length - 1) - i), (1 - s.cpu) * viewBoxY.value]);
+	let memPolylinePointsStats = stats.value.map((s, i) => [viewBoxX.value - ((stats.value.length - 1) - i), (1 - (s.mem.active / props.meta.mem.total)) * viewBoxY.value]);
+	cpuPolylinePoints.value = cpuPolylinePointsStats.map(xy => `${xy[0]},${xy[1]}`).join(' ');
+	memPolylinePoints.value = memPolylinePointsStats.map(xy => `${xy[0]},${xy[1]}`).join(' ');
 
-	cpuPolygonPoints = `${viewBoxX - (stats.length - 1)},${viewBoxY} ${cpuPolylinePoints} ${viewBoxX},${viewBoxY}`;
-	memPolygonPoints = `${viewBoxX - (stats.length - 1)},${viewBoxY} ${memPolylinePoints} ${viewBoxX},${viewBoxY}`;
+	cpuPolygonPoints.value = `${viewBoxX.value - (stats.value.length - 1)},${viewBoxY.value} ${cpuPolylinePoints.value} ${viewBoxX.value},${viewBoxY.value}`;
+	memPolygonPoints.value = `${viewBoxX.value - (stats.value.length - 1)},${viewBoxY.value} ${memPolylinePoints.value} ${viewBoxX.value},${viewBoxY.value}`;
 
-	cpuHeadX = cpuPolylinePointsStats[cpuPolylinePointsStats.length - 1][0];
-	cpuHeadY = cpuPolylinePointsStats[cpuPolylinePointsStats.length - 1][1];
-	memHeadX = memPolylinePointsStats[memPolylinePointsStats.length - 1][0];
-	memHeadY = memPolylinePointsStats[memPolylinePointsStats.length - 1][1];
+	cpuHeadX.value = cpuPolylinePointsStats[cpuPolylinePointsStats.length - 1][0];
+	cpuHeadY.value = cpuPolylinePointsStats[cpuPolylinePointsStats.length - 1][1];
+	memHeadX.value = memPolylinePointsStats[memPolylinePointsStats.length - 1][0];
+	memHeadY.value = memPolylinePointsStats[memPolylinePointsStats.length - 1][1];
 
-	cpuP = (connStats.cpu * 100).toFixed(0);
-	memP = (connStats.mem.active / props.meta.mem.total * 100).toFixed(0);
+	cpuP.value = (connStats.cpu * 100).toFixed(0);
+	memP.value = (connStats.mem.active / props.meta.mem.total * 100).toFixed(0);
 }
 
 function onStatsLog(statsLog) {

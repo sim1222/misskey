@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch } from 'vue';
+import { onMounted, watch, ref } from 'vue';
 import * as misskey from 'misskey-js';
 import { getStaticImageUrl } from '@/scripts/get-static-image-url';
 import { extractAvgColorFromBlurhash } from '@/scripts/extract-avg-color-from-blurhash';
@@ -48,10 +48,10 @@ function onClick(ev: MouseEvent) {
 	emit('click', ev);
 }
 
-let color = $ref();
+let color = ref();
 
 watch(() => props.user.avatarBlurhash, () => {
-	color = extractAvgColorFromBlurhash(props.user.avatarBlurhash);
+	color.value = extractAvgColorFromBlurhash(props.user.avatarBlurhash);
 }, {
 	immediate: true,
 });

@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import MkSignin from '@/components/MkSignin.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
@@ -57,10 +57,10 @@ const props = defineProps<{
 
 const _permissions = props.permission.split(',');
 
-let state = $ref<string | null>(null);
+let state = ref<string | null>(null);
 
 async function accept(): Promise<void> {
-	state = 'waiting';
+	state.value = 'waiting';
 	await os.api('miauth/gen-token', {
 		session: props.session,
 		name: props.name,
@@ -68,7 +68,7 @@ async function accept(): Promise<void> {
 		permission: _permissions,
 	});
 
-	state = 'accepted';
+	state.value = 'accepted';
 	if (props.callback) {
 		location.href = appendQuery(props.callback, query({
 			session: props.session,
@@ -77,7 +77,7 @@ async function accept(): Promise<void> {
 }
 
 function deny(): void {
-	state = 'denied';
+	state.value = 'denied';
 }
 
 function onLogin(res): void {

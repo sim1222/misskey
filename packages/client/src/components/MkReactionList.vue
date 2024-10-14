@@ -43,7 +43,7 @@ type reactionUsers = {
 	users: UserLite[];
 }[]
 
-const dialog = $ref<InstanceType<typeof MkModalWindow>>();
+const dialog = ref<InstanceType<typeof MkModalWindow>>();
 const el = ref<HTMLElement>();
 const reactions = ref([] as NoteReaction[]);
 const reactUsers = ref([] as reactionUsers);

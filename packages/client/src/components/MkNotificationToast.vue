@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import XNotification from '@/components/MkNotification.vue';
 import * as os from '@/os';
 
@@ -20,11 +20,11 @@ const emit = defineEmits<{
 }>();
 
 const zIndex = os.claimZIndex('high');
-let showing = $ref(true);
+let showing = ref(true);
 
 onMounted(() => {
 	window.setTimeout(() => {
-		showing = false;
+		showing.value = false;
 	}, 6000);
 });
 </script>

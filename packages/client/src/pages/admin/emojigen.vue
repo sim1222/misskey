@@ -134,7 +134,7 @@ definePageMetadata(computed(() => ({
 })));
 
 const tab = ref('string');
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'string',
 	title: i18n.ts._simkey.emojiNormal,
 }, {

@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, computed } from 'vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkTab from '@/components/MkTab.vue';
 import FormInfo from '@/components/MkInfo.vue';
@@ -38,7 +38,7 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let tab = $ref('mute');
+let tab = ref('mute');
 
 const mutingPagination = {
 	endpoint: 'mute/list' as const,
@@ -50,9 +50,9 @@ const blockingPagination = {
 	limit: 10,
 };
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.muteAndBlock,

@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 /* eslint-disable vue/no-mutating-props */
-import { watch } from 'vue';
+import { watch, ref } from 'vue';
 import XContainer from '../page-editor.container.vue';
 import MkInput from '@/components/form/input.vue';
 import MkSwitch from '@/components/form/switch.vue';
@@ -35,17 +35,17 @@ const props = withDefaults(defineProps<{
 	}
 });
 
-let id: any = $ref(props.value.note);
-let note: any = $ref(null);
+let id: any = ref(props.value.note);
+let note: any = ref(null);
 
-watch(id, async () => {
-	if (id && (id.startsWith('http://') || id.startsWith('https://'))) {
-		props.value.note = (id.endsWith('/') ? id.slice(0, -1) : id).split('/').pop();
+watch(id.value, async () => {
+	if (id.value && (id.value.startsWith('http://') || id.value.startsWith('https://'))) {
+		props.value.note = (id.value.endsWith('/') ? id.value.slice(0, -1) : id.value).split('/').pop();
 	} else {
-		props.value.note = id;
+		props.value.note = id.value;
 	}
 
-	note = await os.api('notes/show', { noteId: props.value.note });
+	note.value = await os.api('notes/show', { noteId: props.value.note });
 }, {
 	immediate: true
 });

@@ -20,19 +20,21 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
+
 const props = withDefaults(defineProps<{
 	defaultOpen: boolean;
 }>(), {
   defaultOpen: false,
 });
 
-let opened = $ref(props.defaultOpen);
-let openedAtLeastOnce = $ref(props.defaultOpen);
+let opened = ref(props.defaultOpen);
+let openedAtLeastOnce = ref(props.defaultOpen);
 
 const toggle = () => {
-	opened = !opened;
-	if (opened) {
-		openedAtLeastOnce = true;
+	opened.value = !opened.value;
+	if (opened.value) {
+		openedAtLeastOnce.value = true;
 	}
 };
 </script>

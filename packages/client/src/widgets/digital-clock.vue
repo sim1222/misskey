@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted, ref, watch } from 'vue';
+import { onUnmounted, ref, watch, computed } from 'vue';
 import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
 import { GetFormResultType } from '@/scripts/form';
 import { timezones } from '@/scripts/timezones';
@@ -62,15 +62,15 @@ const { widgetProps, configure } = useWidgetPropsManager(name,
 	emit,
 );
 
-const tzAbbrev = $computed(() => (widgetProps.timezone === null
+const tzAbbrev = computed(() => (widgetProps.timezone === null
 	? timezones.find((tz) => tz.name.toLowerCase() === Intl.DateTimeFormat().resolvedOptions().timeZone.toLowerCase())?.abbrev
 	: timezones.find((tz) => tz.name.toLowerCase() === widgetProps.timezone)?.abbrev) ?? '?');
 
-const tzOffset = $computed(() => widgetProps.timezone === null
+const tzOffset = computed(() => widgetProps.timezone === null
 	? 0 - new Date().getTimezoneOffset()
 	: timezones.find((tz) => tz.name.toLowerCase() === widgetProps.timezone)?.offset ?? 0);
 
-const tzOffsetLabel = $computed(() => (tzOffset >= 0 ? '+' : '-') + Math.floor(tzOffset / 60).toString().padStart(2, '0') + ':' + (tzOffset % 60).toString().padStart(2, '0'));
+const tzOffsetLabel = computed(() => (tzOffset.value >= 0 ? '+' : '-') + Math.floor(tzOffset.value / 60).toString().padStart(2, '0') + ':' + (tzOffset.value % 60).toString().padStart(2, '0'));
 
 defineExpose<WidgetComponentExpose>({
 	name,

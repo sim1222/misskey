@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import MkButton from '@/components/MkButton.vue';
 import FormSection from '@/components/form/section.vue';
 import FormFolder from '@/components/form/folder.vue';
@@ -148,9 +148,9 @@ const importBlocking = async (ev) => {
 	os.api('i/import-blocking', { fileId: file.id }).then(onImportSuccess).catch(onError);
 };
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.importAndExport,

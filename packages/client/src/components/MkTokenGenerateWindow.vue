@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import { permissions as kinds } from 'misskey-js';
 import MkInput from './form/input.vue';
 import MkSwitch from './form/switch.vue';
@@ -54,37 +54,37 @@ const emit = defineEmits<{
 	(ev: 'done', result: { name: string | null, permissions: string[] }): void;
 }>();
 
-const dialog = $ref<InstanceType<typeof XModalWindow>>();
-let name = $ref(props.initialName);
-let permissions = $ref({});
+const dialog = ref<InstanceType<typeof XModalWindow>>();
+let name = ref(props.initialName);
+let permissions = ref({});
 
 if (props.initialPermissions) {
 	for (const kind of props.initialPermissions) {
-		permissions[kind] = true;
+		permissions.value[kind] = true;
 	}
 } else {
 	for (const kind of kinds) {
-		permissions[kind] = false;
+		permissions.value[kind] = false;
 	}
 }
 
 function ok(): void {
 	emit('done', {
-		name: name,
-		permissions: Object.keys(permissions).filter(p => permissions[p]),
+		name: name.value,
+		permissions: Object.keys(permissions.value).filter(p => permissions.value[p]),
 	});
-	dialog.close();
+	dialog.value.close();
 }
 
 function disableAll(): void {
-	for (const p in permissions) {
-		permissions[p] = false;
+	for (const p in permissions.value) {
+		permissions.value[p] = false;
 	}
 }
 
 function enableAll(): void {
-	for (const p in permissions) {
-		permissions[p] = true;
+	for (const p in permissions.value) {
+		permissions.value[p] = true;
 	}
 }
 </script>

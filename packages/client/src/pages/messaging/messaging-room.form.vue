@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch } from 'vue';
+import { onMounted, watch, ref, computed } from 'vue';
 import * as Misskey from 'misskey-js';
 import autosize from 'autosize';
 //import insertTextAtCursor from 'insert-text-at-cursor';
@@ -46,20 +46,20 @@ const props = defineProps<{
 	group?: Misskey.entities.UserGroup | null;
 }>();
 
-let textEl = $ref<HTMLTextAreaElement>();
-let fileEl = $ref<HTMLInputElement>();
+let textEl = ref<HTMLTextAreaElement>();
+let fileEl = ref<HTMLInputElement>();
 
-let text = $ref<string>('');
-let file = $ref<Misskey.entities.DriveFile | null>(null);
-let sending = $ref(false);
+let text = ref<string>('');
+let file = ref<Misskey.entities.DriveFile | null>(null);
+let sending = ref(false);
 const typing = throttle(3000, () => {
 	stream.send('typingOnMessaging', props.user ? { partner: props.user.id } : { group: props.group?.id });
 });
 
-let draftKey = $computed(() => props.user ? 'user:' + props.user.id : 'group:' + props.group?.id);
-let canSend = $computed(() => (text != null && text !== '') || file != null);
+let draftKey = computed(() => props.user ? 'user:' + props.user.id : 'group:' + props.group?.id);
+let canSend = computed(() => (text.value != null && text.value !== '') || file.value != null);
 
-watch([$$(text), $$(file)], saveDraft);
+watch([(text), (file)], saveDraft);
 
 async function onPaste(ev: ClipboardEvent) {
 	if (!ev.clipboardData) return;
@@ -117,7 +117,7 @@ function onDrop(ev: DragEvent): void {
 	//#region ドライブのファイル
 	const driveFile = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
 	if (driveFile != null && driveFile !== '') {
-		file = JSON.parse(driveFile);
+		file.value = JSON.parse(driveFile);
 		ev.preventDefault();
 	}
 	//#endregion
@@ -125,7 +125,7 @@ function onDrop(ev: DragEvent): void {
 
 function onKeydown(ev: KeyboardEvent) {
 	typing();
-	if ((ev.key === 'Enter') && (ev.ctrlKey || ev.metaKey) && canSend) {
+	if ((ev.key === 'Enter') && (ev.ctrlKey || ev.metaKey) && canSend.value) {
 		send();
 	}
 }
@@ -136,51 +136,51 @@ function onCompositionUpdate() {
 
 function chooseFile(ev: MouseEvent) {
 	selectFile(ev.currentTarget ?? ev.target, i18n.ts.selectFile).then(selectedFile => {
-		file = selectedFile;
+		file.value = selectedFile;
 	});
 }
 
 function onChangeFile() {
-	if (fileEl.files![0]) upload(fileEl.files[0]);
+	if (fileEl.value.files![0]) upload(fileEl.value.files[0]);
 }
 
 function upload(fileToUpload: File, name?: string) {
 	uploadFile(fileToUpload, defaultStore.state.uploadFolder, name).then(res => {
-		file = res;
+		file.value = res;
 	});
 }
 
 function send() {
-	sending = true;
+	sending.value = true;
 	os.api('messaging/messages/create', {
 		userId: props.user ? props.user.id : undefined,
 		groupId: props.group ? props.group.id : undefined,
-		text: text ? text : undefined,
-		fileId: file ? file.id : undefined,
+		text: text.value ? text.value : undefined,
+		fileId: file.value ? file.value.id : undefined,
 	}).then(message => {
 		clear();
 	}).catch(err => {
 		console.error(err);
 	}).then(() => {
-		sending = false;
+		sending.value = false;
 	});
 }
 
 function clear() {
-	text = '';
-	file = null;
+	text.value = '';
+	file.value = null;
 	deleteDraft();
 }
 
 function saveDraft() {
 	const drafts = JSON.parse(localStorage.getItem('message_drafts') || '{}');
 
-	drafts[draftKey] = {
+	drafts[draftKey.value] = {
 		updatedAt: new Date(),
 		// eslint-disable-next-line id-denylist
 		data: {
-			text: text,
-			file: file,
+			text: text.value,
+			file: file.value,
 		},
 	};
 
@@ -190,32 +190,32 @@ function saveDraft() {
 function deleteDraft() {
 	const drafts = JSON.parse(localStorage.getItem('message_drafts') || '{}');
 
-	delete drafts[draftKey];
+	delete drafts[draftKey.value];
 
 	localStorage.setItem('message_drafts', JSON.stringify(drafts));
 }
 
 async function insertEmoji(ev: MouseEvent) {
-	os.openEmojiPicker(ev.currentTarget ?? ev.target, {}, textEl);
+	os.openEmojiPicker(ev.currentTarget ?? ev.target, {}, textEl.value);
 }
 
 onMounted(() => {
-	autosize(textEl);
+	autosize(textEl.value);
 
 	// TODO: detach when unmount
 	// TODO
 	//new Autocomplete(textEl, this, { model: 'text' });
 
 	// 書きかけの投稿を復元
-	const draft = JSON.parse(localStorage.getItem('message_drafts') || '{}')[draftKey];
+	const draft = JSON.parse(localStorage.getItem('message_drafts') || '{}')[draftKey.value];
 	if (draft) {
-		text = draft.data.text;
-		file = draft.data.file;
+		text.value = draft.data.text;
+		file.value = draft.data.file;
 	}
 });
 
 defineExpose({
-	file,
+	file: file.value,
 	upload,
 });
 </script>

@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineComponent, watch } from 'vue';
+import { computed, defineComponent, watch, ref } from 'vue';
 import * as misskey from 'misskey-js';
 import XNote from '@/components/MkNote.vue';
 import XNoteDetailed from '@/components/MkNoteDetailed.vue';
@@ -56,20 +56,20 @@ const props = defineProps<{
 	noteId: string;
 }>();
 
-let note = $ref<null | misskey.entities.Note>();
-let clips = $ref();
-let hasPrev = $ref(false);
-let hasNext = $ref(false);
-let showPrev = $ref(false);
-let showNext = $ref(false);
-let error = $ref();
+let note = ref<null | misskey.entities.Note>();
+let clips = ref();
+let hasPrev = ref(false);
+let hasNext = ref(false);
+let showPrev = ref(false);
+let showNext = ref(false);
+let error = ref();
 
 const prevPagination = {
 	endpoint: 'users/notes' as const,
 	limit: 10,
-	params: computed(() => note ? ({
-		userId: note.userId,
-		untilId: note.id,
+	params: computed(() => note.value ? ({
+		userId: note.value.userId,
+		untilId: note.value.id,
 	}) : null),
 };
 
@@ -77,43 +77,43 @@ const nextPagination = {
 	reversed: true,
 	endpoint: 'users/notes' as const,
 	limit: 10,
-	params: computed(() => note ? ({
-		userId: note.userId,
-		sinceId: note.id,
+	params: computed(() => note.value ? ({
+		userId: note.value.userId,
+		sinceId: note.value.id,
 	}) : null),
 };
 
 function fetchNote() {
-	hasPrev = false;
-	hasNext = false;
-	showPrev = false;
-	showNext = false;
-	note = null;
+	hasPrev.value = false;
+	hasNext.value = false;
+	showPrev.value = false;
+	showNext.value = false;
+	note.value = null;
 	os.api('notes/show', {
 		noteId: props.noteId,
 	}).then(res => {
-		note = res;
+		note.value = res;
 		Promise.all([
 			os.api('notes/clips', {
-				noteId: note.id,
+				noteId: note.value.id,
 			}),
 			os.api('users/notes', {
-				userId: note.userId,
-				untilId: note.id,
+				userId: note.value.userId,
+				untilId: note.value.id,
 				limit: 1,
 			}),
 			os.api('users/notes', {
-				userId: note.userId,
-				sinceId: note.id,
+				userId: note.value.userId,
+				sinceId: note.value.id,
 				limit: 1,
 			}),
 		]).then(([_clips, prev, next]) => {
-			clips = _clips;
-			hasPrev = prev.length !== 0;
-			hasNext = next.length !== 0;
+			clips.value = _clips;
+			hasPrev.value = prev.length !== 0;
+			hasNext.value = next.length !== 0;
 		});
 	}).catch(err => {
-		error = err;
+		error.value = err;
 	});
 }
 
@@ -121,18 +121,18 @@ watch(() => props.noteId, fetchNote, {
 	immediate: true,
 });
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
-definePageMetadata(computed(() => note ? {
+definePageMetadata(computed(() => note.value ? {
 	title: i18n.ts.note,
-	subtitle: new Date(note.createdAt).toLocaleString(),
-	avatar: note.user,
-	path: `/notes/${note.id}`,
+	subtitle: new Date(note.value.createdAt).toLocaleString(),
+	avatar: note.value.user,
+	path: `/notes/${note.value.id}`,
 	share: {
-		title: i18n.t('noteOf', { user: note.user.name }),
-		text: note.text,
+		title: i18n.t('noteOf', { user: note.value.user.name }),
+		text: note.value.text,
 	},
 } : null));
 </script>

@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, inject } from 'vue';
+import { computed, watch, inject, ref } from 'vue';
 import XTimeline from '@/components/MkTimeline.vue';
 import { scroll } from '@/scripts/scroll';
 import * as os from '@/os';
@@ -32,23 +32,23 @@ const props = defineProps<{
 	listId: string;
 }>();
 
-let list = $ref(null);
-let queue = $ref(0);
-let tlEl = $ref<InstanceType<typeof XTimeline>>();
-let rootEl = $ref<HTMLElement>();
+let list = ref(null);
+let queue = ref(0);
+let tlEl = ref<InstanceType<typeof XTimeline>>();
+let rootEl = ref<HTMLElement>();
 
 watch(() => props.listId, async () => {
-	list = await os.api('users/lists/show', {
+	list.value = await os.api('users/lists/show', {
 		listId: props.listId,
 	});
 }, { immediate: true });
 
 function queueUpdated(q) {
-	queue = q;
+	queue.value = q;
 }
 
 function top() {
-	scroll(rootEl, { top: 0 });
+	scroll(rootEl.value, { top: 0 });
 }
 
 function settings() {
@@ -61,10 +61,10 @@ async function timetravel() {
 	});
 	if (canceled) return;
 
-	tlEl.timetravel(date);
+	tlEl.value.timetravel(date);
 }
 
-const headerActions = $computed(() => list ? [{
+const headerActions = computed(() => list.value ? [{
 	icon: 'fas fa-calendar-alt',
 	text: i18n.ts.jumpToSpecifiedDate,
 	handler: timetravel,
@@ -74,10 +74,10 @@ const headerActions = $computed(() => list ? [{
 	handler: settings,
 }] : []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
-definePageMetadata(computed(() => list ? {
-	title: list.name,
+definePageMetadata(computed(() => list.value ? {
+	title: list.value.name,
 	icon: 'fas fa-list-ul',
 } : null));
 </script>

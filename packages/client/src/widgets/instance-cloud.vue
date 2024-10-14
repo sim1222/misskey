@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, shallowRef } from 'vue';
 import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
 import { GetFormResultType } from '@/scripts/form';
 import MkContainer from '@/components/MkContainer.vue';
@@ -44,8 +44,8 @@ const { widgetProps, configure } = useWidgetPropsManager(name,
 	emit,
 );
 
-let cloud = $ref<InstanceType<typeof MkTagCloud> | null>();
-let activeInstances = $shallowRef(null);
+let cloud = ref<InstanceType<typeof MkTagCloud> | null>();
+let activeInstances = shallowRef(null);
 
 function onInstanceClick(i) {
 	os.pageWindow(`/instance-info/${i.host}`);
@@ -56,8 +56,8 @@ useInterval(() => {
 		sort: '+lastCommunicatedAt',
 		limit: 25,
 	}).then(res => {
-		activeInstances = res;
-		if (cloud) cloud.update();
+		activeInstances.value = res;
+		if (cloud.value) cloud.value.update();
 	});
 }, 1000 * 60 * 3, {
 	immediate: true,

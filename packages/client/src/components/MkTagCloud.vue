@@ -18,13 +18,13 @@ const SAFE_FOR_HTML_ID = 'abcdefghijklmnopqrstuvwxyz';
 const computedStyle = getComputedStyle(document.documentElement);
 const idForCanvas = Array.from(Array(16)).map(() => SAFE_FOR_HTML_ID[Math.floor(Math.random() * SAFE_FOR_HTML_ID.length)]).join('');
 const idForTags = Array.from(Array(16)).map(() => SAFE_FOR_HTML_ID[Math.floor(Math.random() * SAFE_FOR_HTML_ID.length)]).join('');
-let available = $ref(false);
-let rootEl = $ref<HTMLElement | null>(null);
-let canvasEl = $ref<HTMLCanvasElement | null>(null);
-let tagsEl = $ref<HTMLElement | null>(null);
-let width = $ref(300);
+let available = ref(false);
+let rootEl = ref<HTMLElement | null>(null);
+let canvasEl = ref<HTMLCanvasElement | null>(null);
+let tagsEl = ref<HTMLElement | null>(null);
+let width = ref(300);
 
-watch($$(available), () => {
+watch((available), () => {
 	try {
 		window.TagCanvas.Start(idForCanvas, idForTags, {
 			textColour: '#ffffff',
@@ -47,15 +47,15 @@ watch($$(available), () => {
 });
 
 onMounted(() => {
-	width = rootEl.offsetWidth;
+	width.value = rootEl.value.offsetWidth;
 
 	if (loaded) {
-		available = true;
+		available.value = true;
 	} else {
 		document.head.appendChild(Object.assign(document.createElement('script'), {
 			async: true,
 			src: '/client-assets/tagcanvas.min.js',
-		})).addEventListener('load', () => available = true);
+		})).addEventListener('load', () => available.value = true);
 	}
 });
 

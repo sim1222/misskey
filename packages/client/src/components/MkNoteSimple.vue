@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import * as misskey from 'misskey-js';
 import XNoteHeader from '@/components/MkNoteHeader.vue';
 import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
@@ -28,7 +28,7 @@ const props = defineProps<{
 	pinned?: boolean;
 }>();
 
-const showContent = $ref(false);
+const showContent = ref(false);
 </script>
 
 <style lang="scss" scoped>

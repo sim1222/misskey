@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted, watch } from 'vue';
+import { onUnmounted, watch, ref } from 'vue';
 import { v4 as uuid } from 'uuid';
 import tinycolor from 'tinycolor2';
 import { useInterval } from '@/scripts/use-interval';
@@ -38,11 +38,11 @@ const props = defineProps<{
 const viewBoxX = 50;
 const viewBoxY = 50;
 const gradientId = uuid();
-let polylinePoints = $ref('');
-let polygonPoints = $ref('');
-let headX = $ref<number | null>(null);
-let headY = $ref<number | null>(null);
-let clock = $ref<number | null>(null);
+let polylinePoints = ref('');
+let polygonPoints = ref('');
+let headX = ref<number | null>(null);
+let headY = ref<number | null>(null);
+let clock = ref<number | null>(null);
 const accent = tinycolor(getComputedStyle(document.documentElement).getPropertyValue('--accent'));
 const color = accent.toRgbString();
 
@@ -55,12 +55,12 @@ function draw(): void {
 		(1 - (n / peak)) * viewBoxY,
 	]);
 
-	polylinePoints = _polylinePoints.map(xy => `${xy[0]},${xy[1]}`).join(' ');
+	polylinePoints.value = _polylinePoints.map(xy => `${xy[0]},${xy[1]}`).join(' ');
 
-	polygonPoints = `0,${ viewBoxY } ${ polylinePoints } ${ viewBoxX },${ viewBoxY }`;
+	polygonPoints.value = `0,${ viewBoxY } ${ polylinePoints.value } ${ viewBoxX },${ viewBoxY }`;
 
-	headX = _polylinePoints[_polylinePoints.length - 1][0];
-	headY = _polylinePoints[_polylinePoints.length - 1][1];
+	headX.value = _polylinePoints[_polylinePoints.length - 1][0];
+	headY.value = _polylinePoints[_polylinePoints.length - 1][1];
 }
 
 watch(() => props.src, draw, { immediate: true });

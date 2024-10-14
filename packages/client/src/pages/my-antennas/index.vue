@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { computed } from 'vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';
 import { i18n } from '@/i18n';
@@ -27,9 +27,9 @@ const pagination = {
 	limit: 10,
 };
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.manageAntennas,

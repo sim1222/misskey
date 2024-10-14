@@ -28,9 +28,9 @@ const navWindow = computed(deckStore.makeGetterSetter('navWindow'));
 const alwaysShowMainColumn = computed(deckStore.makeGetterSetter('alwaysShowMainColumn'));
 const columnAlign = computed(deckStore.makeGetterSetter('columnAlign'));
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.deck,

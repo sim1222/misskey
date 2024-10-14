@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, inject, onMounted, onUnmounted, watch } from 'vue';
+import { defineAsyncComponent, computed, inject, onMounted, onUnmounted, watch, ref } from 'vue';
 import * as Acct from 'misskey-js/built/acct';
 import * as misskey from 'misskey-js';
 import XFollowList from './follow-list.vue';
@@ -27,16 +27,16 @@ const props = withDefaults(defineProps<{
 }>(), {
 });
 
-let user = $ref<null | misskey.entities.UserDetailed>(null);
-let error = $ref(null);
+let user = ref<null | misskey.entities.UserDetailed>(null);
+let error = ref(null);
 
 function fetchUser(): void {
 	if (props.acct == null) return;
-	user = null;
+	user.value = null;
 	os.api('users/show', Acct.parse(props.acct)).then(u => {
-		user = u;
+		user.value = u;
 	}).catch(err => {
-		error = err;
+		error.value = err;
 	});
 }
 
@@ -44,16 +44,16 @@ watch(() => props.acct, fetchUser, {
 	immediate: true,
 });
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
-definePageMetadata(computed(() => user ? {
+definePageMetadata(computed(() => user.value ? {
 	icon: 'fas fa-user',
-	title: user.name ? `${user.name} (@${user.username})` : `@${user.username}`,
+	title: user.value.name ? `${user.value.name} (@${user.value.username})` : `@${user.value.username}`,
 	subtitle: i18n.ts.followers,
-	userName: user,
-	avatar: user,
+	userName: user.value,
+	avatar: user.value,
 } : null));
 </script>
 

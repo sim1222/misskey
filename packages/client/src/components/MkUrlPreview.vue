@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, onUnmounted } from 'vue';
+import { defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue';
 import { url as local, lang } from '@/config';
 import { i18n } from '@/i18n';
 import * as os from '@/os';
@@ -49,33 +49,33 @@ const props = withDefaults(defineProps<{
 });
 
 const MOBILE_THRESHOLD = 500;
-const isMobile = $ref(deviceKind === 'smartphone' || window.innerWidth <= MOBILE_THRESHOLD);
+const isMobile = ref(deviceKind === 'smartphone' || window.innerWidth <= MOBILE_THRESHOLD);
 
 const self = props.url.startsWith(local);
 const attr = self ? 'to' : 'href';
 const target = self ? null : '_blank';
-let fetching = $ref(true);
-let title = $ref<string | null>(null);
-let description = $ref<string | null>(null);
-let thumbnail = $ref<string | null>(null);
-let icon = $ref<string | null>(null);
-let sitename = $ref<string | null>(null);
-let player = $ref({
+let fetching = ref(true);
+let title = ref<string | null>(null);
+let description = ref<string | null>(null);
+let thumbnail = ref<string | null>(null);
+let icon = ref<string | null>(null);
+let sitename = ref<string | null>(null);
+let player = ref({
 	url: null,
 	width: null,
 	height: null,
 });
-let playerEnabled = $ref(false);
-let tweetId = $ref<string | null>(null);
-let tweetExpanded = $ref(props.detail);
+let playerEnabled = ref(false);
+let tweetId = ref<string | null>(null);
+let tweetExpanded = ref(props.detail);
 const embedId = `embed${Math.random().toString().replace(/\D/,'')}`;
-let tweetHeight = $ref(150);
+let tweetHeight = ref(150);
 
 const requestUrl = new URL(props.url);
 
 if (requestUrl.hostname === 'twitter.com' || requestUrl.hostname === 'mobile.twitter.com') {
 	const m = requestUrl.pathname.match(/^\/.+\/status(?:es)?\/(\d+)/);
-	if (m) tweetId = m[1];
+	if (m) tweetId.value = m[1];
 }
 
 if (requestUrl.hostname === 'music.youtube.com' && requestUrl.pathname.match('^/(?:watch|channel)')) {
@@ -89,13 +89,13 @@ requestUrl.hash = '';
 fetch(`/url?url=${encodeURIComponent(requestUrl.href)}&lang=${requestLang}`).then(res => {
 	res.json().then(info => {
 		if (info.url == null) return;
-		title = info.title;
-		description = info.description;
-		thumbnail = info.thumbnail;
-		icon = info.icon;
-		sitename = info.sitename;
-		fetching = false;
-		player = info.player;
+		title.value = info.title;
+		description.value = info.description;
+		thumbnail.value = info.thumbnail;
+		icon.value = info.icon;
+		sitename.value = info.sitename;
+		fetching.value = false;
+		player.value = info.player;
 	});
 });
 
@@ -105,7 +105,7 @@ function adjustTweetHeight(message: any) {
 	if (embed?.method !== 'twttr.private.resize') return;
 	if (embed?.id !== embedId) return;
 	const height = embed?.params[0]?.height;
-	if (height) tweetHeight = height;
+	if (height) tweetHeight.value = height;
 }
 
 const openPlayer = (): void => {

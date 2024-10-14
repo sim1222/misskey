@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { computed } from 'vue';
 import XHeader from './_header_.vue';
 import FormSuspense from '@/components/form/suspense.vue';
 import * as os from '@/os';
@@ -28,14 +28,14 @@ function save() {
 	});
 }
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	asFullButton: true,
 	icon: 'fas fa-check',
 	text: i18n.ts.save,
 	handler: save,
 }]);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.other,

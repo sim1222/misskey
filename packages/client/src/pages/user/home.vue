@@ -108,7 +108,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, inject, onMounted, onUnmounted, watch } from 'vue';
+import { defineAsyncComponent, computed, inject, onMounted, onUnmounted, watch, ref } from 'vue';
 import calcAge from 's-age';
 import * as misskey from 'misskey-js';
 import XUserTimeline from './index.timeline.vue';
@@ -139,19 +139,19 @@ const props = withDefaults(defineProps<{
 
 const router = useRouter();
 
-let parallaxAnimationId = $ref<null | number>(null);
-let narrow = $ref<null | boolean>(null);
-let rootEl = $ref<null | HTMLElement>(null);
-let bannerEl = $ref<null | HTMLElement>(null);
+let parallaxAnimationId = ref<null | number>(null);
+let narrow = ref<null | boolean>(null);
+let rootEl = ref<null | HTMLElement>(null);
+let bannerEl = ref<null | HTMLElement>(null);
 
-const style = $computed(() => {
+const style = computed(() => {
 	if (props.user.bannerUrl == null) return {};
 	return {
 		backgroundImage: `url(${ props.user.bannerUrl })`,
 	};
 });
 
-const age = $computed(() => {
+const age = computed(() => {
 	return calcAge(props.user.birthday);
 });
 
@@ -160,15 +160,15 @@ function menu(ev) {
 }
 
 function parallaxLoop() {
-	parallaxAnimationId = window.requestAnimationFrame(parallaxLoop);
+	parallaxAnimationId.value = window.requestAnimationFrame(parallaxLoop);
 	parallax();
 }
 
 function parallax() {
-	const banner = bannerEl as any;
+	const banner = bannerEl.value as any;
 	if (banner == null) return;
 
-	const top = getScrollPosition(rootEl);
+	const top = getScrollPosition(rootEl.value);
 
 	if (top < 0) return;
 
@@ -179,12 +179,12 @@ function parallax() {
 
 onMounted(() => {
 	window.requestAnimationFrame(parallaxLoop);
-	narrow = rootEl!.clientWidth < 1000;
+	narrow.value = rootEl.value!.clientWidth < 1000;
 });
 
 onUnmounted(() => {
-	if (parallaxAnimationId) {
-		window.cancelAnimationFrame(parallaxAnimationId);
+	if (parallaxAnimationId.value) {
+		window.cancelAnimationFrame(parallaxAnimationId.value);
 	}
 });
 </script>

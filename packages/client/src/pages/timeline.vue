@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, watch } from 'vue';
+import { defineAsyncComponent, computed, watch, ref } from 'vue';
 import XTimeline from '@/components/MkTimeline.vue';
 import XPostForm from '@/components/MkPostForm.vue';
 import { scroll } from '@/scripts/scroll';
@@ -41,20 +41,20 @@ const keymap = {
 	't': focus,
 };
 
-const tlComponent = $ref<InstanceType<typeof XTimeline>>();
-const rootEl = $ref<HTMLElement>();
+const tlComponent = ref<InstanceType<typeof XTimeline>>();
+const rootEl = ref<HTMLElement>();
 
-let queue = $ref(0);
-const src = $computed({ get: () => defaultStore.reactiveState.tl.value.src, set: (x) => saveSrc(x) });
+let queue = ref(0);
+const src = computed({ get: () => defaultStore.reactiveState.tl.value.src, set: (x) => saveSrc(x) });
 
-watch ($$(src), () => queue = 0);
+watch ((src), () => queue.value = 0);
 
 function queueUpdated(q: number): void {
-	queue = q;
+	queue.value = q;
 }
 
 function top(): void {
-	scroll(rootEl, { top: 0 });
+	scroll(rootEl.value, { top: 0 });
 }
 
 async function chooseList(ev: MouseEvent): Promise<void> {
@@ -102,16 +102,16 @@ async function timetravel(): Promise<void> {
 	});
 	if (canceled) return;
 
-	tlComponent.timetravel(date);
+	tlComponent.value.timetravel(date);
 }
 
 function focus(): void {
-	tlComponent.focus();
+	tlComponent.value.focus();
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'home',
 	title: i18n.ts._timelines.home,
 	icon: 'fas fa-home',
@@ -150,7 +150,7 @@ const headerTabs = $computed(() => [{
 
 definePageMetadata(computed(() => ({
 	title: i18n.ts.timeline,
-	icon: src === 'local' ? 'fas fa-comments' : src === 'social' ? 'fas fa-share-alt' : src === 'global' ? 'fas fa-globe' : 'fas fa-home',
+	icon: src.value === 'local' ? 'fas fa-comments' : src.value === 'social' ? 'fas fa-share-alt' : src.value === 'global' ? 'fas fa-globe' : 'fas fa-home',
 })));
 </script>
 

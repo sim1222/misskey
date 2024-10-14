@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { computed } from 'vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
@@ -40,9 +40,9 @@ function read(items, announcement, i) {
 	os.api('i/read-announcement', { announcementId: announcement.id });
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.announcements,

@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, onMounted, nextTick, onBeforeUnmount } from 'vue';
+import { computed, watch, onMounted, nextTick, onBeforeUnmount, ref } from 'vue';
 import * as Misskey from 'misskey-js';
 import * as Acct from 'misskey-js/built/acct';
 import XMessage from './messaging-room.message.vue';
@@ -71,70 +71,70 @@ const props = defineProps<{
 	groupId?: string;
 }>();
 
-let rootEl = $ref<HTMLDivElement>();
-let formEl = $ref<InstanceType<typeof XForm>>();
-let pagingComponent = $ref<InstanceType<typeof MkPagination>>();
+let rootEl = ref<HTMLDivElement>();
+let formEl = ref<InstanceType<typeof XForm>>();
+let pagingComponent = ref<InstanceType<typeof MkPagination>>();
 
-let fetching = $ref(true);
-let user: Misskey.entities.UserDetailed | null = $ref(null);
-let group: Misskey.entities.UserGroup | null = $ref(null);
-let typers: Misskey.entities.User[] = $ref([]);
-let connection: Misskey.ChannelConnection<Misskey.Channels['messaging']> | null = $ref(null);
-let showIndicator = $ref(false);
+let fetching = ref(true);
+let user: Misskey.entities.UserDetailed | null = ref(null);
+let group: Misskey.entities.UserGroup | null = ref(null);
+let typers: Misskey.entities.User[] = ref([]);
+let connection: Misskey.ChannelConnection<Misskey.Channels['messaging']> | null = ref(null);
+let showIndicator = ref(false);
 const {
 	animation,
 } = defaultStore.reactiveState;
 
-let pagination: Paging | null = $ref(null);
+let pagination: Paging | null = ref(null);
 
 watch([() => props.userAcct, () => props.groupId], () => {
-	if (connection) connection.dispose();
+	if (connection.value) connection.value.dispose();
 	fetch();
 });
 
 async function fetch() {
-	fetching = true;
+	fetching.value = true;
 
 	if (props.userAcct) {
 		const acct = Acct.parse(props.userAcct);
-		user = await os.api('users/show', { username: acct.username, host: acct.host || undefined });
-		group = null;
+		user.value = await os.api('users/show', { username: acct.username, host: acct.host || undefined });
+		group.value = null;
 		
-		pagination = {
+		pagination.value = {
 			endpoint: 'messaging/messages',
 			limit: 20,
 			params: {
-				userId: user.id,
+				userId: user.value.id,
 			},
 			reversed: true,
-			pageEl: $$(rootEl).value,
+			pageEl: (rootEl).value,
 		};
-		connection = stream.useChannel('messaging', {
-			otherparty: user.id,
+		connection.value = stream.useChannel('messaging', {
+			otherparty: user.value.id,
 		});
 	} else {
-		user = null;
-		group = await os.api('users/groups/show', { groupId: props.groupId });
+		user.value = null;
+		group.value = await os.api('users/groups/show', { groupId: props.groupId });
 
-		pagination = {
+		pagination.value = {
 			endpoint: 'messaging/messages',
 			limit: 20,
 			params: {
-				groupId: group?.id,
+				groupId: group.value?.id,
 			},
 			reversed: true,
-			pageEl: $$(rootEl).value,
+			pageEl: (rootEl).value,
 		};
-		connection = stream.useChannel('messaging', {
-			group: group?.id,
+		connection.value = stream.useChannel('messaging', {
+			group: group.value?.id,
 		});
 	}
 
-	connection.on('message', onMessage);
-	connection.on('read', onRead);
-	connection.on('deleted', onDeleted);
-	connection.on('typers', _typers => {
-		typers = _typers.filter(u => u.id !== $i?.id);
+	connection.value.on('message', onMessage);
+	connection.value.on('read', onRead);
+	connection.value.on('deleted', onDeleted);
+	connection.value.on('typers', _typers => {
+		typers.value = _typers.filter(u => u.id !== $i?.id);
 	});
 
 	document.addEventListener('visibilitychange', onVisibilitychange);
@@ -142,7 +142,7 @@ async function fetch() {
 	nextTick(() => {
 		thisScrollToBottom();
 		window.setTimeout(() => {
-			fetching = false;
+			fetching.value = false;
 		}, 300);
 	});
 }
@@ -165,7 +165,7 @@ function onDrop(ev: DragEvent): void {
 
 	// ファイルだったら
 	if (ev.dataTransfer.files.length === 1) {
-		formEl.upload(ev.dataTransfer.files[0]);
+		formEl.value.upload(ev.dataTransfer.files[0]);
 		return;
 	} else if (ev.dataTransfer.files.length > 1) {
 		os.alert({
@@ -179,7 +179,7 @@ function onDrop(ev: DragEvent): void {
 	const driveFile = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
 	if (driveFile != null && driveFile !== '') {
 		const file = JSON.parse(driveFile);
-		formEl.file = file;
+		formEl.value.file = file;
 	}
 	//#endregion
 }
@@ -187,11 +187,11 @@ function onDrop(ev: DragEvent): void {
 function onMessage(message) {
 	sound.play('chat');
 
-	const _isBottom = isBottomVisible(rootEl, 64);
+	const _isBottom = isBottomVisible(rootEl.value, 64);
 
-	pagingComponent.prepend(message);
+	pagingComponent.value.prepend(message);
 	if (message.userId !== $i?.id && !document.hidden) {
-		connection?.send('read', {
+		connection.value?.send('read', {
 			id: message.id,
 		});
 	}
@@ -208,24 +208,24 @@ function onMessage(message) {
 }
 
 function onRead(x) {
-	if (user) {
+	if (user.value) {
 		if (!Array.isArray(x)) x = [x];
 		for (const id of x) {
-			if (pagingComponent.items.some(y => y.id === id)) {
-				const exist = pagingComponent.items.map(y => y.id).indexOf(id);
-				pagingComponent.items[exist] = {
-					...pagingComponent.items[exist],
+			if (pagingComponent.value.items.some(y => y.id === id)) {
+				const exist = pagingComponent.value.items.map(y => y.id).indexOf(id);
+				pagingComponent.value.items[exist] = {
+					...pagingComponent.value.items[exist],
 					isRead: true,
 				};
 			}
 		}
-	} else if (group) {
+	} else if (group.value) {
 		for (const id of x.ids) {
-			if (pagingComponent.items.some(y => y.id === id)) {
-				const exist = pagingComponent.items.map(y => y.id).indexOf(id);
-				pagingComponent.items[exist] = {
-					...pagingComponent.items[exist],
-					reads: [...pagingComponent.items[exist].reads, x.userId],
+			if (pagingComponent.value.items.some(y => y.id === id)) {
+				const exist = pagingComponent.value.items.map(y => y.id).indexOf(id);
+				pagingComponent.value.items[exist] = {
+					...pagingComponent.value.items[exist],
+					reads: [...pagingComponent.value.items[exist].reads, x.userId],
 				};
 			}
 		}
@@ -233,37 +233,37 @@ function onRead(x) {
 }
 
 function onDeleted(id) {
-	const msg = pagingComponent.items.find(m => m.id === id);
+	const msg = pagingComponent.value.items.find(m => m.id === id);
 	if (msg) {
-		pagingComponent.items = pagingComponent.items.filter(m => m.id !== msg.id);
+		pagingComponent.value.items = pagingComponent.value.items.filter(m => m.id !== msg.id);
 	}
 }
 
 function thisScrollToBottom() {
-	scrollToBottom($$(rootEl).value, { behavior: 'smooth' });
+	scrollToBottom((rootEl).value, { behavior: 'smooth' });
 }
 
 function onIndicatorClick() {
-	showIndicator = false;
+	showIndicator.value = false;
 	thisScrollToBottom();
 }
 
-let scrollRemove: (() => void) | null = $ref(null);
+let scrollRemove: (() => void) | null = ref(null);
 
 function notifyNewMessage() {
-	showIndicator = true;
+	showIndicator.value = true;
 
-	scrollRemove = onScrollBottom(rootEl, () => {
-		showIndicator = false;
-		scrollRemove = null;
+	scrollRemove.value = onScrollBottom(rootEl.value, () => {
+		showIndicator.value = false;
+		scrollRemove.value = null;
 	});
 }
 
 function onVisibilitychange() {
 	if (document.hidden) return;
-	for (const message of pagingComponent.items) {
+	for (const message of pagingComponent.value.items) {
 		if (message.userId !== $i?.id && !message.isRead) {
-			connection?.send('read', {
+			connection.value?.send('read', {
 				id: message.id,
 			});
 		}
@@ -275,16 +275,16 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-	connection?.dispose();
+	connection.value?.dispose();
 	document.removeEventListener('visibilitychange', onVisibilitychange);
-	if (scrollRemove) scrollRemove();
+	if (scrollRemove.value) scrollRemove.value();
 });
 
-definePageMetadata(computed(() => !fetching ? user ? {
-	userName: user,
-	avatar: user,
+definePageMetadata(computed(() => !fetching.value ? user.value ? {
+	userName: user.value,
+	avatar: user.value,
 } : {
-	title: group?.name,
+	title: group.value?.name,
 	icon: 'fas fa-users',
 } : null));
 </script>

@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, inject, onMounted, onUnmounted, watch } from 'vue';
+import { defineAsyncComponent, computed, inject, onMounted, onUnmounted, watch, ref } from 'vue';
 import calcAge from 's-age';
 import * as Acct from 'misskey-js/built/acct';
 import * as misskey from 'misskey-js';
@@ -46,17 +46,17 @@ const props = withDefaults(defineProps<{
 
 const router = useRouter();
 
-let tab = $ref(props.page);
-let user = $ref<null | misskey.entities.UserDetailed>(null);
-let error = $ref(null);
+let tab = ref(props.page);
+let user = ref<null | misskey.entities.UserDetailed>(null);
+let error = ref(null);
 
 function fetchUser(): void {
 	if (props.acct == null) return;
-	user = null;
+	user.value = null;
 	os.api('users/show', Acct.parse(props.acct)).then(u => {
-		user = u;
+		user.value = u;
 	}).catch(err => {
-		error = err;
+		error.value = err;
 	});
 }
 
@@ -64,13 +64,13 @@ watch(() => props.acct, fetchUser, {
 	immediate: true,
 });
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => user ? [{
+const headerTabs = computed(() => user.value ? [{
 	key: 'home',
 	title: i18n.ts.overview,
 	icon: 'fas fa-home',
-}, ...($i && ($i.id === user.id)) || user.publicReactions ? [{
+}, ...($i && ($i.id === user.value.id)) || user.value.publicReactions ? [{
 	key: 'reactions',
 	title: i18n.ts.reaction,
 	icon: 'fas fa-laugh',
@@ -88,15 +88,15 @@ const headerTabs = $computed(() => user ? [{
 	icon: 'fas fa-icons',
 }] : null);
 
-definePageMetadata(computed(() => user ? {
+definePageMetadata(computed(() => user.value ? {
 	icon: 'fas fa-user',
-	title: user.name ? `${user.name} (@${user.username})` : `@${user.username}`,
-	subtitle: `@${getAcct(user)}`,
-	userName: user,
-	avatar: user,
-	path: `/@${user.username}`,
+	title: user.value.name ? `${user.value.name} (@${user.value.username})` : `@${user.value.username}`,
+	subtitle: `@${getAcct(user.value)}`,
+	userName: user.value,
+	avatar: user.value,
+	path: `/@${user.value.username}`,
 	share: {
-		title: user.name,
+		title: user.value.name,
 	},
 } : null));
 </script>

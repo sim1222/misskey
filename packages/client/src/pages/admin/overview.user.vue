@@ -10,6 +10,8 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
+
 import * as misskey from 'misskey-js';
 import MkMiniChart from '@/components/MkMiniChart.vue';
 import * as os from '@/os';
@@ -19,10 +21,10 @@ const props = defineProps<{
 	user: misskey.entities.User;
 }>();
 
-let chart = $ref(null);
+let chart = ref(null);
 
 os.apiGet('charts/user/notes', { userId: props.user.id, limit: 16, span: 'day' }).then(res => {
-	chart = res;
+	chart.value = res;
 });
 </script>
 

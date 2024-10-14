@@ -16,9 +16,7 @@ export default defineConfig(({ command, mode }) => {
 		base: '/assets/',
 
 		plugins: [
-			pluginVue({
-				reactivityTransform: true,
-			}),
+			pluginVue(),
 			pluginJson5(),
 		],
 
@@ -42,6 +40,14 @@ export default defineConfig(({ command, mode }) => {
 			_DATA_TRANSFER_DECK_COLUMN_: JSON.stringify('mk_deck_column'),
 			__VUE_OPTIONS_API__: true,
 			__VUE_PROD_DEVTOOLS__: false,
+		},
+
+		css: {
+			preprocessorOptions: {
+				scss: {
+					api: "modern-compiler"
+				}
+			}
 		},
 
 		build: {

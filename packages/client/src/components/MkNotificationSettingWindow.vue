@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { computed, ref } from 'vue';
 import { notificationTypes } from 'misskey-js';
 import MkSwitch from './form/switch.vue';
 import MkInfo from './MkInfo.vue';
@@ -49,39 +49,39 @@ const props = withDefaults(defineProps<{
 	showGlobalToggle: true,
 });
 
-let includingTypes = $computed(() => props.includingTypes || []);
+let includingTypes = computed(() => props.includingTypes || []);
 
-const dialog = $ref<InstanceType<typeof XModalWindow>>();
+const dialog = ref<InstanceType<typeof XModalWindow>>();
 
-let typesMap = $ref<Record<typeof notificationTypes[number], boolean>>({});
-let useGlobalSetting = $ref((includingTypes === null || includingTypes.length === 0) && props.showGlobalToggle);
+let typesMap = ref<Record<typeof notificationTypes[number], boolean>>({});
+let useGlobalSetting = ref((includingTypes.value === null || includingTypes.value.length === 0) && props.showGlobalToggle);
 
 for (const ntype of notificationTypes) {
-	typesMap[ntype] = includingTypes.includes(ntype);
+	typesMap.value[ntype] = includingTypes.value.includes(ntype);
 }
 
 function ok() {
-	if (useGlobalSetting) {
+	if (useGlobalSetting.value) {
 		emit('done', { includingTypes: null });
 	} else {
 		emit('done', {
-			includingTypes: (Object.keys(typesMap) as typeof notificationTypes[number][])
-				.filter(type => typesMap[type]),
+			includingTypes: (Object.keys(typesMap.value) as typeof notificationTypes[number][])
+				.filter(type => typesMap.value[type]),
 		});
 	}
 
-	dialog.close();
+	dialog.value.close();
 }
 
 function disableAll() {
-	for (const type in typesMap) {
-		typesMap[type as typeof notificationTypes[number]] = false;
+	for (const type in typesMap.value) {
+		typesMap.value[type as typeof notificationTypes[number]] = false;
 	}
 }
 
 function enableAll() {
-	for (const type in typesMap) {
-		typesMap[type as typeof notificationTypes[number]] = true;
+	for (const type in typesMap.value) {
+		typesMap.value[type as typeof notificationTypes[number]] = true;
 	}
 }
 </script>

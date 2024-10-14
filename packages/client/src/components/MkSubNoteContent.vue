@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import * as misskey from 'misskey-js';
 import XMediaList from '@/components/MkMediaList.vue';
 import XPoll from '@/components/MkPoll.vue';
@@ -32,7 +32,7 @@ const props = defineProps<{
 	note: misskey.entities.Note;
 }>();
 
-const collapsed = $ref(
+const collapsed = ref(
 	props.note.cw == null && props.note.text != null && (
 		(props.note.text.split('\n').length > 9) ||
 		(props.note.text.length > 500)

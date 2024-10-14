@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { decode } from 'blurhash';
 import { defaultStore } from '@/store';
 
@@ -30,20 +30,20 @@ const imgSrc = defaultStore.state.mediaProxy ?
 	:
 	props.src;
 
-const canvas = $ref<HTMLCanvasElement>();
-let loaded = $ref(false);
+const canvas = ref<HTMLCanvasElement>();
+let loaded = ref(false);
 
 function draw() {
 	if (props.hash == null) return;
 	const pixels = decode(props.hash, props.size, props.size);
-	const ctx = canvas.getContext('2d');
+	const ctx = canvas.value.getContext('2d');
 	const imageData = ctx!.createImageData(props.size, props.size);
 	imageData.data.set(pixels);
 	ctx!.putImageData(imageData, 0, 0);
 }
 
 function onLoad() {
-	loaded = true;
+	loaded.value = true;
 }
 
 onMounted(() => {

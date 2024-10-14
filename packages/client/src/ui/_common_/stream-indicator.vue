@@ -9,18 +9,18 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted } from 'vue';
+import { onUnmounted, ref } from 'vue';
 import { stream } from '@/stream';
 import { i18n } from '@/i18n';
 
-let hasDisconnected = $ref(false);
+let hasDisconnected = ref(false);
 
 function onDisconnected() {
-	hasDisconnected = true;
+	hasDisconnected.value = true;
 }
 
 function resetDisconnected() {
-	hasDisconnected = false;
+	hasDisconnected.value = false;
 }
 
 function reload() {

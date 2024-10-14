@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject } from 'vue';
+import { inject, computed } from 'vue';
 import * as os from '@/os';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
 import { url } from '@/config';
@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<{
 
 const router = useRouter();
 
-const active = $computed(() => {
+const active = computed(() => {
 	if (props.activeClass == null) return false;
 	const resolved = router.resolve(props.to);
 	if (resolved == null) return false;

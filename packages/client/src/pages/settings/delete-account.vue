@@ -8,6 +8,8 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue'
+
 import FormInfo from '@/components/MkInfo.vue';
 import FormButton from '@/components/MkButton.vue';
 import * as os from '@/os';
@@ -41,9 +43,9 @@ async function deleteAccount() {
 	await signout();
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts._accountDelete.accountDelete,

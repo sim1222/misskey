@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted } from 'vue';
+import { defineAsyncComponent, onMounted, ref, computed } from 'vue';
 import FormInput from '@/components/form/input.vue';
 import FormButton from '@/components/MkButton.vue';
 import * as os from '@/os';
@@ -27,12 +27,12 @@ const props = defineProps<{
 	token?: string;
 }>();
 
-let password = $ref('');
+let password = ref('');
 
 async function save() {
 	await os.apiWithDialog('reset-password', {
 		token: props.token,
-		password: password,
+		password: password.value,
 	});
 	mainRouter.push('/');
 }
@@ -44,9 +44,9 @@ onMounted(() => {
 	}
 });
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.resetPassword,

@@ -137,24 +137,24 @@ const props = defineProps<{
 
 const inChannel = inject('inChannel', null);
 
-let note = $ref(JSON.parse(JSON.stringify(props.note)));
+let note = ref(JSON.parse(JSON.stringify(props.note)));
 
 // plugin
 if (noteViewInterruptors.length > 0) {
 	onMounted(async () => {
-		let result = JSON.parse(JSON.stringify(note));
+		let result = JSON.parse(JSON.stringify(note.value));
 		for (const interruptor of noteViewInterruptors) {
 			result = await interruptor.handler(result);
 		}
-		note = result;
+		note.value = result;
 	});
 }
 
 const isRenote = (
-	note.renote != null &&
-	note.text == null &&
-	note.fileIds.length === 0 &&
-	note.poll == null
+	note.value.renote != null &&
+	note.value.text == null &&
+	note.value.fileIds.length === 0 &&
+	note.value.poll == null
 );
 
 const el = ref<HTMLElement>();
@@ -162,20 +162,20 @@ const menuButton = ref<HTMLElement>();
 const renoteButton = ref<InstanceType<typeof XRenoteButton>>();
 const renoteTime = ref<HTMLElement>();
 const reactButton = ref<HTMLElement>();
-let appearNote = $computed(() => isRenote ? note.renote as misskey.entities.Note : note);
-const isMyRenote = $i && ($i.id === note.userId);
+let appearNote = computed(() => isRenote ? note.value.renote as misskey.entities.Note : note.value);
+const isMyRenote = $i && ($i.id === note.value.userId);
 const showContent = ref(false);
-const isLong = (appearNote.cw == null && appearNote.text != null && (
-	(appearNote.text.split('\n').length > 9) ||
-	(appearNote.text.length > 500)
+const isLong = (appearNote.value.cw == null && appearNote.value.text != null && (
+	(appearNote.value.text.split('\n').length > 9) ||
+	(appearNote.value.text.length > 500)
 ));
-const collapsed = ref(appearNote.cw == null && isLong);
+const collapsed = ref(appearNote.value.cw == null && isLong);
 const isDeleted = ref(false);
-const muted = ref(checkWordMute(appearNote, $i, defaultStore.state.mutedWords));
+const muted = ref(checkWordMute(appearNote.value, $i, defaultStore.state.mutedWords));
 const translation = ref(null);
 const translating = ref(false);
-const urls = appearNote.text ? extractUrlFromMfm(mfm.parse(appearNote.text)) : null;
-const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultStore.state.instanceTicker === 'remote' && appearNote.user.instance);
+const urls = appearNote.value.text ? extractUrlFromMfm(mfm.parse(appearNote.value.text)) : null;
+const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultStore.state.instanceTicker === 'remote' && appearNote.value.user.instance);
 
 const keymap = {
 	'r': () => reply(true),
@@ -190,14 +190,14 @@ const keymap = {
 
 useNoteCapture({
 	rootEl: el,
-	note: $$(appearNote),
+	note: (appearNote),
 	isDeletedRef: isDeleted,
 });
 
 function reply(viaKeyboard = false): void {
 	pleaseLogin();
 	os.post({
-		reply: appearNote,
+		reply: appearNote.value,
 		animation: !viaKeyboard,
 	}, () => {
 		focus();
@@ -209,12 +209,12 @@ function react(viaKeyboard = false): void {
 	blur();
 	reactionPicker.show(reactButton.value, results => {
 		os.api('notes/reactions/create', {
-			noteId: appearNote.id,
+			noteId: appearNote.value.id,
 			reaction: results.reaction,
 		});
 		if (results.withRenote) {
 			os.api('notes/create', {
-				renoteId: appearNote.id,
+				renoteId: appearNote.value.id,
 				isRenote: true,
 			});
 		}
@@ -247,12 +247,12 @@ function onContextmenu(ev: MouseEvent): void {
 		ev.preventDefault();
 		react();
 	} else {
-		os.contextMenu(getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClipPage }), ev).then(focus);
+		os.contextMenu(getNoteMenu({ note: note.value, translating, translation, menuButton, isDeleted, currentClipPage }), ev).then(focus);
 	}
 }
 
 function menu(viaKeyboard = false): void {
-	os.popupMenu(getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClipPage }), menuButton.value, {
+	os.popupMenu(getNoteMenu({ note: note.value, translating, translation, menuButton, isDeleted, currentClipPage }), menuButton.value, {
 		viaKeyboard,
 	}).then(focus);
 }
@@ -265,7 +265,7 @@ function showRenoteMenu(viaKeyboard = false): void {
 		danger: true,
 		action: () => {
 			os.api('notes/delete', {
-				noteId: note.id,
+				noteId: note.value.id,
 			});
 			isDeleted.value = true;
 		},
@@ -292,7 +292,7 @@ function focusAfter() {
 
 function readPromo() {
 	os.api('promo/read', {
-		noteId: appearNote.id,
+		noteId: appearNote.value.id,
 	});
 	isDeleted.value = true;
 }

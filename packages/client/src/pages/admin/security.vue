@@ -101,7 +101,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref, computed } from 'vue';
 import XBotProtection from './bot-protection.vue';
 import XHeader from './_header_.vue';
 import FormFolder from '@/components/form/folder.vue';
@@ -117,57 +117,57 @@ import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let summalyProxy: string = $ref('');
-let enableHcaptcha: boolean = $ref(false);
-let enableRecaptcha: boolean = $ref(false);
-let sensitiveMediaDetection: string = $ref('none');
-let sensitiveMediaDetectionSensitivity: number = $ref(0);
-let setSensitiveFlagAutomatically: boolean = $ref(false);
-let enableSensitiveMediaDetectionForVideos: boolean = $ref(false);
-let enableIpLogging: boolean = $ref(false);
-let enableActiveEmailValidation: boolean = $ref(false);
+let summalyProxy: string = ref('');
+let enableHcaptcha: boolean = ref(false);
+let enableRecaptcha: boolean = ref(false);
+let sensitiveMediaDetection: string = ref('none');
+let sensitiveMediaDetectionSensitivity: number = ref(0);
+let setSensitiveFlagAutomatically: boolean = ref(false);
+let enableSensitiveMediaDetectionForVideos: boolean = ref(false);
+let enableIpLogging: boolean = ref(false);
+let enableActiveEmailValidation: boolean = ref(false);
 
 async function init() {
 	const meta = await os.api('admin/meta');
-	summalyProxy = meta.summalyProxy;
-	enableHcaptcha = meta.enableHcaptcha;
-	enableRecaptcha = meta.enableRecaptcha;
-	sensitiveMediaDetection = meta.sensitiveMediaDetection;
-	sensitiveMediaDetectionSensitivity =
+	summalyProxy.value = meta.summalyProxy;
+	enableHcaptcha.value = meta.enableHcaptcha;
+	enableRecaptcha.value = meta.enableRecaptcha;
+	sensitiveMediaDetection.value = meta.sensitiveMediaDetection;
+	sensitiveMediaDetectionSensitivity.value =
 		meta.sensitiveMediaDetectionSensitivity === 'veryLow' ? 0 :
 		meta.sensitiveMediaDetectionSensitivity === 'low' ? 1 :
 		meta.sensitiveMediaDetectionSensitivity === 'medium' ? 2 :
 		meta.sensitiveMediaDetectionSensitivity === 'high' ? 3 :
 		meta.sensitiveMediaDetectionSensitivity === 'veryHigh' ? 4 : 0;
-	setSensitiveFlagAutomatically = meta.setSensitiveFlagAutomatically;
-	enableSensitiveMediaDetectionForVideos = meta.enableSensitiveMediaDetectionForVideos;
-	enableIpLogging = meta.enableIpLogging;
-	enableActiveEmailValidation = meta.enableActiveEmailValidation;
+	setSensitiveFlagAutomatically.value = meta.setSensitiveFlagAutomatically;
+	enableSensitiveMediaDetectionForVideos.value = meta.enableSensitiveMediaDetectionForVideos;
+	enableIpLogging.value = meta.enableIpLogging;
+	enableActiveEmailValidation.value = meta.enableActiveEmailValidation;
 }
 
 function save() {
 	os.apiWithDialog('admin/update-meta', {
-		summalyProxy,
-		sensitiveMediaDetection,
+		summalyProxy: summalyProxy.value,
+		sensitiveMediaDetection: sensitiveMediaDetection.value,
 		sensitiveMediaDetectionSensitivity:
-			sensitiveMediaDetectionSensitivity === 0 ? 'veryLow' :
-			sensitiveMediaDetectionSensitivity === 1 ? 'low' :
-			sensitiveMediaDetectionSensitivity === 2 ? 'medium' :
-			sensitiveMediaDetectionSensitivity === 3 ? 'high' :
-			sensitiveMediaDetectionSensitivity === 4 ? 'veryHigh' :
+			sensitiveMediaDetectionSensitivity.value === 0 ? 'veryLow' :
+			sensitiveMediaDetectionSensitivity.value === 1 ? 'low' :
+			sensitiveMediaDetectionSensitivity.value === 2 ? 'medium' :
+			sensitiveMediaDetectionSensitivity.value === 3 ? 'high' :
+			sensitiveMediaDetectionSensitivity.value === 4 ? 'veryHigh' :
 			0,
-		setSensitiveFlagAutomatically,
-		enableSensitiveMediaDetectionForVideos,
-		enableIpLogging,
-		enableActiveEmailValidation,
+		setSensitiveFlagAutomatically: setSensitiveFlagAutomatically.value,
+		enableSensitiveMediaDetectionForVideos: enableSensitiveMediaDetectionForVideos.value,
+		enableIpLogging: enableIpLogging.value,
+		enableActiveEmailValidation: enableActiveEmailValidation.value,
 	}).then(() => {
 		fetchInstance();
 	});
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.security,

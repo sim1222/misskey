@@ -39,7 +39,7 @@ const props = defineProps<{
 
 const notes = ref<misskey.entities.Note[]>([]);
 const fetching = ref(true);
-let key = $ref(0);
+let key = ref(0);
 
 const tick = () => {
 	if (props.userListId == null) return;
@@ -48,7 +48,7 @@ const tick = () => {
 	}).then(res => {
 		notes.value = res;
 		fetching.value = false;
-		key++;
+		key.value++;
 	});
 };
 

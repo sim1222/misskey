@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref } from 'vue';
+import { defineAsyncComponent, ref, computed } from 'vue';
 import FormSuspense from '@/components/form/suspense.vue';
 import FormButton from '@/components/MkButton.vue';
 import * as os from '@/os';
@@ -102,9 +102,9 @@ function switchAccountWithToken(token: string) {
 	login(token);
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.accounts,

@@ -10,6 +10,8 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
+
 import XNotes from '@/components/MkNotes.vue';
 import MkTab from '@/components/MkTab.vue';
 import { i18n } from '@/i18n';
@@ -26,5 +28,5 @@ const paginationForPolls = {
 	offsetMode: true,
 };
 
-let tab = $ref('notes');
+let tab = ref('notes');
 </script>

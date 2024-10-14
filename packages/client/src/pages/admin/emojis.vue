@@ -271,7 +271,7 @@ const delBulk = async () => {
 	emojisPaginationComponent.value.reload();
 };
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	asFullButton: true,
 	icon: 'fas fa-plus',
 	text: i18n.ts.addEmoji,
@@ -281,7 +281,7 @@ const headerActions = $computed(() => [{
 	handler: menu,
 }]);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'local',
 	title: i18n.ts.local,
 }, {

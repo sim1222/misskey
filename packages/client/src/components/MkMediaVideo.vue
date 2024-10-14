@@ -32,11 +32,11 @@ const props = defineProps<{
 	video: misskey.entities.DriveFile;
 }>();
 
-const videoEl = $ref<HTMLVideoElement | null>();
+const videoEl = ref<HTMLVideoElement | null>();
 const hide = ref((defaultStore.state.nsfw === 'force') ? true : props.video.isSensitive && (defaultStore.state.nsfw !== 'ignore'));
 
 onMounted(() => {
-	if (videoEl) videoEl.volume = 0.2;
+	if (videoEl.value) videoEl.value.volume = 0.2;
 });
 </script>
 

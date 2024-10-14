@@ -8,8 +8,8 @@
 	},
 	"private": true,
 	"scripts": {
-		"postinstall": "node ./scripts/install-packages.js",
-		"build": "node ./scripts/build.js",
+		"postinstall": "node ./scripts/install-packages.mjs",
+		"build": "node ./scripts/build.mjs",
 		"start": "cd packages/backend && node --experimental-json-modules ./built/boot/index.js",
 		"start:test": "cd packages/backend && cross-env NODE_ENV=test node --experimental-json-modules ./built/boot/index.js",
 		"init": "npm run migrate",
@@ -17,8 +17,8 @@
 		"migrateandstart": "npm run migrate && npm run start",
 		"gulp": "gulp build",
 		"watch": "npm run dev",
-		"dev": "node ./scripts/dev.js",
-		"lint": "node ./scripts/lint.js",
+		"dev": "node ./scripts/dev.mjs",
+		"lint": "node ./scripts/lint.mjs",
 		"cy:open": "cypress open --browser --e2e --config-file=cypress.config.ts",
 		"cy:run": "cypress run",
 		"e2e": "start-server-and-test start:test http://localhost:61812 cy:run",
@@ -27,26 +27,27 @@
 		"test": "npm run jest",
 		"test-and-coverage": "npm run jest-and-coverage",
 		"format": "gulp format",
-		"clean": "node ./scripts/clean.js",
-		"clean-all": "node ./scripts/clean-all.js",
+		"clean": "node ./scripts/clean.mjs",
+		"clean-all": "node ./scripts/clean-all.mjs",
 		"cleanall": "npm run clean-all"
 	},
 	"dependencies": {
-		"execa": "5.1.1",
+		"execa": "9.4.0",
 		"gulp": "4.0.2",
 		"gulp-cssnano": "2.1.3",
 		"gulp-rename": "2.0.0",
-		"gulp-replace": "1.1.3",
+		"gulp-replace": "1.1.4",
 		"gulp-terser": "2.1.0",
 		"js-yaml": "4.1.0"
 	},
 	"devDependencies": {
-		"@types/gulp": "4.0.9",
-		"@types/gulp-rename": "2.0.1",
-		"@typescript-eslint/parser": "5.38.0",
+		"@types/gulp": "4.0.17",
+		"@types/gulp-rename": "2.0.6",
+		"@typescript-eslint/parser": "8.8.1",
 		"cross-env": "7.0.3",
-		"cypress": "10.8.0",
-		"start-server-and-test": "1.14.0",
-		"typescript": "4.8.3"
-	}
+		"cypress": "13.15.0",
+		"start-server-and-test": "2.0.8",
+		"typescript": "5.6.3"
+	},
+	"packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
 }

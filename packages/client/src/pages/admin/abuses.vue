@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import XHeader from './_header_.vue';
 import MkInput from '@/components/form/input.vue';
@@ -58,31 +58,31 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let reports = $ref<InstanceType<typeof MkPagination>>();
+let reports = ref<InstanceType<typeof MkPagination>>();
 
-let state = $ref('unresolved');
-let reporterOrigin = $ref('combined');
-let targetUserOrigin = $ref('combined');
-let searchUsername = $ref('');
-let searchHost = $ref('');
+let state = ref('unresolved');
+let reporterOrigin = ref('combined');
+let targetUserOrigin = ref('combined');
+let searchUsername = ref('');
+let searchHost = ref('');
 
 const pagination = {
 	endpoint: 'admin/abuse-user-reports' as const,
 	limit: 10,
 	params: computed(() => ({
-		state,
-		reporterOrigin,
-		targetUserOrigin,
+		state: state.value,
+		reporterOrigin: reporterOrigin.value,
+		targetUserOrigin: targetUserOrigin.value,
 	})),
 };
 
 function resolved(reportId) {
-	reports.removeItem(item => item.id === reportId);
+	reports.value.removeItem(item => item.id === reportId);
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.abuseReports,

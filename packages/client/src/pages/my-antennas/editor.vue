@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
+import { watch, ref } from 'vue';
 import * as Acct from 'misskey-js/built/acct';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/form/input.vue';
@@ -65,46 +65,46 @@ const emit = defineEmits<{
 	(ev: 'deleted'): void,
 }>();
 
-let name: string = $ref(props.antenna.name);
-let src: string = $ref(props.antenna.src);
-let userListId: any = $ref(props.antenna.userListId);
-let userGroupId: any = $ref(props.antenna.userGroupId);
-let users: string = $ref(props.antenna.users.join('\n'));
-let keywords: string = $ref(props.antenna.keywords.map(x => x.join(' ')).join('\n'));
-let excludeKeywords: string = $ref(props.antenna.excludeKeywords.map(x => x.join(' ')).join('\n'));
-let caseSensitive: boolean = $ref(props.antenna.caseSensitive);
-let withReplies: boolean = $ref(props.antenna.withReplies);
-let withFile: boolean = $ref(props.antenna.withFile);
-let notify: boolean = $ref(props.antenna.notify);
-let userLists: any = $ref(null);
-let userGroups: any = $ref(null);
+let name: string = ref(props.antenna.name);
+let src: string = ref(props.antenna.src);
+let userListId: any = ref(props.antenna.userListId);
+let userGroupId: any = ref(props.antenna.userGroupId);
+let users: string = ref(props.antenna.users.join('\n'));
+let keywords: string = ref(props.antenna.keywords.map(x => x.join(' ')).join('\n'));
+let excludeKeywords: string = ref(props.antenna.excludeKeywords.map(x => x.join(' ')).join('\n'));
+let caseSensitive: boolean = ref(props.antenna.caseSensitive);
+let withReplies: boolean = ref(props.antenna.withReplies);
+let withFile: boolean = ref(props.antenna.withFile);
+let notify: boolean = ref(props.antenna.notify);
+let userLists: any = ref(null);
+let userGroups: any = ref(null);
 
-watch(() => src, async () => {
-	if (src === 'list' && userLists === null) {
-		userLists = await os.api('users/lists/list');
+watch(() => src.value, async () => {
+	if (src.value === 'list' && userLists.value === null) {
+		userLists.value = await os.api('users/lists/list');
 	}
 
-	if (src === 'group' && userGroups === null) {
+	if (src.value === 'group' && userGroups.value === null) {
 		const groups1 = await os.api('users/groups/owned');
 		const groups2 = await os.api('users/groups/joined');
 
-		userGroups = [...groups1, ...groups2];
+		userGroups.value = [...groups1, ...groups2];
 	}
 });
 
 async function saveAntenna() {
 	const antennaData = {
-		name,
-		src,
-		userListId,
-		userGroupId,
-		withReplies,
-		withFile,
-		notify,
-		caseSensitive,
-		users: users.trim().split('\n').map(x => x.trim()),
-		keywords: keywords.trim().split('\n').map(x => x.trim().split(' ')),
-		excludeKeywords: excludeKeywords.trim().split('\n').map(x => x.trim().split(' ')),
+		name: name.value,
+		src: src.value,
+		userListId: userListId.value,
+		userGroupId: userGroupId.value,
+		withReplies: withReplies.value,
+		withFile: withFile.value,
+		notify: notify.value,
+		caseSensitive: caseSensitive.value,
+		users: users.value.trim().split('\n').map(x => x.trim()),
+		keywords: keywords.value.trim().split('\n').map(x => x.trim().split(' ')),
+		excludeKeywords: excludeKeywords.value.trim().split('\n').map(x => x.trim().split(' ')),
 	};
 
 	if (props.antenna.id == null) {
@@ -134,9 +134,9 @@ async function deleteAntenna() {
 
 function addUser() {
 	os.selectUser().then(user => {
-		users = users.trim();
-		users += '\n@' + Acct.toString(user as any);
-		users = users.trim();
+		users.value = users.value.trim();
+		users.value += '\n@' + Acct.toString(user as any);
+		users.value = users.value.trim();
 	});
 }
 </script>

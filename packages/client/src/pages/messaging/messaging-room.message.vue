@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { computed } from 'vue';
 import * as mfm from 'mfm-js';
 import * as Misskey from 'misskey-js';
 import { extractUrlFromMfm } from '@/scripts/extract-url-from-mfm';
@@ -49,8 +49,8 @@ const props = defineProps<{
 	isGroup?: boolean;
 }>();
 
-const isMe = $computed(() => props.message.userId === $i?.id);
-const urls = $computed(() => props.message.text ? extractUrlFromMfm(mfm.parse(props.message.text)) : []);
+const isMe = computed(() => props.message.userId === $i?.id);
+const urls = computed(() => props.message.text ? extractUrlFromMfm(mfm.parse(props.message.text)) : []);
 
 function del(): void {
 	os.api('messaging/messages/delete', {

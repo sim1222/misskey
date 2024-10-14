@@ -45,14 +45,14 @@ const childInfo = ref(null);
 
 const router = useRouter();
 
-let narrow = $ref(false);
+let narrow = ref(false);
 const NARROW_THRESHOLD = 600;
 
-let currentPage = $computed(() => router.currentRef.value.child);
+let currentPage = computed(() => router.currentRef.value.child);
 
 const ro = new ResizeObserver((entries, observer) => {
 	if (entries.length === 0) return;
-	narrow = entries[0].borderBoxSize[0].inlineSize < NARROW_THRESHOLD;
+	narrow.value = entries[0].borderBoxSize[0].inlineSize < NARROW_THRESHOLD;
 });
 
 const menuDef = computed(() => [{
@@ -61,42 +61,42 @@ const menuDef = computed(() => [{
 		icon: 'fas fa-user',
 		text: i18n.ts.profile,
 		to: '/settings/profile',
-		active: currentPage?.route.name === 'profile',
+		active: currentPage.value?.route.name === 'profile',
 	}, {
 		icon: 'fas fa-lock-open',
 		text: i18n.ts.privacy,
 		to: '/settings/privacy',
-		active: currentPage?.route.name === 'privacy',
+		active: currentPage.value?.route.name === 'privacy',
 	}, {
 		icon: 'fas fa-laugh',
 		text: i18n.ts.reaction,
 		to: '/settings/reaction',
-		active: currentPage?.route.name === 'reaction',
+		active: currentPage.value?.route.name === 'reaction',
 	}, {
 		icon: 'fas fa-cloud',
 		text: i18n.ts.drive,
 		to: '/settings/drive',
-		active: currentPage?.route.name === 'drive',
+		active: currentPage.value?.route.name === 'drive',
 	}, {
 		icon: 'fas fa-bell',
 		text: i18n.ts.notifications,
 		to: '/settings/notifications',
-		active: currentPage?.route.name === 'notifications',
+		active: currentPage.value?.route.name === 'notifications',
 	}, {
 		icon: 'fas fa-envelope',
 		text: i18n.ts.email,
 		to: '/settings/email',
-		active: currentPage?.route.name === 'email',
+		active: currentPage.value?.route.name === 'email',
 	}, {
 		icon: 'fas fa-share-alt',
 		text: i18n.ts.integration,
 		to: '/settings/integration',
-		active: currentPage?.route.name === 'integration',
+		active: currentPage.value?.route.name === 'integration',
 	}, {
 		icon: 'fas fa-lock',
 		text: i18n.ts.security,
 		to: '/settings/security',
-		active: currentPage?.route.name === 'security',
+		active: currentPage.value?.route.name === 'security',
 	}],
 }, {
 	title: i18n.ts.clientSettings,
@@ -104,32 +104,32 @@ const menuDef = computed(() => [{
 		icon: 'fas fa-cogs',
 		text: i18n.ts.general,
 		to: '/settings/general',
-		active: currentPage?.route.name === 'general',
+		active: currentPage.value?.route.name === 'general',
 	}, {
 		icon: 'fas fa-palette',
 		text: i18n.ts.theme,
 		to: '/settings/theme',
-		active: currentPage?.route.name === 'theme',
+		active: currentPage.value?.route.name === 'theme',
 	}, {
 		icon: 'fas fa-bars',
 		text: i18n.ts.navbar,
 		to: '/settings/navbar',
-		active: currentPage?.route.name === 'navbar',
+		active: currentPage.value?.route.name === 'navbar',
 	}, {
 		icon: 'fas fa-bars-progress',
 		text: i18n.ts.statusbar,
 		to: '/settings/statusbar',
-		active: currentPage?.route.name === 'statusbar',
+		active: currentPage.value?.route.name === 'statusbar',
 	}, {
 		icon: 'fas fa-music',
 		text: i18n.ts.sounds,
 		to: '/settings/sounds',
-		active: currentPage?.route.name === 'sounds',
+		active: currentPage.value?.route.name === 'sounds',
 	}, {
 		icon: 'fas fa-plug',
 		text: i18n.ts.plugins,
 		to: '/settings/plugin',
-		active: currentPage?.route.name === 'plugin',
+		active: currentPage.value?.route.name === 'plugin',
 	}],
 }, {
 	title: i18n.ts.otherSettings,
@@ -137,49 +137,49 @@ const menuDef = computed(() => [{
 		icon: 'fas fa-boxes',
 		text: i18n.ts.importAndExport,
 		to: '/settings/import-export',
-		active: currentPage?.route.name === 'import-export',
+		active: currentPage.value?.route.name === 'import-export',
 	}, {
 		icon: 'fas fa-volume-mute',
 		text: i18n.ts.instanceMute,
 		to: '/settings/instance-mute',
-		active: currentPage?.route.name === 'instance-mute',
+		active: currentPage.value?.route.name === 'instance-mute',
 	}, {
 		icon: 'fas fa-ban',
 		text: i18n.ts.muteAndBlock,
 		to: '/settings/mute-block',
-		active: currentPage?.route.name === 'mute-block',
+		active: currentPage.value?.route.name === 'mute-block',
 	}, {
 		icon: 'fas fa-comment-slash',
 		text: i18n.ts.wordMute,
 		to: '/settings/word-mute',
-		active: currentPage?.route.name === 'word-mute',
+		active: currentPage.value?.route.name === 'word-mute',
 	}, {
 		icon: 'fas fa-key',
 		text: 'API',
 		to: '/settings/api',
-		active: currentPage?.route.name === 'api',
+		active: currentPage.value?.route.name === 'api',
 	}, {
 		icon: 'fas fa-bolt',
 		text: 'Webhook',
 		to: '/settings/webhook',
-		active: currentPage?.route.name === 'webhook',
+		active: currentPage.value?.route.name === 'webhook',
 	}, {
 		icon: 'fas fa-ellipsis-h',
 		text: i18n.ts.other,
 		to: '/settings/other',
-		active: currentPage?.route.name === 'other',
+		active: currentPage.value?.route.name === 'other',
 	}, {
 		icon: 'fas fa-flask',
 		text: i18n.ts._simkey.experimentalFeatures,
 		to: '/settings/experimental-features',
-		active: currentPage?.route.name === 'experimental-features',
+		active: currentPage.value?.route.name === 'experimental-features',
 	}],
 }, {
 	items: [{
 		icon: 'fas fa-floppy-disk',
 		text: i18n.ts.preferencesBackups,
 		to: '/settings/preferences-backups',
-		active: currentPage?.route.name === 'preferences-backups',
+		active: currentPage.value?.route.name === 'preferences-backups',
 	}, {
 		type: 'button',
 		icon: 'fas fa-trash',
@@ -205,23 +205,23 @@ const menuDef = computed(() => [{
 	}],
 }]);
 
-watch($$(narrow), () => {
+watch((narrow), () => {
 });
 
 onMounted(() => {
 	ro.observe(el.value);
 
-	narrow = el.value.offsetWidth < NARROW_THRESHOLD;
+	narrow.value = el.value.offsetWidth < NARROW_THRESHOLD;
 
-	if (!narrow && currentPage?.route.name == null) {
+	if (!narrow.value && currentPage.value?.route.name == null) {
 		router.replace('/settings/profile');
 	}
 });
 
 onActivated(() => {
-	narrow = el.value.offsetWidth < NARROW_THRESHOLD;
+	narrow.value = el.value.offsetWidth < NARROW_THRESHOLD;
 
-	if (!narrow && currentPage?.route.name == null) {
+	if (!narrow.value && currentPage.value?.route.name == null) {
 		router.replace('/settings/profile');
 	}
 });
@@ -240,9 +240,9 @@ provideMetadataReceiver((info) => {
 	}
 });
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata(INFO);
 // w 890

@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import MkModal from './MkModal.vue';
 import MkMenu from './MkMenu.vue';
 import { MenuItem } from '@/types/menu';
@@ -22,7 +22,7 @@ const emit = defineEmits<{
 	(ev: 'closed'): void;
 }>();
 
-let modal = $ref<InstanceType<typeof MkModal>>();
+let modal = ref<InstanceType<typeof MkModal>>();
 </script>
 
 <style lang="scss" scoped>
