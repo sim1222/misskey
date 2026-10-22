@@ -8,7 +8,6 @@ import { Test } from '@nestjs/testing';
 import { GlobalModule } from '@/GlobalModule.js';
 import { FileInfoService } from '@/core/FileInfoService.js';
 import { DI } from '@/di-symbols.js';
-import { AiService } from '@/core/AiService.js';
 import type { TestingModule } from '@nestjs/testing';
 import type { jest } from '@jest/globals';
 import type { MockFunctionMetadata } from 'jest-mock';
@@ -29,14 +28,10 @@ describe('FileInfoService', () => {
 				GlobalModule,
 			],
 			providers: [
-				AiService,
 				FileInfoService,
 			],
 		})
 			.useMocker((token) => {
-				//if (token === AiService) {
-				//	return {  };
-				//}
 				if (typeof token === 'function') {
 					const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
 					const Mock = moduleMocker.generateFromMetadata(mockMetadata);

@@ -7,6 +7,9 @@
 		"url": "https://github.com/sim1222/misskey.git"
 	},
 	"private": true,
+	"engines": {
+		"node": ">=24.22.1 <25"
+	},
 	"scripts": {
 		"postinstall": "node ./scripts/install-packages.mjs",
 		"build": "node ./scripts/build.mjs",

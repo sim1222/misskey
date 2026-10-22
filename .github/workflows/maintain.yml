@@ -1,0 +1,56 @@
+name: Maintenance validation
+
+on:
+  push:
+    branches: [v12-mod-maintain]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: maintenance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CYPRESS_INSTALL_BINARY: '0'
+    services:
+      postgres:
+        image: postgres:15
+        ports: ['54312:5432']
+        env:
+          POSTGRES_DB: test-misskey
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres -d test-misskey"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      redis:
+        image: redis:7
+        ports: ['56312:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - run: npm install --global yarn@1.22.19
+      - run: yarn install --frozen-lockfile --non-interactive
+      - name: Verify lockfiles were preserved
+        run: git diff --exit-code
+      - name: Configure isolated fixture database
+        run: |
+          cp .github/misskey/test.yml .config/default.yml
+          cp .github/misskey/test.yml .config/test.yml
+      - run: yarn build
+      - run: yarn migrate
+      - name: Start application and check HTTP behavior
+        run: yarn exec start-server-and-test start http://127.0.0.1:61812 'node scripts/maintenance-smoke.mjs'
+      - run: yarn jest
