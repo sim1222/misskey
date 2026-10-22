@@ -11,3 +11,12 @@ export function query(obj: Record<string, any>): string {
 export function appendQuery(url: string, query: string): string {
 	return `${url}${/\?/.test(url) ? url.endsWith('?') ? '' : '&' : '?'}${query}`;
 }
+
+export function createMiAuthCallbackUrl(callback: string, session: string): string {
+	const url = new URL(callback);
+	if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+		throw new Error('Invalid MiAuth callback URL');
+	}
+	url.searchParams.set('session', session);
+	return url.href;
+}

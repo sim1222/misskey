@@ -44,7 +44,7 @@ import MkSignin from '@/components/MkSignin.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 import { $i, login } from '@/account';
-import { appendQuery, query } from '@/scripts/url';
+import { createMiAuthCallbackUrl } from '@/scripts/url';
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
@@ -60,6 +60,8 @@ const _permissions = props.permission.split(',');
 let state = ref<string | null>(null);
 
 async function accept(): Promise<void> {
+	// Validate before issuing a token, as callback URLs are controlled by the app.
+	const callback = props.callback ? createMiAuthCallbackUrl(props.callback, props.session) : null;
 	state.value = 'waiting';
 	await os.api('miauth/gen-token', {
 		session: props.session,
@@ -69,10 +71,8 @@ async function accept(): Promise<void> {
 	});
 
 	state.value = 'accepted';
-	if (props.callback) {
-		location.href = appendQuery(props.callback, query({
-			session: props.session,
-		}));
+	if (callback) {
+		location.href = callback;
 	}
 }
 
