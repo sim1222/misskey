@@ -32,7 +32,8 @@
 		"format": "gulp format",
 		"clean": "node ./scripts/clean.mjs",
 		"clean-all": "node ./scripts/clean-all.mjs",
-		"cleanall": "npm run clean-all"
+		"cleanall": "npm run clean-all",
+		"typecheck:backend": "yarn --cwd packages/backend typecheck"
 	},
 	"dependencies": {
 		"cssnano": "9.9.0",

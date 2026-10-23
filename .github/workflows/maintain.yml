@@ -51,6 +51,8 @@ jobs:
         run: |
           cp .github/misskey/test.yml .config/default.yml
           cp .github/misskey/test.yml .config/test.yml
+      - name: Check backend source and type contracts
+        run: yarn typecheck:backend
       - run: yarn build
       - run: yarn migrate
       - name: Start application and check HTTP behavior
