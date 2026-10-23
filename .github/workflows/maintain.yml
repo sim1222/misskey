@@ -46,7 +46,9 @@ jobs:
       - run: node --test scripts/test/normalize-yarn-aliases.test.mjs
       - run: node scripts/normalize-yarn-aliases.mjs --check
       - name: Install frozen dependencies
+        shell: bash
         run: |
+          set -o pipefail
           if yarn install --frozen-lockfile --non-interactive 2>&1 | tee .maintenance-ci-install.log; then
             exit 0
           fi
