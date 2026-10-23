@@ -124,3 +124,19 @@ Critical の監査警告は全スコープで 0 件になったが、High を含
 - 外部 SMTP、オブジェクトストレージ、OAuth 等の実資格情報を必要とする接続先は検証していない。
 
 GitHub Actions は `Maintenance validation` を確認する。ローカル成功と CI 成功は区別して扱う。
+
+## CI 冷起動の再現とロックファイルの再発防止
+
+最初の CI 失敗後、空のローカル DB で手順を再現し、TypeORM CLI が同じ npm エイリアス配置問題で起動できないことを確認した。
+依存追加の後で Yarn が別名と通常名を再び一つにまとめていたため、更新作業の最後に以下を実行する。
+
+```sh
+node scripts/normalize-yarn-aliases.mjs
+node --test scripts/test/normalize-yarn-aliases.test.mjs
+```
+
+正規化は artifact の version / resolved / integrity を保持する。曖昧な複数の別名は変更せずエラーにする。
+CI は `node scripts/normalize-yarn-aliases.mjs --check` で、インストール前に未正規化のロックを拒否する。
+3 件の Node テストで、artifact identity の維持・冪等性・曖昧な入力の拒否を確認した。
+再配置後、空 DB からの全マイグレーション、通常モードでのアプリ起動・HTTP/CSS smoke、全 62 Jest テストまで成功した。
+元のローカル起動設定は退避した内容へ復元済み。

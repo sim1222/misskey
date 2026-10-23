@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-23T07:46:13.257Z",
+  "generatedAt": "2026-10-23T08:04:50.495Z",
   "source": "Yarn Classic audit / npm registry",
   "scopes": {
     "root": {
@@ -115,10 +115,10 @@
           "high": 26,
           "critical": 0
         },
-        "dependencies": 1467,
+        "dependencies": 1470,
         "devDependencies": 0,
         "optionalDependencies": 0,
-        "totalDependencies": 1467
+        "totalDependencies": 1470
       },
       "uniqueAdvisories": [
         {

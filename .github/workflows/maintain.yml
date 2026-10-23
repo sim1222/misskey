@@ -42,6 +42,8 @@ jobs:
         with:
           node-version-file: .node-version
       - run: npm install --global yarn@1.22.19
+      - run: node --test scripts/test/normalize-yarn-aliases.test.mjs
+      - run: node scripts/normalize-yarn-aliases.mjs --check
       - run: yarn install --frozen-lockfile --non-interactive
       - name: Verify lockfiles were preserved
         run: git diff --exit-code
