@@ -1,6 +1,6 @@
 import * as crypto from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
-import * as jsrsasign from 'jsrsasign';
+import { getCertSubject, verifyCertificateChain } from '@/misc/certificate.js';
 import { DI } from '@/di-symbols.js';
 import type { UsersRepository } from '@/models/index.js';
 import type { Config } from '@/config.js';
@@ -38,48 +38,6 @@ TBj0/VLZjmmx6BEP3ojY+x1J96relc8geMJgEtslQIxq/H5COEBkEveegeGTLg==
 
 function base64URLDecode(source: string) {
 	return Buffer.from(source.replace(/\-/g, '+').replace(/_/g, '/'), 'base64');
-}
-
-function getCertSubject(certificate: string) {
-	const subjectCert = new jsrsasign.X509();
-	subjectCert.readCertPEM(certificate);
-
-	const subjectString = subjectCert.getSubjectString();
-	const subjectFields = subjectString.slice(1).split('/');
-
-	const fields = {} as Record<string, string>;
-	for (const field of subjectFields) {
-		const eqIndex = field.indexOf('=');
-		fields[field.substring(0, eqIndex)] = field.substring(eqIndex + 1);
-	}
-
-	return fields;
-}
-
-function verifyCertificateChain(certificates: string[]) {
-	let valid = true;
-
-	for (let i = 0; i < certificates.length; i++) {
-		const Cert = certificates[i];
-		const certificate = new jsrsasign.X509();
-		certificate.readCertPEM(Cert);
-
-		const CACert = i + 1 >= certificates.length ? Cert : certificates[i + 1];
-
-		const certStruct = jsrsasign.ASN1HEX.getTLVbyList(certificate.hex!, 0, [0]);
-		if (certStruct == null) throw new Error('certStruct is null');
-		
-		const algorithm = certificate.getSignatureAlgorithmField();
-		const signatureHex = certificate.getSignatureValueHex();
-
-		// Verify against CA
-		const Signature = new jsrsasign.KJUR.crypto.Signature({ alg: algorithm });
-		Signature.init(CACert);
-		Signature.updateHex(certStruct);
-		valid = valid && !!Signature.verify(signatureHex); // true if CA signed the certificate
-	}
-
-	return valid;
 }
 
 function PEMString(pemBuffer: Buffer, type = 'CERTIFICATE') {

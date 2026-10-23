@@ -126,6 +126,15 @@ export async function fixture() {
 		await writeFile(resolve(output, 'migrations.log'), migrationLog);
 		assert.equal(code, 0, `Fixture migrations failed; see ${output}/migrations.log`);
 		await mkdir(resolve(output, 'v8'), { recursive: true });
+		// Run the compiled crypto helper in the same fixture/build and collect its
+		// real V8 coverage alongside the server, including malformed/invalid chains.
+		const contracts = run([resolve(root, 'scripts/regression/certificate-contracts.mjs'), resolve(backend, 'built')], { NODE_V8_COVERAGE: resolve(output, 'v8') });
+		let contractLog = '';
+		contracts.stdout.on('data', data => { contractLog += data; });
+		contracts.stderr.on('data', data => { contractLog += data; });
+		const [contractCode] = await once(contracts, 'exit');
+		await writeFile(resolve(output, 'certificate-contracts.log'), contractLog);
+		assert.equal(contractCode, 0, `Certificate compatibility failed; see ${output}/certificate-contracts.log`);
 		log = createWriteStream(resolve(output, 'application.log'));
 		child = run(['--import', resolve(root, 'scripts/regression/probe-hooks.mjs'), 'built/boot/index.js'], { NODE_V8_COVERAGE: resolve(output, 'v8') }, true);
 		child.stdout.pipe(log, { end: false });

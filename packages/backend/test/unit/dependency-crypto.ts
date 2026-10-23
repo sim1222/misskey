@@ -1,36 +1,7 @@
-import { generateKeyPairSync, sign, X509Certificate } from 'node:crypto';
-import * as jsrsasign from 'jsrsasign';
+import { generateKeyPairSync, sign } from 'node:crypto';
 import { TwoFactorAuthenticationService } from '@/core/TwoFactorAuthenticationService.js';
 
 describe('Cryptography dependency compatibility', () => {
-	it('reads and verifies an RSA certificate with both jsrsasign and Node', () => {
-		const keys = generateKeyPairSync('rsa', { modulusLength: 2048 });
-		const certificate = new jsrsasign.KJUR.asn1.x509.Certificate({
-			version: 3,
-			serial: { int: 1 },
-			sigalg: 'SHA256withRSA',
-			issuer: { str: '/CN=Maintenance fixture' },
-			subject: { str: '/CN=Maintenance fixture' },
-			notbefore: '20260101000000Z',
-			notafter: '20300101000000Z',
-			sbjpubkey: keys.publicKey.export({ type: 'spki', format: 'pem' }),
-			cakey: keys.privateKey.export({ type: 'pkcs8', format: 'pem' }),
-		});
-		const pem = certificate.getPEM();
-		expect(new X509Certificate(pem).verify(keys.publicKey)).toBe(true);
-		const parsed = new jsrsasign.X509();
-		parsed.readCertPEM(pem);
-		expect(parsed.getSubjectString()).toBe('/CN=Maintenance fixture');
-		const signature = new jsrsasign.KJUR.crypto.Signature({ alg: parsed.getSignatureAlgorithmField() });
-		signature.init(pem);
-		signature.updateHex(jsrsasign.ASN1HEX.getTLVbyList(parsed.hex!, 0, [0])!);
-		expect(signature.verify(parsed.getSignatureValueHex())).toBe(true);
-		const invalid = new jsrsasign.KJUR.crypto.Signature({ alg: parsed.getSignatureAlgorithmField() });
-		invalid.init(pem);
-		invalid.updateString('tampered certificate');
-		expect(invalid.verify(parsed.getSignatureValueHex())).toBe(false);
-	});
-
 	it('continues to verify existing P-256 WebAuthn keys and rejects altered data', () => {
 		const keys = generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
 		const jwk = keys.publicKey.export({ format: 'jwk' });
