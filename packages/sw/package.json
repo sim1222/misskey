@@ -8,7 +8,7 @@
 	"resolutions": {},
 	"dependencies": {
 		"esbuild": "0.28.2",
-		"idb-keyval": "^6.0.3",
+		"idb-keyval": "6.3.0",
 		"misskey-js": "0.0.14"
 	},
 	"devDependencies": {

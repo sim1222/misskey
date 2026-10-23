@@ -1,0 +1,138 @@
+{
+  "reference": "5d53b9aa77b29c275c5fa570746099121a94a672",
+  "description": "Generated with the frozen pre-update backend dependencies, Node 24.22.1, TZ=UTC",
+  "observations": {
+    "qr": [
+      {
+        "version": 4,
+        "size": 33,
+        "matrix": "3f7ca1268d7bfb2d51752f14af4d0b294939575f87b508cc30d29533aabeb5e8"
+      },
+      {
+        "version": 1,
+        "size": 21,
+        "matrix": "1d5217cd2c70909672673802ed2d00fa6d19b041843c9144dab07613f7db8de2"
+      }
+    ],
+    "cidr": [
+      {
+        "network": "192.0.2.0/24",
+        "range": [
+          "192.0.2.0",
+          "192.0.2.255"
+        ],
+        "contains": [
+          true,
+          true,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "network": "2001:db8::/64",
+        "range": [
+          "2001:0db8:0000:0000:0000:0000:0000:0000",
+          "2001:0db8:0000:0000:ffff:ffff:ffff:ffff"
+        ],
+        "contains": [
+          false,
+          false,
+          false,
+          true,
+          true,
+          false
+        ]
+      },
+      {
+        "network": "::ffff:192.0.2.0/120",
+        "range": [
+          "0000:0000:0000:0000:0000:ffff:c000:0200",
+          "0000:0000:0000:0000:0000:ffff:c000:02ff"
+        ],
+        "contains": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    ],
+    "ipHashPrefix": "0010000000000001000011011011100000010010001101000101011001111000",
+    "svg": [
+      true,
+      true,
+      false,
+      false,
+      false,
+      true
+    ],
+    "html": [
+      {
+        "parsed": "<p>日本語 &amp; 🙂<br><b>bold</b></p>",
+        "html": "<p>日本語 &amp; 🙂<br><b>bold</b></p>",
+        "text": "日本語 & 🙂bold"
+      },
+      {
+        "parsed": "<table><tbody><tr><td>x</td></tr></tbody></table>",
+        "html": "<table><tbody><tr><td>x</td></tr></tbody></table>",
+        "text": "x"
+      },
+      {
+        "parsed": "<a href=\"https://example.test/?a=1&amp;b=2\" rel=\"me\">@alice</a>",
+        "html": "<a href=\"https://example.test/?a=1&amp;b=2\" rel=\"me\">@alice</a>",
+        "text": "@alice"
+      },
+      {
+        "parsed": "<p></p><div>x</div>y",
+        "html": "<p></p><div>x</div>y",
+        "text": "xy"
+      }
+    ],
+    "dates": [
+      {
+        "days": "2024-03-01T23:59:59.000Z",
+        "months": "2024-03-29T23:59:59.000Z",
+        "distance": 180
+      },
+      {
+        "days": "2024-03-11T09:59:59.000Z",
+        "months": "2024-04-10T09:59:59.000Z",
+        "distance": 180
+      },
+      {
+        "days": "2024-11-04T08:59:59.000Z",
+        "months": "2024-12-03T08:59:59.000Z",
+        "distance": 180
+      }
+    ],
+    "observable": [
+      6,
+      12
+    ],
+    "zip": {
+      "digest": "b9c3ed46d76b446b9ddb4ecd9ab59057747f2d43908579ede9e2379e0c0faa92",
+      "entries": [
+        {
+          "name": "notes.json",
+          "content": "{\"text\":\"日本語 🙂\"}\n"
+        },
+        {
+          "name": "files/添付.txt",
+          "content": "attachment\n"
+        }
+      ]
+    },
+    "proxy": {
+      "status": 201,
+      "contentType": "text/plain; charset=utf-8",
+      "body": "GET /attachment?q=a%20b contract 日本語",
+      "routes": [
+        true
+      ]
+    }
+  }
+}
