@@ -1,0 +1,6 @@
+{
+  "GHSA-cc6r-chgr-8r5m": {
+    "unitFiles": ["packages/backend/test/unit/miauth-callback.ts"],
+    "observations": []
+  }
+}

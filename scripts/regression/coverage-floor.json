@@ -1,0 +1,42 @@
+{
+  "total": {
+    "lines": 78,
+    "branches": 65,
+    "functions": 71
+  },
+  "packages/backend/src/server/api/ApiCallService.ts": {
+    "lines": 75,
+    "branches": 80,
+    "functions": 80
+  },
+  "packages/backend/src/server/api/AuthenticateService.ts": {
+    "lines": 100,
+    "branches": 100,
+    "functions": 100
+  },
+  "packages/backend/src/server/api/endpoint-base.ts": {
+    "lines": 93,
+    "branches": 77,
+    "functions": 100
+  },
+  "packages/backend/src/server/ActivityPubServerService.ts": {
+    "lines": 56,
+    "branches": 48,
+    "functions": 90
+  },
+  "packages/backend/src/queue/processors/InboxProcessorService.ts": {
+    "lines": 69,
+    "branches": 50,
+    "functions": 100
+  },
+  "packages/backend/src/core/NoteCreateService.ts": {
+    "lines": 87,
+    "branches": 71,
+    "functions": 100
+  },
+  "packages/backend/src/core/entities/NoteEntityService.ts": {
+    "lines": 82,
+    "branches": 84,
+    "functions": 100
+  }
+}

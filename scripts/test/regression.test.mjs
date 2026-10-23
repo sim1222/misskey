@@ -1,0 +1,76 @@
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
+import { test } from 'node:test';
+import { localHost, root } from '../regression/harness.mjs';
+import { Observations, differences, verifyBaseline } from '../regression/observations.mjs';
+import { changedLines, uncoveredChanges } from '../regression/changed-coverage.mjs';
+import { requireBackend } from '../regression/harness.mjs';
+
+test('fixture refuses non-local service hosts before database creation', () => {
+	for (const host of ['production.example.com', '192.168.1.1', '127.0.0.1.example.org', '/var/run/postgresql', 'localhost:5432', '']) assert.throws(() => localHost(host));
+	assert.equal(localHost('127.0.0.1'), '127.0.0.1');
+});
+
+test('application process cannot connect to external hosts or Unix sockets', () => {
+	for (const expression of ["require('node:net').connect(443, 'example.com')", "require('node:net').connect({port:443,host:'169.254.169.254'})", "require('node:net').connect('/tmp/socket')"]) {
+		assert.throws(() => execFileSync(process.execPath, ['--require', resolve(root, 'scripts/regression/network-guard.cjs'), '-e', expression], { stdio: 'pipe' }), /blocked non-loopback/);
+	}
+});
+
+test('normalization preserves privacy fields, nullability, array order and status', () => {
+	const o = new Observations('http://127.0.0.1:12345');
+	o.alias('abcdefghijkl', 'alice');
+	const normalized = o.normalize({ status: 403, body: { userId: 'abcdefghijkl', uri: 'http://127.0.0.1:12345/users/abcdefghijkl', text: null, isHidden: true, permission: ['read:notes', 'write:notes'], createdAt: '2024-01-02T03:04:05.000Z' } });
+	assert.equal(normalized.body.uri, '<instance>/users/<alice>');
+	assert.equal(normalized.body.createdAt, '<timestamp>');
+	assert.equal(normalized.body.text, null);
+	assert.equal(normalized.body.isHidden, true);
+	assert.equal(normalized.status, 403);
+	assert.deepEqual(normalized.body.permission, ['read:notes', 'write:notes']);
+});
+
+test('credentials are redacted without losing their presence or null state', () => {
+	const o = new Observations('http://127.0.0.1:12345');
+	assert.deepEqual(o.normalize({ token: 'random', password: null }), { password: null, token: '<generated-secret>' });
+	assert.equal(o.normalize('http://127.0.0.1:12345/auth/random'), '<instance>/auth/<generated-secret>');
+});
+
+test('diff detects leaked text, changed authentication, missing fields and ordering', () => {
+	const expected = { status: 401, body: { text: null, isHidden: true, permission: ['read:notes'], items: ['a', 'b'] } };
+	for (const changed of [
+		{ ...expected, status: 200 },
+		{ ...expected, body: { ...expected.body, text: 'secret' } },
+		{ ...expected, body: { ...expected.body, isHidden: undefined } },
+		{ ...expected, body: { ...expected.body, permission: ['read:notes', 'write:notes'] } },
+		{ ...expected, body: { ...expected.body, items: ['b', 'a'] } },
+	]) assert.ok(differences(expected, changed).length > 0);
+});
+
+test('comparison gate fails on behavior changes and leaves the baseline untouched', async () => {
+	const directory = await mkdtemp(join(tmpdir(), 'misskey-regression-gate-'));
+	try {
+		const path = join(directory, 'baseline.json');
+		const text = JSON.stringify({ privateNote: { text: null } });
+		await writeFile(path, text);
+		await verifyBaseline({ privateNote: { text: null } }, directory, path);
+		await assert.rejects(verifyBaseline({ privateNote: { text: 'leaked' } }, directory, path), /Behavior changed/);
+		assert.equal(await readFile(path, 'utf8'), text);
+		assert.equal(JSON.parse(await readFile(join(directory, 'behavior-diff.json'), 'utf8'))[0].path, '$.privateNote.text');
+	} finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test('patch gate detects newly untested executable lines and branch outcomes', () => {
+	const path = 'packages/backend/src/example.ts';
+	const lines = changedLines(`diff --git a/${path} b/${path}\n--- a/${path}\n+++ b/${path}\n@@ -3,0 +4,2 @@\n+if (user) return 1;\n+return 0;`);
+	assert.deepEqual([...lines.get(path)], [4, 5]);
+	const { createCoverageMap } = requireBackend('istanbul-lib-coverage');
+	const location = line => ({ start: { line, column: 0 }, end: { line, column: 20 } });
+	const map = createCoverageMap({ [resolve(root, path)]: { path: resolve(root, path), statementMap: { 0: location(4), 1: location(5) }, fnMap: {}, branchMap: { 0: { type: 'if', loc: location(4), locations: [location(4), location(5)] } }, s: { 0: 1, 1: 0 }, f: {}, b: { 0: [1, 0] } } });
+	assert.equal(uncoveredChanges(lines, map).length, 2);
+	map.data[resolve(root, path)].s[1] = 1;
+	map.data[resolve(root, path)].b[0][1] = 1;
+	assert.deepEqual(uncoveredChanges(lines, map), []);
+});

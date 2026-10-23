@@ -37,6 +37,7 @@ api-docs.json
 *.code-workspace
 .DS_Store
 /files
+/.maintenance-regression
 ormconfig.json
 
 # blender backups
