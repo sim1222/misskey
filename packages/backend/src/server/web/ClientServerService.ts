@@ -16,6 +16,7 @@ import { In, IsNull } from 'typeorm';
 import type { Config } from '@/config.js';
 import { getNoteSummary } from '@/misc/get-note-summary.js';
 import { DI } from '@/di-symbols.js';
+import { getClientEntry } from '@/misc/client-manifest.js';
 import * as Acct from '@/misc/acct.js';
 import { MetaService } from '@/core/MetaService.js';
 import type { DbQueue, DeliverQueue, EndedPollNotificationQueue, InboxQueue, ObjectStorageQueue, SystemQueue, WebhookDeliverQueue } from '@/core/queue/QueueModule.js';
@@ -149,7 +150,7 @@ export class ClientServerService {
 				version: this.config.version,
 				getClientEntry: () => process.env.NODE_ENV === 'production' ?
 					this.config.clientEntry :
-					JSON.parse(readFileSync(`${_dirname}/../../../../../built/_client_dist_/manifest.json`, 'utf-8'))['src/init.ts'],
+					getClientEntry(JSON.parse(readFileSync(`${_dirname}/../../../../../built/_client_dist_/manifest.json`, 'utf-8'))),
 				config: this.config,
 			},
 		}));

@@ -58,13 +58,13 @@ export default defineConfig(({ command, mode }) => {
 				'es2017', // TODO: そのうち消す
 			],
 			manifest: 'manifest.json',
-			rollupOptions: {
+			rolldownOptions: {
 				input: {
 					app: './src/init.ts',
 				},
 				output: {
-					manualChunks: {
-						vue: ['vue'],
+					manualChunks(id) {
+						if (/[\\/]node_modules[\\/](?:vue|@vue)[\\/]/.test(id)) return 'vue';
 					},
 				},
 			},

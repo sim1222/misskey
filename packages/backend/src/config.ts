@@ -6,6 +6,7 @@ import * as fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import * as yaml from 'js-yaml';
+import { getClientEntry } from './misc/client-manifest.js';
 
 /**
  * ユーザーが設定する必要のある情報
@@ -90,7 +91,7 @@ export type Mixin = {
 	authUrl: string;
 	driveUrl: string;
 	userAgent: string;
-	clientEntry: string;
+	clientEntry: ReturnType<typeof getClientEntry>;
 };
 
 export type Config = Source & Mixin;
@@ -133,7 +134,7 @@ export function loadConfig() {
 	mixin.authUrl = `${mixin.scheme}://${mixin.host}/auth`;
 	mixin.driveUrl = `${mixin.scheme}://${mixin.host}/files`;
 	mixin.userAgent = `Misskey/${meta.version} (${config.url})`;
-	mixin.clientEntry = clientManifest['src/init.ts'];
+	mixin.clientEntry = getClientEntry(clientManifest);
 
 	if (!config.redis.prefix) config.redis.prefix = mixin.host;
 

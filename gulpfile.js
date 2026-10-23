@@ -6,7 +6,8 @@ const fs = require('fs');
 const gulp = require('gulp');
 const replace = require('gulp-replace');
 const terser = require('gulp-terser');
-const cssnano = require('gulp-cssnano');
+const postcss = require('gulp-postcss');
+const cssnano = require('cssnano');
 
 const locales = require('./locales');
 const meta = require('./package.json');
@@ -20,11 +21,11 @@ gulp.task('copy:backend:manifest', () =>
 );
 
 gulp.task('copy:client:fonts', () =>
-	gulp.src('./packages/client/node_modules/three/examples/fonts/**/*').pipe(gulp.dest('./built/_client_dist_/fonts/'))
+	gulp.src('./packages/client/node_modules/three/examples/fonts/**/*', { encoding: false }).pipe(gulp.dest('./built/_client_dist_/fonts/'))
 );
 
 gulp.task('copy:client:fontawesome', () =>
-	gulp.src('./packages/client/node_modules/@fortawesome/fontawesome-free/**/*').pipe(gulp.dest('./built/_client_dist_/fontawesome/'))
+	gulp.src('./packages/client/node_modules/@fortawesome/fontawesome-free/**/*', { encoding: false }).pipe(gulp.dest('./built/_client_dist_/fontawesome/'))
 );
 
 gulp.task('copy:client:locales', cb => {
@@ -50,9 +51,7 @@ gulp.task('build:backend:script', () => {
 
 gulp.task('build:backend:style', () => {
 	return gulp.src(['./packages/backend/src/server/web/style.css', './packages/backend/src/server/web/bios.css', './packages/backend/src/server/web/cli.css'])
-		.pipe(cssnano({
-			zindex: false
-		}))
+		.pipe(postcss([cssnano({ preset: 'default' })]))
 		.pipe(gulp.dest('./packages/backend/built/server/web/'));
 });
 
