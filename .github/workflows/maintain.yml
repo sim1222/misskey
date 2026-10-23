@@ -45,7 +45,18 @@ jobs:
       - run: npm install --global yarn@1.22.19
       - run: node --test scripts/test/normalize-yarn-aliases.test.mjs
       - run: node scripts/normalize-yarn-aliases.mjs --check
-      - run: yarn install --frozen-lockfile --non-interactive
+      - name: Install frozen dependencies
+        run: |
+          if yarn install --frozen-lockfile --non-interactive 2>&1 | tee .maintenance-ci-install.log; then
+            exit 0
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          message = Path('.maintenance-ci-install.log').read_text(errors='replace')[-6000:]
+          escaped = message.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+          print('::error title=Frozen dependency installation failed::' + escaped)
+          PY
+          exit 1
       - run: yarn test:regression:harness
       - name: Verify lockfiles were preserved
         run: git diff --exit-code
@@ -86,5 +97,6 @@ jobs:
           include-hidden-files: true
           retention-days: 14
           path: |
+            .maintenance-ci-install.log
             .maintenance-regression/latest
             packages/backend/coverage
