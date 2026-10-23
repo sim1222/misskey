@@ -37,7 +37,9 @@
 		"test:regression": "node scripts/regression/build.mjs && node scripts/regression/run.mjs",
 		"test:regression:record": "node scripts/regression/build.mjs && node scripts/regression/run.mjs --record",
 		"test:regression:harness": "node --test scripts/test/*.test.mjs",
-		"test:regression:patch": "node scripts/regression/changed-coverage.mjs"
+		"test:regression:patch": "node scripts/regression/changed-coverage.mjs",
+		"test:services": "node scripts/regression/services.mjs",
+		"test:federation": "node scripts/regression/build.mjs && node scripts/federation/run.mjs"
 	},
 	"dependencies": {
 		"cssnano": "9.9.0",

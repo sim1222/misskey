@@ -34,14 +34,14 @@ export async function fixture() {
 	const Redis = requireBackend('ioredis');
 	const adminOptions = {
 		host: localHost(process.env.REGRESSION_PG_HOST ?? '127.0.0.1'),
-		port: Number(process.env.REGRESSION_PG_PORT ?? 5432),
-		user: process.env.REGRESSION_PG_USER ?? 'misskey',
+		port: Number(process.env.REGRESSION_PG_PORT ?? 54318),
+		user: process.env.REGRESSION_PG_USER ?? 'postgres',
 		password: process.env.REGRESSION_PG_PASSWORD ?? '',
 		database: 'postgres',
 	};
 	const redisOptions = {
 		host: localHost(process.env.REGRESSION_REDIS_HOST ?? '127.0.0.1'),
-		port: Number(process.env.REGRESSION_REDIS_PORT ?? 6379),
+		port: Number(process.env.REGRESSION_REDIS_PORT ?? 56318),
 	};
 	const name = `regression_${process.pid}_${randomBytes(6).toString('hex')}`;
 	assert.match(name, /^regression_[0-9]+_[a-f0-9]+$/);
@@ -82,6 +82,9 @@ export async function fixture() {
 	};
 	try {
 		await admin.connect();
+		const { rows: [version] } = await admin.query("SELECT current_setting('server_version_num')::integer AS number, version() AS description");
+		assert.ok(version.number >= 180000 && version.number < 190000, 'Regression tests require PostgreSQL 18');
+		await writeFile(resolve(output, 'postgres-version.json'), JSON.stringify(version, null, 2) + '\n');
 		await admin.query(`CREATE DATABASE "${name}"`);
 		created = true;
 		db = new Client({ ...adminOptions, database: name });

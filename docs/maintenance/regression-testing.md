@@ -30,26 +30,34 @@ DB リセット方法を含み、そのまま復活させていない。新し�
 ## 実行方法
 
 Node と Yarn はリポジトリ指定の版を使い、依存を frozen lockfile でインストールし、
-`yarn build` でフロントエンドもビルドしておく。ローカル PostgreSQL のユーザーには
+`yarn build` でフロントエンドもビルドしておく。テスト DB は **PostgreSQL 18** を使い、
+接続時にメジャーバージョンを検証する。ローカル PostgreSQL のユーザーには
 テスト用 DB の作成・削除権限が必要。既存 DB の名前を渡すオプションは設けていない。
 
 ```sh
 yarn test:regression:harness
+# Docker で隔離した PostgreSQL 18 と Redis を起動する
+yarn test:services
 # 最初の一度。CI では --with-deps も指定する
 node node_modules/playwright-core/cli.js install chromium
 
-REGRESSION_PG_PORT=5432 REGRESSION_PG_USER=misskey \
-REGRESSION_REDIS_PORT=6379 yarn test:regression
+yarn test:regression
 ```
 
 既存の Chromium を使う場合は `REGRESSION_CHROMIUM=/usr/bin/chromium` を指定する。
 PG の接続先は `REGRESSION_PG_HOST` / `PORT` / `USER` / `PASSWORD`、
 Redis は `REGRESSION_REDIS_HOST` / `PORT` で指定できる。ホストは loopback のみ許可する。
+既定値は PG `127.0.0.1:54318` / `postgres`、Redis `127.0.0.1:56318`。
+`yarn test:services --down` は専用ラベルを持つこの 2 コンテナだけを削除する。
+PG のデータは tmpfs 上にあり、コンテナ削除時に失われる。
 通常の `.config/default.yml`・`.config/test.yml` を読んだり書き換えたりしない。
 
 生成物は `.maintenance-regression/latest/` に出る。同じ checkout での実行は直列に行う。
 Actions の `Maintenance validation` でも全検証を行い、失敗時も生成済みの結果を
 `maintenance-regression-<SHA>` artifact として 14 日間保存する。
+
+実際の 3 サーバー間の HTTPS 配送・受信は、追加の
+[コンテナ連合試験](federation-testing.md)で実行する。
 
 ## 比較とパッチの進め方
 
@@ -106,7 +114,7 @@ null、キーの有無、公開範囲、権限の配列、要素の順序、本�
 
 | 領域 | 現時点の限界・パッチ時に加えるべき検証 |
 | --- | --- |
-| 連合の相互運用 | 既知 Actor の受信と送信出力・配送キューまでは検証。実際の他実装への配送完了、未知 Actor の discovery、鍵更新、LD-signature、Announce・Update・投票・リレー・リモート添付の全組み合わせは未検証 |
+| 連合の相互運用 | 別のコンテナ連合試験で同じ版の Misskey 3 台の discovery・配送・Announce・Update・投票・リモート添付等を検証。他実装、鍵更新、LD-signature、リレー、機能の全組み合わせは未検証 |
 | 外部サービス | 外向き TCP をテストプロセスで拒否し、ブラウザも同一 origin に制限。S3、OAuth 外部プロバイダー、CAPTCHA、DNS・リダイレクトを含む SSRF、URL プレビュー、RSS、SMTP サービスとの実相互運用には専用の相手役が必要 |
 | セキュリティ攻撃の再現 | 全登録 API に共通の拒否検証はあるが、48 件の公式アドバイザリーすべてに攻撃再現テストがある状態ではない。`misskey-advisories.json` の適用確認・専用回帰ケースを各パッチで追加し、テスト成功だけで修正済みに変更しない |
 | 非同期・運用 | Redis による権限状態の伝播を状態で待つ。複数 worker・複数ノードの競合、再起動中のジョブ、障害復旧、並行実行、長時間の漏れ、負荷・DoS は未検証 |
@@ -139,5 +147,8 @@ undefined に対して呼ぶ未処理 Promise rejection が発生する。
 - 既存 Jest 14 スイート・82 テストが成功。単体テスト側は行 46.95%、関数 26.73%。
 - 隔離・比較・変更行判定・lockfile のテスト 10 件が成功。
 - 実アプリの回帰テストは 1,604 観測。独立した新規 DB で再実行し、基準との差は 0。
+- PostgreSQL 18 でも 1,604 観測と既存 82 テストが成功。旧 PG 15 の基準との差は、
+  PG 18 がカタログに表示する 757 件の NOT NULL 制約の追加だけだった。
+  制約の削除や API 応答・保存内容の変化がないことを確認して基準を更新した。
 - 実アプリ側は行約 78.4%、分岐約 65.9%、関数約 71.3%。これらは別々の計測であり、
   Jest 側の割合を足したり、全機能の検証率と読んだりしない。

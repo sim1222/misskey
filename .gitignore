@@ -38,6 +38,7 @@ api-docs.json
 .DS_Store
 /files
 /.maintenance-regression
+/.maintenance-federation
 ormconfig.json
 
 # blender backups

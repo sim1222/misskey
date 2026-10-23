@@ -34,7 +34,7 @@ async function main() {
 	assert.match(base ?? '', /^[0-9a-f]{40}$/, 'Pass the full pre-patch commit SHA as REGRESSION_BASE_REF or first argument');
 	const diff = execFileSync('git', ['diff', '--no-ext-diff', '--no-renames', '--unified=0', '--diff-filter=AM', base, 'HEAD', '--', 'packages/backend/src'], { cwd: root, encoding: 'utf8' });
 	const { createCoverageMap } = requireBackend('istanbul-lib-coverage');
-	const map = createCoverageMap(JSON.parse(await readFile(resolve(root, '.maintenance-regression/latest/coverage/coverage-final.json'), 'utf8')));
+	const map = createCoverageMap(JSON.parse(await readFile(resolve(root, process.env.REGRESSION_PATCH_COVERAGE ?? '.maintenance-regression/latest/coverage/coverage-final.json'), 'utf8')));
 	const files = changedLines(diff);
 	const failures = uncoveredChanges(files, map);
 	await writeFile(resolve(root, '.maintenance-regression/latest/changed-coverage.json'), JSON.stringify({ base, files: [...files.keys()], failures }, null, 2) + '\n');

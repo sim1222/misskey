@@ -49236,6 +49236,101 @@
       "table_name": "__chart__active_users"
     },
     {
+      "definition": "NOT NULL \"___readWrite\"",
+      "name": "__chart__active_users____readWrite_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL ___read",
+      "name": "__chart__active_users____read_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredOutsideMonth\"",
+      "name": "__chart__active_users____registeredOutsideMonth_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredOutsideWeek\"",
+      "name": "__chart__active_users____registeredOutsideWeek_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredOutsideYear\"",
+      "name": "__chart__active_users____registeredOutsideYear_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredWithinMonth\"",
+      "name": "__chart__active_users____registeredWithinMonth_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredWithinWeek\"",
+      "name": "__chart__active_users____registeredWithinWeek_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredWithinYear\"",
+      "name": "__chart__active_users____registeredWithinYear_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL ___write",
+      "name": "__chart__active_users____write_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__active_users_date_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__active_users_id_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL unique_temp___read",
+      "name": "__chart__active_users_unique_temp___read_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredOutsideMonth\"",
+      "name": "__chart__active_users_unique_temp___registeredOutsideM_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredOutsideWeek\"",
+      "name": "__chart__active_users_unique_temp___registeredOutsideW_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredOutsideYear\"",
+      "name": "__chart__active_users_unique_temp___registeredOutsideY_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredWithinMonth\"",
+      "name": "__chart__active_users_unique_temp___registeredWithinMo_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredWithinWeek\"",
+      "name": "__chart__active_users_unique_temp___registeredWithinWe_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredWithinYear\"",
+      "name": "__chart__active_users_unique_temp___registeredWithinYe_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
+      "definition": "NOT NULL unique_temp___write",
+      "name": "__chart__active_users_unique_temp___write_not_null",
+      "table_name": "__chart__active_users"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_56a25cd447c7ee08876b3baf8d8",
       "table_name": "__chart__ap_request"
@@ -49243,6 +49338,31 @@
     {
       "definition": "UNIQUE (date)",
       "name": "UQ_e56f4beac5746d44bc3e19c80d0",
+      "table_name": "__chart__ap_request"
+    },
+    {
+      "definition": "NOT NULL \"___deliverFailed\"",
+      "name": "__chart__ap_request____deliverFailed_not_null",
+      "table_name": "__chart__ap_request"
+    },
+    {
+      "definition": "NOT NULL \"___deliverSucceeded\"",
+      "name": "__chart__ap_request____deliverSucceeded_not_null",
+      "table_name": "__chart__ap_request"
+    },
+    {
+      "definition": "NOT NULL \"___inboxReceived\"",
+      "name": "__chart__ap_request____inboxReceived_not_null",
+      "table_name": "__chart__ap_request"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__ap_request_date_not_null",
+      "table_name": "__chart__ap_request"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__ap_request_id_not_null",
       "table_name": "__chart__ap_request"
     },
     {
@@ -49256,6 +49376,56 @@
       "table_name": "__chart__drive"
     },
     {
+      "definition": "NOT NULL \"___local_decCount\"",
+      "name": "__chart__drive____local_decCount_not_null",
+      "table_name": "__chart__drive"
+    },
+    {
+      "definition": "NOT NULL \"___local_decSize\"",
+      "name": "__chart__drive____local_decSize_not_null",
+      "table_name": "__chart__drive"
+    },
+    {
+      "definition": "NOT NULL \"___local_incCount\"",
+      "name": "__chart__drive____local_incCount_not_null",
+      "table_name": "__chart__drive"
+    },
+    {
+      "definition": "NOT NULL \"___local_incSize\"",
+      "name": "__chart__drive____local_incSize_not_null",
+      "table_name": "__chart__drive"
+    },
+    {
+      "definition": "NOT NULL \"___remote_decCount\"",
+      "name": "__chart__drive____remote_decCount_not_null",
+      "table_name": "__chart__drive"
+    },
+    {
+      "definition": "NOT NULL \"___remote_decSize\"",
+      "name": "__chart__drive____remote_decSize_not_null",
+      "table_name": "__chart__drive"
+    },
+    {
+      "definition": "NOT NULL \"___remote_incCount\"",
+      "name": "__chart__drive____remote_incCount_not_null",
+      "table_name": "__chart__drive"
+    },
+    {
+      "definition": "NOT NULL \"___remote_incSize\"",
+      "name": "__chart__drive____remote_incSize_not_null",
+      "table_name": "__chart__drive"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__drive_date_not_null",
+      "table_name": "__chart__drive"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__drive_id_not_null",
+      "table_name": "__chart__drive"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_b39dcd31a0fe1a7757e348e85fd",
       "table_name": "__chart__federation"
@@ -49263,6 +49433,71 @@
     {
       "definition": "UNIQUE (date)",
       "name": "UQ_36cb699c49580d4e6c2e6159f97",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL \"___deliveredInstances\"",
+      "name": "__chart__federation____deliveredInstances_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL \"___inboxInstances\"",
+      "name": "__chart__federation____inboxInstances_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL \"___pubActive\"",
+      "name": "__chart__federation____pubActive_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL ___pub",
+      "name": "__chart__federation____pub_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL ___pubsub",
+      "name": "__chart__federation____pubsub_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL ___stalled",
+      "name": "__chart__federation____stalled_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL \"___subActive\"",
+      "name": "__chart__federation____subActive_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL ___sub",
+      "name": "__chart__federation____sub_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__federation_date_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__federation_id_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___deliveredInstances\"",
+      "name": "__chart__federation_unique_temp___deliveredInstances_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___inboxInstances\"",
+      "name": "__chart__federation_unique_temp___inboxInstances_not_null",
+      "table_name": "__chart__federation"
+    },
+    {
+      "definition": "NOT NULL unique_temp___stalled",
+      "name": "__chart__federation_unique_temp___stalled_not_null",
       "table_name": "__chart__federation"
     },
     {
@@ -49276,6 +49511,41 @@
       "table_name": "__chart__hashtag"
     },
     {
+      "definition": "NOT NULL ___local_users",
+      "name": "__chart__hashtag____local_users_not_null",
+      "table_name": "__chart__hashtag"
+    },
+    {
+      "definition": "NOT NULL ___remote_users",
+      "name": "__chart__hashtag____remote_users_not_null",
+      "table_name": "__chart__hashtag"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__hashtag_date_not_null",
+      "table_name": "__chart__hashtag"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart__hashtag_group_not_null",
+      "table_name": "__chart__hashtag"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__hashtag_id_not_null",
+      "table_name": "__chart__hashtag"
+    },
+    {
+      "definition": "NOT NULL unique_temp___local_users",
+      "name": "__chart__hashtag_unique_temp___local_users_not_null",
+      "table_name": "__chart__hashtag"
+    },
+    {
+      "definition": "NOT NULL unique_temp___remote_users",
+      "name": "__chart__hashtag_unique_temp___remote_users_not_null",
+      "table_name": "__chart__hashtag"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_1267c67c7c2d47b4903975f2c00",
       "table_name": "__chart__instance"
@@ -49283,6 +49553,141 @@
     {
       "definition": "UNIQUE (date, \"group\")",
       "name": "UQ_39ee857ab2f23493037c6b66311",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL \"___drive_decFiles\"",
+      "name": "__chart__instance____drive_decFiles_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL \"___drive_decUsage\"",
+      "name": "__chart__instance____drive_decUsage_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL \"___drive_incFiles\"",
+      "name": "__chart__instance____drive_incFiles_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL \"___drive_incUsage\"",
+      "name": "__chart__instance____drive_incUsage_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL \"___drive_totalFiles\"",
+      "name": "__chart__instance____drive_totalFiles_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___followers_dec",
+      "name": "__chart__instance____followers_dec_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___followers_inc",
+      "name": "__chart__instance____followers_inc_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___followers_total",
+      "name": "__chart__instance____followers_total_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___following_dec",
+      "name": "__chart__instance____following_dec_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___following_inc",
+      "name": "__chart__instance____following_inc_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___following_total",
+      "name": "__chart__instance____following_total_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_dec",
+      "name": "__chart__instance____notes_dec_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_diffs_normal",
+      "name": "__chart__instance____notes_diffs_normal_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_diffs_renote",
+      "name": "__chart__instance____notes_diffs_renote_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_diffs_reply",
+      "name": "__chart__instance____notes_diffs_reply_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL \"___notes_diffs_withFile\"",
+      "name": "__chart__instance____notes_diffs_withFile_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_inc",
+      "name": "__chart__instance____notes_inc_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_total",
+      "name": "__chart__instance____notes_total_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___requests_failed",
+      "name": "__chart__instance____requests_failed_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___requests_received",
+      "name": "__chart__instance____requests_received_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___requests_succeeded",
+      "name": "__chart__instance____requests_succeeded_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___users_dec",
+      "name": "__chart__instance____users_dec_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___users_inc",
+      "name": "__chart__instance____users_inc_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL ___users_total",
+      "name": "__chart__instance____users_total_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__instance_date_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart__instance_group_not_null",
+      "table_name": "__chart__instance"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__instance_id_not_null",
       "table_name": "__chart__instance"
     },
     {
@@ -49296,6 +49701,41 @@
       "table_name": "__chart__network"
     },
     {
+      "definition": "NOT NULL \"___incomingBytes\"",
+      "name": "__chart__network____incomingBytes_not_null",
+      "table_name": "__chart__network"
+    },
+    {
+      "definition": "NOT NULL \"___incomingRequests\"",
+      "name": "__chart__network____incomingRequests_not_null",
+      "table_name": "__chart__network"
+    },
+    {
+      "definition": "NOT NULL \"___outgoingBytes\"",
+      "name": "__chart__network____outgoingBytes_not_null",
+      "table_name": "__chart__network"
+    },
+    {
+      "definition": "NOT NULL \"___outgoingRequests\"",
+      "name": "__chart__network____outgoingRequests_not_null",
+      "table_name": "__chart__network"
+    },
+    {
+      "definition": "NOT NULL \"___totalTime\"",
+      "name": "__chart__network____totalTime_not_null",
+      "table_name": "__chart__network"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__network_date_not_null",
+      "table_name": "__chart__network"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__network_id_not_null",
+      "table_name": "__chart__network"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_0aec823fa85c7f901bdb3863b14",
       "table_name": "__chart__notes"
@@ -49303,6 +49743,86 @@
     {
       "definition": "UNIQUE (date)",
       "name": "UQ_42eb716a37d381cdf566192b2be",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_dec",
+      "name": "__chart__notes____local_dec_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_diffs_normal",
+      "name": "__chart__notes____local_diffs_normal_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_diffs_renote",
+      "name": "__chart__notes____local_diffs_renote_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_diffs_reply",
+      "name": "__chart__notes____local_diffs_reply_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL \"___local_diffs_withFile\"",
+      "name": "__chart__notes____local_diffs_withFile_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_inc",
+      "name": "__chart__notes____local_inc_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_total",
+      "name": "__chart__notes____local_total_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_dec",
+      "name": "__chart__notes____remote_dec_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_diffs_normal",
+      "name": "__chart__notes____remote_diffs_normal_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_diffs_renote",
+      "name": "__chart__notes____remote_diffs_renote_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_diffs_reply",
+      "name": "__chart__notes____remote_diffs_reply_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL \"___remote_diffs_withFile\"",
+      "name": "__chart__notes____remote_diffs_withFile_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_inc",
+      "name": "__chart__notes____remote_inc_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_total",
+      "name": "__chart__notes____remote_total_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__notes_date_not_null",
+      "table_name": "__chart__notes"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__notes_id_not_null",
       "table_name": "__chart__notes"
     },
     {
@@ -49316,6 +49836,51 @@
       "table_name": "__chart__per_user_drive"
     },
     {
+      "definition": "NOT NULL \"___decCount\"",
+      "name": "__chart__per_user_drive____decCount_not_null",
+      "table_name": "__chart__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___decSize\"",
+      "name": "__chart__per_user_drive____decSize_not_null",
+      "table_name": "__chart__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___incCount\"",
+      "name": "__chart__per_user_drive____incCount_not_null",
+      "table_name": "__chart__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___incSize\"",
+      "name": "__chart__per_user_drive____incSize_not_null",
+      "table_name": "__chart__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___totalCount\"",
+      "name": "__chart__per_user_drive____totalCount_not_null",
+      "table_name": "__chart__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___totalSize\"",
+      "name": "__chart__per_user_drive____totalSize_not_null",
+      "table_name": "__chart__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__per_user_drive_date_not_null",
+      "table_name": "__chart__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart__per_user_drive_group_not_null",
+      "table_name": "__chart__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__per_user_drive_id_not_null",
+      "table_name": "__chart__per_user_drive"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_85bb1b540363a29c2fec83bd907",
       "table_name": "__chart__per_user_following"
@@ -49323,6 +49888,81 @@
     {
       "definition": "UNIQUE (date, \"group\")",
       "name": "UQ_b77d4dd9562c3a899d9a286fcd7",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followers_dec",
+      "name": "__chart__per_user_following____local_followers_dec_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followers_inc",
+      "name": "__chart__per_user_following____local_followers_inc_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followers_total",
+      "name": "__chart__per_user_following____local_followers_total_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followings_dec",
+      "name": "__chart__per_user_following____local_followings_dec_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followings_inc",
+      "name": "__chart__per_user_following____local_followings_inc_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followings_total",
+      "name": "__chart__per_user_following____local_followings_total_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followers_dec",
+      "name": "__chart__per_user_following____remote_followers_dec_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followers_inc",
+      "name": "__chart__per_user_following____remote_followers_inc_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followers_total",
+      "name": "__chart__per_user_following____remote_followers_total_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followings_dec",
+      "name": "__chart__per_user_following____remote_followings_dec_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followings_inc",
+      "name": "__chart__per_user_following____remote_followings_inc_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followings_total",
+      "name": "__chart__per_user_following____remote_followings_total_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__per_user_following_date_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart__per_user_following_group_not_null",
+      "table_name": "__chart__per_user_following"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__per_user_following_id_not_null",
       "table_name": "__chart__per_user_following"
     },
     {
@@ -49336,6 +49976,56 @@
       "table_name": "__chart__per_user_notes"
     },
     {
+      "definition": "NOT NULL ___dec",
+      "name": "__chart__per_user_notes____dec_not_null",
+      "table_name": "__chart__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___diffs_normal",
+      "name": "__chart__per_user_notes____diffs_normal_not_null",
+      "table_name": "__chart__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___diffs_renote",
+      "name": "__chart__per_user_notes____diffs_renote_not_null",
+      "table_name": "__chart__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___diffs_reply",
+      "name": "__chart__per_user_notes____diffs_reply_not_null",
+      "table_name": "__chart__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL \"___diffs_withFile\"",
+      "name": "__chart__per_user_notes____diffs_withFile_not_null",
+      "table_name": "__chart__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___inc",
+      "name": "__chart__per_user_notes____inc_not_null",
+      "table_name": "__chart__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___total",
+      "name": "__chart__per_user_notes____total_not_null",
+      "table_name": "__chart__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__per_user_notes_date_not_null",
+      "table_name": "__chart__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart__per_user_notes_group_not_null",
+      "table_name": "__chart__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__per_user_notes_id_not_null",
+      "table_name": "__chart__per_user_notes"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_984f54dae441e65b633e8d27a7f",
       "table_name": "__chart__per_user_reaction"
@@ -49346,8 +50036,58 @@
       "table_name": "__chart__per_user_reaction"
     },
     {
+      "definition": "NOT NULL ___local_count",
+      "name": "__chart__per_user_reaction____local_count_not_null",
+      "table_name": "__chart__per_user_reaction"
+    },
+    {
+      "definition": "NOT NULL ___remote_count",
+      "name": "__chart__per_user_reaction____remote_count_not_null",
+      "table_name": "__chart__per_user_reaction"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__per_user_reaction_date_not_null",
+      "table_name": "__chart__per_user_reaction"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart__per_user_reaction_group_not_null",
+      "table_name": "__chart__per_user_reaction"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__per_user_reaction_id_not_null",
+      "table_name": "__chart__per_user_reaction"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_b4bc31dffbd1b785276a3ecfc1e",
+      "table_name": "__chart__test"
+    },
+    {
+      "definition": "NOT NULL ___foo_dec",
+      "name": "__chart__test____foo_dec_not_null",
+      "table_name": "__chart__test"
+    },
+    {
+      "definition": "NOT NULL ___foo_inc",
+      "name": "__chart__test____foo_inc_not_null",
+      "table_name": "__chart__test"
+    },
+    {
+      "definition": "NOT NULL ___foo_total",
+      "name": "__chart__test____foo_total_not_null",
+      "table_name": "__chart__test"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__test_date_not_null",
+      "table_name": "__chart__test"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__test_id_not_null",
       "table_name": "__chart__test"
     },
     {
@@ -49356,8 +50096,48 @@
       "table_name": "__chart__test_grouped"
     },
     {
+      "definition": "NOT NULL ___foo_dec",
+      "name": "__chart__test_grouped____foo_dec_not_null",
+      "table_name": "__chart__test_grouped"
+    },
+    {
+      "definition": "NOT NULL ___foo_inc",
+      "name": "__chart__test_grouped____foo_inc_not_null",
+      "table_name": "__chart__test_grouped"
+    },
+    {
+      "definition": "NOT NULL ___foo_total",
+      "name": "__chart__test_grouped____foo_total_not_null",
+      "table_name": "__chart__test_grouped"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__test_grouped_date_not_null",
+      "table_name": "__chart__test_grouped"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__test_grouped_id_not_null",
+      "table_name": "__chart__test_grouped"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_409bac9c97cc612d8500012319d",
+      "table_name": "__chart__test_unique"
+    },
+    {
+      "definition": "NOT NULL ___foo",
+      "name": "__chart__test_unique____foo_not_null",
+      "table_name": "__chart__test_unique"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__test_unique_date_not_null",
+      "table_name": "__chart__test_unique"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__test_unique_id_not_null",
       "table_name": "__chart__test_unique"
     },
     {
@@ -49371,6 +50151,46 @@
       "table_name": "__chart__users"
     },
     {
+      "definition": "NOT NULL ___local_dec",
+      "name": "__chart__users____local_dec_not_null",
+      "table_name": "__chart__users"
+    },
+    {
+      "definition": "NOT NULL ___local_inc",
+      "name": "__chart__users____local_inc_not_null",
+      "table_name": "__chart__users"
+    },
+    {
+      "definition": "NOT NULL ___local_total",
+      "name": "__chart__users____local_total_not_null",
+      "table_name": "__chart__users"
+    },
+    {
+      "definition": "NOT NULL ___remote_dec",
+      "name": "__chart__users____remote_dec_not_null",
+      "table_name": "__chart__users"
+    },
+    {
+      "definition": "NOT NULL ___remote_inc",
+      "name": "__chart__users____remote_inc_not_null",
+      "table_name": "__chart__users"
+    },
+    {
+      "definition": "NOT NULL ___remote_total",
+      "name": "__chart__users____remote_total_not_null",
+      "table_name": "__chart__users"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart__users_date_not_null",
+      "table_name": "__chart__users"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart__users_id_not_null",
+      "table_name": "__chart__users"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_b1790489b14f005ae8f404f5795",
       "table_name": "__chart_day__active_users"
@@ -49378,6 +50198,101 @@
     {
       "definition": "UNIQUE (date)",
       "name": "UQ_d5954f3df5e5e3bdfc3c03f3906",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___readWrite\"",
+      "name": "__chart_day__active_users____readWrite_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL ___read",
+      "name": "__chart_day__active_users____read_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredOutsideMonth\"",
+      "name": "__chart_day__active_users____registeredOutsideMonth_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredOutsideWeek\"",
+      "name": "__chart_day__active_users____registeredOutsideWeek_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredOutsideYear\"",
+      "name": "__chart_day__active_users____registeredOutsideYear_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredWithinMonth\"",
+      "name": "__chart_day__active_users____registeredWithinMonth_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredWithinWeek\"",
+      "name": "__chart_day__active_users____registeredWithinWeek_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"___registeredWithinYear\"",
+      "name": "__chart_day__active_users____registeredWithinYear_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL ___write",
+      "name": "__chart_day__active_users____write_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__active_users_date_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__active_users_id_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL unique_temp___read",
+      "name": "__chart_day__active_users_unique_temp___read_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredOutsideMonth\"",
+      "name": "__chart_day__active_users_unique_temp___registeredOut_not_null1",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredOutsideYear\"",
+      "name": "__chart_day__active_users_unique_temp___registeredOut_not_null2",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredOutsideWeek\"",
+      "name": "__chart_day__active_users_unique_temp___registeredOuts_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredWithinMonth\"",
+      "name": "__chart_day__active_users_unique_temp___registeredWit_not_null1",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredWithinYear\"",
+      "name": "__chart_day__active_users_unique_temp___registeredWit_not_null2",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___registeredWithinWeek\"",
+      "name": "__chart_day__active_users_unique_temp___registeredWith_not_null",
+      "table_name": "__chart_day__active_users"
+    },
+    {
+      "definition": "NOT NULL unique_temp___write",
+      "name": "__chart_day__active_users_unique_temp___write_not_null",
       "table_name": "__chart_day__active_users"
     },
     {
@@ -49391,6 +50306,31 @@
       "table_name": "__chart_day__ap_request"
     },
     {
+      "definition": "NOT NULL \"___deliverFailed\"",
+      "name": "__chart_day__ap_request____deliverFailed_not_null",
+      "table_name": "__chart_day__ap_request"
+    },
+    {
+      "definition": "NOT NULL \"___deliverSucceeded\"",
+      "name": "__chart_day__ap_request____deliverSucceeded_not_null",
+      "table_name": "__chart_day__ap_request"
+    },
+    {
+      "definition": "NOT NULL \"___inboxReceived\"",
+      "name": "__chart_day__ap_request____inboxReceived_not_null",
+      "table_name": "__chart_day__ap_request"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__ap_request_date_not_null",
+      "table_name": "__chart_day__ap_request"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__ap_request_id_not_null",
+      "table_name": "__chart_day__ap_request"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_e7ec0de057c77c40fc8d8b62151",
       "table_name": "__chart_day__drive"
@@ -49398,6 +50338,56 @@
     {
       "definition": "UNIQUE (date)",
       "name": "UQ_0b60ebb3aa0065f10b0616c1171",
+      "table_name": "__chart_day__drive"
+    },
+    {
+      "definition": "NOT NULL \"___local_decCount\"",
+      "name": "__chart_day__drive____local_decCount_not_null",
+      "table_name": "__chart_day__drive"
+    },
+    {
+      "definition": "NOT NULL \"___local_decSize\"",
+      "name": "__chart_day__drive____local_decSize_not_null",
+      "table_name": "__chart_day__drive"
+    },
+    {
+      "definition": "NOT NULL \"___local_incCount\"",
+      "name": "__chart_day__drive____local_incCount_not_null",
+      "table_name": "__chart_day__drive"
+    },
+    {
+      "definition": "NOT NULL \"___local_incSize\"",
+      "name": "__chart_day__drive____local_incSize_not_null",
+      "table_name": "__chart_day__drive"
+    },
+    {
+      "definition": "NOT NULL \"___remote_decCount\"",
+      "name": "__chart_day__drive____remote_decCount_not_null",
+      "table_name": "__chart_day__drive"
+    },
+    {
+      "definition": "NOT NULL \"___remote_decSize\"",
+      "name": "__chart_day__drive____remote_decSize_not_null",
+      "table_name": "__chart_day__drive"
+    },
+    {
+      "definition": "NOT NULL \"___remote_incCount\"",
+      "name": "__chart_day__drive____remote_incCount_not_null",
+      "table_name": "__chart_day__drive"
+    },
+    {
+      "definition": "NOT NULL \"___remote_incSize\"",
+      "name": "__chart_day__drive____remote_incSize_not_null",
+      "table_name": "__chart_day__drive"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__drive_date_not_null",
+      "table_name": "__chart_day__drive"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__drive_id_not_null",
       "table_name": "__chart_day__drive"
     },
     {
@@ -49411,6 +50401,71 @@
       "table_name": "__chart_day__federation"
     },
     {
+      "definition": "NOT NULL \"___deliveredInstances\"",
+      "name": "__chart_day__federation____deliveredInstances_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL \"___inboxInstances\"",
+      "name": "__chart_day__federation____inboxInstances_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL \"___pubActive\"",
+      "name": "__chart_day__federation____pubActive_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL ___pub",
+      "name": "__chart_day__federation____pub_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL ___pubsub",
+      "name": "__chart_day__federation____pubsub_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL ___stalled",
+      "name": "__chart_day__federation____stalled_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL \"___subActive\"",
+      "name": "__chart_day__federation____subActive_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL ___sub",
+      "name": "__chart_day__federation____sub_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__federation_date_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__federation_id_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___deliveredInstances\"",
+      "name": "__chart_day__federation_unique_temp___deliveredInstanc_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL \"unique_temp___inboxInstances\"",
+      "name": "__chart_day__federation_unique_temp___inboxInstances_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
+      "definition": "NOT NULL unique_temp___stalled",
+      "name": "__chart_day__federation_unique_temp___stalled_not_null",
+      "table_name": "__chart_day__federation"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_13d5a3b089344e5557f8e0980b4",
       "table_name": "__chart_day__hashtag"
@@ -49418,6 +50473,41 @@
     {
       "definition": "UNIQUE (date, \"group\")",
       "name": "UQ_8f589cf056ff51f09d6096f6450",
+      "table_name": "__chart_day__hashtag"
+    },
+    {
+      "definition": "NOT NULL ___local_users",
+      "name": "__chart_day__hashtag____local_users_not_null",
+      "table_name": "__chart_day__hashtag"
+    },
+    {
+      "definition": "NOT NULL ___remote_users",
+      "name": "__chart_day__hashtag____remote_users_not_null",
+      "table_name": "__chart_day__hashtag"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__hashtag_date_not_null",
+      "table_name": "__chart_day__hashtag"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart_day__hashtag_group_not_null",
+      "table_name": "__chart_day__hashtag"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__hashtag_id_not_null",
+      "table_name": "__chart_day__hashtag"
+    },
+    {
+      "definition": "NOT NULL unique_temp___local_users",
+      "name": "__chart_day__hashtag_unique_temp___local_users_not_null",
+      "table_name": "__chart_day__hashtag"
+    },
+    {
+      "definition": "NOT NULL unique_temp___remote_users",
+      "name": "__chart_day__hashtag_unique_temp___remote_users_not_null",
       "table_name": "__chart_day__hashtag"
     },
     {
@@ -49431,6 +50521,141 @@
       "table_name": "__chart_day__instance"
     },
     {
+      "definition": "NOT NULL \"___drive_decFiles\"",
+      "name": "__chart_day__instance____drive_decFiles_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL \"___drive_decUsage\"",
+      "name": "__chart_day__instance____drive_decUsage_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL \"___drive_incFiles\"",
+      "name": "__chart_day__instance____drive_incFiles_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL \"___drive_incUsage\"",
+      "name": "__chart_day__instance____drive_incUsage_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL \"___drive_totalFiles\"",
+      "name": "__chart_day__instance____drive_totalFiles_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___followers_dec",
+      "name": "__chart_day__instance____followers_dec_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___followers_inc",
+      "name": "__chart_day__instance____followers_inc_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___followers_total",
+      "name": "__chart_day__instance____followers_total_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___following_dec",
+      "name": "__chart_day__instance____following_dec_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___following_inc",
+      "name": "__chart_day__instance____following_inc_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___following_total",
+      "name": "__chart_day__instance____following_total_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_dec",
+      "name": "__chart_day__instance____notes_dec_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_diffs_normal",
+      "name": "__chart_day__instance____notes_diffs_normal_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_diffs_renote",
+      "name": "__chart_day__instance____notes_diffs_renote_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_diffs_reply",
+      "name": "__chart_day__instance____notes_diffs_reply_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL \"___notes_diffs_withFile\"",
+      "name": "__chart_day__instance____notes_diffs_withFile_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_inc",
+      "name": "__chart_day__instance____notes_inc_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___notes_total",
+      "name": "__chart_day__instance____notes_total_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___requests_failed",
+      "name": "__chart_day__instance____requests_failed_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___requests_received",
+      "name": "__chart_day__instance____requests_received_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___requests_succeeded",
+      "name": "__chart_day__instance____requests_succeeded_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___users_dec",
+      "name": "__chart_day__instance____users_dec_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___users_inc",
+      "name": "__chart_day__instance____users_inc_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL ___users_total",
+      "name": "__chart_day__instance____users_total_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__instance_date_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart_day__instance_group_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__instance_id_not_null",
+      "table_name": "__chart_day__instance"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_cac499d6f471042dfed1e7e0132",
       "table_name": "__chart_day__network"
@@ -49438,6 +50663,41 @@
     {
       "definition": "UNIQUE (date)",
       "name": "UQ_8bfa548c2b31f9e07db113773ee",
+      "table_name": "__chart_day__network"
+    },
+    {
+      "definition": "NOT NULL \"___incomingBytes\"",
+      "name": "__chart_day__network____incomingBytes_not_null",
+      "table_name": "__chart_day__network"
+    },
+    {
+      "definition": "NOT NULL \"___incomingRequests\"",
+      "name": "__chart_day__network____incomingRequests_not_null",
+      "table_name": "__chart_day__network"
+    },
+    {
+      "definition": "NOT NULL \"___outgoingBytes\"",
+      "name": "__chart_day__network____outgoingBytes_not_null",
+      "table_name": "__chart_day__network"
+    },
+    {
+      "definition": "NOT NULL \"___outgoingRequests\"",
+      "name": "__chart_day__network____outgoingRequests_not_null",
+      "table_name": "__chart_day__network"
+    },
+    {
+      "definition": "NOT NULL \"___totalTime\"",
+      "name": "__chart_day__network____totalTime_not_null",
+      "table_name": "__chart_day__network"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__network_date_not_null",
+      "table_name": "__chart_day__network"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__network_id_not_null",
       "table_name": "__chart_day__network"
     },
     {
@@ -49451,6 +50711,86 @@
       "table_name": "__chart_day__notes"
     },
     {
+      "definition": "NOT NULL ___local_dec",
+      "name": "__chart_day__notes____local_dec_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_diffs_normal",
+      "name": "__chart_day__notes____local_diffs_normal_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_diffs_renote",
+      "name": "__chart_day__notes____local_diffs_renote_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_diffs_reply",
+      "name": "__chart_day__notes____local_diffs_reply_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL \"___local_diffs_withFile\"",
+      "name": "__chart_day__notes____local_diffs_withFile_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_inc",
+      "name": "__chart_day__notes____local_inc_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___local_total",
+      "name": "__chart_day__notes____local_total_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_dec",
+      "name": "__chart_day__notes____remote_dec_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_diffs_normal",
+      "name": "__chart_day__notes____remote_diffs_normal_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_diffs_renote",
+      "name": "__chart_day__notes____remote_diffs_renote_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_diffs_reply",
+      "name": "__chart_day__notes____remote_diffs_reply_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL \"___remote_diffs_withFile\"",
+      "name": "__chart_day__notes____remote_diffs_withFile_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_inc",
+      "name": "__chart_day__notes____remote_inc_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL ___remote_total",
+      "name": "__chart_day__notes____remote_total_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__notes_date_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__notes_id_not_null",
+      "table_name": "__chart_day__notes"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_1ae135254c137011645da7f4045",
       "table_name": "__chart_day__per_user_drive"
@@ -49458,6 +50798,51 @@
     {
       "definition": "UNIQUE (date, \"group\")",
       "name": "UQ_62aa5047b5aec92524f24c701d7",
+      "table_name": "__chart_day__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___decCount\"",
+      "name": "__chart_day__per_user_drive____decCount_not_null",
+      "table_name": "__chart_day__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___decSize\"",
+      "name": "__chart_day__per_user_drive____decSize_not_null",
+      "table_name": "__chart_day__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___incCount\"",
+      "name": "__chart_day__per_user_drive____incCount_not_null",
+      "table_name": "__chart_day__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___incSize\"",
+      "name": "__chart_day__per_user_drive____incSize_not_null",
+      "table_name": "__chart_day__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___totalCount\"",
+      "name": "__chart_day__per_user_drive____totalCount_not_null",
+      "table_name": "__chart_day__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"___totalSize\"",
+      "name": "__chart_day__per_user_drive____totalSize_not_null",
+      "table_name": "__chart_day__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__per_user_drive_date_not_null",
+      "table_name": "__chart_day__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart_day__per_user_drive_group_not_null",
+      "table_name": "__chart_day__per_user_drive"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__per_user_drive_id_not_null",
       "table_name": "__chart_day__per_user_drive"
     },
     {
@@ -49471,6 +50856,81 @@
       "table_name": "__chart_day__per_user_following"
     },
     {
+      "definition": "NOT NULL ___remote_followings_total",
+      "name": "__chart_day__per_user_follo____remote_followings_total_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followings_total",
+      "name": "__chart_day__per_user_follow____local_followings_total_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followers_total",
+      "name": "__chart_day__per_user_follow____remote_followers_total_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followers_total",
+      "name": "__chart_day__per_user_followi____local_followers_total_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followings_dec",
+      "name": "__chart_day__per_user_followi____remote_followings_dec_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followings_inc",
+      "name": "__chart_day__per_user_followi____remote_followings_inc_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followings_dec",
+      "name": "__chart_day__per_user_followin____local_followings_dec_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followings_inc",
+      "name": "__chart_day__per_user_followin____local_followings_inc_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followers_dec",
+      "name": "__chart_day__per_user_followin____remote_followers_dec_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___remote_followers_inc",
+      "name": "__chart_day__per_user_followin____remote_followers_inc_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followers_dec",
+      "name": "__chart_day__per_user_following____local_followers_dec_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL ___local_followers_inc",
+      "name": "__chart_day__per_user_following____local_followers_inc_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__per_user_following_date_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart_day__per_user_following_group_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__per_user_following_id_not_null",
+      "table_name": "__chart_day__per_user_following"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_58bab6b6d3ad9310cbc7460fd28",
       "table_name": "__chart_day__per_user_notes"
@@ -49478,6 +50938,56 @@
     {
       "definition": "UNIQUE (date, \"group\")",
       "name": "UQ_c5545d4b31cdc684034e33b81c3",
+      "table_name": "__chart_day__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___dec",
+      "name": "__chart_day__per_user_notes____dec_not_null",
+      "table_name": "__chart_day__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___diffs_normal",
+      "name": "__chart_day__per_user_notes____diffs_normal_not_null",
+      "table_name": "__chart_day__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___diffs_renote",
+      "name": "__chart_day__per_user_notes____diffs_renote_not_null",
+      "table_name": "__chart_day__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___diffs_reply",
+      "name": "__chart_day__per_user_notes____diffs_reply_not_null",
+      "table_name": "__chart_day__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL \"___diffs_withFile\"",
+      "name": "__chart_day__per_user_notes____diffs_withFile_not_null",
+      "table_name": "__chart_day__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___inc",
+      "name": "__chart_day__per_user_notes____inc_not_null",
+      "table_name": "__chart_day__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL ___total",
+      "name": "__chart_day__per_user_notes____total_not_null",
+      "table_name": "__chart_day__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__per_user_notes_date_not_null",
+      "table_name": "__chart_day__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart_day__per_user_notes_group_not_null",
+      "table_name": "__chart_day__per_user_notes"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__per_user_notes_id_not_null",
       "table_name": "__chart_day__per_user_notes"
     },
     {
@@ -49491,6 +51001,31 @@
       "table_name": "__chart_day__per_user_reaction"
     },
     {
+      "definition": "NOT NULL ___local_count",
+      "name": "__chart_day__per_user_reaction____local_count_not_null",
+      "table_name": "__chart_day__per_user_reaction"
+    },
+    {
+      "definition": "NOT NULL ___remote_count",
+      "name": "__chart_day__per_user_reaction____remote_count_not_null",
+      "table_name": "__chart_day__per_user_reaction"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__per_user_reaction_date_not_null",
+      "table_name": "__chart_day__per_user_reaction"
+    },
+    {
+      "definition": "NOT NULL \"group\"",
+      "name": "__chart_day__per_user_reaction_group_not_null",
+      "table_name": "__chart_day__per_user_reaction"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__per_user_reaction_id_not_null",
+      "table_name": "__chart_day__per_user_reaction"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_d7f7185abb9851f70c4726c54bd",
       "table_name": "__chart_day__users"
@@ -49498,6 +51033,46 @@
     {
       "definition": "UNIQUE (date)",
       "name": "UQ_cad6e07c20037f31cdba8a350c3",
+      "table_name": "__chart_day__users"
+    },
+    {
+      "definition": "NOT NULL ___local_dec",
+      "name": "__chart_day__users____local_dec_not_null",
+      "table_name": "__chart_day__users"
+    },
+    {
+      "definition": "NOT NULL ___local_inc",
+      "name": "__chart_day__users____local_inc_not_null",
+      "table_name": "__chart_day__users"
+    },
+    {
+      "definition": "NOT NULL ___local_total",
+      "name": "__chart_day__users____local_total_not_null",
+      "table_name": "__chart_day__users"
+    },
+    {
+      "definition": "NOT NULL ___remote_dec",
+      "name": "__chart_day__users____remote_dec_not_null",
+      "table_name": "__chart_day__users"
+    },
+    {
+      "definition": "NOT NULL ___remote_inc",
+      "name": "__chart_day__users____remote_inc_not_null",
+      "table_name": "__chart_day__users"
+    },
+    {
+      "definition": "NOT NULL ___remote_total",
+      "name": "__chart_day__users____remote_total_not_null",
+      "table_name": "__chart_day__users"
+    },
+    {
+      "definition": "NOT NULL date",
+      "name": "__chart_day__users_date_not_null",
+      "table_name": "__chart_day__users"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "__chart_day__users_id_not_null",
       "table_name": "__chart_day__users"
     },
     {
@@ -49516,6 +51091,41 @@
       "table_name": "abuse_user_report"
     },
     {
+      "definition": "NOT NULL comment",
+      "name": "abuse_user_report_comment_not_null",
+      "table_name": "abuse_user_report"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "abuse_user_report_createdAt_not_null",
+      "table_name": "abuse_user_report"
+    },
+    {
+      "definition": "NOT NULL forwarded",
+      "name": "abuse_user_report_forwarded_not_null",
+      "table_name": "abuse_user_report"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "abuse_user_report_id_not_null",
+      "table_name": "abuse_user_report"
+    },
+    {
+      "definition": "NOT NULL \"reporterId\"",
+      "name": "abuse_user_report_reporterId_not_null",
+      "table_name": "abuse_user_report"
+    },
+    {
+      "definition": "NOT NULL resolved",
+      "name": "abuse_user_report_resolved_not_null",
+      "table_name": "abuse_user_report"
+    },
+    {
+      "definition": "NOT NULL \"targetUserId\"",
+      "name": "abuse_user_report_userId_not_null",
+      "table_name": "abuse_user_report"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_9949557d0e1b2c19e5344c171e9",
       "table_name": "access_token"
@@ -49531,13 +51141,113 @@
       "table_name": "access_token"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "access_token_createdAt_not_null",
+      "table_name": "access_token"
+    },
+    {
+      "definition": "NOT NULL fetched",
+      "name": "access_token_fetched_not_null",
+      "table_name": "access_token"
+    },
+    {
+      "definition": "NOT NULL hash",
+      "name": "access_token_hash_not_null",
+      "table_name": "access_token"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "access_token_id_not_null",
+      "table_name": "access_token"
+    },
+    {
+      "definition": "NOT NULL permission",
+      "name": "access_token_permission_not_null",
+      "table_name": "access_token"
+    },
+    {
+      "definition": "NOT NULL token",
+      "name": "access_token_token_not_null",
+      "table_name": "access_token"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "access_token_userId_not_null",
+      "table_name": "access_token"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_0193d5ef09746e88e9ea92c634d",
       "table_name": "ad"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "ad_createdAt_not_null",
+      "table_name": "ad"
+    },
+    {
+      "definition": "NOT NULL \"expiresAt\"",
+      "name": "ad_expiresAt_not_null",
+      "table_name": "ad"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "ad_id_not_null",
+      "table_name": "ad"
+    },
+    {
+      "definition": "NOT NULL \"imageUrl\"",
+      "name": "ad_imageUrl_not_null",
+      "table_name": "ad"
+    },
+    {
+      "definition": "NOT NULL memo",
+      "name": "ad_memo_not_null",
+      "table_name": "ad"
+    },
+    {
+      "definition": "NOT NULL place",
+      "name": "ad_place_not_null",
+      "table_name": "ad"
+    },
+    {
+      "definition": "NOT NULL priority",
+      "name": "ad_priority_not_null",
+      "table_name": "ad"
+    },
+    {
+      "definition": "NOT NULL ratio",
+      "name": "ad_ratio_not_null",
+      "table_name": "ad"
+    },
+    {
+      "definition": "NOT NULL url",
+      "name": "ad_url_not_null",
+      "table_name": "ad"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_e0ef0550174fd1099a308fd18a0",
+      "table_name": "announcement"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "announcement_createdAt_not_null",
+      "table_name": "announcement"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "announcement_id_not_null",
+      "table_name": "announcement"
+    },
+    {
+      "definition": "NOT NULL text",
+      "name": "announcement_text_not_null",
+      "table_name": "announcement"
+    },
+    {
+      "definition": "NOT NULL title",
+      "name": "announcement_title_not_null",
       "table_name": "announcement"
     },
     {
@@ -49553,6 +51263,26 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_4b90ad1f42681d97b2683890c5e",
+      "table_name": "announcement_read"
+    },
+    {
+      "definition": "NOT NULL \"announcementId\"",
+      "name": "announcement_read_announcementId_not_null",
+      "table_name": "announcement_read"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "announcement_read_createdAt_not_null",
+      "table_name": "announcement_read"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "announcement_read_id_not_null",
+      "table_name": "announcement_read"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "announcement_read_userId_not_null",
       "table_name": "announcement_read"
     },
     {
@@ -49576,6 +51306,66 @@
       "table_name": "antenna"
     },
     {
+      "definition": "NOT NULL \"caseSensitive\"",
+      "name": "antenna_caseSensitive_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "antenna_createdAt_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL \"excludeKeywords\"",
+      "name": "antenna_excludeKeywords_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "antenna_id_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL keywords",
+      "name": "antenna_keywords_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "antenna_name_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL notify",
+      "name": "antenna_notify_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL src",
+      "name": "antenna_src_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "antenna_userId_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL users",
+      "name": "antenna_users_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL \"withFile\"",
+      "name": "antenna_withFile_not_null",
+      "table_name": "antenna"
+    },
+    {
+      "definition": "NOT NULL \"withReplies\"",
+      "name": "antenna_withReplies_not_null",
+      "table_name": "antenna"
+    },
+    {
       "definition": "FOREIGN KEY (\"antennaId\") REFERENCES antenna(id) ON DELETE CASCADE",
       "name": "FK_0d775946662d2575dfd2068a5f5",
       "table_name": "antenna_note"
@@ -49591,6 +51381,26 @@
       "table_name": "antenna_note"
     },
     {
+      "definition": "NOT NULL \"antennaId\"",
+      "name": "antenna_note_antennaId_not_null",
+      "table_name": "antenna_note"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "antenna_note_id_not_null",
+      "table_name": "antenna_note"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "antenna_note_noteId_not_null",
+      "table_name": "antenna_note"
+    },
+    {
+      "definition": "NOT NULL read",
+      "name": "antenna_note_read_not_null",
+      "table_name": "antenna_note"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE SET NULL",
       "name": "FK_3f5b0899ef90527a3462d7c2cb3",
       "table_name": "app"
@@ -49601,6 +51411,36 @@
       "table_name": "app"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "app_createdAt_not_null",
+      "table_name": "app"
+    },
+    {
+      "definition": "NOT NULL description",
+      "name": "app_description_not_null",
+      "table_name": "app"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "app_id_not_null",
+      "table_name": "app"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "app_name_not_null",
+      "table_name": "app"
+    },
+    {
+      "definition": "NOT NULL permission",
+      "name": "app_permission_not_null",
+      "table_name": "app"
+    },
+    {
+      "definition": "NOT NULL secret",
+      "name": "app_secret_not_null",
+      "table_name": "app"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_f1a461a618fa1755692d0e0d592",
       "table_name": "attestation_challenge"
@@ -49608,6 +51448,31 @@
     {
       "definition": "PRIMARY KEY (id, \"userId\")",
       "name": "PK_d0ba6786e093f1bcb497572a6b5",
+      "table_name": "attestation_challenge"
+    },
+    {
+      "definition": "NOT NULL challenge",
+      "name": "attestation_challenge_challenge_not_null",
+      "table_name": "attestation_challenge"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "attestation_challenge_createdAt_not_null",
+      "table_name": "attestation_challenge"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "attestation_challenge_id_not_null",
+      "table_name": "attestation_challenge"
+    },
+    {
+      "definition": "NOT NULL \"registrationChallenge\"",
+      "name": "attestation_challenge_registrationChallenge_not_null",
+      "table_name": "attestation_challenge"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "attestation_challenge_userId_not_null",
       "table_name": "attestation_challenge"
     },
     {
@@ -49626,6 +51491,26 @@
       "table_name": "auth_session"
     },
     {
+      "definition": "NOT NULL \"appId\"",
+      "name": "auth_session_appId_not_null",
+      "table_name": "auth_session"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "auth_session_createdAt_not_null",
+      "table_name": "auth_session"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "auth_session_id_not_null",
+      "table_name": "auth_session"
+    },
+    {
+      "definition": "NOT NULL token",
+      "name": "auth_session_token_not_null",
+      "table_name": "auth_session"
+    },
+    {
       "definition": "FOREIGN KEY (\"blockerId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_0627125f1a8a42c9a1929edb552",
       "table_name": "blocking"
@@ -49638,6 +51523,26 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_e5d9a541cc1965ee7e048ea09dd",
+      "table_name": "blocking"
+    },
+    {
+      "definition": "NOT NULL \"blockeeId\"",
+      "name": "blocking_blockeeId_not_null",
+      "table_name": "blocking"
+    },
+    {
+      "definition": "NOT NULL \"blockerId\"",
+      "name": "blocking_blockerId_not_null",
+      "table_name": "blocking"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "blocking_createdAt_not_null",
+      "table_name": "blocking"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "blocking_id_not_null",
       "table_name": "blocking"
     },
     {
@@ -49656,6 +51561,31 @@
       "table_name": "channel"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "channel_createdAt_not_null",
+      "table_name": "channel"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "channel_id_not_null",
+      "table_name": "channel"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "channel_name_not_null",
+      "table_name": "channel"
+    },
+    {
+      "definition": "NOT NULL \"notesCount\"",
+      "name": "channel_notesCount_not_null",
+      "table_name": "channel"
+    },
+    {
+      "definition": "NOT NULL \"usersCount\"",
+      "name": "channel_usersCount_not_null",
+      "table_name": "channel"
+    },
+    {
       "definition": "FOREIGN KEY (\"followeeId\") REFERENCES channel(id) ON DELETE CASCADE",
       "name": "FK_0e43068c3f92cab197c3d3cd86e",
       "table_name": "channel_following"
@@ -49668,6 +51598,26 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_8b104be7f7415113f2a02cd5bdd",
+      "table_name": "channel_following"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "channel_following_createdAt_not_null",
+      "table_name": "channel_following"
+    },
+    {
+      "definition": "NOT NULL \"followeeId\"",
+      "name": "channel_following_followeeId_not_null",
+      "table_name": "channel_following"
+    },
+    {
+      "definition": "NOT NULL \"followerId\"",
+      "name": "channel_following_followerId_not_null",
+      "table_name": "channel_following"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "channel_following_id_not_null",
       "table_name": "channel_following"
     },
     {
@@ -49686,6 +51636,26 @@
       "table_name": "channel_note_pining"
     },
     {
+      "definition": "NOT NULL \"channelId\"",
+      "name": "channel_note_pining_channelId_not_null",
+      "table_name": "channel_note_pining"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "channel_note_pining_createdAt_not_null",
+      "table_name": "channel_note_pining"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "channel_note_pining_id_not_null",
+      "table_name": "channel_note_pining"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "channel_note_pining_noteId_not_null",
+      "table_name": "channel_note_pining"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_2b5ec6c574d6802c94c80313fb2",
       "table_name": "clip"
@@ -49693,6 +51663,31 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_f0685dac8d4dd056d7255670b75",
+      "table_name": "clip"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "clip_createdAt_not_null",
+      "table_name": "clip"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "clip_id_not_null",
+      "table_name": "clip"
+    },
+    {
+      "definition": "NOT NULL \"isPublic\"",
+      "name": "clip_isPublic_not_null",
+      "table_name": "clip"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "clip_name_not_null",
+      "table_name": "clip"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "clip_userId_not_null",
       "table_name": "clip"
     },
     {
@@ -49711,6 +51706,21 @@
       "table_name": "clip_note"
     },
     {
+      "definition": "NOT NULL \"clipId\"",
+      "name": "clip_note_clipId_not_null",
+      "table_name": "clip_note"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "clip_note_id_not_null",
+      "table_name": "clip_note"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "clip_note_noteId_not_null",
+      "table_name": "clip_note"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE SET NULL",
       "name": "FK_860fa6f6c7df5bb887249fba22e",
       "table_name": "drive_file"
@@ -49723,6 +51733,71 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_43ddaaaf18c9e68029b7cbb032e",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "drive_file_createdAt_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "drive_file_id_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL \"isLink\"",
+      "name": "drive_file_isLink_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL \"isSensitive\"",
+      "name": "drive_file_isSensitive_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL \"maybePorn\"",
+      "name": "drive_file_maybePorn_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL \"maybeSensitive\"",
+      "name": "drive_file_maybeSensitive_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL md5",
+      "name": "drive_file_md5_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "drive_file_name_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL properties",
+      "name": "drive_file_properties_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL size",
+      "name": "drive_file_size_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL \"storedInternal\"",
+      "name": "drive_file_storedInternal_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL type",
+      "name": "drive_file_type_not_null",
+      "table_name": "drive_file"
+    },
+    {
+      "definition": "NOT NULL url",
+      "name": "drive_file_url_not_null",
       "table_name": "drive_file"
     },
     {
@@ -49741,8 +51816,48 @@
       "table_name": "drive_folder"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "drive_folder_createdAt_not_null",
+      "table_name": "drive_folder"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "drive_folder_id_not_null",
+      "table_name": "drive_folder"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "drive_folder_name_not_null",
+      "table_name": "drive_folder"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_df74ce05e24999ee01ea0bc50a3",
+      "table_name": "emoji"
+    },
+    {
+      "definition": "NOT NULL aliases",
+      "name": "emoji_aliases_not_null",
+      "table_name": "emoji"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "emoji_id_not_null",
+      "table_name": "emoji"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "emoji_name_not_null",
+      "table_name": "emoji"
+    },
+    {
+      "definition": "NOT NULL \"publicUrl\"",
+      "name": "emoji_publicUrl_not_null",
+      "table_name": "emoji"
+    },
+    {
+      "definition": "NOT NULL \"originalUrl\"",
+      "name": "emoji_url_not_null",
       "table_name": "emoji"
     },
     {
@@ -49761,6 +51876,26 @@
       "table_name": "follow_request"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "follow_request_createdAt_not_null",
+      "table_name": "follow_request"
+    },
+    {
+      "definition": "NOT NULL \"followeeId\"",
+      "name": "follow_request_followeeId_not_null",
+      "table_name": "follow_request"
+    },
+    {
+      "definition": "NOT NULL \"followerId\"",
+      "name": "follow_request_followerId_not_null",
+      "table_name": "follow_request"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "follow_request_id_not_null",
+      "table_name": "follow_request"
+    },
+    {
       "definition": "FOREIGN KEY (\"followeeId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_24e0042143a18157b234df186c3",
       "table_name": "following"
@@ -49773,6 +51908,26 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_c76c6e044bdf76ecf8bfb82a645",
+      "table_name": "following"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "following_createdAt_not_null",
+      "table_name": "following"
+    },
+    {
+      "definition": "NOT NULL \"followeeId\"",
+      "name": "following_followeeId_not_null",
+      "table_name": "following"
+    },
+    {
+      "definition": "NOT NULL \"followerId\"",
+      "name": "following_followerId_not_null",
+      "table_name": "following"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "following_id_not_null",
       "table_name": "following"
     },
     {
@@ -49791,6 +51946,26 @@
       "table_name": "gallery_like"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "gallery_like_createdAt_not_null",
+      "table_name": "gallery_like"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "gallery_like_id_not_null",
+      "table_name": "gallery_like"
+    },
+    {
+      "definition": "NOT NULL \"postId\"",
+      "name": "gallery_like_postId_not_null",
+      "table_name": "gallery_like"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "gallery_like_userId_not_null",
+      "table_name": "gallery_like"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_985b836dddd8615e432d7043ddb",
       "table_name": "gallery_post"
@@ -49801,13 +51976,178 @@
       "table_name": "gallery_post"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "gallery_post_createdAt_not_null",
+      "table_name": "gallery_post"
+    },
+    {
+      "definition": "NOT NULL \"fileIds\"",
+      "name": "gallery_post_fileIds_not_null",
+      "table_name": "gallery_post"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "gallery_post_id_not_null",
+      "table_name": "gallery_post"
+    },
+    {
+      "definition": "NOT NULL \"isSensitive\"",
+      "name": "gallery_post_isSensitive_not_null",
+      "table_name": "gallery_post"
+    },
+    {
+      "definition": "NOT NULL \"likedCount\"",
+      "name": "gallery_post_likedCount_not_null",
+      "table_name": "gallery_post"
+    },
+    {
+      "definition": "NOT NULL tags",
+      "name": "gallery_post_tags_not_null",
+      "table_name": "gallery_post"
+    },
+    {
+      "definition": "NOT NULL title",
+      "name": "gallery_post_title_not_null",
+      "table_name": "gallery_post"
+    },
+    {
+      "definition": "NOT NULL \"updatedAt\"",
+      "name": "gallery_post_updatedAt_not_null",
+      "table_name": "gallery_post"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "gallery_post_userId_not_null",
+      "table_name": "gallery_post"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_cb36eb8af8412bfa978f1165d78",
       "table_name": "hashtag"
     },
     {
+      "definition": "NOT NULL \"attachedLocalUserIds\"",
+      "name": "hashtag_attachedLocalUserIds_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"attachedLocalUsersCount\"",
+      "name": "hashtag_attachedLocalUsersCount_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"attachedRemoteUserIds\"",
+      "name": "hashtag_attachedRemoteUserIds_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"attachedRemoteUsersCount\"",
+      "name": "hashtag_attachedRemoteUsersCount_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"attachedUserIds\"",
+      "name": "hashtag_attachedUserIds_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"attachedUsersCount\"",
+      "name": "hashtag_attachedUsersCount_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "hashtag_id_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"mentionedLocalUserIds\"",
+      "name": "hashtag_mentionedLocalUserIds_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"mentionedLocalUsersCount\"",
+      "name": "hashtag_mentionedLocalUsersCount_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"mentionedRemoteUserIds\"",
+      "name": "hashtag_mentionedRemoteUserIds_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"mentionedRemoteUsersCount\"",
+      "name": "hashtag_mentionedRemoteUsersCount_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"mentionedUserIds\"",
+      "name": "hashtag_mentionedUserIds_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL \"mentionedUsersCount\"",
+      "name": "hashtag_mentionedUsersCount_not_null",
+      "table_name": "hashtag"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "hashtag_name_not_null",
+      "table_name": "hashtag"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_eaf60e4a0c399c9935413e06474",
+      "table_name": "instance"
+    },
+    {
+      "definition": "NOT NULL \"caughtAt\"",
+      "name": "instance_caughtAt_not_null",
+      "table_name": "instance"
+    },
+    {
+      "definition": "NOT NULL \"followersCount\"",
+      "name": "instance_followersCount_not_null",
+      "table_name": "instance"
+    },
+    {
+      "definition": "NOT NULL \"followingCount\"",
+      "name": "instance_followingCount_not_null",
+      "table_name": "instance"
+    },
+    {
+      "definition": "NOT NULL host",
+      "name": "instance_host_not_null",
+      "table_name": "instance"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "instance_id_not_null",
+      "table_name": "instance"
+    },
+    {
+      "definition": "NOT NULL \"isNotResponding\"",
+      "name": "instance_isNotResponding_not_null",
+      "table_name": "instance"
+    },
+    {
+      "definition": "NOT NULL \"isSuspended\"",
+      "name": "instance_isSuspended_not_null",
+      "table_name": "instance"
+    },
+    {
+      "definition": "NOT NULL \"lastCommunicatedAt\"",
+      "name": "instance_lastCommunicatedAt_not_null",
+      "table_name": "instance"
+    },
+    {
+      "definition": "NOT NULL \"notesCount\"",
+      "name": "instance_notesCount_not_null",
+      "table_name": "instance"
+    },
+    {
+      "definition": "NOT NULL \"usersCount\"",
+      "name": "instance_usersCount_not_null",
       "table_name": "instance"
     },
     {
@@ -49836,6 +52176,31 @@
       "table_name": "messaging_message"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "messaging_message_createdAt_not_null",
+      "table_name": "messaging_message"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "messaging_message_id_not_null",
+      "table_name": "messaging_message"
+    },
+    {
+      "definition": "NOT NULL \"isRead\"",
+      "name": "messaging_message_isRead_not_null",
+      "table_name": "messaging_message"
+    },
+    {
+      "definition": "NOT NULL reads",
+      "name": "messaging_message_reads_not_null",
+      "table_name": "messaging_message"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "messaging_message_userId_not_null",
+      "table_name": "messaging_message"
+    },
+    {
       "definition": "FOREIGN KEY (\"proxyAccountId\") REFERENCES \"user\"(id) ON DELETE SET NULL",
       "name": "FK_ab1bc0c1e209daa77b8e8d212ad",
       "table_name": "meta"
@@ -49846,8 +52211,198 @@
       "table_name": "meta"
     },
     {
+      "definition": "NOT NULL \"blockedHosts\"",
+      "name": "meta_blockedHosts_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"cacheRemoteFiles\"",
+      "name": "meta_cacheRemoteFiles_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"deeplIsPro\"",
+      "name": "meta_deeplIsPro_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"disableGlobalTimeline\"",
+      "name": "meta_disableGlobalTimeline_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"disableLocalTimeline\"",
+      "name": "meta_disableLocalTimeline_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"disableRegistration\"",
+      "name": "meta_disableRegistration_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"emailRequiredForSignup\"",
+      "name": "meta_emailRequiredForSignup_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"enableActiveEmailValidation\"",
+      "name": "meta_enableActiveEmailValidation_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"enableDiscordIntegration\"",
+      "name": "meta_enableDiscordIntegration_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"enableEmail\"",
+      "name": "meta_enableEmail_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"enableGithubIntegration\"",
+      "name": "meta_enableGithubIntegration_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"enableHcaptcha\"",
+      "name": "meta_enableHcaptcha_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"enableIpLogging\"",
+      "name": "meta_enableIpLogging_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"enableRecaptcha\"",
+      "name": "meta_enableRecaptcha_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"enableSensitiveMediaDetectionForVideos\"",
+      "name": "meta_enableSensitiveMediaDetectionForVideos_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"enableServiceWorker\"",
+      "name": "meta_enableServiceWorker_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"enableTwitterIntegration\"",
+      "name": "meta_enableTwitterIntegration_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"hiddenTags\"",
+      "name": "meta_hiddenTags_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "meta_id_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL langs",
+      "name": "meta_langs_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"localDriveCapacityMb\"",
+      "name": "meta_localDriveCapacityMb_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"objectStorageS3ForcePathStyle\"",
+      "name": "meta_objectStorageS3ForcePathStyle_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"objectStorageSetPublicRead\"",
+      "name": "meta_objectStorageSetPublicRead_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"objectStorageUseProxy\"",
+      "name": "meta_objectStorageUseProxy_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"objectStorageUseSSL\"",
+      "name": "meta_objectStorageUseSSL_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"pinnedPages\"",
+      "name": "meta_pinnedPages_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"pinnedUsers\"",
+      "name": "meta_pinnedUsers_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"remoteDriveCapacityMb\"",
+      "name": "meta_remoteDriveCapacityMb_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"repositoryUrl\"",
+      "name": "meta_repositoryUrl_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"sensitiveMediaDetectionSensitivity\"",
+      "name": "meta_sensitiveMediaDetectionSensitivity_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"sensitiveMediaDetection\"",
+      "name": "meta_sensitiveMediaDetection_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"setSensitiveFlagAutomatically\"",
+      "name": "meta_setSensitiveFlagAutomatically_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"smtpSecure\"",
+      "name": "meta_smtpSecure_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"useObjectStorage\"",
+      "name": "meta_useObjectStorage_not_null",
+      "table_name": "meta"
+    },
+    {
+      "definition": "NOT NULL \"useStarForReactionFallback\"",
+      "name": "meta_useStarForReactionFallback_not_null",
+      "table_name": "meta"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_8c82d7f526340ab734260ea46be",
+      "table_name": "migrations"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "migrations_id_not_null",
+      "table_name": "migrations"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "migrations_name_not_null",
+      "table_name": "migrations"
+    },
+    {
+      "definition": "NOT NULL \"timestamp\"",
+      "name": "migrations_timestamp_not_null",
       "table_name": "migrations"
     },
     {
@@ -49858,6 +52413,31 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_d0adca6ecfd068db83e4526cc26",
+      "table_name": "moderation_log"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "moderation_log_createdAt_not_null",
+      "table_name": "moderation_log"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "moderation_log_id_not_null",
+      "table_name": "moderation_log"
+    },
+    {
+      "definition": "NOT NULL info",
+      "name": "moderation_log_info_not_null",
+      "table_name": "moderation_log"
+    },
+    {
+      "definition": "NOT NULL type",
+      "name": "moderation_log_type_not_null",
+      "table_name": "moderation_log"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "moderation_log_userId_not_null",
       "table_name": "moderation_log"
     },
     {
@@ -49876,6 +52456,26 @@
       "table_name": "muted_note"
     },
     {
+      "definition": "NOT NULL id",
+      "name": "muted_note_id_not_null",
+      "table_name": "muted_note"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "muted_note_noteId_not_null",
+      "table_name": "muted_note"
+    },
+    {
+      "definition": "NOT NULL reason",
+      "name": "muted_note_reason_not_null",
+      "table_name": "muted_note"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "muted_note_userId_not_null",
+      "table_name": "muted_note"
+    },
+    {
       "definition": "FOREIGN KEY (\"muterId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_93060675b4a79a577f31d260c67",
       "table_name": "muting"
@@ -49888,6 +52488,26 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_2e92d06c8b5c602eeb27ca9ba48",
+      "table_name": "muting"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "muting_createdAt_not_null",
+      "table_name": "muting"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "muting_id_not_null",
+      "table_name": "muting"
+    },
+    {
+      "definition": "NOT NULL \"muteeId\"",
+      "name": "muting_muteeId_not_null",
+      "table_name": "muting"
+    },
+    {
+      "definition": "NOT NULL \"muterId\"",
+      "name": "muting_muterId_not_null",
       "table_name": "muting"
     },
     {
@@ -49916,6 +52536,91 @@
       "table_name": "note"
     },
     {
+      "definition": "NOT NULL \"attachedFileTypes\"",
+      "name": "note_attachedFileTypes_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "note_createdAt_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL emojis",
+      "name": "note_emojis_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL \"fileIds\"",
+      "name": "note_fileIds_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL \"hasPoll\"",
+      "name": "note_hasPoll_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "note_id_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL \"localOnly\"",
+      "name": "note_localOnly_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL \"mentionedRemoteUsers\"",
+      "name": "note_mentionedRemoteUsers_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL mentions",
+      "name": "note_mentions_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL reactions",
+      "name": "note_reactions_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL \"renoteCount\"",
+      "name": "note_renoteCount_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL \"repliesCount\"",
+      "name": "note_repliesCount_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL score",
+      "name": "note_score_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL tags",
+      "name": "note_tags_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "note_userId_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL visibility",
+      "name": "note_visibility_not_null",
+      "table_name": "note"
+    },
+    {
+      "definition": "NOT NULL \"visibleUserIds\"",
+      "name": "note_visibleUserIds_not_null",
+      "table_name": "note"
+    },
+    {
       "definition": "FOREIGN KEY (\"noteId\") REFERENCES note(id) ON DELETE CASCADE",
       "name": "FK_0e00498f180193423c992bc4370",
       "table_name": "note_favorite"
@@ -49928,6 +52633,26 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_af0da35a60b9fa4463a62082b36",
+      "table_name": "note_favorite"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "note_favorite_createdAt_not_null",
+      "table_name": "note_favorite"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "note_favorite_id_not_null",
+      "table_name": "note_favorite"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "note_favorite_noteId_not_null",
+      "table_name": "note_favorite"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "note_favorite_userId_not_null",
       "table_name": "note_favorite"
     },
     {
@@ -49946,6 +52671,31 @@
       "table_name": "note_reaction"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "note_reaction_createdAt_not_null",
+      "table_name": "note_reaction"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "note_reaction_id_not_null",
+      "table_name": "note_reaction"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "note_reaction_noteId_not_null",
+      "table_name": "note_reaction"
+    },
+    {
+      "definition": "NOT NULL reaction",
+      "name": "note_reaction_reaction_not_null",
+      "table_name": "note_reaction"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "note_reaction_userId_not_null",
+      "table_name": "note_reaction"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_29c11c7deb06615076f8c95b80a",
       "table_name": "note_thread_muting"
@@ -49953,6 +52703,26 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_ec5936d94d1a0369646d12a3a47",
+      "table_name": "note_thread_muting"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "note_thread_muting_createdAt_not_null",
+      "table_name": "note_thread_muting"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "note_thread_muting_id_not_null",
+      "table_name": "note_thread_muting"
+    },
+    {
+      "definition": "NOT NULL \"threadId\"",
+      "name": "note_thread_muting_threadId_not_null",
+      "table_name": "note_thread_muting"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "note_thread_muting_userId_not_null",
       "table_name": "note_thread_muting"
     },
     {
@@ -49971,6 +52741,36 @@
       "table_name": "note_unread"
     },
     {
+      "definition": "NOT NULL id",
+      "name": "note_unread_id_not_null",
+      "table_name": "note_unread"
+    },
+    {
+      "definition": "NOT NULL \"isMentioned\"",
+      "name": "note_unread_isMentioned_not_null",
+      "table_name": "note_unread"
+    },
+    {
+      "definition": "NOT NULL \"isSpecified\"",
+      "name": "note_unread_isSpecified_not_null",
+      "table_name": "note_unread"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "note_unread_noteId_not_null",
+      "table_name": "note_unread"
+    },
+    {
+      "definition": "NOT NULL \"noteUserId\"",
+      "name": "note_unread_noteUserId_not_null",
+      "table_name": "note_unread"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "note_unread_userId_not_null",
+      "table_name": "note_unread"
+    },
+    {
       "definition": "FOREIGN KEY (\"noteId\") REFERENCES note(id) ON DELETE CASCADE",
       "name": "FK_03e7028ab8388a3f5e3ce2a8619",
       "table_name": "note_watching"
@@ -49983,6 +52783,31 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_49286fdb23725945a74aa27d757",
+      "table_name": "note_watching"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "note_watching_createdAt_not_null",
+      "table_name": "note_watching"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "note_watching_id_not_null",
+      "table_name": "note_watching"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "note_watching_noteId_not_null",
+      "table_name": "note_watching"
+    },
+    {
+      "definition": "NOT NULL \"noteUserId\"",
+      "name": "note_watching_noteUserId_not_null",
+      "table_name": "note_watching"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "note_watching_userId_not_null",
       "table_name": "note_watching"
     },
     {
@@ -50021,6 +52846,31 @@
       "table_name": "notification"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "notification_createdAt_not_null",
+      "table_name": "notification"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "notification_id_not_null",
+      "table_name": "notification"
+    },
+    {
+      "definition": "NOT NULL \"isRead\"",
+      "name": "notification_isRead_not_null",
+      "table_name": "notification"
+    },
+    {
+      "definition": "NOT NULL \"notifieeId\"",
+      "name": "notification_notifieeId_not_null",
+      "table_name": "notification"
+    },
+    {
+      "definition": "NOT NULL type",
+      "name": "notification_type_not_null",
+      "table_name": "notification"
+    },
+    {
       "definition": "FOREIGN KEY (\"eyeCatchingImageId\") REFERENCES drive_file(id) ON DELETE CASCADE",
       "name": "FK_a9ca79ad939bf06066b81c9d3aa",
       "table_name": "page"
@@ -50033,6 +52883,81 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_742f4117e065c5b6ad21b37ba1f",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL \"alignCenter\"",
+      "name": "page_alignCenter_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL content",
+      "name": "page_content_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "page_createdAt_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL font",
+      "name": "page_font_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL \"hideTitleWhenPinned\"",
+      "name": "page_hideTitleWhenPinned_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "page_id_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL \"likedCount\"",
+      "name": "page_likedCount_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "page_name_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL script",
+      "name": "page_script_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL title",
+      "name": "page_title_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL \"updatedAt\"",
+      "name": "page_updatedAt_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "page_userId_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL variables",
+      "name": "page_variables_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL visibility",
+      "name": "page_visibility_not_null",
+      "table_name": "page"
+    },
+    {
+      "definition": "NOT NULL \"visibleUserIds\"",
+      "name": "page_visibleUserIds_not_null",
       "table_name": "page"
     },
     {
@@ -50051,6 +52976,26 @@
       "table_name": "page_like"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "page_like_createdAt_not_null",
+      "table_name": "page_like"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "page_like_id_not_null",
+      "table_name": "page_like"
+    },
+    {
+      "definition": "NOT NULL \"pageId\"",
+      "name": "page_like_pageId_not_null",
+      "table_name": "page_like"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "page_like_userId_not_null",
+      "table_name": "page_like"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_4bb7fd4a34492ae0e6cc8d30ac8",
       "table_name": "password_reset_request"
@@ -50058,6 +53003,26 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_fcf4b02eae1403a2edaf87fd074",
+      "table_name": "password_reset_request"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "password_reset_request_createdAt_not_null",
+      "table_name": "password_reset_request"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "password_reset_request_id_not_null",
+      "table_name": "password_reset_request"
+    },
+    {
+      "definition": "NOT NULL token",
+      "name": "password_reset_request_token_not_null",
+      "table_name": "password_reset_request"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "password_reset_request_userId_not_null",
       "table_name": "password_reset_request"
     },
     {
@@ -50076,6 +53041,36 @@
       "table_name": "poll"
     },
     {
+      "definition": "NOT NULL choices",
+      "name": "poll_choices_not_null",
+      "table_name": "poll"
+    },
+    {
+      "definition": "NOT NULL multiple",
+      "name": "poll_multiple_not_null",
+      "table_name": "poll"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "poll_noteId_not_null",
+      "table_name": "poll"
+    },
+    {
+      "definition": "NOT NULL \"noteVisibility\"",
+      "name": "poll_noteVisibility_not_null",
+      "table_name": "poll"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "poll_userId_not_null",
+      "table_name": "poll"
+    },
+    {
+      "definition": "NOT NULL votes",
+      "name": "poll_votes_not_null",
+      "table_name": "poll"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_66d2bd2ee31d14bcc23069a89f8",
       "table_name": "poll_vote"
@@ -50088,6 +53083,31 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_fd002d371201c472490ba89c6a0",
+      "table_name": "poll_vote"
+    },
+    {
+      "definition": "NOT NULL choice",
+      "name": "poll_vote_choice_not_null",
+      "table_name": "poll_vote"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "poll_vote_createdAt_not_null",
+      "table_name": "poll_vote"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "poll_vote_id_not_null",
+      "table_name": "poll_vote"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "poll_vote_noteId_not_null",
+      "table_name": "poll_vote"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "poll_vote_userId_not_null",
       "table_name": "poll_vote"
     },
     {
@@ -50106,6 +53126,21 @@
       "table_name": "promo_note"
     },
     {
+      "definition": "NOT NULL \"expiresAt\"",
+      "name": "promo_note_expiresAt_not_null",
+      "table_name": "promo_note"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "promo_note_noteId_not_null",
+      "table_name": "promo_note"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "promo_note_userId_not_null",
+      "table_name": "promo_note"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_9657d55550c3d37bfafaf7d4b05",
       "table_name": "promo_read"
@@ -50121,8 +53156,43 @@
       "table_name": "promo_read"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "promo_read_createdAt_not_null",
+      "table_name": "promo_read"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "promo_read_id_not_null",
+      "table_name": "promo_read"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "promo_read_noteId_not_null",
+      "table_name": "promo_read"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "promo_read_userId_not_null",
+      "table_name": "promo_read"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_f11696b6fafcf3662d4292734f8",
+      "table_name": "registration_ticket"
+    },
+    {
+      "definition": "NOT NULL code",
+      "name": "registration_ticket_code_not_null",
+      "table_name": "registration_ticket"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "registration_ticket_createdAt_not_null",
+      "table_name": "registration_ticket"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "registration_ticket_id_not_null",
       "table_name": "registration_ticket"
     },
     {
@@ -50136,8 +53206,53 @@
       "table_name": "registry_item"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "registry_item_createdAt_not_null",
+      "table_name": "registry_item"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "registry_item_id_not_null",
+      "table_name": "registry_item"
+    },
+    {
+      "definition": "NOT NULL key",
+      "name": "registry_item_key_not_null",
+      "table_name": "registry_item"
+    },
+    {
+      "definition": "NOT NULL scope",
+      "name": "registry_item_scope_not_null",
+      "table_name": "registry_item"
+    },
+    {
+      "definition": "NOT NULL \"updatedAt\"",
+      "name": "registry_item_updatedAt_not_null",
+      "table_name": "registry_item"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "registry_item_userId_not_null",
+      "table_name": "registry_item"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_78ebc9cfddf4292633b7ba57aee",
+      "table_name": "relay"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "relay_id_not_null",
+      "table_name": "relay"
+    },
+    {
+      "definition": "NOT NULL inbox",
+      "name": "relay_inbox_not_null",
+      "table_name": "relay"
+    },
+    {
+      "definition": "NOT NULL status",
+      "name": "relay_status_not_null",
       "table_name": "relay"
     },
     {
@@ -50156,6 +53271,76 @@
       "table_name": "reversi_game"
     },
     {
+      "definition": "NOT NULL bw",
+      "name": "reversi_game_bw_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL \"canPutEverywhere\"",
+      "name": "reversi_game_canPutEverywhere_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "reversi_game_createdAt_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "reversi_game_id_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL \"isEnded\"",
+      "name": "reversi_game_isEnded_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL \"isLlotheo\"",
+      "name": "reversi_game_isLlotheo_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL \"isStarted\"",
+      "name": "reversi_game_isStarted_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL logs",
+      "name": "reversi_game_logs_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL \"loopedBoard\"",
+      "name": "reversi_game_loopedBoard_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL map",
+      "name": "reversi_game_map_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL \"user1Accepted\"",
+      "name": "reversi_game_user1Accepted_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL \"user1Id\"",
+      "name": "reversi_game_user1Id_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL \"user2Accepted\"",
+      "name": "reversi_game_user2Accepted_not_null",
+      "table_name": "reversi_game"
+    },
+    {
+      "definition": "NOT NULL \"user2Id\"",
+      "name": "reversi_game_user2Id_not_null",
+      "table_name": "reversi_game"
+    },
+    {
       "definition": "FOREIGN KEY (\"parentId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_3b25402709dd9882048c2bbade0",
       "table_name": "reversi_matching"
@@ -50171,6 +53356,26 @@
       "table_name": "reversi_matching"
     },
     {
+      "definition": "NOT NULL \"childId\"",
+      "name": "reversi_matching_childId_not_null",
+      "table_name": "reversi_matching"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "reversi_matching_createdAt_not_null",
+      "table_name": "reversi_matching"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "reversi_matching_id_not_null",
+      "table_name": "reversi_matching"
+    },
+    {
+      "definition": "NOT NULL \"parentId\"",
+      "name": "reversi_matching_parentId_not_null",
+      "table_name": "reversi_matching"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_2c308dbdc50d94dc625670055f7",
       "table_name": "signin"
@@ -50178,6 +53383,36 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_9e96ddc025712616fc492b3b588",
+      "table_name": "signin"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "signin_createdAt_not_null",
+      "table_name": "signin"
+    },
+    {
+      "definition": "NOT NULL headers",
+      "name": "signin_headers_not_null",
+      "table_name": "signin"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "signin_id_not_null",
+      "table_name": "signin"
+    },
+    {
+      "definition": "NOT NULL ip",
+      "name": "signin_ip_not_null",
+      "table_name": "signin"
+    },
+    {
+      "definition": "NOT NULL success",
+      "name": "signin_success_not_null",
+      "table_name": "signin"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "signin_userId_not_null",
       "table_name": "signin"
     },
     {
@@ -50191,8 +53426,48 @@
       "table_name": "sw_subscription"
     },
     {
+      "definition": "NOT NULL auth",
+      "name": "sw_subscription_auth_not_null",
+      "table_name": "sw_subscription"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "sw_subscription_createdAt_not_null",
+      "table_name": "sw_subscription"
+    },
+    {
+      "definition": "NOT NULL endpoint",
+      "name": "sw_subscription_endpoint_not_null",
+      "table_name": "sw_subscription"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "sw_subscription_id_not_null",
+      "table_name": "sw_subscription"
+    },
+    {
+      "definition": "NOT NULL publickey",
+      "name": "sw_subscription_publickey_not_null",
+      "table_name": "sw_subscription"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "sw_subscription_userId_not_null",
+      "table_name": "sw_subscription"
+    },
+    {
       "definition": "PRIMARY KEY (username)",
       "name": "PK_78fd79d2d24c6ac2f4cc9a31a5d",
+      "table_name": "used_username"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "used_username_createdAt_not_null",
+      "table_name": "used_username"
+    },
+    {
+      "definition": "NOT NULL username",
+      "name": "used_username_username_not_null",
       "table_name": "used_username"
     },
     {
@@ -50226,6 +53501,106 @@
       "table_name": "user"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "user_createdAt_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL emojis",
+      "name": "user_emojis_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"followersCount\"",
+      "name": "user_followersCount_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"followingCount\"",
+      "name": "user_followingCount_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"hideOnlineStatus\"",
+      "name": "user_hideOnlineStatus_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "user_id_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"isAdmin\"",
+      "name": "user_isAdmin_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"isBot\"",
+      "name": "user_isBot_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"isCat\"",
+      "name": "user_isCat_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"isDeleted\"",
+      "name": "user_isDeleted_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"isExplorable\"",
+      "name": "user_isExplorable_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"isLocked\"",
+      "name": "user_isLocked_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"isModerator\"",
+      "name": "user_isModerator_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"isSilenced\"",
+      "name": "user_isSilenced_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"isSuspended\"",
+      "name": "user_isSuspended_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"notesCount\"",
+      "name": "user_notesCount_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"showTimelineReplies\"",
+      "name": "user_showTimelineReplies_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL tags",
+      "name": "user_tags_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL \"usernameLower\"",
+      "name": "user_usernameLower_not_null",
+      "table_name": "user"
+    },
+    {
+      "definition": "NOT NULL username",
+      "name": "user_username_not_null",
+      "table_name": "user"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_3d6b372788ab01be58853003c93",
       "table_name": "user_group"
@@ -50233,6 +53608,31 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_3c29fba6fe013ec8724378ce7c9",
+      "table_name": "user_group"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "user_group_createdAt_not_null",
+      "table_name": "user_group"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "user_group_id_not_null",
+      "table_name": "user_group"
+    },
+    {
+      "definition": "NOT NULL \"isPrivate\"",
+      "name": "user_group_isPrivate_not_null",
+      "table_name": "user_group"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "user_group_name_not_null",
+      "table_name": "user_group"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_group_userId_not_null",
       "table_name": "user_group"
     },
     {
@@ -50251,6 +53651,26 @@
       "table_name": "user_group_invitation"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "user_group_invitation_createdAt_not_null",
+      "table_name": "user_group_invitation"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "user_group_invitation_id_not_null",
+      "table_name": "user_group_invitation"
+    },
+    {
+      "definition": "NOT NULL \"userGroupId\"",
+      "name": "user_group_invitation_userGroupId_not_null",
+      "table_name": "user_group_invitation"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_group_invitation_userId_not_null",
+      "table_name": "user_group_invitation"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_1039988afa3bf991185b277fe03",
       "table_name": "user_group_invite"
@@ -50263,6 +53683,26 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_3893884af0d3a5f4d01e7921a97",
+      "table_name": "user_group_invite"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "user_group_invite_createdAt_not_null",
+      "table_name": "user_group_invite"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "user_group_invite_id_not_null",
+      "table_name": "user_group_invite"
+    },
+    {
+      "definition": "NOT NULL \"userGroupId\"",
+      "name": "user_group_invite_userGroupId_not_null",
+      "table_name": "user_group_invite"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_group_invite_userId_not_null",
       "table_name": "user_group_invite"
     },
     {
@@ -50281,8 +53721,48 @@
       "table_name": "user_group_joining"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "user_group_joining_createdAt_not_null",
+      "table_name": "user_group_joining"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "user_group_joining_id_not_null",
+      "table_name": "user_group_joining"
+    },
+    {
+      "definition": "NOT NULL \"userGroupId\"",
+      "name": "user_group_joining_userGroupId_not_null",
+      "table_name": "user_group_joining"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_group_joining_userId_not_null",
+      "table_name": "user_group_joining"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_2c44ddfbf7c0464d028dcef325e",
+      "table_name": "user_ip"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "user_ip_createdAt_not_null",
+      "table_name": "user_ip"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "user_ip_id_not_null",
+      "table_name": "user_ip"
+    },
+    {
+      "definition": "NOT NULL ip",
+      "name": "user_ip_ip_not_null",
+      "table_name": "user_ip"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_ip_userId_not_null",
       "table_name": "user_ip"
     },
     {
@@ -50301,6 +53781,21 @@
       "table_name": "user_keypair"
     },
     {
+      "definition": "NOT NULL \"privateKey\"",
+      "name": "user_keypair_privateKey_not_null",
+      "table_name": "user_keypair"
+    },
+    {
+      "definition": "NOT NULL \"publicKey\"",
+      "name": "user_keypair_publicKey_not_null",
+      "table_name": "user_keypair"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_keypair_userId_not_null",
+      "table_name": "user_keypair"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_b7fcefbdd1c18dce86687531f99",
       "table_name": "user_list"
@@ -50308,6 +53803,26 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_87bab75775fd9b1ff822b656402",
+      "table_name": "user_list"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "user_list_createdAt_not_null",
+      "table_name": "user_list"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "user_list_id_not_null",
+      "table_name": "user_list"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "user_list_name_not_null",
+      "table_name": "user_list"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_list_userId_not_null",
       "table_name": "user_list"
     },
     {
@@ -50326,6 +53841,26 @@
       "table_name": "user_list_joining"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "user_list_joining_createdAt_not_null",
+      "table_name": "user_list_joining"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "user_list_joining_id_not_null",
+      "table_name": "user_list_joining"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_list_joining_userId_not_null",
+      "table_name": "user_list_joining"
+    },
+    {
+      "definition": "NOT NULL \"userListId\"",
+      "name": "user_list_joining_userListId_not_null",
+      "table_name": "user_list_joining"
+    },
+    {
       "definition": "FOREIGN KEY (\"noteId\") REFERENCES note(id) ON DELETE CASCADE",
       "name": "FK_68881008f7c3588ad7ecae471cf",
       "table_name": "user_note_pining"
@@ -50341,8 +53876,58 @@
       "table_name": "user_note_pining"
     },
     {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "user_note_pining_createdAt_not_null",
+      "table_name": "user_note_pining"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "user_note_pining_id_not_null",
+      "table_name": "user_note_pining"
+    },
+    {
+      "definition": "NOT NULL \"noteId\"",
+      "name": "user_note_pining_noteId_not_null",
+      "table_name": "user_note_pining"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_note_pining_userId_not_null",
+      "table_name": "user_note_pining"
+    },
+    {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_d4c84e013c98ec02d19b8fbbafa",
+      "table_name": "user_pending"
+    },
+    {
+      "definition": "NOT NULL code",
+      "name": "user_pending_code_not_null",
+      "table_name": "user_pending"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "user_pending_createdAt_not_null",
+      "table_name": "user_pending"
+    },
+    {
+      "definition": "NOT NULL email",
+      "name": "user_pending_email_not_null",
+      "table_name": "user_pending"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "user_pending_id_not_null",
+      "table_name": "user_pending"
+    },
+    {
+      "definition": "NOT NULL password",
+      "name": "user_pending_password_not_null",
+      "table_name": "user_pending"
+    },
+    {
+      "definition": "NOT NULL username",
+      "name": "user_pending_username_not_null",
       "table_name": "user_pending"
     },
     {
@@ -50371,6 +53956,126 @@
       "table_name": "user_profile"
     },
     {
+      "definition": "NOT NULL \"alwaysMarkNsfw\"",
+      "name": "user_profile_alwaysMarkNsfw_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"autoAcceptFollowed\"",
+      "name": "user_profile_autoAcceptFollowed_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"autoSensitive\"",
+      "name": "user_profile_autoSensitive_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"carefulBot\"",
+      "name": "user_profile_carefulBot_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"clientData\"",
+      "name": "user_profile_clientData_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"emailNotificationTypes\"",
+      "name": "user_profile_emailNotificationTypes_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"emailVerified\"",
+      "name": "user_profile_emailVerified_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"enableWordMute\"",
+      "name": "user_profile_enableWordMute_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"ffVisibility\"",
+      "name": "user_profile_ffVisibility_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL fields",
+      "name": "user_profile_fields_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"injectFeaturedNote\"",
+      "name": "user_profile_injectFeaturedNote_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL integrations",
+      "name": "user_profile_integrations_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"moderationNote\"",
+      "name": "user_profile_moderationNote_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"mutedInstances\"",
+      "name": "user_profile_mutedInstances_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"mutedWords\"",
+      "name": "user_profile_mutedWords_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"mutingNotificationTypes\"",
+      "name": "user_profile_mutingNotificationTypes_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"noCrawle\"",
+      "name": "user_profile_noCrawle_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"publicReactions\"",
+      "name": "user_profile_publicReactions_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"receiveAnnouncementEmail\"",
+      "name": "user_profile_receiveAnnouncementEmail_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL room",
+      "name": "user_profile_room_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"securityKeysAvailable\"",
+      "name": "user_profile_securityKeysAvailable_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"twoFactorEnabled\"",
+      "name": "user_profile_twoFactorEnabled_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"usePasswordLessLogin\"",
+      "name": "user_profile_usePasswordLessLogin_not_null",
+      "table_name": "user_profile"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_profile_userId_not_null",
+      "table_name": "user_profile"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_10c146e4b39b443ede016f6736d",
       "table_name": "user_publickey"
@@ -50386,6 +54091,21 @@
       "table_name": "user_publickey"
     },
     {
+      "definition": "NOT NULL \"keyId\"",
+      "name": "user_publickey_keyId_not_null",
+      "table_name": "user_publickey"
+    },
+    {
+      "definition": "NOT NULL \"keyPem\"",
+      "name": "user_publickey_keyPem_not_null",
+      "table_name": "user_publickey"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_publickey_userId_not_null",
+      "table_name": "user_publickey"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_ff9ca3b5f3ee3d0681367a9b447",
       "table_name": "user_security_key"
@@ -50396,6 +54116,31 @@
       "table_name": "user_security_key"
     },
     {
+      "definition": "NOT NULL id",
+      "name": "user_security_key_id_not_null",
+      "table_name": "user_security_key"
+    },
+    {
+      "definition": "NOT NULL \"lastUsed\"",
+      "name": "user_security_key_lastUsed_not_null",
+      "table_name": "user_security_key"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "user_security_key_name_not_null",
+      "table_name": "user_security_key"
+    },
+    {
+      "definition": "NOT NULL \"publicKey\"",
+      "name": "user_security_key_publicKey_not_null",
+      "table_name": "user_security_key"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "user_security_key_userId_not_null",
+      "table_name": "user_security_key"
+    },
+    {
       "definition": "FOREIGN KEY (\"userId\") REFERENCES \"user\"(id) ON DELETE CASCADE",
       "name": "FK_f272c8c8805969e6a6449c77b3c",
       "table_name": "webhook"
@@ -50403,6 +54148,46 @@
     {
       "definition": "PRIMARY KEY (id)",
       "name": "PK_e6765510c2d078db49632b59020",
+      "table_name": "webhook"
+    },
+    {
+      "definition": "NOT NULL active",
+      "name": "webhook_active_not_null",
+      "table_name": "webhook"
+    },
+    {
+      "definition": "NOT NULL \"createdAt\"",
+      "name": "webhook_createdAt_not_null",
+      "table_name": "webhook"
+    },
+    {
+      "definition": "NOT NULL id",
+      "name": "webhook_id_not_null",
+      "table_name": "webhook"
+    },
+    {
+      "definition": "NOT NULL name",
+      "name": "webhook_name_not_null",
+      "table_name": "webhook"
+    },
+    {
+      "definition": "NOT NULL \"on\"",
+      "name": "webhook_on_not_null",
+      "table_name": "webhook"
+    },
+    {
+      "definition": "NOT NULL secret",
+      "name": "webhook_secret_not_null",
+      "table_name": "webhook"
+    },
+    {
+      "definition": "NOT NULL url",
+      "name": "webhook_url_not_null",
+      "table_name": "webhook"
+    },
+    {
+      "definition": "NOT NULL \"userId\"",
+      "name": "webhook_userId_not_null",
       "table_name": "webhook"
     }
   ],

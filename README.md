@@ -51,6 +51,8 @@ With Misskey's built in drive, you get cloud storage right in your social media,
 
 Misskey Documentation can be found at [Misskey Hub](https://misskey-hub.net/), some of the links and graphics above also lead to specific portions of it.
 
+メンテナンス版の検証: [回帰テスト](docs/maintenance/regression-testing.md)・[コンテナ間の連合試験](docs/maintenance/federation-testing.md)。
+
 ## Sponsors
 <div align="center">
 	<a class="rss3" title="RSS3" href="https://rss3.io/" target="_blank"><img src="https://rss3.mypinata.cloud/ipfs/QmUG6H3Z7D5P511shn7sB4CPmpjH5uZWu4m5mWX7U3Gqbu" alt="RSS3" height="60"></a>

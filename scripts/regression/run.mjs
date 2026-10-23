@@ -7,6 +7,7 @@ import { scenarios, database } from './scenarios.mjs';
 import { inventory } from './inventory.mjs';
 import { browserScenarios } from './browser.mjs';
 import { coverage } from './coverage.mjs';
+import { buildFingerprint } from './build-fingerprint.mjs';
 
 const f = await fixture();
 const o = new Observations(f.base);
@@ -23,7 +24,7 @@ try {
 	o.record('unhandled runtime errors (known defects included)', runtime.errors);
 	await writeFile(resolve(f.output, 'runtime-errors.json'), JSON.stringify(runtime.errors, null, 2) + '\n');
 	if (runtime.errors.length) console.warn(`Observed ${runtime.errors.length} unhandled runtime errors; these remain explicit baseline defects, see runtime-errors.json`);
-	const summary = { ...counts, observations: Object.keys(o.values).length };
+	const summary = { ...counts, observations: Object.keys(o.values).length, backendBuildDigest: await buildFingerprint() };
 	await writeFile(resolve(f.output, 'summary.json'), JSON.stringify({ ...summary, revision: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), node: process.version }, null, 2) + '\n');
 	await verifyBaseline(o.values, f.output, resolve(root, 'scripts/regression/baseline.json'));
 	completed = true;

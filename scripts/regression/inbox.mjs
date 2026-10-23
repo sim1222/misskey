@@ -20,7 +20,7 @@ export async function inboxScenarios(f, o, alice, localNoteId) {
 	await f.db.query('INSERT INTO instance (id,host,"caughtAt","lastCommunicatedAt","infoUpdatedAt") VALUES ($1,$2,now(),now(),now())', ['zzzzzzzz02', 'peer.example.invalid']);
 	o.alias(remoteId, 'remote-user');
 	const prefix = `${f.name}:queue`;
-	const queues = ['inbox', 'deliver'].map(name => new Bull(name, { prefix, redis: { host: '127.0.0.1', port: Number(process.env.REGRESSION_REDIS_PORT ?? 6379) } }));
+	const queues = ['inbox', 'deliver'].map(name => new Bull(name, { prefix, redis: { host: '127.0.0.1', port: Number(process.env.REGRESSION_REDIS_PORT ?? 56318) } }));
 	const [inbox, deliver] = queues;
 	const send = async (name, activity, expected = 202, tamper = false) => {
 		let completed;

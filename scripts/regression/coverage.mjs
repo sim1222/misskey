@@ -10,7 +10,7 @@ export async function coverage(output, directory, completed = true) {
 	const { createContext } = requireBackend('istanbul-lib-report');
 	const reports = requireBackend('istanbul-reports');
 	const map = createCoverageMap({});
-	for (const name of await readdir(resolve(output, 'v8'))) {
+	for (const name of (await readdir(resolve(output, 'v8'), { recursive: true })).filter(path => path.endsWith('.json'))) {
 		const report = JSON.parse(await readFile(resolve(output, 'v8', name), 'utf8'));
 		for (const script of report.result) {
 			if (!script.url.startsWith('file:')) continue;
