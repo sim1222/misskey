@@ -52929,5 +52929,25 @@
       "usePasswordLessLogin": false,
       "userId": "<remote-user>"
     }
+  ],
+  "unhandled runtime errors (known defects included)": [
+    {
+      "kind": "unhandledRejection",
+      "message": "Cannot read properties of undefined (reading 'push')",
+      "name": "TypeError",
+      "origin": "core/AntennaService.js"
+    },
+    {
+      "kind": "unhandledRejection",
+      "message": "Cannot read properties of undefined (reading 'findIndex')",
+      "name": "TypeError",
+      "origin": "core/AntennaService.js"
+    },
+    {
+      "kind": "unhandledRejection",
+      "message": "Cannot read properties of undefined (reading 'filter')",
+      "name": "TypeError",
+      "origin": "core/AntennaService.js"
+    }
   ]
 }

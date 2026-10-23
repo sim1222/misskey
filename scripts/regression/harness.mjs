@@ -132,17 +132,17 @@ export async function fixture() {
 			const response = await fetch(`${base}/api/meta`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
 			assert.equal(response.status, 200);
 		}, 'HTTP application readiness', 60000, () => child.exitCode !== null);
-		const received = new Promise((done, reject) => {
+		const query = (request, kind) => new Promise((done, reject) => {
 			const timer = setTimeout(() => { child.off('message', receive); reject(new Error('Metadata IPC timeout')); }, 10000);
 			function receive(message) {
-				if (message?.kind === 'metadata') { clearTimeout(timer); child.off('message', receive); done(message); }
+				if (message?.kind === kind) { clearTimeout(timer); child.off('message', receive); done(message); }
 			}
 			child.on('message', receive);
+			child.send(request);
 		});
-		child.send('regression:metadata');
-		const message = await received;
+		const message = await query('regression:metadata', 'metadata');
 		assert.equal(message.kind, 'metadata');
-		return { base, db, redis, name, output, directory, stop, endpoints: message.endpoints };
+		return { base, db, redis, name, output, directory, stop, endpoints: message.endpoints, runtimeErrors: () => query('regression:errors', 'runtimeErrors') };
 	} catch (error) {
 		await stop();
 		throw error;

@@ -19,6 +19,10 @@ try {
 	console.log('Probing every registered API authentication boundary');
 	const counts = await inventory(f, o, users);
 	await database(f, o);
+	const runtime = await f.runtimeErrors();
+	o.record('unhandled runtime errors (known defects included)', runtime.errors);
+	await writeFile(resolve(f.output, 'runtime-errors.json'), JSON.stringify(runtime.errors, null, 2) + '\n');
+	if (runtime.errors.length) console.warn(`Observed ${runtime.errors.length} unhandled runtime errors; these remain explicit baseline defects, see runtime-errors.json`);
 	const summary = { ...counts, observations: Object.keys(o.values).length };
 	await writeFile(resolve(f.output, 'summary.json'), JSON.stringify({ ...summary, revision: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), node: process.version }, null, 2) + '\n');
 	await verifyBaseline(o.values, f.output, resolve(root, 'scripts/regression/baseline.json'));
