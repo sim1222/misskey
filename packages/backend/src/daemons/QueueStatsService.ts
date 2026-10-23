@@ -10,7 +10,7 @@ const interval = 10000;
 
 @Injectable()
 export class QueueStatsService implements OnApplicationShutdown {
-	private intervalId: NodeJS.Timer;
+	private intervalId: ReturnType<typeof setInterval>;
 
 	constructor(
 		private queueService: QueueService,

@@ -23,7 +23,7 @@ import type { UserKeypair } from '@/models/entities/UserKeypair.js';
 import type { UsersRepository, UserProfilesRepository, NotesRepository, DriveFilesRepository, EmojisRepository, PollsRepository } from '@/models/index.js';
 import { LdSignatureService } from './LdSignatureService.js';
 import { ApMfmService } from './ApMfmService.js';
-import type { IActivity } from './type.js';
+import type { IActivity, IPost, IObject } from './type.js';
 import type { IIdentifier } from './models/identifier.js';
 
 @Injectable()
@@ -276,7 +276,7 @@ export class ApRendererService {
 		};
 	}
 
-	public async renderNote(note: Note, dive = true, isTalk = false): Promise<Record<string, unknown>> {
+	public async renderNote(note: Note, dive = true, isTalk = false): Promise<IPost> {
 		const getPromisedFiles = async (ids: string[]) => {
 			if (!ids || ids.length === 0) return [];
 			const items = await this.driveFilesRepository.findBy({ id: In(ids) });
@@ -376,7 +376,7 @@ export class ApRendererService {
 		];
 	
 		const asPoll = poll ? {
-			type: 'Question',
+			type: 'Question' as const,
 			content: this.apMfmService.getNoteHtml(Object.assign({}, note, {
 				text: text,
 			})),
@@ -591,7 +591,10 @@ export class ApRendererService {
 		};
 	}
 
-	public renderActivity(x: any): IActivity | null {
+	public renderActivity<T extends { type: string | string[]; id?: string }>(x: T): T & { '@context': (string | Record<string, string>)[] };
+	public renderActivity(x: null | undefined): null;
+	public renderActivity<T extends { type: string | string[]; id?: string }>(x: T | null | undefined): (T & { '@context': (string | Record<string, string>)[] }) | null;
+	public renderActivity<T extends { type: string | string[]; id?: string }>(x: T | null | undefined) {
 		if (x == null) return null;
 	
 		if (typeof x === 'object' && x.id == null) {
@@ -674,7 +677,7 @@ export class ApRendererService {
 	 * @param last URL of last page (optional)
 	 * @param orderedItems attached objects (optional)
 	 */
-	public renderOrderedCollection(id: string | null, totalItems: any, first?: string, last?: string, orderedItems?: Record<string, unknown>[]) {
+	public renderOrderedCollection(id: string | null, totalItems: any, first?: string, last?: string, orderedItems?: IObject[]) {
 		const page: any = {
 			id,
 			type: 'OrderedCollection',

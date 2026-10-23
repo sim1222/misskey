@@ -1,4 +1,5 @@
 import cluster from 'node:cluster';
+import type { RFC5424 } from 'syslog-pro';
 import chalk from 'chalk';
 import { default as convertColor } from 'color-convert';
 import { format as dateFormat } from 'date-fns';
@@ -6,7 +7,7 @@ import { envOption } from './env.js';
 
 type Domain = {
 	name: string;
-	color?: string;
+	color?: Parameters<typeof convertColor.keyword.rgb>[0];
 };
 
 type Level = 'error' | 'success' | 'warning' | 'debug' | 'info';
@@ -15,9 +16,9 @@ export default class Logger {
 	private domain: Domain;
 	private parentLogger: Logger | null = null;
 	private store: boolean;
-	private syslogClient: any | null = null;
+	private syslogClient: RFC5424 | null = null;
 
-	constructor(domain: string, color?: string, store = true, syslogClient = null) {
+	constructor(domain: string, color?: Domain['color'], store = true, syslogClient: RFC5424 | null = null) {
 		this.domain = {
 			name: domain,
 			color: color,
@@ -26,7 +27,7 @@ export default class Logger {
 		this.syslogClient = syslogClient;
 	}
 
-	public createSubLogger(domain: string, color?: string, store = true): Logger {
+	public createSubLogger(domain: string, color?: Domain['color'], store = true): Logger {
 		const logger = new Logger(domain, color, store);
 		logger.parentLogger = this;
 		return logger;
@@ -43,7 +44,7 @@ export default class Logger {
 		}
 
 		const time = dateFormat(new Date(), 'HH:mm:ss');
-		const worker = cluster.isPrimary ? '*' : cluster.worker.id;
+		const worker = cluster.worker === undefined ? '*' : cluster.worker.id;
 		const l =
 			level === 'error' ? important ? chalk.bgRed.white('ERR ') : chalk.red('ERR ') :
 			level === 'warning' ? chalk.yellow('WARN') :

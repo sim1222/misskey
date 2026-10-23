@@ -25,7 +25,7 @@ const accessDenied = {
 export class ApiCallService implements OnApplicationShutdown {
 	private logger: Logger;
 	private userIpHistories: Map<User['id'], Set<string>>;
-	private userIpHistoriesClearIntervalId: NodeJS.Timer;
+	private userIpHistoriesClearIntervalId: ReturnType<typeof setInterval>;
 
 	constructor(
 		@Inject(DI.userIpsRepository)
@@ -147,14 +147,10 @@ export class ApiCallService implements OnApplicationShutdown {
 				limitActor = getIpHash(ctx!.ip);
 			}
 
-			const limit = Object.assign({}, ep.meta.limit);
-
-			if (!limit.key) {
-				limit.key = ep.name;
-			}
+			const limit = { ...ep.meta.limit, key: ep.meta.limit.key || ep.name };
 
 			// Rate limit
-			await this.rateLimiterService.limit(limit as IEndpointMeta['limit'] & { key: NonNullable<string> }, limitActor).catch(e => {
+			await this.rateLimiterService.limit(limit, limitActor).catch(e => {
 				throw new ApiError({
 					message: 'Rate limit exceeded. Please try again later.',
 					code: 'RATE_LIMIT_EXCEEDED',

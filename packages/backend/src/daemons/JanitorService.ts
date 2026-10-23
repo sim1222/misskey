@@ -8,7 +8,7 @@ const interval = 30 * 60 * 1000;
 
 @Injectable()
 export class JanitorService implements OnApplicationShutdown {
-	private intervalId: NodeJS.Timer;
+	private intervalId: ReturnType<typeof setInterval>;
 
 	constructor(
 		@Inject(DI.attestationChallengesRepository)

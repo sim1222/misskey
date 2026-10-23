@@ -187,7 +187,27 @@ export class UserProfile {
 	@Column('jsonb', {
 		default: {},
 	})
-	public integrations: Record<string, any>;
+	public integrations: {
+		twitter?: {
+			accessToken: string;
+			accessTokenSecret: string;
+			userId: string;
+			screenName: string;
+		};
+		github?: {
+			accessToken: string;
+			id: string;
+			login: string;
+		};
+		discord?: {
+			accessToken: string;
+			refreshToken: string;
+			expiresDate: number;
+			id: string;
+			username: string;
+			discriminator: string;
+		};
+	};
 
 	@Index()
 	@Column('boolean', {

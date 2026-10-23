@@ -2,25 +2,25 @@ export type obj = { [x: string]: any };
 export type ApObject = IObject | string | (IObject | string)[];
 
 export interface IObject {
-	'@context': string | string[] | obj | obj[];
+	'@context'?: string | obj | (string | obj)[];
 	type: string | string[];
 	id?: string;
-	summary?: string;
+	summary?: string | null;
 	published?: string;
 	cc?: ApObject;
 	to?: ApObject;
-	attributedTo: ApObject;
+	attributedTo?: ApObject;
 	attachment?: any[];
 	inReplyTo?: any;
 	replies?: ICollection;
-	content?: string;
+	content?: string | null;
 	name?: string;
 	startTime?: Date;
 	endTime?: Date;
 	icon?: any;
 	image?: any;
 	url?: ApObject;
-	href?: string;
+	href?: string | null;
 	tag?: IObject | IObject[];
 	sensitive?: boolean;
 }
@@ -74,7 +74,7 @@ export function getApHrefNullable(value: string | IObject | undefined): string |
 export interface IActivity extends IObject {
 	//type: 'Activity';
 	actor: IObject | string;
-	object: IObject | string;
+	object: ApObject;
 	target?: IObject | string;
 	/** LD-Signature */
 	signature?: {
@@ -105,6 +105,7 @@ export const isPost = (object: IObject): object is IPost =>
 	validPost.includes(getApType(object));
 
 export interface IPost extends IObject {
+	attributedTo: ApObject;
 	type: 'Note' | 'Question' | 'Article' | 'Audio' | 'Document' | 'Image' | 'Page' | 'Video' | 'Event';
 	source?: {
 		content: string;

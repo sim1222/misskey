@@ -2,7 +2,7 @@ import * as mfm from 'mfm-js';
 import { unique } from '@/misc/prelude/array.js';
 
 export function extractCustomEmojisFromMfm(nodes: mfm.MfmNode[]): string[] {
-	const emojiNodes = mfm.extract(nodes, (node) => {
+	const emojiNodes = mfm.extract(nodes, (node): node is mfm.MfmEmojiCode => {
 		return (node.type === 'emojiCode' && node.props.name.length <= 100);
 	});
 

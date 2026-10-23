@@ -3,7 +3,7 @@ import { Brackets } from 'typeorm';
 import { DI } from '@/di-symbols.js';
 import type { User } from '@/models/entities/User.js';
 import type { UserProfilesRepository, FollowingsRepository, ChannelFollowingsRepository, MutedNotesRepository, BlockingsRepository, NoteThreadMutingsRepository, MutingsRepository } from '@/models/index.js';
-import type { SelectQueryBuilder } from 'typeorm';
+import type { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class QueryService {
@@ -31,7 +31,7 @@ export class QueryService {
 	) {
 	}
 
-	public makePaginationQuery<T>(q: SelectQueryBuilder<T>, sinceId?: string, untilId?: string, sinceDate?: number, untilDate?: number): SelectQueryBuilder<T> {
+	public makePaginationQuery<T extends ObjectLiteral>(q: SelectQueryBuilder<T>, sinceId?: string, untilId?: string, sinceDate?: number, untilDate?: number): SelectQueryBuilder<T> {
 		if (sinceId && untilId) {
 			q.andWhere(`${q.alias}.id > :sinceId`, { sinceId: sinceId });
 			q.andWhere(`${q.alias}.id < :untilId`, { untilId: untilId });

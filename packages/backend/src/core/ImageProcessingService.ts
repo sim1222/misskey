@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import sharp from 'sharp';
+import sharp, { type Sharp } from 'sharp';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 
@@ -25,7 +25,7 @@ export class ImageProcessingService {
 		return this.convertSharpToJpeg(await sharp(path), width, height);
 	}
 
-	public async convertSharpToJpeg(sharp: sharp.Sharp, width: number, height: number): Promise<IImage> {
+	public async convertSharpToJpeg(sharp: Sharp, width: number, height: number): Promise<IImage> {
 		const data = await sharp
 			.resize(width, height, {
 				fit: 'inside',
@@ -53,7 +53,7 @@ export class ImageProcessingService {
 		return this.convertSharpToWebp(await sharp(path), width, height, quality);
 	}
 
-	public async convertSharpToWebp(sharp: sharp.Sharp, width: number, height: number, quality = 85): Promise<IImage> {
+	public async convertSharpToWebp(sharp: Sharp, width: number, height: number, quality = 85): Promise<IImage> {
 		const data = await sharp
 			.resize(width, height, {
 				fit: 'inside',
@@ -80,7 +80,7 @@ export class ImageProcessingService {
 		return this.convertSharpToPng(await sharp(path), width, height);
 	}
 
-	public async convertSharpToPng(sharp: sharp.Sharp, width: number, height: number): Promise<IImage> {
+	public async convertSharpToPng(sharp: Sharp, width: number, height: number): Promise<IImage> {
 		const data = await sharp
 			.resize(width, height, {
 				fit: 'inside',

@@ -9,7 +9,7 @@ import type { OnApplicationShutdown } from '@nestjs/common';
 @Injectable()
 export class MetaService implements OnApplicationShutdown {
 	private cache: Meta | undefined;
-	private intervalId: NodeJS.Timer;
+	private intervalId: ReturnType<typeof setInterval>;
 
 	constructor(
 		@Inject(DI.redisSubscriber)

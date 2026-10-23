@@ -1,3 +1,4 @@
+import type { User } from '@/models/entities/User.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 import { ModuleRef } from '@nestjs/core';

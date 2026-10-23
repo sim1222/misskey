@@ -14,7 +14,7 @@ const round = (num: number) => Math.round(num * 10) / 10;
 
 @Injectable()
 export class ServerStatsService implements OnApplicationShutdown {
-	private intervalId: NodeJS.Timer;
+	private intervalId: ReturnType<typeof setInterval>;
 
 	constructor(
 	) {

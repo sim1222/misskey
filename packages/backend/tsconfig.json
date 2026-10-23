@@ -28,7 +28,10 @@
 		"paths": {
 			"@/*": [
 				"./src/*"
-			]
+			],
+			// This package exposes types through exports, which the legacy Node
+			// resolver cannot read. Use its complete, bundled public declarations.
+			"file-type": ["./node_modules/file-type/source/index.d.ts"]
 		},
 		"outDir": "./built",
 		"types": [

@@ -72,6 +72,7 @@ export interface MainStreamTypes {
 		file: Packed<'DriveFile'>;
 	};
 	readAllNotifications: undefined;
+	readNotifications: string[];
 	unreadNotification: Packed<'Notification'>;
 	unreadMention: Note['id'];
 	readAllUnreadMentions: undefined;

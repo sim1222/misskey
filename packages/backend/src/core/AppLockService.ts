@@ -11,7 +11,7 @@ const retryDelay = 100;
 
 @Injectable()
 export class AppLockService {
-	private lock: (key: string, timeout?: number) => Promise<() => void>;
+	private lock: (key: string, timeout?: number) => Promise<() => Promise<number | undefined>>;
 
 	constructor(
 		@Inject(DI.redis)
@@ -26,15 +26,15 @@ export class AppLockService {
 	 * @param timeout Lock timeout (ms), The timeout releases previous lock.
 	 * @returns Unlock function
 	 */
-	public getApLock(uri: string, timeout = 30 * 1000): Promise<() => void> {
+	public getApLock(uri: string, timeout = 30 * 1000): Promise<() => Promise<number | undefined>> {
 		return this.lock(`ap-object:${uri}`, timeout);
 	}
 
-	public getFetchInstanceMetadataLock(host: string, timeout = 30 * 1000): Promise<() => void> {
+	public getFetchInstanceMetadataLock(host: string, timeout = 30 * 1000): Promise<() => Promise<number | undefined>> {
 		return this.lock(`instance:${host}`, timeout);
 	}
 
-	public getChartInsertLock(lockKey: string, timeout = 30 * 1000): Promise<() => void> {
+	public getChartInsertLock(lockKey: string, timeout = 30 * 1000): Promise<() => Promise<number | undefined>> {
 		return this.lock(`chart-insert:${lockKey}`, timeout);
 	}
 }

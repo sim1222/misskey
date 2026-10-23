@@ -14,7 +14,7 @@ class UserListChannel extends Channel {
 	public static requireCredential = false;
 	private listId: string;
 	public listUsers: User['id'][] = [];
-	private listUsersClock: NodeJS.Timer;
+	private listUsersClock: ReturnType<typeof setInterval>;
 
 	constructor(
 		private userListsRepository: UserListsRepository,

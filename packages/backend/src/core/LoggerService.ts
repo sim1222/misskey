@@ -6,7 +6,7 @@ import Logger from '@/logger.js';
 
 @Injectable()
 export class LoggerService {
-	private syslogClient;
+	private syslogClient: SyslogPro.RFC5424 | null = null;
 
 	constructor(
 		@Inject(DI.config)
@@ -27,7 +27,7 @@ export class LoggerService {
 		}
 	}
 
-	public getLogger(domain: string, color?: string | undefined, store?: boolean) {
+	public getLogger(domain: string, color?: ConstructorParameters<typeof Logger>[1], store?: boolean) {
 		return new Logger(domain, color, store, this.syslogClient);
 	}
 }

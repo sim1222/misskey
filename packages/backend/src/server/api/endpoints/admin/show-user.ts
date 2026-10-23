@@ -60,8 +60,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 
 			const maskedKeys = ['accessToken', 'accessTokenSecret', 'refreshToken'];
-			Object.keys(profile.integrations).forEach(integration => {
-				maskedKeys.forEach(key => profile.integrations[integration][key] = '<MASKED>');
+			Object.values(profile.integrations).forEach(integration => {
+				maskedKeys.forEach(key => { Object.assign(integration, { [key]: '<MASKED>' }); });
 			});
 
 			const signins = await this.signinsRepository.findBy({ userId: user.id });

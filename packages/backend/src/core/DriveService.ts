@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import { Inject, Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
-import sharp from 'sharp';
+import sharp, { type Sharp } from 'sharp';
 import { IsNull } from 'typeorm';
 import { DI } from '@/di-symbols.js';
 import type { DriveFilesRepository, UsersRepository, DriveFoldersRepository, UserProfilesRepository } from '@/models/index.js';
@@ -267,7 +267,7 @@ export class DriveService {
 			};
 		}
 
-		let img: sharp.Sharp | null = null;
+		let img: Sharp | null = null;
 		let satisfyWebpublic: boolean;
 
 		try {
