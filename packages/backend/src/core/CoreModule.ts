@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { DI } from "../di-symbols.js";
 import { AccountUpdateService } from "./AccountUpdateService.js";
-// import { AiService } from './AiService.js';
 import { AntennaService } from "./AntennaService.js";
 import { AppLockService } from "./AppLockService.js";
 import { CaptchaService } from "./CaptchaService.js";
@@ -126,7 +125,6 @@ const $AccountUpdateService: Provider = {
 	provide: "AccountUpdateService",
 	useExisting: AccountUpdateService,
 };
-// const $AiService: Provider = { provide: "AiService", useExisting: AiService };
 const $AntennaService: Provider = {
 	provide: "AntennaService",
 	useExisting: AntennaService,
@@ -570,7 +568,6 @@ const $ApQuestionService: Provider = {
 	providers: [
 		LoggerService,
 		AccountUpdateService,
-		// AiService,
 		AntennaService,
 		AppLockService,
 		CaptchaService,
@@ -686,7 +683,6 @@ const $ApQuestionService: Provider = {
 		//#region 文字列ベースでのinjection用(循環参照対応のため)
 		$LoggerService,
 		$AccountUpdateService,
-		// $AiService,
 		$AntennaService,
 		$AppLockService,
 		$CaptchaService,
@@ -803,7 +799,6 @@ const $ApQuestionService: Provider = {
 		QueueModule,
 		LoggerService,
 		AccountUpdateService,
-		// AiService,
 		AntennaService,
 		AppLockService,
 		CaptchaService,
@@ -918,7 +913,6 @@ const $ApQuestionService: Provider = {
 		//#region 文字列ベースでのinjection用(循環参照対応のため)
 		$LoggerService,
 		$AccountUpdateService,
-		// $AiService,
 		$AntennaService,
 		$AppLockService,
 		$CaptchaService,

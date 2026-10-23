@@ -9,11 +9,9 @@ import { fileTypeFromFile } from "file-type";
 import FFmpeg from "fluent-ffmpeg";
 import isSvg from "is-svg";
 import probeImageSize from "probe-image-size";
-import { type predictionType } from "nsfwjs";
 import sharp from "sharp";
 import { encode } from "blurhash";
 import { createTempDir } from "@/misc/create-temp.js";
-// import { AiService } from '@/core/AiService.js';
 
 const pipeline = util.promisify(stream.pipeline);
 
@@ -44,7 +42,7 @@ const TYPE_SVG = {
 };
 @Injectable()
 export class FileInfoService {
-	constructor() {} // private aiService: AiService,
+	constructor() {}
 
 	/**
 	 * Get file information
@@ -169,42 +167,8 @@ export class FileInfoService {
 		let sensitive = false;
 		let porn = false;
 
-		function judgePrediction(
-			result: readonly predictionType[],
-		): [sensitive: boolean, porn: boolean] {
-			let sensitive = false;
-			let porn = false;
-
-			if (
-				(result.find((x) => x.className === "Sexy")?.probability ?? 0) >
-				sensitiveThreshold
-			)
-				sensitive = true;
-			if (
-				(result.find((x) => x.className === "Hentai")?.probability ?? 0) >
-				sensitiveThreshold
-			)
-				sensitive = true;
-			if (
-				(result.find((x) => x.className === "Porn")?.probability ?? 0) >
-				sensitiveThreshold
-			)
-				sensitive = true;
-
-			if (
-				(result.find((x) => x.className === "Porn")?.probability ?? 0) >
-				sensitiveThresholdForPorn
-			)
-				porn = true;
-
-			return [sensitive, porn];
-		}
-
 		if (["image/jpeg", "image/png", "image/webp"].includes(mime)) {
-			// const result = await this.aiService.detectSensitive(source);
-			// if (result) {
-			// 	[sensitive, porn] = judgePrediction(result);
-			// }
+			// Automatic AI detection is disabled in this fork.
 		} else if (
 			analyzeVideo &&
 			(mime === "image/apng" || mime.startsWith("video/"))
@@ -253,7 +217,7 @@ export class FileInfoService {
 					.format("image2")
 					.output(join(outDir, "%d.png"))
 					.outputOptions(["-vsync", "0"]); // 可変フレームレートにすることで穴埋めをさせない
-				const results: ReturnType<typeof judgePrediction>[] = [];
+				const results: [sensitive: boolean, porn: boolean][] = [];
 				let frameIndex = 0;
 				let targetIndex = 0;
 				let nextIndex = 1;
@@ -265,10 +229,7 @@ export class FileInfoService {
 						}
 						targetIndex = nextIndex;
 						nextIndex += index; // fibonacci sequence によってフレーム数制限を掛ける
-						// const result = await this.aiService.detectSensitive(path);
-						// if (result) {
-						// 	results.push(judgePrediction(result));
-						// }
+						// Automatic AI detection is disabled in this fork.
 					} finally {
 						fs.promises.unlink(path);
 					}
