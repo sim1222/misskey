@@ -32,6 +32,15 @@ describe('Validated boundaries and generated API contracts', () => {
 		expect(validateActivity({ type: 'Like', actor, object: note.id })).toBe(true);
 		expect(validateActivity({ type: 'OrderedCollection', actor, orderedItems: [{ type: 'Create', actor, object: note }] })).toBe(true);
 	});
+	it.each([null, '2030-01-01T00:00:00.000Z', undefined])('accepts federated polls with endTime %j without rewriting their deadline', endTime => {
+		const value = { type: 'Create', actor, object: { ...note, type: 'Question', endTime, oneOf: [{ type: 'Note', name: 'one', replies: { type: 'Collection', totalItems: 0 } }] } };
+		const before = JSON.stringify(value);
+		expect(validateActivity(value)).toBe(true);
+		expect(JSON.stringify(value)).toBe(before);
+	});
+	it.each([123, {}, []])('rejects a malformed poll endTime %j', endTime => {
+		expect(validateActivity({ type: 'Create', actor, object: { ...note, type: 'Question', endTime } })).toBe(false);
+	});
 	it.each([undefined, null, [], {}, { type: 'Create', actor }, { type: 12, actor, object: note }, { type: 'Create', actor: 12, object: note }, { type: 'Create', actor, object: { type: 'Note', to: [12] } }])('rejects malformed inbox data: %j', value => {
 		expect(validateActivity(value)).toBe(false);
 	});

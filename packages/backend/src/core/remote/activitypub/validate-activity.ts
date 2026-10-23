@@ -26,7 +26,8 @@ const objectProperties = {
 	content: { type: ['string', 'null'] },
 	name: { type: ['string', 'null'] },
 	startTime: { type: 'string' },
-	endTime: { type: 'string' },
+	// Misskey emits an explicit null for polls without an expiry date.
+	endTime: { type: ['string', 'null'] },
 	url: apObject,
 	href: { type: ['string', 'null'] },
 	tag: { anyOf: [{ $ref: '#/definitions/object' }, { type: 'array', items: { $ref: '#/definitions/object' } }] },

@@ -16,7 +16,7 @@ export interface IObject {
 	content?: string | null;
 	name?: string | null;
 	startTime?: Date | string;
-	endTime?: Date | string;
+	endTime?: Date | string | null;
 	icon?: any;
 	image?: any;
 	url?: ApObject;
@@ -132,7 +132,7 @@ export interface IQuestion extends IObject {
 	quoteUrl?: string;
 	oneOf?: IQuestionChoice[];
 	anyOf?: IQuestionChoice[];
-	endTime?: Date | string;
+	endTime?: Date | string | null;
 	closed?: Date;
 }
 
