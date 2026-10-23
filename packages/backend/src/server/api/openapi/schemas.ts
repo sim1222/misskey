@@ -1,30 +1,31 @@
 import type { Schema } from '@/misc/schema.js';
 import { refs } from '@/misc/schema.js';
 
-export function convertSchemaToOpenApiSchema(schema: Schema) {
-	const res: any = schema;
+type OpenApiSchema = Omit<Schema, 'type' | 'properties' | 'items' | 'anyOf' | 'oneOf' | 'allOf' | 'ref' | 'optional'> & {
+	type?: Exclude<Schema['type'], 'any'>;
+	properties?: Record<string, OpenApiSchema>;
+	items?: OpenApiSchema;
+	anyOf?: OpenApiSchema[];
+	oneOf?: OpenApiSchema[];
+	allOf?: OpenApiSchema[];
+	$ref?: string;
+};
 
-	if (schema.type === 'object' && schema.properties) {
-		res.required = Object.entries(schema.properties).filter(([k, v]) => !v.optional).map(([k]) => k);
-
-		for (const k of Object.keys(schema.properties)) {
-			res.properties[k] = convertSchemaToOpenApiSchema(schema.properties[k]);
-		}
-	}
-
-	if (schema.type === 'array' && schema.items) {
-		res.items = convertSchemaToOpenApiSchema(schema.items);
-	}
-
-	if (schema.anyOf) res.anyOf = schema.anyOf.map(convertSchemaToOpenApiSchema);
-	if (schema.oneOf) res.oneOf = schema.oneOf.map(convertSchemaToOpenApiSchema);
-	if (schema.allOf) res.allOf = schema.allOf.map(convertSchemaToOpenApiSchema);
-
-	if (schema.ref) {
-		res.$ref = `#/components/schemas/${schema.ref}`;
-	}
-
-	return res;
+export function convertSchemaToOpenApiSchema(schema: Schema): OpenApiSchema {
+	const { type, properties, items, anyOf, oneOf, allOf, ref, optional, ...rest } = schema;
+	return {
+		...rest,
+		...(type && type !== 'any' ? { type } : {}),
+		...(properties ? {
+			properties: Object.fromEntries(Object.entries(properties).map(([key, value]) => [key, convertSchemaToOpenApiSchema(value)] as const)),
+			required: schema.required ?? Object.entries(properties).filter(([, value]) => value.optional === false).map(([key]) => key),
+		} : {}),
+		...(items ? { items: convertSchemaToOpenApiSchema(items) } : {}),
+		...(anyOf ? { anyOf: anyOf.map(convertSchemaToOpenApiSchema) } : {}),
+		...(oneOf ? { oneOf: oneOf.map(convertSchemaToOpenApiSchema) } : {}),
+		...(allOf ? { allOf: allOf.map(convertSchemaToOpenApiSchema) } : {}),
+		...(ref ? { $ref: `#/components/schemas/${ref}` } : {}),
+	};
 }
 
 export const schemas = {
@@ -56,6 +57,6 @@ export const schemas = {
 	},
 
 	...Object.fromEntries(
-		Object.entries(refs).map(([key, schema]) => [key, convertSchemaToOpenApiSchema(schema)]),
+		Object.entries(refs).map(([key, schema]) => [key, convertSchemaToOpenApiSchema(schema)] as const),
 	),
 };

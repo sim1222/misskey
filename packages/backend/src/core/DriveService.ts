@@ -314,7 +314,7 @@ export class DriveService {
 					this.registerLogger.debug('web image not created (not an required image)');
 				}
 			} catch (err) {
-				this.registerLogger.warn('web image not created (an error occured)', err as Error);
+				this.registerLogger.warn('web image not created (an error occured)', { error: err });
 			}
 		} else {
 			if (satisfyWebpublic) this.registerLogger.info('web image not created (original satisfies webpublic)');
@@ -332,7 +332,7 @@ export class DriveService {
 				this.registerLogger.debug('thumbnail not created (not an required file)');
 			}
 		} catch (err) {
-			this.registerLogger.warn('thumbnail not created (an error occured)', err as Error);
+			this.registerLogger.warn('thumbnail not created (an error occured)', { error: err });
 		}
 		// #endregion thumbnail
 

@@ -8,6 +8,7 @@ import redisLock from 'redis-lock';
 import { promisify } from 'node:util';
 import type Redis from 'ioredis';
 import * as image from 'pureimage';
+import type { genOpenapiSpec } from '@/server/api/openapi/gen-spec.js';
 
 type Assert<T extends true> = T;
 type IsAny<T> = 0 extends (1 & T) ? true : false;
@@ -39,7 +40,8 @@ type TextNotAny = Assert<Not<IsAny<Params['text']>>>;
 type NotificationIds = Assert<Assignable<string[], MainStreamTypes['readNotifications']>>;
 type WrongNotificationIds = Assert<Not<Assignable<number[], MainStreamTypes['readNotifications']>>>;
 type PersistedHeaders = Assert<Assignable<IncomingHttpHeaders, Signin['headers']>>;
-type BadGithubId = Assert<Not<Assignable<{ github: { id: number } }, UserProfile['integrations']>>>;
+type BadGithubId = Assert<Not<Assignable<{ github: { id: number; login: string; accessToken: string } }, UserProfile['integrations']>>>;
+type TypedOpenApiOperation = Assert<Not<IsAny<ReturnType<typeof genOpenapiSpec>['paths'][string]['post']>>>;
 
 // Check real call-site inference, including overloads and the custom promisifier.
 export function libraryContracts(client: Redis.Redis, nodes: mfm.MfmNode[]) {

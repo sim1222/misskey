@@ -160,6 +160,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					populateGroup: false,
 				})));
 			}
+			throw new Error('Validated messaging parameters require a recipient');
 		});
 	}
 }

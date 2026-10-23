@@ -33,7 +33,7 @@ export default class Logger {
 		return logger;
 	}
 
-	private log(level: Level, message: string, data?: Record<string, any> | null, important = false, subDomains: Domain[] = [], store = true): void {
+	private log(level: Level, message: string, data?: Record<string, unknown> | null, important = false, subDomains: Domain[] = [], store = true): void {
 		if (envOption.quiet) return;
 		if (!this.store) store = false;
 		if (level === 'debug') store = false;
@@ -71,43 +71,40 @@ export default class Logger {
 				const send =
 					level === 'error' ? this.syslogClient.error :
 					level === 'warning' ? this.syslogClient.warning :
-					level === 'success' ? this.syslogClient.info :
-					level === 'debug' ? this.syslogClient.info :
-					level === 'info' ? this.syslogClient.info :
-					null as never;
+					this.syslogClient.info;
 
 				send.bind(this.syslogClient)(message).catch(() => {});
 			}
 		}
 	}
 
-	public error(x: string | Error, data?: Record<string, any> | null, important = false): void { // 実行を継続できない状況で使う
+	public error(x: string | Error | { message?: unknown; name?: unknown }, data?: Record<string, unknown> | null, important = false): void { // 実行を継続できない状況で使う
 		if (x instanceof Error) {
 			data = data ?? {};
 			data.e = x;
 			this.log('error', x.toString(), data, important);
 		} else if (typeof x === 'object') {
-			this.log('error', `${(x as any).message ?? (x as any).name ?? x}`, data, important);
+			this.log('error', `${x.message ?? x.name ?? x}`, data, important);
 		} else {
 			this.log('error', `${x}`, data, important);
 		}
 	}
 
-	public warn(message: string, data?: Record<string, any> | null, important = false): void { // 実行を継続できるが改善すべき状況で使う
+	public warn(message: string, data?: Record<string, unknown> | null, important = false): void { // 実行を継続できるが改善すべき状況で使う
 		this.log('warning', message, data, important);
 	}
 
-	public succ(message: string, data?: Record<string, any> | null, important = false): void { // 何かに成功した状況で使う
+	public succ(message: string, data?: Record<string, unknown> | null, important = false): void { // 何かに成功した状況で使う
 		this.log('success', message, data, important);
 	}
 
-	public debug(message: string, data?: Record<string, any> | null, important = false): void { // デバッグ用に使う(開発者に必要だが利用者に不要な情報)
+	public debug(message: string, data?: Record<string, unknown> | null, important = false): void { // デバッグ用に使う(開発者に必要だが利用者に不要な情報)
 		if (process.env.NODE_ENV !== 'production' || envOption.verbose) {
 			this.log('debug', message, data, important);
 		}
 	}
 
-	public info(message: string, data?: Record<string, any> | null, important = false): void { // それ以外
+	public info(message: string, data?: Record<string, unknown> | null, important = false): void { // それ以外
 		this.log('info', message, data, important);
 	}
 }

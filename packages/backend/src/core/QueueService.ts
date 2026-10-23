@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
-import type { IActivity } from '@/core/remote/activitypub/type.js';
+import type { IActivity, ApObject, InboxActivity } from '@/core/remote/activitypub/type.js';
 import type { DriveFile } from '@/models/entities/DriveFile.js';
 import type { Webhook, webhookEventTypes } from '@/models/entities/Webhook.js';
 import type { Config } from '@/config.js';
@@ -24,7 +24,7 @@ export class QueueService {
 		@Inject('queue:webhookDeliver') public webhookDeliverQueue: WebhookDeliverQueue,
 	) {}
 
-	public deliver(user: ThinUser, content: IActivity | null, to: string | null) {
+	public deliver(user: ThinUser, content: IActivity<ApObject> | null, to: string | null) {
 		if (content == null) return null;
 		if (to == null) return null;
 
@@ -47,7 +47,7 @@ export class QueueService {
 		});
 	}
 
-	public inbox(activity: IActivity, signature: httpSignature.IParsedSignature) {
+	public inbox(activity: InboxActivity, signature: httpSignature.IParsedSignature) {
 		const data = {
 			activity: activity,
 			signature,

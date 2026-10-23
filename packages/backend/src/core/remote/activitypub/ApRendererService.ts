@@ -23,7 +23,7 @@ import type { UserKeypair } from '@/models/entities/UserKeypair.js';
 import type { UsersRepository, UserProfilesRepository, NotesRepository, DriveFilesRepository, EmojisRepository, PollsRepository } from '@/models/index.js';
 import { LdSignatureService } from './LdSignatureService.js';
 import { ApMfmService } from './ApMfmService.js';
-import type { IActivity, IPost, IObject } from './type.js';
+import type { IActivity, IPost, IObject, IFlag, ILike, IActor } from './type.js';
 import type { IIdentifier } from './models/identifier.js';
 
 @Injectable()
@@ -121,14 +121,14 @@ export class ApRendererService {
 		};
 	}
 
-	public renderCreate(object: any, note: Note) {
-		const activity = {
+	public renderCreate(object: IObject, note: Note): IActivity {
+		const activity: IActivity = {
 			id: `${this.config.url}/notes/${note.id}/activity`,
 			actor: `${this.config.url}/users/${note.userId}`,
 			type: 'Create',
 			published: note.createdAt.toISOString(),
 			object,
-		} as any;
+		};
 	
 		if (object.to) activity.to = object.to;
 		if (object.cc) activity.cc = object.cc;
@@ -159,7 +159,7 @@ export class ApRendererService {
 			id: `${this.config.url}/emojis/${emoji.name}`,
 			type: 'Emoji',
 			name: `:${emoji.name}:`,
-			updated: emoji.updatedAt != null ? emoji.updatedAt.toISOString() : new Date().toISOString,
+			updated: emoji.updatedAt != null ? emoji.updatedAt.toISOString() : new Date().toISOString(),
 			icon: {
 				type: 'Image',
 				mediaType: emoji.type ?? 'image/png',
@@ -170,7 +170,7 @@ export class ApRendererService {
 
 	// to anonymise reporters, the reporting actor must be a system user
 	// object has to be a uri or array of uris
-	public renderFlag(user: ILocalUser, object: [string], content: string) {
+	public renderFlag(user: ILocalUser, object: [string], content: string): IFlag {
 		return {
 			type: 'Flag',
 			actor: `${this.config.url}/users/${user.id}`,
@@ -239,21 +239,21 @@ export class ApRendererService {
 			publicKeyPem: createPublicKey(key.publicKey).export({
 				type: 'spki',
 				format: 'pem',
-			}),
+			}).toString(),
 		};
 	}
 
-	public async renderLike(noteReaction: NoteReaction, note: { uri: string | null }) {
+	public async renderLike(noteReaction: NoteReaction, note: { uri: string | null }): Promise<ILike> {
 		const reaction = noteReaction.reaction;
 
-		const object = {
+		const object: ILike = {
 			type: 'Like',
 			id: `${this.config.url}/likes/${noteReaction.id}`,
 			actor: `${this.config.url}/users/${noteReaction.userId}`,
 			object: note.uri ? note.uri : `${this.config.url}/notes/${noteReaction.noteId}`,
 			content: reaction,
 			_misskey_reaction: reaction,
-		} as any;
+		};
 
 		if (reaction.startsWith(':')) {
 			const name = reaction.replace(/:/g, '');
@@ -420,7 +420,7 @@ export class ApRendererService {
 		};
 	}
 
-	public async renderPerson(user: ILocalUser) {
+	public async renderPerson(user: ILocalUser): Promise<IActor & { isCat: boolean }> {
 		const id = `${this.config.url}/users/${user.id}`;
 		const isSystem = !!user.username.match(/\./);
 
@@ -461,7 +461,7 @@ export class ApRendererService {
 
 		const keypair = await this.userKeypairStoreService.getUserKeypair(user.id);
 
-		const person = {
+		const person: IActor & { isCat: boolean } = {
 			type: isSystem ? 'Application' : user.isBot ? 'Service' : 'Person',
 			id,
 			inbox: `${id}/inbox`,
@@ -483,7 +483,7 @@ export class ApRendererService {
 			publicKey: this.renderKey(user, keypair, '#main-key'),
 			isCat: user.isCat,
 			attachment: attachment.length ? attachment : undefined,
-		} as any;
+		};
 
 		if (profile.birthday) {
 			person['vcard:bday'] = profile.birthday;
@@ -515,7 +515,7 @@ export class ApRendererService {
 		return question;
 	}
 
-	public renderRead(user: { id: User['id'] }, message: MessagingMessage) {
+	public renderRead(user: { id: User['id'] }, message: MessagingMessage & { uri: string }) {
 		return {
 			type: 'Read',
 			actor: `${this.config.url}/users/${user.id}`,
@@ -560,20 +560,21 @@ export class ApRendererService {
 		};
 	}
 
-	public renderUpdate(object: any, user: { id: User['id'] }) {
-		const activity = {
+	public renderUpdate(object: IObject, user: { id: User['id'] }): IActivity {
+		const activity: IActivity = {
 			id: `${this.config.url}/users/${user.id}#updates/${new Date().getTime()}`,
 			actor: `${this.config.url}/users/${user.id}`,
 			type: 'Update',
 			to: ['https://www.w3.org/ns/activitystreams#Public'],
 			object,
 			published: new Date().toISOString(),
-		} as any;
+		};
 	
 		return activity;
 	}
 
 	public renderVote(user: { id: User['id'] }, vote: PollVote, note: Note, poll: Poll, pollOwner: IRemoteUser) {
+		if (pollOwner.uri == null) throw new Error('Remote poll owner has no actor URI');
 		return {
 			id: `${this.config.url}/users/${user.id}#votes/${vote.id}/activity`,
 			actor: `${this.config.url}/users/${user.id}`,

@@ -77,48 +77,51 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private driveService: DriveService,
 	) {
 		super(meta, paramDef, async (ps, me, _, file, cleanup, ip, headers) => {
-			// Get 'name' parameter
-			let name = ps.name ?? file.originalname;
-			if (name !== undefined && name !== null) {
-				name = name.trim();
-				if (name.length === 0) {
-					name = null;
-				} else if (name === 'blob') {
-					name = null;
-				} else if (!this.driveFileEntityService.validateFileName(name)) {
-					throw new ApiError(meta.errors.invalidFileName);
-				}
-			} else {
-				name = null;
-			}
-
-			const meta = await this.metaService.fetch();
-
+			if (file == null || cleanup == null) throw new Error('Upload executor requires a validated disk file');
 			try {
-				// Create file
-				const driveFile = await this.driveService.addFile({
-					user: me,
-					path: file.path,
-					name,
-					comment: ps.comment,
-					folderId: ps.folderId,
-					force: ps.force,
-					sensitive: ps.isSensitive,
-					requestIp: meta.enableIpLogging ? ip : null,
-					requestHeaders: meta.enableIpLogging ? headers : null,
-				});
-				return await this.driveFileEntityService.pack(driveFile, { self: true });
-			} catch (err) {
-				if (err instanceof Error || typeof err === 'string') {
-					console.error(err);
+				// Get 'name' parameter
+				let name: string | null = ps.name ?? file.originalname;
+				if (name !== undefined && name !== null) {
+					name = name.trim();
+					if (name.length === 0) {
+						name = null;
+					} else if (name === 'blob') {
+						name = null;
+					} else if (!this.driveFileEntityService.validateFileName(name)) {
+						throw new ApiError(meta.errors.invalidFileName);
+					}
+				} else {
+					name = null;
 				}
-				if (err instanceof IdentifiableError) {
-					if (err.id === '282f77bf-5816-4f72-9264-aa14d8261a21') throw new ApiError(meta.errors.inappropriate);
-					if (err.id === 'c6244ed2-a39a-4e1c-bf93-f0fbd7764fa6') throw new ApiError(meta.errors.noFreeSpace);
+
+				const instance = await this.metaService.fetch();
+
+				try {
+					// Create file
+					const driveFile = await this.driveService.addFile({
+						user: me,
+						path: file.path,
+						name,
+						comment: ps.comment,
+						folderId: ps.folderId,
+						force: ps.force,
+						sensitive: ps.isSensitive,
+						requestIp: instance.enableIpLogging ? ip : null,
+						requestHeaders: instance.enableIpLogging ? headers : null,
+					});
+					return await this.driveFileEntityService.pack(driveFile, { self: true });
+				} catch (err) {
+					if (err instanceof Error || typeof err === 'string') {
+						console.error(err);
+					}
+					if (err instanceof IdentifiableError) {
+						if (err.id === '282f77bf-5816-4f72-9264-aa14d8261a21') throw new ApiError(meta.errors.inappropriate);
+						if (err.id === 'c6244ed2-a39a-4e1c-bf93-f0fbd7764fa6') throw new ApiError(meta.errors.noFreeSpace);
+					}
+					throw new ApiError();
 				}
-				throw new ApiError();
 			} finally {
-		cleanup!();
+				cleanup();
 			}
 		});
 	}

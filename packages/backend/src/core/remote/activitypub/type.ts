@@ -12,11 +12,11 @@ export interface IObject {
 	attributedTo?: ApObject;
 	attachment?: any[];
 	inReplyTo?: any;
-	replies?: ICollection;
+	replies?: ICollectionReference | string | null;
 	content?: string | null;
-	name?: string;
-	startTime?: Date;
-	endTime?: Date;
+	name?: string | null;
+	startTime?: Date | string;
+	endTime?: Date | string;
 	icon?: any;
 	image?: any;
 	url?: ApObject;
@@ -71,15 +71,15 @@ export function getApHrefNullable(value: string | IObject | undefined): string |
 	return undefined;
 }
 
-export interface IActivity extends IObject {
+export interface IActivity<TObject extends ApObject = IObject | string> extends IObject {
 	//type: 'Activity';
 	actor: IObject | string;
-	object: ApObject;
+	object: TObject;
 	target?: IObject | string;
 	/** LD-Signature */
 	signature?: {
 		type: string;
-		created: Date;
+		created: Date | string;
 		creator: string;
 		domain?: string;
 		nonce?: string;
@@ -87,16 +87,21 @@ export interface IActivity extends IObject {
 	};
 }
 
-export interface ICollection extends IObject {
+// A collection reference (for example Mastodon's replies) need not embed items.
+export interface ICollectionReference extends IObject {
 	type: 'Collection';
-	totalItems: number;
-	items: ApObject;
+	totalItems?: number;
+	items?: ApObject;
+}
+
+export interface ICollection extends ICollectionReference {
+	type: 'Collection';
 }
 
 export interface IOrderedCollection extends IObject {
 	type: 'OrderedCollection';
-	totalItems: number;
-	orderedItems: ApObject;
+	totalItems?: number;
+	orderedItems?: ApObject;
 }
 
 export const validPost = ['Note', 'Question', 'Article', 'Audio', 'Document', 'Image', 'Page', 'Video', 'Event'];
@@ -127,7 +132,7 @@ export interface IQuestion extends IObject {
 	quoteUrl?: string;
 	oneOf?: IQuestionChoice[];
 	anyOf?: IQuestionChoice[];
-	endTime?: Date;
+	endTime?: Date | string;
 	closed?: Date;
 }
 
@@ -136,7 +141,7 @@ export const isQuestion = (object: IObject): object is IQuestion =>
 
 interface IQuestionChoice {
 	name?: string;
-	replies?: ICollection;
+	replies?: ICollection & { totalItems: number };
 	_misskey_votes?: number;
 }
 export interface ITombstone extends IObject {
@@ -155,7 +160,7 @@ export const isActor = (object: IObject): object is IActor =>
 
 export interface IActor extends IObject {
 	type: 'Person' | 'Service' | 'Organization' | 'Group' | 'Application';
-	name?: string;
+	name?: string | null;
 	preferredUsername?: string;
 	manuallyApprovesFollowers?: boolean;
 	discoverable?: boolean;
@@ -277,7 +282,7 @@ export interface IBlock extends IActivity {
 	type: 'Block';
 }
 
-export interface IFlag extends IActivity {
+export interface IFlag extends IActivity<ApObject> {
 	type: 'Flag';
 }
 
@@ -295,3 +300,6 @@ export const isLike = (object: IObject): object is ILike => getApType(object) ==
 export const isAnnounce = (object: IObject): object is IAnnounce => getApType(object) === 'Announce';
 export const isBlock = (object: IObject): object is IBlock => getApType(object) === 'Block';
 export const isFlag = (object: IObject): object is IFlag => getApType(object) === 'Flag';
+
+// Inbox collections may contain activities directly, without an object field.
+export type InboxActivity = IActivity<ApObject> | ((ICollection | IOrderedCollection) & Pick<IActivity, 'actor' | 'signature'>);

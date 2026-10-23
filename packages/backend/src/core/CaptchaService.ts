@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+import Ajv from 'ajv';
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
 import type { UsersRepository } from '@/models/index.js';
@@ -8,6 +10,15 @@ type CaptchaResponse = {
 	success: boolean;
 	'error-codes'?: string[];
 };
+
+const validateCaptchaResponse = new Ajv().compile<CaptchaResponse>({
+	type: 'object',
+	properties: {
+		success: { type: 'boolean' },
+		'error-codes': { type: 'array', items: { type: 'string' } },
+	},
+	required: ['success'],
+});
 
 @Injectable()
 export class CaptchaService {
@@ -33,7 +44,7 @@ export class CaptchaService {
 			},
 			// TODO
 			//timeout: 10 * 1000,
-			agent: (url, bypassProxy) => this.httpRequestService.getAgentByUrl(url, bypassProxy),
+			agent: url => this.httpRequestService.getAgentByUrl(url),
 		}).catch(err => {
 			throw `${err.message ?? err}`;
 		});
@@ -42,7 +53,9 @@ export class CaptchaService {
 			throw `${res.status}`;
 		}
 	
-		return await res.json() as CaptchaResponse;
+		const result: unknown = await res.json();
+		if (!validateCaptchaResponse(result)) throw new Error('Invalid CAPTCHA response');
+		return result;
 	}	
 	
 	public async verifyRecaptcha(secret: string, response: string): Promise<void> {

@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { validateActivity } from '@/core/remote/activitypub/validate-activity.js';
 import Router from '@koa/router';
 import json from 'koa-json-body';
 import httpSignature from '@peertube/http-signature';
@@ -90,7 +91,12 @@ export class ActivityPubServerService {
 			return;
 		}
 
-		this.queueService.inbox(ctx.request.body, signature);
+		const activity: unknown = ctx.request.body;
+		if (!validateActivity(activity)) {
+			ctx.status = 400;
+			return;
+		}
+		this.queueService.inbox(activity, signature);
 
 		ctx.status = 202;
 	}

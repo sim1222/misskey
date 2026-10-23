@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import rndstr from 'rndstr';
+import Ajv from 'ajv';
 import bcrypt from 'bcryptjs';
 import { DI } from '@/di-symbols.js';
 import type { RegistrationTicketsRepository, UserPendingsRepository, UserProfilesRepository, UsersRepository } from '@/models/index.js';
@@ -13,6 +14,31 @@ import { EmailService } from '@/core/EmailService.js';
 import { ILocalUser } from '@/models/entities/User.js';
 import { SigninService } from './SigninService.js';
 import type Koa from 'koa';
+
+interface SignupBody {
+	username: string;
+	password: string;
+	host?: string | null;
+	invitationCode?: string | null;
+	emailAddress?: string | null;
+	'hcaptcha-response'?: string;
+	'g-recaptcha-response'?: string;
+}
+const validateSignup = new Ajv().compile<SignupBody>({
+	type: 'object',
+	properties: {
+		username: { type: 'string' }, password: { type: 'string' },
+		host: { type: ['string', 'null'] },
+		invitationCode: { type: ['string', 'null'] },
+		emailAddress: { type: ['string', 'null'] },
+		'hcaptcha-response': { type: 'string' },
+		'g-recaptcha-response': { type: 'string' },
+	},
+	required: ['username', 'password'],
+});
+const validatePending = new Ajv().compile<{ code: string }>({
+	type: 'object', properties: { code: { type: 'string' } }, required: ['code'],
+});
 
 @Injectable()
 export class SignupApiService {
@@ -43,7 +69,8 @@ export class SignupApiService {
 	}
 
 	public async signup(ctx: Koa.Context) {
-		const body = ctx.request.body;
+		const body: unknown = ctx.request.body;
+		if (!validateSignup(body)) { ctx.status = 400; return; }
 
 		const instance = await this.metaService.fetch(true);
 	
@@ -51,14 +78,14 @@ export class SignupApiService {
 		// ただしテスト時はこの機構は障害となるため無効にする
 		if (process.env.NODE_ENV !== 'test') {
 			if (instance.enableHcaptcha && instance.hcaptchaSecretKey) {
-				await this.captchaService.verifyHcaptcha(instance.hcaptchaSecretKey, body['hcaptcha-response']).catch(e => {
-					ctx.throw(400, e);
+				await this.captchaService.verifyHcaptcha(instance.hcaptchaSecretKey, body['hcaptcha-response'] ?? '').catch(e => {
+					ctx.throw(400, e instanceof Error ? e : String(e));
 				});
 			}
 	
 			if (instance.enableRecaptcha && instance.recaptchaSecretKey) {
-				await this.captchaService.verifyRecaptcha(instance.recaptchaSecretKey, body['g-recaptcha-response']).catch(e => {
-					ctx.throw(400, e);
+				await this.captchaService.verifyRecaptcha(instance.recaptchaSecretKey, body['g-recaptcha-response'] ?? '').catch(e => {
+					ctx.throw(400, e instanceof Error ? e : String(e));
 				});
 			}
 		}
@@ -101,6 +128,8 @@ export class SignupApiService {
 		}
 	
 		if (instance.emailRequiredForSignup) {
+			// The address has already been validated above; narrow it at its use.
+			if (typeof emailAddress !== 'string') { ctx.status = 400; return; }
 			const code = rndstr('a-z0-9', 16);
 	
 			// Generate hash of password
@@ -138,13 +167,14 @@ export class SignupApiService {
 	
 				ctx.body = res;
 			} catch (e) {
-				ctx.throw(400, e);
+				ctx.throw(400, e instanceof Error ? e : String(e));
 			}
 		}
 	}
 
 	public async signupPending(ctx: Koa.Context) {
-		const body = ctx.request.body;
+		const body: unknown = ctx.request.body;
+		if (!validatePending(body)) { ctx.status = 400; return; }
 
 		const code = body['code'];
 
@@ -170,7 +200,7 @@ export class SignupApiService {
 
 			this.signinService.signin(ctx, account as ILocalUser);
 		} catch (e) {
-			ctx.throw(400, e);
+			ctx.throw(400, e instanceof Error ? e : String(e));
 		}
 	}
 }

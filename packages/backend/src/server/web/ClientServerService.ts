@@ -1,6 +1,7 @@
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PathOrFileDescriptor, readFileSync } from 'node:fs';
+import { genOpenapiSpec } from '@/server/api/openapi/gen-spec.js';
 import { Inject, Injectable } from '@nestjs/common';
 import ms from 'ms';
 import Koa from 'koa';
@@ -287,7 +288,7 @@ export class ClientServerService {
 		router.get('/url', ctx => this.urlPreviewService.handle(ctx));
 
 		router.get('/api.json', async ctx => {
-			ctx.body = genOpenapiSpec();
+			ctx.body = genOpenapiSpec(this.config);
 		});
 
 		const getFeed = async (acct: string) => {

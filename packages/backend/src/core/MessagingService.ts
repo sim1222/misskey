@@ -285,8 +285,8 @@ export class MessagingService {
 	}
 
 	public async deliverReadActivity(user: { id: User['id']; host: null; }, recipient: IRemoteUser, messages: MessagingMessage | MessagingMessage[]) {
-		messages = toArray(messages).filter(x => x.uri);
-		const contents = messages.map(x => this.apRendererService.renderRead(user, x));
+		const remoteMessages = toArray(messages).filter((x): x is MessagingMessage & { uri: string } => Boolean(x.uri));
+		const contents = remoteMessages.map(x => this.apRendererService.renderRead(user, x));
 
 		if (contents.length > 1) {
 			const collection = this.apRendererService.renderOrderedCollection(null, contents.length, undefined, undefined, contents);

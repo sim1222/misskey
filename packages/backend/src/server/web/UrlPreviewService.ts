@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import summaly from 'summaly';
+import Ajv from 'ajv';
 import { DI } from '@/di-symbols.js';
 import type { UsersRepository } from '@/models/index.js';
 import type { Config } from '@/config.js';
@@ -9,6 +10,19 @@ import type Logger from '@/logger.js';
 import { query } from '@/misc/prelude/url.js';
 import { LoggerService } from '@/core/LoggerService.js';
 import type Koa from 'koa';
+
+interface PreviewSummary {
+	title?: string | null;
+	icon?: string | null;
+	thumbnail?: string | null;
+}
+const validateSummary = new Ajv().compile<PreviewSummary>({
+	type: 'object', properties: {
+		title: { type: ['string', 'null'] },
+		icon: { type: ['string', 'null'] },
+		thumbnail: { type: ['string', 'null'] },
+	},
+});
 
 @Injectable()
 export class UrlPreviewService {
@@ -28,7 +42,7 @@ export class UrlPreviewService {
 		this.logger = this.loggerService.getLogger('url-preview');
 	}
 
-	private wrap(url?: string): string | null {
+	private wrap(url?: string | null): string | null {
 		return url != null
 			? url.match(/^https?:\/\//)
 				? `${this.config.url}/proxy/preview.webp?${query({
@@ -67,6 +81,8 @@ export class UrlPreviewService {
 				lang: lang ?? 'ja-JP',
 			});
 	
+			if (!validateSummary(summary)) throw new Error('Invalid preview response');
+
 			this.logger.succ(`Got preview of ${url}: ${summary.title}`);
 	
 			summary.icon = this.wrap(summary.icon);

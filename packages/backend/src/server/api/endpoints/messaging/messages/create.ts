@@ -108,8 +108,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private messagingService: MessagingService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			let recipientUser: User | null;
-			let recipientGroup: UserGroup | null;
+			let recipientUser: User | undefined = undefined;
+			let recipientGroup: UserGroup | undefined = undefined;
 
 			if (ps.userId != null) {
 				// Myself
@@ -133,7 +133,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				}
 			} else if (ps.groupId != null) {
 				// Fetch recipient (group)
-				recipientGroup = await this.userGroupsRepository.findOneBy({ id: ps.groupId! });
+				const group = await this.userGroupsRepository.findOneBy({ id: ps.groupId });
+				recipientGroup = group ?? undefined;
 
 				if (recipientGroup == null) {
 					throw new ApiError(meta.errors.noSuchGroup);

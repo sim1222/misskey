@@ -13,6 +13,12 @@ const response = await fetch(`${base}/api/meta`, {
 });
 assert.equal(response.status, 200);
 assert.equal((await response.json()).version, metadata.version);
+const apiDescription = await fetch(`${base}/api.json`);
+assert.equal(apiDescription.status, 200);
+const apiDocument = await apiDescription.json();
+assert.equal(apiDocument.openapi, '3.0.0');
+assert.equal(apiDocument.info.version, metadata.version);
+assert.ok(apiDocument.paths['/drive/files/create'].post);
 const manifest = JSON.parse(await readFile(new URL('../built/_client_dist_/manifest.json', import.meta.url), 'utf8'));
 const asset = await fetch(`${base}/assets/${manifest['src/init.ts'].file}`);
 assert.equal(asset.status, 200);

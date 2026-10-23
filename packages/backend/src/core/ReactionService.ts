@@ -81,7 +81,7 @@ export class ReactionService {
 	) {
 	}
 
-	public async create(user: { id: User['id']; host: User['host']; followersCount: User['followersCount']; }, note: Note, reaction?: string) {
+	public async create(user: { id: User['id']; host: User['host']; followersCount: User['followersCount']; }, note: Note, reaction?: string | null) {
 		// Check blocking
 		if (note.userId !== user.id) {
 			const block = await this.blockingsRepository.findOneBy({

@@ -130,19 +130,15 @@ export class HttpRequestService {
 	}): Promise<Response> {
 		const timeout = args.timeout ?? 10 * 1000;
 
-		const controller = new AbortController();
-		setTimeout(() => {
-			controller.abort();
-		}, timeout * 6);
-
 		const res = await fetch(args.url, {
 			method: args.method,
 			headers: args.headers,
 			body: args.body,
-			timeout,
 			size: args.size ?? 10 * 1024 * 1024,
 			agent: (url) => this.getAgentByUrl(url),
-			signal: controller.signal,
+			// node-fetch 3 ignores its former `timeout` option. Preserve the
+			// existing AbortController deadline, including the legacy multiplier.
+			signal: AbortSignal.timeout(timeout * 6),
 		});
 
 		if (!res.ok) {
