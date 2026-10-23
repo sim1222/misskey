@@ -1,0 +1,893 @@
+{
+  "generatedAt": "2026-10-23T18:32:25.474Z",
+  "source": "Yarn Classic audit / npm registry",
+  "scopes": {
+    "root": {
+      "summary": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 4,
+          "high": 2,
+          "critical": 0
+        },
+        "dependencies": 431,
+        "devDependencies": 0,
+        "optionalDependencies": 0,
+        "totalDependencies": 431
+      },
+      "uniqueAdvisories": [
+        {
+          "id": "GHSA-4mjr-xmp4-gh2g",
+          "module": "qs",
+          "severity": "moderate",
+          "title": "qs: Denial of Service via Attacker Controlled isBuffer",
+          "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g",
+          "vulnerableVersions": ">=2.2.5 <6.16.0",
+          "patchedVersions": ">=6.16.0",
+          "paths": [
+            "cypress>@cypress/request>qs"
+          ]
+        },
+        {
+          "id": "GHSA-7pqw-9j4j-h8q3",
+          "module": "extract-zip",
+          "severity": "high",
+          "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+          "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+          "vulnerableVersions": "<=2.0.1",
+          "patchedVersions": "<0.0.0",
+          "paths": [
+            "cypress>extract-zip"
+          ]
+        },
+        {
+          "id": "GHSA-jmr9-qjv8-65gv",
+          "module": "extract-zip",
+          "severity": "high",
+          "title": "extract-zip unvalidated symlink path traversal",
+          "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+          "vulnerableVersions": "<=2.0.1",
+          "patchedVersions": "<0.0.0",
+          "paths": [
+            "cypress>extract-zip"
+          ]
+        },
+        {
+          "id": "GHSA-q8mj-m7cp-5q26",
+          "module": "qs",
+          "severity": "moderate",
+          "title": "qs has a remotely triggerable DoS: qs.stringify crashes with TypeError on null/undefined entries in comma-format arrays when encodeValuesOnly is set",
+          "url": "https://github.com/advisories/GHSA-q8mj-m7cp-5q26",
+          "vulnerableVersions": ">=6.11.1 <=6.15.1",
+          "patchedVersions": ">=6.15.2",
+          "paths": [
+            "cypress>@cypress/request>qs"
+          ]
+        },
+        {
+          "id": "GHSA-w5hq-g745-h8pq",
+          "module": "uuid",
+          "severity": "moderate",
+          "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+          "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+          "vulnerableVersions": "<11.1.1",
+          "patchedVersions": ">=11.1.1",
+          "paths": [
+            "cypress>@cypress/request>uuid"
+          ]
+        },
+        {
+          "id": "GHSA-x5fp-wj9c-mxmx",
+          "module": "qs",
+          "severity": "moderate",
+          "title": "qs array-limit bypass via bracket-key comma parsing",
+          "url": "https://github.com/advisories/GHSA-x5fp-wj9c-mxmx",
+          "vulnerableVersions": ">=6.14.2 <=6.15.3",
+          "patchedVersions": ">=6.16.0",
+          "paths": [
+            "cypress>@cypress/request>qs"
+          ]
+        }
+      ]
+    },
+    "backend": {
+      "summary": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 5,
+          "moderate": 32,
+          "high": 20,
+          "critical": 0
+        },
+        "dependencies": 1484,
+        "devDependencies": 0,
+        "optionalDependencies": 0,
+        "totalDependencies": 1484
+      },
+      "uniqueAdvisories": [
+        {
+          "id": "GHSA-2mjp-6q6p-2qxm",
+          "module": "undici",
+          "severity": "moderate",
+          "title": "Undici has an HTTP Request/Response Smuggling issue",
+          "url": "https://github.com/advisories/GHSA-2mjp-6q6p-2qxm",
+          "vulnerableVersions": "<6.24.0",
+          "patchedVersions": ">=6.24.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-35p6-xmwp-9g52",
+          "module": "undici",
+          "severity": "low",
+          "title": "undici vulnerable to HTTP response queue poisoning via keep-alive socket reuse",
+          "url": "https://github.com/advisories/GHSA-35p6-xmwp-9g52",
+          "vulnerableVersions": "<6.27.0",
+          "patchedVersions": ">=6.27.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-36xv-jgw5-4q75",
+          "module": "@nestjs/core",
+          "severity": "moderate",
+          "title": "@nestjs/core Improperly Neutralizes Special Elements in Output Used by a Downstream Component ('Injection')",
+          "url": "https://github.com/advisories/GHSA-36xv-jgw5-4q75",
+          "vulnerableVersions": "<=11.1.17",
+          "patchedVersions": ">=11.1.18",
+          "paths": [
+            "@nestjs/core"
+          ]
+        },
+        {
+          "id": "GHSA-3g43-6gmg-66jw",
+          "module": "axios",
+          "severity": "high",
+          "title": "axios Vulnerable to Credential Theft and Response Hijacking via Prototype Pollution Gadget in Config Merge",
+          "url": "https://github.com/advisories/GHSA-3g43-6gmg-66jw",
+          "vulnerableVersions": ">=0.19.0 <0.31.1",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-3p68-rc4w-qgx5",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios has a NO_PROXY Hostname Normalization Bypass that Leads to SSRF",
+          "url": "https://github.com/advisories/GHSA-3p68-rc4w-qgx5",
+          "vulnerableVersions": "<0.31.0",
+          "patchedVersions": ">=0.31.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-43fc-jf86-j433",
+          "module": "axios",
+          "severity": "high",
+          "title": "Axios is Vulnerable to Denial of Service via __proto__ Key in mergeConfig",
+          "url": "https://github.com/advisories/GHSA-43fc-jf86-j433",
+          "vulnerableVersions": "<=0.30.2",
+          "patchedVersions": ">=0.30.3",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-4992-7rv2-5pvq",
+          "module": "undici",
+          "severity": "moderate",
+          "title": "Undici has CRLF Injection in undici via `upgrade` option",
+          "url": "https://github.com/advisories/GHSA-4992-7rv2-5pvq",
+          "vulnerableVersions": "<6.24.0",
+          "patchedVersions": ">=6.24.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-5c9x-8gcm-mpgx",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios' HTTP adapter-streamed uploads bypass maxBodyLength when maxRedirects: 0",
+          "url": "https://github.com/advisories/GHSA-5c9x-8gcm-mpgx",
+          "vulnerableVersions": "<=0.31.0",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-62hf-57xw-28j9",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios: unbounded recursion in toFormData causes DoS via deeply nested request data",
+          "url": "https://github.com/advisories/GHSA-62hf-57xw-28j9",
+          "vulnerableVersions": "<=0.31.0",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-6chq-wfr3-2hj9",
+          "module": "axios",
+          "severity": "high",
+          "title": "Axios: Header Injection via Prototype Pollution",
+          "url": "https://github.com/advisories/GHSA-6chq-wfr3-2hj9",
+          "vulnerableVersions": "<=0.31.0",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-776f-qx25-q3cc",
+          "module": "xml2js",
+          "severity": "moderate",
+          "title": "xml2js is vulnerable to prototype pollution",
+          "url": "https://github.com/advisories/GHSA-776f-qx25-q3cc",
+          "vulnerableVersions": "<0.5.0",
+          "patchedVersions": ">=0.5.0",
+          "paths": [
+            "aws-sdk>xml2js"
+          ]
+        },
+        {
+          "id": "GHSA-7q8q-rj6j-mhjq",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios: Nested axios option objects can consume polluted prototype values",
+          "url": "https://github.com/advisories/GHSA-7q8q-rj6j-mhjq",
+          "vulnerableVersions": ">=0.8.0 <0.33.0",
+          "patchedVersions": ">=0.33.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-898c-q2cr-xwhg",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "axios has DoS & Header Injection via Prototype Pollution Read-Side Gadgets in axios merge functions",
+          "url": "https://github.com/advisories/GHSA-898c-q2cr-xwhg",
+          "vulnerableVersions": "<=0.31.1",
+          "patchedVersions": ">=0.32.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-8xcm-r25x-g524",
+          "module": "undici",
+          "severity": "moderate",
+          "title": "undici vulnerable to downstream response desynchronization via retry interceptor",
+          "url": "https://github.com/advisories/GHSA-8xcm-r25x-g524",
+          "vulnerableVersions": "<6.28.0",
+          "patchedVersions": ">=6.28.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-9h3q-32c7-r533",
+          "module": "private-ip",
+          "severity": "high",
+          "title": "private-ip vulnerable to Server-Side Request Forgery",
+          "url": "https://github.com/advisories/GHSA-9h3q-32c7-r533",
+          "vulnerableVersions": "<=3.0.2",
+          "patchedVersions": "<0.0.0",
+          "paths": [
+            "private-ip",
+            "summaly>private-ip"
+          ]
+        },
+        {
+          "id": "GHSA-9wv6-86v2-598j",
+          "module": "path-to-regexp",
+          "severity": "high",
+          "title": "path-to-regexp outputs backtracking regular expressions",
+          "url": "https://github.com/advisories/GHSA-9wv6-86v2-598j",
+          "vulnerableVersions": ">=2.0.0 <3.3.0",
+          "patchedVersions": ">=3.3.0",
+          "paths": [
+            "@nestjs/core>path-to-regexp"
+          ]
+        },
+        {
+          "id": "GHSA-cj7v-w2c7-cp7c",
+          "module": "@nestjs/common",
+          "severity": "moderate",
+          "title": "nest allows a remote attacker to execute arbitrary code via the Content-Type header",
+          "url": "https://github.com/advisories/GHSA-cj7v-w2c7-cp7c",
+          "vulnerableVersions": "<10.4.16",
+          "patchedVersions": ">=10.4.16",
+          "paths": [
+            "@nestjs/common"
+          ]
+        },
+        {
+          "id": "GHSA-fvcv-3m26-pcqx",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios has Unrestricted Cloud Metadata Exfiltration via Header Injection Chain",
+          "url": "https://github.com/advisories/GHSA-fvcv-3m26-pcqx",
+          "vulnerableVersions": "<0.31.0",
+          "patchedVersions": ">=0.31.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-g8m3-5g58-fq7m",
+          "module": "undici",
+          "severity": "low",
+          "title": "undici vulnerable to Set-Cookie SameSite attribute downgrade via permissive substring matching",
+          "url": "https://github.com/advisories/GHSA-g8m3-5g58-fq7m",
+          "vulnerableVersions": "<6.27.0",
+          "patchedVersions": ">=6.27.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-g9mf-h72j-4rw9",
+          "module": "undici",
+          "severity": "moderate",
+          "title": "Undici has an unbounded decompression chain in HTTP responses on Node.js Fetch API via Content-Encoding leads to resource exhaustion",
+          "url": "https://github.com/advisories/GHSA-g9mf-h72j-4rw9",
+          "vulnerableVersions": "<6.23.0",
+          "patchedVersions": ">=6.23.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-gh4j-gqv2-49f6",
+          "module": "fast-xml-parser",
+          "severity": "moderate",
+          "title": "fast-xml-parser XMLBuilder: XML Comment and CDATA Injection via Unescaped Delimiters",
+          "url": "https://github.com/advisories/GHSA-gh4j-gqv2-49f6",
+          "vulnerableVersions": "<5.7.0",
+          "patchedVersions": ">=5.7.0",
+          "paths": [
+            "is-svg>fast-xml-parser"
+          ]
+        },
+        {
+          "id": "GHSA-gxm5-99cw-xjw9",
+          "module": "@fastify/busboy",
+          "severity": "moderate",
+          "title": "@fastify/busboy vulnerable to CRLF injection via multipart Content-Disposition filename and name",
+          "url": "https://github.com/advisories/GHSA-gxm5-99cw-xjw9",
+          "vulnerableVersions": "<3.2.2",
+          "patchedVersions": ">=3.2.2",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici>@fastify/busboy"
+          ]
+        },
+        {
+          "id": "GHSA-h3mg-xc3c-68pw",
+          "module": "ip-address",
+          "severity": "moderate",
+          "title": "ip-address: Address6 builds a parse diagnostic proportional to the input with no length bound, allowing a single long string to stall or crash the process",
+          "url": "https://github.com/advisories/GHSA-h3mg-xc3c-68pw",
+          "vulnerableVersions": "<=10.7.0",
+          "patchedVersions": ">=10.7.1",
+          "paths": [
+            "ip-cidr>ip-address"
+          ]
+        },
+        {
+          "id": "GHSA-hfxv-24rg-xrqf",
+          "module": "axios",
+          "severity": "high",
+          "title": "Axios: Regular Expression Denial of Service (ReDoS) via Cookie Name Injection",
+          "url": "https://github.com/advisories/GHSA-hfxv-24rg-xrqf",
+          "vulnerableVersions": "<=0.31.1",
+          "patchedVersions": ">=0.32.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-j5f8-grm9-p9fc",
+          "module": "axios",
+          "severity": "high",
+          "title": "Axios: Proxy-Authorization header leaks to redirect target when proxy is re-evaluated to direct connection",
+          "url": "https://github.com/advisories/GHSA-j5f8-grm9-p9fc",
+          "vulnerableVersions": "<=0.31.1",
+          "patchedVersions": ">=0.32.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-j6r3-76f7-8jcv",
+          "module": "ip-address",
+          "severity": "moderate",
+          "title": "ip-address: isInSubnet() and isHostInSubnet() compare addresses of different families as if they shared an address space, allowing an allowlist check to admit an address outside its range",
+          "url": "https://github.com/advisories/GHSA-j6r3-76f7-8jcv",
+          "vulnerableVersions": "<=10.7.0",
+          "patchedVersions": ">=10.7.1",
+          "paths": [
+            "ip-cidr>ip-address"
+          ]
+        },
+        {
+          "id": "GHSA-j965-2qgj-vjmq",
+          "module": "aws-sdk",
+          "severity": "low",
+          "title": "JavaScript SDK v2 users should add validation to the region parameter value in or migrate to v3",
+          "url": "https://github.com/advisories/GHSA-j965-2qgj-vjmq",
+          "vulnerableVersions": ">=2.0.0 <=3.0.0",
+          "patchedVersions": "<0.0.0",
+          "paths": [
+            "aws-sdk"
+          ]
+        },
+        {
+          "id": "GHSA-jr5f-v2jv-69x6",
+          "module": "axios",
+          "severity": "high",
+          "title": "axios Requests Vulnerable To Possible SSRF and Credential Leakage via Absolute URL",
+          "url": "https://github.com/advisories/GHSA-jr5f-v2jv-69x6",
+          "vulnerableVersions": "<0.30.0",
+          "patchedVersions": ">=0.30.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-m7pr-hjqh-92cm",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios: no_proxy bypass via IP alias allows SSRF",
+          "url": "https://github.com/advisories/GHSA-m7pr-hjqh-92cm",
+          "vulnerableVersions": "<=0.31.0",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-m8rv-5g2x-5cg5",
+          "module": "undici",
+          "severity": "moderate",
+          "title": "undici vulnerable to CRLF Injection via blob-like body 'type' property",
+          "url": "https://github.com/advisories/GHSA-m8rv-5g2x-5cg5",
+          "vulnerableVersions": "<6.28.0",
+          "patchedVersions": ">=6.28.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-mmx7-hfxf-jppx",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios: Prototype pollution gadgets can alter axios request construction",
+          "url": "https://github.com/advisories/GHSA-mmx7-hfxf-jppx",
+          "vulnerableVersions": "<0.33.0",
+          "patchedVersions": ">=0.33.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-mwp4-54f8-5fhr",
+          "module": "ip-address",
+          "severity": "high",
+          "title": "ip-address: Address4 decodes leading-zero octets as decimal while resolvers decode them as octal, allowing SSRF and trust-boundary bypass",
+          "url": "https://github.com/advisories/GHSA-mwp4-54f8-5fhr",
+          "vulnerableVersions": "<=10.3.0",
+          "patchedVersions": ">=10.3.1",
+          "paths": [
+            "ip-cidr>ip-address"
+          ]
+        },
+        {
+          "id": "GHSA-p6mc-m468-83gw",
+          "module": "lodash.pick",
+          "severity": "high",
+          "title": "Prototype Pollution in lodash",
+          "url": "https://github.com/advisories/GHSA-p6mc-m468-83gw",
+          "vulnerableVersions": ">=4.0.0 <=4.4.0",
+          "patchedVersions": "<0.0.0",
+          "paths": [
+            "summaly>cheerio>lodash.pick"
+          ]
+        },
+        {
+          "id": "GHSA-p88m-4jfj-68fv",
+          "module": "undici",
+          "severity": "moderate",
+          "title": "undici vulnerable to HTTP header injection via Set-Cookie percent-decoding",
+          "url": "https://github.com/advisories/GHSA-p88m-4jfj-68fv",
+          "vulnerableVersions": "<6.27.0",
+          "patchedVersions": ">=6.27.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-p92q-9vqr-4j8v",
+          "module": "axios",
+          "severity": "high",
+          "title": "Axios: Proxy-Authorization Credential Leak to Origin Server Across HTTP-to-HTTPS Redirect in Axios Node.js HTTP Adapter",
+          "url": "https://github.com/advisories/GHSA-p92q-9vqr-4j8v",
+          "vulnerableVersions": "<=0.31.1",
+          "patchedVersions": ">=0.32.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-pf86-5x62-jrwf",
+          "module": "axios",
+          "severity": "high",
+          "title": "Axios: Prototype Pollution Gadgets - Response Tampering, Data Exfiltration, and Request Hijacking",
+          "url": "https://github.com/advisories/GHSA-pf86-5x62-jrwf",
+          "vulnerableVersions": "<=0.31.0",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-pjwm-pj3p-43mv",
+          "module": "axios",
+          "severity": "high",
+          "title": "axios's shouldBypassProxy does not recognize IPv4-mapped IPv6 addresses, allowing NO_PROXY bypass (incomplete fix for CVE-2025-62718)",
+          "url": "https://github.com/advisories/GHSA-pjwm-pj3p-43mv",
+          "vulnerableVersions": "<=0.31.1",
+          "patchedVersions": ">=0.32.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-pmwg-cvhr-8vh7",
+          "module": "axios",
+          "severity": "high",
+          "title": "Axios: Incomplete Fix for CVE-2025-62718 — NO_PROXY Protection Bypassed via RFC 1122 Loopback Subnet (127.0.0.0/8) in Axios 1.15.0",
+          "url": "https://github.com/advisories/GHSA-pmwg-cvhr-8vh7",
+          "vulnerableVersions": "<=0.31.0",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-r53p-7pc4-xj5r",
+          "module": "undici",
+          "severity": "low",
+          "title": "undici vulnerable to downstream response splitting via retry interceptor",
+          "url": "https://github.com/advisories/GHSA-r53p-7pc4-xj5r",
+          "vulnerableVersions": "<6.28.1",
+          "patchedVersions": ">=6.28.1",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-rp65-9cf3-cjxr",
+          "module": "nth-check",
+          "severity": "high",
+          "title": "Inefficient Regular Expression Complexity in nth-check",
+          "url": "https://github.com/advisories/GHSA-rp65-9cf3-cjxr",
+          "vulnerableVersions": "<2.0.1",
+          "patchedVersions": ">=2.0.1",
+          "paths": [
+            "summaly>cheerio>css-select>nth-check"
+          ]
+        },
+        {
+          "id": "GHSA-rpw4-54j3-4h4q",
+          "module": "ip-address",
+          "severity": "moderate",
+          "title": "ip-address: Address6.isLinkLocal() recognizes fe80::/64 rather than fe80::/10, allowing SSRF and trust-boundary bypass to on-link hosts",
+          "url": "https://github.com/advisories/GHSA-rpw4-54j3-4h4q",
+          "vulnerableVersions": "<=10.5.0",
+          "patchedVersions": ">=10.5.1",
+          "paths": [
+            "ip-cidr>ip-address"
+          ]
+        },
+        {
+          "id": "GHSA-rxp7-6hxx-x8q5",
+          "module": "ip-address",
+          "severity": "moderate",
+          "title": "ip-address: Address6 matches a zone identifier in quadratic time ahead of its length limit, allowing a single long string to stall the process",
+          "url": "https://github.com/advisories/GHSA-rxp7-6hxx-x8q5",
+          "vulnerableVersions": "<=10.7.3",
+          "patchedVersions": ">=10.7.4",
+          "paths": [
+            "ip-cidr>ip-address"
+          ]
+        },
+        {
+          "id": "GHSA-v2v4-37r5-5v8g",
+          "module": "ip-address",
+          "severity": "moderate",
+          "title": "ip-address has XSS in Address6 HTML-emitting methods",
+          "url": "https://github.com/advisories/GHSA-v2v4-37r5-5v8g",
+          "vulnerableVersions": "<=10.1.0",
+          "patchedVersions": ">=10.1.1",
+          "paths": [
+            "ip-cidr>ip-address"
+          ]
+        },
+        {
+          "id": "GHSA-v3r7-h72x-cjcm",
+          "module": "undici",
+          "severity": "moderate",
+          "title": "undici vulnerable to cookie attribute injection via unsanitized domain and unparsed setCookie fields",
+          "url": "https://github.com/advisories/GHSA-v3r7-h72x-cjcm",
+          "vulnerableVersions": "<6.28.0",
+          "patchedVersions": ">=6.28.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-v9p9-hfj2-hcw8",
+          "module": "undici",
+          "severity": "high",
+          "title": "Undici has Unhandled Exception in WebSocket Client Due to Invalid server_max_window_bits Validation",
+          "url": "https://github.com/advisories/GHSA-v9p9-hfj2-hcw8",
+          "vulnerableVersions": "<6.24.0",
+          "patchedVersions": ">=6.24.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-vf2m-468p-8v99",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios: HTTP adapter streamed responses bypass maxContentLength",
+          "url": "https://github.com/advisories/GHSA-vf2m-468p-8v99",
+          "vulnerableVersions": "<=0.31.0",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-vrm6-8vpv-qv8q",
+          "module": "undici",
+          "severity": "high",
+          "title": "Undici has Unbounded Memory Consumption in WebSocket permessage-deflate Decompression",
+          "url": "https://github.com/advisories/GHSA-vrm6-8vpv-qv8q",
+          "vulnerableVersions": "<6.24.0",
+          "patchedVersions": ">=6.24.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-vxpw-j846-p89q",
+          "module": "undici",
+          "severity": "high",
+          "title": "undici WebSocket client vulnerable to denial of service via fragment count bypass",
+          "url": "https://github.com/advisories/GHSA-vxpw-j846-p89q",
+          "vulnerableVersions": "<6.27.0",
+          "patchedVersions": ">=6.27.0",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici"
+          ]
+        },
+        {
+          "id": "GHSA-w5hq-g745-h8pq",
+          "module": "uuid",
+          "severity": "moderate",
+          "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+          "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+          "vulnerableVersions": "<11.1.1",
+          "patchedVersions": ">=11.1.1",
+          "paths": [
+            "@syuilo/aiscript>uuid",
+            "aws-sdk>uuid",
+            "bull>uuid"
+          ]
+        },
+        {
+          "id": "GHSA-w9j2-pvgh-6h63",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios: Authentication Bypass via Prototype Pollution Gadget in `validateStatus` Merge Strategy",
+          "url": "https://github.com/advisories/GHSA-w9j2-pvgh-6h63",
+          "vulnerableVersions": "<=0.31.0",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-wf5p-g6vw-rhxx",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios Cross-Site Request Forgery Vulnerability",
+          "url": "https://github.com/advisories/GHSA-wf5p-g6vw-rhxx",
+          "vulnerableVersions": ">=0.8.1 <0.28.0",
+          "patchedVersions": ">=0.28.0",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-x8mw-p69m-v3mx",
+          "module": "@fastify/busboy",
+          "severity": "high",
+          "title": "@fastify/busboy vulnerable to Denial of Service via prototype-named multipart part header",
+          "url": "https://github.com/advisories/GHSA-x8mw-p69m-v3mx",
+          "vulnerableVersions": ">=1.0.0 <3.2.1",
+          "patchedVersions": ">=3.2.1",
+          "paths": [
+            "jsonld>@digitalbazaar/http-client>undici>@fastify/busboy"
+          ]
+        },
+        {
+          "id": "GHSA-xhjh-pmcv-23jw",
+          "module": "axios",
+          "severity": "low",
+          "title": "Axios: Null Byte Injection via Reverse-Encoding in AxiosURLSearchParams",
+          "url": "https://github.com/advisories/GHSA-xhjh-pmcv-23jw",
+          "vulnerableVersions": "<=0.31.0",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        },
+        {
+          "id": "GHSA-xx6v-rp6x-q39c",
+          "module": "axios",
+          "severity": "moderate",
+          "title": "Axios: XSRF Token Cross-Origin Leakage via Prototype Pollution Gadget in `withXSRFToken` Boolean Coercion",
+          "url": "https://github.com/advisories/GHSA-xx6v-rp6x-q39c",
+          "vulnerableVersions": "<=0.31.0",
+          "patchedVersions": ">=0.31.1",
+          "paths": [
+            "deep-email-validator>axios"
+          ]
+        }
+      ]
+    },
+    "client": {
+      "summary": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 1,
+          "moderate": 6,
+          "high": 2,
+          "critical": 0
+        },
+        "dependencies": 679,
+        "devDependencies": 0,
+        "optionalDependencies": 0,
+        "totalDependencies": 679
+      },
+      "uniqueAdvisories": [
+        {
+          "id": "GHSA-4mjr-xmp4-gh2g",
+          "module": "qs",
+          "severity": "moderate",
+          "title": "qs: Denial of Service via Attacker Controlled isBuffer",
+          "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g",
+          "vulnerableVersions": ">=2.2.5 <6.16.0",
+          "patchedVersions": ">=6.16.0",
+          "paths": [
+            "cypress>@cypress/request>qs"
+          ]
+        },
+        {
+          "id": "GHSA-7pqw-9j4j-h8q3",
+          "module": "extract-zip",
+          "severity": "high",
+          "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+          "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+          "vulnerableVersions": "<=2.0.1",
+          "patchedVersions": "<0.0.0",
+          "paths": [
+            "cypress>extract-zip"
+          ]
+        },
+        {
+          "id": "GHSA-jmr9-qjv8-65gv",
+          "module": "extract-zip",
+          "severity": "high",
+          "title": "extract-zip unvalidated symlink path traversal",
+          "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+          "vulnerableVersions": "<=2.0.1",
+          "patchedVersions": "<0.0.0",
+          "paths": [
+            "cypress>extract-zip"
+          ]
+        },
+        {
+          "id": "GHSA-q8mj-m7cp-5q26",
+          "module": "qs",
+          "severity": "moderate",
+          "title": "qs has a remotely triggerable DoS: qs.stringify crashes with TypeError on null/undefined entries in comma-format arrays when encodeValuesOnly is set",
+          "url": "https://github.com/advisories/GHSA-q8mj-m7cp-5q26",
+          "vulnerableVersions": ">=6.11.1 <=6.15.1",
+          "patchedVersions": ">=6.15.2",
+          "paths": [
+            "cypress>@cypress/request>qs"
+          ]
+        },
+        {
+          "id": "GHSA-rj75-hqrm-r3gf",
+          "module": "postcss-selector-parser",
+          "severity": "moderate",
+          "title": "PostCSS: Quadratic complexity in flat selector parsing allows CPU exhaustion",
+          "url": "https://github.com/advisories/GHSA-rj75-hqrm-r3gf",
+          "vulnerableVersions": "<7.1.6",
+          "patchedVersions": ">=7.1.6",
+          "paths": [
+            "eslint-plugin-vue>postcss-selector-parser"
+          ]
+        },
+        {
+          "id": "GHSA-w5hq-g745-h8pq",
+          "module": "uuid",
+          "severity": "moderate",
+          "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+          "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+          "vulnerableVersions": "<11.1.1",
+          "patchedVersions": ">=11.1.1",
+          "paths": [
+            "cypress>@cypress/request>uuid",
+            "@syuilo/aiscript>uuid"
+          ]
+        },
+        {
+          "id": "GHSA-x5fp-wj9c-mxmx",
+          "module": "qs",
+          "severity": "moderate",
+          "title": "qs array-limit bypass via bracket-key comma parsing",
+          "url": "https://github.com/advisories/GHSA-x5fp-wj9c-mxmx",
+          "vulnerableVersions": ">=6.14.2 <=6.15.3",
+          "patchedVersions": ">=6.16.0",
+          "paths": [
+            "cypress>@cypress/request>qs"
+          ]
+        },
+        {
+          "id": "GHSA-xffm-g5w8-qvg7",
+          "module": "@eslint/plugin-kit",
+          "severity": "low",
+          "title": "@eslint/plugin-kit is vulnerable to Regular Expression Denial of Service attacks through ConfigCommentParser",
+          "url": "https://github.com/advisories/GHSA-xffm-g5w8-qvg7",
+          "vulnerableVersions": "<0.3.4",
+          "patchedVersions": ">=0.3.4",
+          "paths": [
+            "eslint>@eslint/plugin-kit"
+          ]
+        }
+      ]
+    },
+    "sw": {
+      "summary": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0
+        },
+        "dependencies": 131,
+        "devDependencies": 0,
+        "optionalDependencies": 0,
+        "totalDependencies": 131
+      },
+      "uniqueAdvisories": []
+    }
+  }
+}

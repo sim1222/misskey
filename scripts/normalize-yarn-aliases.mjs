@@ -8,16 +8,20 @@ import { fileURLToPath } from 'node:url';
 export function normalizeYarnAliases(source) {
 	return source.split('\n\n').flatMap(block => {
 		const [header, ...body] = block.split('\n');
-		if (!header?.endsWith(':') || !body.some(line => line.startsWith('  name '))) return [block];
+		if (!header?.endsWith(':')) return [block];
 		const keys = header.slice(0, -1).match(/"[^"]+"|[^,]+/g).map(key => key.trim());
 		const aliases = keys.filter(key => key.includes('@npm:'));
 		const normal = keys.filter(key => !key.includes('@npm:'));
 		if (!aliases.length || !normal.length) return [block];
 		const names = new Set(aliases.map(key => key.replace(/^"/, '').split('@npm:')[0]));
 		if (names.size !== 1) throw new Error(`Ambiguous npm alias names in ${header}`);
+		const normalBody = body.filter(line => !line.startsWith('  name '));
+		// Yarn can also merge these selectors after dropping the name field. Restore
+		// the alias identity explicitly so CJS consumers keep the correct artifact.
+		const aliasBody = [`  name ${[...names][0]}`, ...normalBody];
 		return [
-			`${normal.join(', ')}:\n${body.filter(line => !line.startsWith('  name ')).join('\n').replace(/\n+$/, '')}`,
-			`${aliases.join(', ')}:\n${body.join('\n')}`,
+			`${normal.join(', ')}:\n${normalBody.join('\n').replace(/\n+$/, '')}`,
+			`${aliases.join(', ')}:\n${aliasBody.join('\n')}`,
 		];
 	}).join('\n\n');
 }

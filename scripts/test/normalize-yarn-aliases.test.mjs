@@ -10,6 +10,13 @@ test('separates npm alias metadata without changing artifact identity', () => {
 	assert.equal(normalizeYarnAliases(input), `# yarn lockfile v1\n\nstrip-ansi@^6.0.0:\n${artifact}\n\n${alias}:\n  name strip-ansi-cjs\n${artifact}\n`);
 });
 
+test('repairs merged selectors even when Yarn omitted the alias name field', () => {
+	const input = `# yarn lockfile v1\n\n${alias}, strip-ansi@^6.0.0:\n${artifact}\n`;
+	const expected = `# yarn lockfile v1\n\nstrip-ansi@^6.0.0:\n${artifact}\n\n${alias}:\n  name strip-ansi-cjs\n${artifact}\n`;
+	assert.equal(normalizeYarnAliases(input), expected);
+	assert.equal(normalizeYarnAliases(expected), expected);
+});
+
 test('is idempotent and preserves unrelated and standalone alias entries', () => {
 	const input = `# yarn lockfile v1\n\n${alias}:\n  name strip-ansi-cjs\n${artifact}\n\nstrip-ansi@^6.0.0:\n${artifact}\n`;
 	assert.equal(normalizeYarnAliases(input), input);

@@ -118,7 +118,7 @@ export async function fixture() {
 		delete env.MK_ONLY_SERVER;
 		delete env.MK_ONLY_QUEUE;
 		const run = (args, extra = {}, ipc = false) => spawn(process.execPath, ['--require', resolve(root, 'scripts/regression/network-guard.cjs'), ...args], { cwd: backend, env: { ...env, ...extra }, stdio: ipc ? ['ignore', 'pipe', 'pipe', 'ipc'] : ['ignore', 'pipe', 'pipe'] });
-		const migrate = run(['--input-type=module', '-e', "const {default: db} = await import('./ormconfig.js'); await db.initialize(); await db.runMigrations(); await db.destroy();"]);
+		const migrate = run(['node_modules/typeorm/cli.js', 'migration:run', '-d', 'ormconfig.js']);
 		let migrationLog = '';
 		migrate.stdout.on('data', data => { migrationLog += data; });
 		migrate.stderr.on('data', data => { migrationLog += data; });

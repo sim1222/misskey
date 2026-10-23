@@ -81,13 +81,49 @@ Jest で source を直接検証するテストに加え、回帰試験では同�
 同一メジャー内の更新コミット `9a2a22a06` は
 [GitHub Actions](https://github.com/sim1222/misskey/actions/runs/40001187146) でも全検証が成功した。
 
+## CLI 起動の回帰検出と lockfile 補正
+
+証明書ライブラリ削除時の Yarn Classic の lockfile 再生成で、npm alias と通常の selector が
+`name` フィールドなしで 1 エントリにまとまり、TypeORM CLI の `cliui` が
+CommonJS の `strip-ansi` / `string-width` の代わりに ESM 版を読み込む回帰が発生した。
+CI の `yarn migrate` が失敗し、ローカルでも CLI の `--help` だけで再現できた。
+プログラムから DataSource を直接使う回帰試験の migration はこの CLI 経路を通らない。
+
+`normalize-yarn-aliases.mjs` は、以前は `name` がある混在エントリだけを補正していた。
+`name` がない形式も分離し、alias 側に正しい別名を設定するようにした。
+パッケージのバージョン・取得先・integrity は変えていない。
+空の依存ツリーからの frozen インストールでも CLI の起動を確認した。
+更新作業中に誤配置された node_modules は frozen インストールだけでは残る場合があり、
+作業環境では `--force` を加えて再配置した。
+
+再発検出のため、名前なしの alias に対する補正テストと、
+DB に接続せず実際の `typeorm --help` を実行するテストを比較基盤へ追加した。
+CI はマイグレーション前にこの経路を検証する。アプリの挙動基準は変更していない。
+さらに回帰試験の使い捨て PostgreSQL 18 DB も、DataSource の直接呼び出しから
+本番の `yarn migrate` と同じ TypeORM CLI 経由で全 migration を適用する方式に変えた。
+
+## 依存監査
+
+既存の同じ監査スクリプトで、[最終 lockfile の結果](dependency-audit-2026-10-24.json)を保存した。
+比較先は[前回記録済みの結果](dependency-audit-after-update.json)。各スコープ内で GHSA ID を重複除去し、
+スコープ間では合算しない。この比較で新しく増えた指摘 ID はなかった。
+
+| スコープ | 前回記録 | 今回 | 残る High | 残る Critical |
+| --- | ---: | ---: | ---: | ---: |
+| root | 7 | 6 | 2 | 0 |
+| backend | 56 | 54 | 19 | 0 |
+| client | 10 | 8 | 2 | 0 |
+| sw | 0 | 0 | 0 | 0 |
+
+未解消の High を含み、監査データベースで検出できない本体・設定の不具合も別途扱う必要がある。
+
 ## 検証
 
 - 4 スコープの frozen-lockfile インストール、Yarn alias 整合性確認。
 - バックエンドと型契約の型検査、クライアント・SW を含む全体ビルド。
 - 既存 Jest: 14 スイート、88 テスト。
 - 証明書の置換後は Jest: 15 スイート、122 テスト。
-- 比較基盤テスト: 11 テスト。依存の比較テストを追加した。
+- 比較基盤テスト: 13 テスト。依存の比較・CLI 起動・alias 補正のケースを追加した。
 - PostgreSQL 18 の使い捨て DB に全 migration を適用し、HTTP・保存行・WebSocket・ブラウザ等
   1,604 項目を更新前の基準と比較。差分 0。312 API の認証境界と 190 API の正常系を含む。
 - 3 台の隔離サーバーと PostgreSQL 18 による実 HTTPS 連合試験も更新前後で実行。
