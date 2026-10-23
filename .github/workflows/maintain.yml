@@ -74,8 +74,19 @@ jobs:
         run: yarn exec start-server-and-test start http://127.0.0.1:61812 'node scripts/maintenance-smoke.mjs'
       - name: Unit tests and source coverage
         run: yarn jest --coverage --coverageReporters=json-summary --coverageReporters=lcov --coverageReporters=text-summary
-      - name: Install regression browser
-        run: node node_modules/playwright-core/cli.js install --with-deps chromium
+      - name: Configure regression browser
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          for regression_browser in google-chrome chromium chromium-browser; do
+            if command -v "$regression_browser" >/dev/null; then
+              regression_executable="$(command -v "$regression_browser")"
+              "$regression_executable" --version
+              printf 'REGRESSION_CHROMIUM=%s\n' "$regression_executable" >> "$GITHUB_ENV"
+              exit 0
+            fi
+          done
+          node node_modules/playwright-core/cli.js install --with-deps chromium
       - name: Observe HTTP, database, federation, streaming and browser behavior
         run: yarn test:regression
         env:

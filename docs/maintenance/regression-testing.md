@@ -38,13 +38,15 @@ Node と Yarn はリポジトリ指定の版を使い、依存を frozen lockfil
 yarn test:regression:harness
 # Docker で隔離した PostgreSQL 18 と Redis を起動する
 yarn test:services
-# 最初の一度。CI では --with-deps も指定する
+# 最初の一度（既存の Chromium を指定する場合は不要）
 node node_modules/playwright-core/cli.js install chromium
 
 yarn test:regression
 ```
 
 既存の Chromium を使う場合は `REGRESSION_CHROMIUM=/usr/bin/chromium` を指定する。
+CI はランナーにある Chrome / Chromium を優先し、見つからない場合に
+`install --with-deps chromium` を使う。ブラウザ準備は 10 分で打ち切る。
 PG の接続先は `REGRESSION_PG_HOST` / `PORT` / `USER` / `PASSWORD`、
 Redis は `REGRESSION_REDIS_HOST` / `PORT` で指定できる。ホストは loopback のみ許可する。
 既定値は PG `127.0.0.1:54318` / `postgres`、Redis `127.0.0.1:56318`。
