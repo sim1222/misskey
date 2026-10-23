@@ -32,7 +32,7 @@ export function uncoveredChanges(files, map) {
 async function main() {
 	const base = process.env.REGRESSION_BASE_REF ?? process.argv[2];
 	assert.match(base ?? '', /^[0-9a-f]{40}$/, 'Pass the full pre-patch commit SHA as REGRESSION_BASE_REF or first argument');
-	const diff = execFileSync('git', ['diff', '--no-ext-diff', '--unified=0', '--diff-filter=AM', base, 'HEAD', '--', 'packages/backend/src'], { cwd: root, encoding: 'utf8' });
+	const diff = execFileSync('git', ['diff', '--no-ext-diff', '--no-renames', '--unified=0', '--diff-filter=AM', base, 'HEAD', '--', 'packages/backend/src'], { cwd: root, encoding: 'utf8' });
 	const { createCoverageMap } = requireBackend('istanbul-lib-coverage');
 	const map = createCoverageMap(JSON.parse(await readFile(resolve(root, '.maintenance-regression/latest/coverage/coverage-final.json'), 'utf8')));
 	const files = changedLines(diff);
