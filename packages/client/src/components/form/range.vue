@@ -18,6 +18,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, watch } from 'vue';
+import { getDragPoint } from '@/scripts/drag';
 import * as os from '@/os';
 
 const props = withDefaults(defineProps<{
@@ -31,7 +32,7 @@ const props = withDefaults(defineProps<{
 	easing?: boolean;
 }>(), {
 	step: 1,
-	textConverter: (v) => v.toString(),
+	textConverter: (v: number) => v.toString(),
 	easing: false,
 });
 
@@ -79,6 +80,7 @@ onMounted(() => {
 	ro = new ResizeObserver((entries, observer) => {
 		calcThumbPosition();
 	});
+	if (containerEl.value == null) return;
 	ro.observe(containerEl.value);
 });
 
@@ -113,7 +115,9 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 	const onDrag = (ev: MouseEvent | TouchEvent) => {
 		ev.preventDefault();
 		const containerRect = containerEl.value!.getBoundingClientRect();
-		const pointerX = ev.touches && ev.touches.length > 0 ? ev.touches[0].clientX : ev.clientX;
+		const point = getDragPoint(ev);
+		if (!point) return;
+		const pointerX = point.clientX;
 		const pointerPositionOnContainer = pointerX - (containerRect.left + (thumbWidth.value / 2));
 		rawValue.value = Math.min(1, Math.max(0, pointerPositionOnContainer / (containerEl.value!.offsetWidth - thumbWidth.value)));
 	};

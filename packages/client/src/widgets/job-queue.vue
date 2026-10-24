@@ -46,13 +46,14 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, reactive, ref } from 'vue';
+import type { QueueStats } from '@/misskey';
+import { onUnmounted, reactive } from 'vue';
 import { GetFormResultType } from '@/scripts/form';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import { stream } from '@/stream';
 import number from '@/filters/number';
 import * as sound from '@/scripts/sound';
-import * as os from '@/os';
+
 
 const name = 'jobQueue';
 
@@ -73,7 +74,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -99,12 +100,12 @@ const current = reactive({
 const prev = reactive({} as typeof current);
 const jammedSound = sound.setVolume(sound.getAudio('syuilo/queue-jammed'), 1);
 
-for (const domain of ['inbox', 'deliver']) {
+for (const domain of (['inbox', 'deliver'] as const)) {
 	prev[domain] = JSON.parse(JSON.stringify(current[domain]));
 }
 
-const onStats = (stats) => {
-	for (const domain of ['inbox', 'deliver']) {
+const onStats = (stats: QueueStats) => {
+	for (const domain of (['inbox', 'deliver'] as const)) {
 		prev[domain] = JSON.parse(JSON.stringify(current[domain]));
 		current[domain].activeSincePrevTick = stats[domain].activeSincePrevTick;
 		current[domain].active = stats[domain].active;
@@ -117,7 +118,7 @@ const onStats = (stats) => {
 	}
 };
 
-const onStatsLog = (statsLog) => {
+const onStatsLog = (statsLog: QueueStats[]) => {
 	for (const stats of [...statsLog].reverse()) {
 		onStats(stats);
 	}

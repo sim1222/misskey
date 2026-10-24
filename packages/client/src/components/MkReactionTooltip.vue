@@ -1,5 +1,5 @@
 <template>
-<MkTooltip ref="tooltip" :target-element="targetElement" :max-width="340" @closed="emit('closed')">
+<MkTooltip ref="tooltip" :showing="showing" :target-element="targetElement" :max-width="340" @closed="emit('closed')">
 	<div class="beeadbfb">
 		<XReactionIcon :reaction="reaction" :custom-emojis="emojis" class="icon" :no-style="true"/>
 		<div class="name">{{ reaction.replace('@.', '') }}</div>
@@ -12,9 +12,10 @@ import { } from 'vue';
 import MkTooltip from './MkTooltip.vue';
 import XReactionIcon from '@/components/MkReactionIcon.vue';
 
-const props = defineProps<{
+defineProps<{
+ showing: boolean;
 	reaction: string;
-	emojis: any[]; // TODO
+	emojis: { name: string; url: string | null }[];
 	targetElement: HTMLElement;
 }>();
 

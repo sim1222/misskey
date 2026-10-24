@@ -5,23 +5,23 @@
 
 	<div>
 		<MkLoading v-if="fetching"/>
-		<template v-else>
-			<XCalendar v-show="widgetProps.view === 0" :activity="[].concat(activity)"/>
-			<XChart v-show="widgetProps.view === 1" :activity="[].concat(activity)"/>
+		<template v-else-if="activity">
+			<XCalendar v-show="widgetProps.view === 0" :activity="[...activity]"/>
+			<XChart v-show="widgetProps.view === 1" :activity="[...activity]"/>
 		</template>
 	</div>
 </MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { ref } from 'vue';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import XCalendar from './activity.calendar.vue';
 import XChart from './activity.chart.vue';
 import { GetFormResultType } from '@/scripts/form';
 import * as os from '@/os';
 import MkContainer from '@/components/MkContainer.vue';
-import { $i } from '@/account';
+import { requireAccount } from '@/account';
 import { i18n } from '@/i18n';
 
 const name = 'activity';
@@ -48,7 +48,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure, save } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -56,7 +56,7 @@ const { widgetProps, configure, save } = useWidgetPropsManager(name,
 	emit,
 );
 
-const activity = ref(null);
+const activity = ref<{ total: number; notes: number; replies: number; renotes: number }[] | null>(null);
 const fetching = ref(true);
 
 const toggleView = () => {
@@ -69,7 +69,7 @@ const toggleView = () => {
 };
 
 os.apiGet('charts/user/notes', {
-	userId: $i.id,
+	userId: requireAccount().id,
 	span: 'day',
 	limit: 7 * 21,
 }).then(res => {

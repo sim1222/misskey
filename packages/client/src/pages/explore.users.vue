@@ -1,6 +1,6 @@
 <template>
 <MkSpacer :content-max="1200">
-	<MkTab v-model="origin" style="margin-bottom: var(--margin);">
+	<MkTab v-model="origin" style="margin-bottom: var(--margin);" :choices="['local', 'remote']">
 		<option value="local">{{ i18n.ts.local }}</option>
 		<option value="remote">{{ i18n.ts.remote }}</option>
 	</MkTab>
@@ -25,7 +25,7 @@
 		</template>
 	</div>
 	<div v-else>
-		<MkFolder ref="tagsEl" :foldable="true" :expanded="false" class="_gap">
+		<MkFolder ref="tagsEl" :expanded="false" class="_gap">
 			<template #header><i class="fas fa-hashtag fa-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.popularTags }}</template>
 
 			<div class="vxjfqztj">
@@ -58,14 +58,16 @@
 </template>
 
 <script lang="ts" setup>
+import type { Paging } from '@/types/paging';
+import type { ApiResponse } from '@/types/api';
 import { computed, watch, ref } from 'vue';
 import XUserList from '@/components/MkUserList.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import MkTab from '@/components/MkTab.vue';
-import number from '@/filters/number';
+
 import * as os from '@/os';
 import { i18n } from '@/i18n';
-import { instance } from '@/instance';
+
 
 const props = defineProps<{
 	tag?: string;
@@ -73,48 +75,48 @@ const props = defineProps<{
 
 let origin = ref('local');
 let tagsEl = ref<InstanceType<typeof MkFolder>>();
-let tagsLocal = ref([]);
-let tagsRemote = ref([]);
+let tagsLocal = ref<ApiResponse<'hashtags/list'>>([]);
+let tagsRemote = ref<ApiResponse<'hashtags/list'>>([]);
 
 watch(() => props.tag, () => {
 	if (tagsEl.value) tagsEl.value.toggleContent(props.tag == null);
 });
 
-const tagUsers = computed(() => ({
+const tagUsers = computed<Paging<'hashtags/users'>>(() => ({
 	endpoint: 'hashtags/users' as const,
 	limit: 30,
 	params: {
-		tag: props.tag,
+		tag: props.tag ?? '',
 		origin: 'combined',
 		sort: '+follower',
 	},
 }));
 
-const pinnedUsers = { endpoint: 'pinned-users' };
-const popularUsers = { endpoint: 'users', limit: 10, noPaging: true, params: {
+const pinnedUsers: Paging<'pinned-users'> = { endpoint: 'pinned-users' };
+const popularUsers: Paging<'users'> = { endpoint: 'users', limit: 10, noPaging: true, params: {
 	state: 'alive',
 	origin: 'local',
 	sort: '+follower',
 } };
-const recentlyUpdatedUsers = { endpoint: 'users', limit: 10, noPaging: true, params: {
+const recentlyUpdatedUsers: Paging<'users'> = { endpoint: 'users', limit: 10, noPaging: true, params: {
 	origin: 'local',
 	sort: '+updatedAt',
 } };
-const recentlyRegisteredUsers = { endpoint: 'users', limit: 10, noPaging: true, params: {
+const recentlyRegisteredUsers: Paging<'users'> = { endpoint: 'users', limit: 10, noPaging: true, params: {
 	origin: 'local',
 	state: 'alive',
 	sort: '+createdAt',
 } };
-const popularUsersF = { endpoint: 'users', limit: 10, noPaging: true, params: {
+const popularUsersF: Paging<'users'> = { endpoint: 'users', limit: 10, noPaging: true, params: {
 	state: 'alive',
 	origin: 'remote',
 	sort: '+follower',
 } };
-const recentlyUpdatedUsersF = { endpoint: 'users', limit: 10, noPaging: true, params: {
+const recentlyUpdatedUsersF: Paging<'users'> = { endpoint: 'users', limit: 10, noPaging: true, params: {
 	origin: 'combined',
 	sort: '+updatedAt',
 } };
-const recentlyRegisteredUsersF = { endpoint: 'users', limit: 10, noPaging: true, params: {
+const recentlyRegisteredUsersF: Paging<'users'> = { endpoint: 'users', limit: 10, noPaging: true, params: {
 	origin: 'combined',
 	sort: '+createdAt',
 } };

@@ -4,7 +4,8 @@ import type { Endpoints, ApiResponse } from '@/types/api';
 export type PagedEndpoint = { [K in keyof Endpoints]: Endpoints[K]['res'] extends { id: string }[] ? K : never }[keyof Endpoints];
 export type PagedItem<E extends PagedEndpoint> = (ApiResponse<E> extends (infer Item)[] ? Item : never) & { id: string; _shouldInsertAd_?: boolean };
 export type EndpointOf<Item> = { [K in PagedEndpoint]: PagedItem<K> extends Item ? K : never }[PagedEndpoint];
-type Params<E extends PagedEndpoint> = {} extends Endpoints[E]['req'] ? { params?: Endpoints[E]['req'] | ComputedRef<Endpoints[E]['req'] | null> } : { params: Endpoints[E]['req'] | ComputedRef<Endpoints[E]['req'] | null> };
+type Request<E extends PagedEndpoint> = E extends 'users/search' | 'users/search-by-username-and-host' ? Omit<Endpoints[E]['req'], 'detail'> & { detail?: true } : Endpoints[E]['req'];
+type Params<E extends PagedEndpoint> = {} extends Request<E> ? { params?: Request<E> | ComputedRef<Request<E> | null> } : { params: Request<E> | ComputedRef<Request<E> | null> };
 export type Paging<E extends PagedEndpoint = PagedEndpoint> = { [K in E]: {
  endpoint: K; limit?: number; noPaging?: boolean; reversed?: boolean; offsetMode?: boolean;
 } & Params<K> }[E];

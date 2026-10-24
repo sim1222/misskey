@@ -113,7 +113,7 @@
 					<MkTagCloud v-if="activeInstances">
 						<li v-for="instance in activeInstances">
 							<a @click.prevent="onInstanceClick(instance)">
-								<img style="width: 32px;" :src="instance.iconUrl">
+								<img style="width: 32px;" :src="(instance.iconUrl) ?? undefined">
 							</a>
 						</li>
 					</MkTagCloud>
@@ -139,7 +139,8 @@
 </template>
 
 <script lang="ts" setup>
-import { markRaw, version as vueVersion, onMounted, onBeforeUnmount, nextTick, ref, shallowRef, computed } from 'vue';
+import type { ApiResponse } from '@/types/api';
+import { markRaw, version as vueVersion, onMounted, onBeforeUnmount, nextTick, ref, shallowRef } from 'vue';
 import {
 	Chart,
 	ArcElement,
@@ -159,15 +160,15 @@ import {
 } from 'chart.js';
 import { enUS } from 'date-fns/locale';
 import tinycolor from 'tinycolor2';
-import MagicGrid from 'magic-grid';
-import XMetrics from './metrics.vue';
+
+
 import XFederation from './overview.federation.vue';
 import XQueueChart from './overview.queue-chart.vue';
 import XUser from './overview.user.vue';
 import XPie from './overview.pie.vue';
 import MkNumberDiff from '@/components/MkNumberDiff.vue';
 import MkTagCloud from '@/components/MkTagCloud.vue';
-import { version, url } from '@/config';
+import { version } from '@/config';
 import number from '@/filters/number';
 import * as os from '@/os';
 import { stream } from '@/stream';
@@ -196,23 +197,23 @@ Chart.register(
 	//gradient,
 );
 
-const rootEl = ref<HTMLElement>();
-const chartEl = ref<HTMLCanvasElement>(null);
-let stats: any = ref(null);
-let serverInfo: any = ref(null);
-let topSubInstancesForPie: any = ref(null);
-let topPubInstancesForPie: any = ref(null);
-let usersComparedToThePrevDay: any = ref(null);
-let notesComparedToThePrevDay: any = ref(null);
+type PieEntry = { name: string; color: string | null; value: number; onClick?: () => void };
+const chartEl = ref<HTMLCanvasElement | null>(null);
+let stats = ref<ApiResponse<'stats'> | null>(null);
+let serverInfo = ref<ApiResponse<'admin/server-info'> | null>(null);
+let topSubInstancesForPie = ref<PieEntry[] | null>(null);
+let topPubInstancesForPie = ref<PieEntry[] | null>(null);
+let usersComparedToThePrevDay = ref<number | null>(null);
+let notesComparedToThePrevDay = ref<number | null>(null);
 let federationPubActive = ref<number | null>(null);
 let federationPubActiveDiff = ref<number | null>(null);
 let federationSubActive = ref<number | null>(null);
 let federationSubActiveDiff = ref<number | null>(null);
-let newUsers = ref(null);
-let activeInstances = shallowRef(null);
+let newUsers = ref<ApiResponse<'users'> | null>(null);
+let activeInstances = shallowRef<ApiResponse<'federation/instances'> | null>(null);
 const queueStatsConnection = markRaw(stream.useChannel('queueStats'));
 const now = new Date();
-let chartInstance: Chart = null;
+let chartInstance: Chart<'bar', { x: number; y: number }[]> | null = null;
 const chartLimit = 30;
 const filesPagination = {
 	endpoint: 'admin/drive/files' as const,
@@ -235,7 +236,7 @@ async function renderChart() {
 		return new Date(y, m, d - ago);
 	};
 
-	const format = (arr) => {
+	const format = (arr: number[]) => {
 		return arr.map((v, i) => ({
 			x: getDate(i).getTime(),
 			y: v,
@@ -244,15 +245,16 @@ async function renderChart() {
 
 	const raw = await os.api('charts/active-users', { limit: chartLimit, span: 'day' });
 
-	const gridColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
 	const vLineColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)';
 
 	// フォントカラー
 	Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--fg');
 
-	const color = tinycolor(getComputedStyle(document.documentElement).getPropertyValue('--accent'));
+	const color = tinycolor(getComputedStyle(document.documentElement).getPropertyValue('--accent')).toRgbString();
 
-	chartInstance = new Chart(chartEl.value, {
+	if (!chartEl.value) return;
+ chartInstance = new Chart(chartEl.value, {
 		type: 'bar',
 		data: {
 			//labels: new Array(props.limit).fill(0).map((_, i) => getDate(i).toLocaleString()).slice().reverse(),
@@ -260,10 +262,7 @@ async function renderChart() {
 				parsing: false,
 				label: 'a',
 				data: format(raw.readWrite).slice().reverse(),
-				tension: 0.3,
-				pointRadius: 0,
 				borderWidth: 0,
-				borderJoinStyle: 'round',
 				borderRadius: 3,
 				backgroundColor: color,
 				/*gradient: props.bar ? undefined : {
@@ -297,7 +296,6 @@ async function renderChart() {
 					stacked: true,
 					offset: false,
 					time: {
-						stepSize: 1,
 						unit: 'month',
 					},
 					grid: {
@@ -355,8 +353,8 @@ async function renderChart() {
 		plugins: [{
 			id: 'vLine',
 			beforeDraw(chart, args, options) {
-				if (chart.tooltip?._active?.length) {
-					const activePoint = chart.tooltip._active[0];
+				if (chart.tooltip?.getActiveElements().length) {
+					const activePoint = chart.tooltip.getActiveElements()[0];
 					const ctx = chart.ctx;
 					const x = activePoint.element.x;
 					const topY = chart.scales.y.top;
@@ -376,7 +374,7 @@ async function renderChart() {
 	});
 }
 
-function onInstanceClick(i) {
+function onInstanceClick(i: ApiResponse<'federation/instances'>[number]) {
 	os.pageWindow(`/instance-info/${i.host}`);
 }
 
@@ -397,11 +395,11 @@ onMounted(async () => {
 		stats.value = statsResponse;
 
 		os.apiGet('charts/users', { limit: 2, span: 'day' }).then(chart => {
-			usersComparedToThePrevDay.value = stats.value.originalUsersCount - chart.local.total[1];
+			usersComparedToThePrevDay.value = statsResponse.originalUsersCount - chart.local.total[1];
 		});
 
 		os.apiGet('charts/notes', { limit: 2, span: 'day' }).then(chart => {
-			notesComparedToThePrevDay.value = stats.value.originalNotesCount - chart.local.total[1];
+			notesComparedToThePrevDay.value = statsResponse.originalNotesCount - chart.local.total[1];
 		});
 	});
 
@@ -413,7 +411,7 @@ onMounted(async () => {
 	});
 
 	os.apiGet('federation/stats', { limit: 10 }).then(res => {
-		topSubInstancesForPie.value = res.topSubInstances.map(x => ({
+		topSubInstancesForPie.value = res.topSubInstances.map((x): PieEntry => ({
 			name: x.host,
 			color: x.themeColor,
 			value: x.followersCount,
@@ -421,7 +419,7 @@ onMounted(async () => {
 				os.pageWindow(`/instance-info/${x.host}`);
 			},
 		})).concat([{ name: '(other)', color: '#80808080', value: res.otherFollowersCount }]);
-		topPubInstancesForPie.value = res.topPubInstances.map(x => ({
+		topPubInstancesForPie.value = res.topPubInstances.map((x): PieEntry => ({
 			name: x.host,
 			color: x.themeColor,
 			value: x.followingCount,
@@ -461,9 +459,9 @@ onBeforeUnmount(() => {
 	queueStatsConnection.dispose();
 });
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.dashboard,

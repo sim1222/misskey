@@ -11,24 +11,30 @@
 		<MkInput v-model="value.text">
 			<template #label>{{ $ts._pages.blocks._counter.text }}</template>
 		</MkInput>
-		<MkInput v-model="value.inc" type="number">
+		<MkNumberInput v-model="value.inc" type="number">
 			<template #label>{{ $ts._pages.blocks._counter.inc }}</template>
-		</MkInput>
+		</MkNumberInput>
 	</section>
 </XContainer>
 </template>
 
 <script lang="ts" setup>
+import type { BlockDraftOf } from '@/scripts/hpml/block';
+
+
+
 /* eslint-disable vue/no-mutating-props */
 import { } from 'vue';
 import XContainer from '../page-editor.container.vue';
 import MkInput from '@/components/form/input.vue';
+import MkNumberInput from '@/components/form/number-input.vue';
 
 withDefaults(defineProps<{
-	value: any
+	value?: BlockDraftOf<'counter'>
 }>(), {
-	value: {
+	value: () => ({ id: '', type: 'counter',
 		name: ''
-	}
+	})
 });
+defineEmits<{ (event: 'remove'): void }>();
 </script>

@@ -1,3 +1,4 @@
+import type { AutocompleteResult } from '@/types/autocomplete';
 import { nextTick, Ref, ref, defineAsyncComponent } from 'vue';
 import getCaretCoordinates from 'textarea-caret';
 import { toASCII } from 'punycode/';
@@ -11,12 +12,12 @@ export class Autocomplete {
 		close: () => void;
 	} | null;
 	private textarea: HTMLInputElement | HTMLTextAreaElement;
-	private currentType: string;
-	private textRef: Ref<string>;
+	private currentType: AutocompleteResult['type'] | null = null;
+	private textRef: Ref<string | null | undefined>;
 	private opening: boolean;
 
 	private get text(): string {
-		return this.textRef.value;
+		return this.textRef.value ?? '';
 	}
 
 	private set text(text: string) {
@@ -26,7 +27,7 @@ export class Autocomplete {
 	/**
 	 * 対象のテキストエリアを与えてインスタンスを初期化します。
 	 */
-	constructor(textarea: HTMLInputElement | HTMLTextAreaElement, textRef: Ref<string>) {
+	constructor(textarea: HTMLInputElement | HTMLTextAreaElement, textRef: Ref<string | null | undefined>) {
 		//#region BIND
 		this.onInput = this.onInput.bind(this);
 		this.complete = this.complete.bind(this);
@@ -60,7 +61,7 @@ export class Autocomplete {
 	 * テキスト入力時
 	 */
 	private onInput() {
-		const caretPos = this.textarea.selectionStart;
+		const caretPos = this.textarea.selectionStart ?? 0;
 		const text = this.text.substr(0, caretPos).split('\n').pop()!;
 
 		const mentionIndex = text.lastIndexOf('@');
@@ -129,7 +130,7 @@ export class Autocomplete {
 	/**
 	 * サジェストを提示します。
 	 */
-	private async open(type: string, q: string | null) {
+	private async open(type: AutocompleteResult['type'], q: string | null) {
 		if (type !== this.currentType) {
 			this.close();
 		}
@@ -138,7 +139,7 @@ export class Autocomplete {
 		this.currentType = type;
 
 		//#region サジェストを表示すべき位置を計算
-		const caretPosition = getCaretCoordinates(this.textarea, this.textarea.selectionStart);
+		const caretPosition = getCaretCoordinates(this.textarea, this.textarea.selectionStart ?? 0);
 
 		const rect = this.textarea.getBoundingClientRect();
 
@@ -165,7 +166,7 @@ export class Autocomplete {
 				x: _x,
 				y: _y,
 			}, {
-				done: (res) => {
+				done: (res: AutocompleteResult) => {
 					this.complete(res);
 				}
 			});
@@ -196,10 +197,10 @@ export class Autocomplete {
 	/**
 	 * オートコンプリートする
 	 */
-	private complete({ type, value }) {
+	private complete({ type, value }: AutocompleteResult) {
 		this.close();
 
-		const caret = this.textarea.selectionStart;
+		const caret = this.textarea.selectionStart ?? 0;
 
 		if (type === 'user') {
 			const source = this.text;

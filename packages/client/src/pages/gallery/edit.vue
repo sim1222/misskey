@@ -7,12 +7,12 @@
 				<template #label>{{ i18n.ts.title }}</template>
 			</FormInput>
 
-			<FormTextarea v-model="description" :max="500">
+			<FormTextarea v-model="description">
 				<template #label>{{ i18n.ts.description }}</template>
 			</FormTextarea>
 
 			<div class="">
-				<div v-for="file in files" :key="file.id" class="wqugxsfx" :style="{ backgroundImage: file ? `url(${ file.thumbnailUrl })` : null }">
+				<div v-for="file in files" :key="file.id" class="wqugxsfx" :style="{ backgroundImage: file ? `url(${ file.thumbnailUrl })` : undefined }">
 					<div class="name">{{ file.name }}</div>
 					<button v-tooltip="i18n.ts.remove" class="remove _button" @click="remove(file)"><i class="fas fa-times"></i></button>
 				</div>
@@ -31,7 +31,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, watch, ref } from 'vue';
+import type { entities } from '@/misskey';
+import { computed, watch, ref } from 'vue';
 import FormButton from '@/components/MkButton.vue';
 import FormInput from '@/components/form/input.vue';
 import FormTextarea from '@/components/form/textarea.vue';
@@ -49,23 +50,24 @@ const props = defineProps<{
 	postId?: string;
 }>();
 
-let init = ref(null);
-let files = ref([]);
-let description = ref(null);
-let title = ref(null);
+let init = ref<() => Promise<unknown>>(() => Promise.resolve(null));
+let files = ref<entities.DriveFile[]>([]);
+let description = ref<string | null>(null);
+let title = ref<string | null>(null);
 let isSensitive = ref(false);
 
-function selectFile(evt) {
+function selectFile(evt: MouseEvent) {
 	selectFiles(evt.currentTarget ?? evt.target, null).then(selected => {
 		files.value = files.value.concat(selected);
 	});
 }
 
-function remove(file) {
+function remove(file: { id: string; }) {
 	files.value = files.value.filter(f => f.id !== file.id);
 }
 
 async function save() {
+    if (title.value == null) return;
 	if (props.postId) {
 		await os.apiWithDialog('gallery/posts/update', {
 			postId: props.postId,
@@ -87,6 +89,7 @@ async function save() {
 }
 
 async function del() {
+    if (!props.postId) return;
 	const { canceled } = await os.confirm({
 		type: 'warning',
 		text: i18n.ts.deleteConfirm,

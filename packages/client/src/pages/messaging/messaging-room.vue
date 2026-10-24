@@ -15,11 +15,11 @@
 					</div>
 				</template>
 
-				<template #default="{ items: messages, fetching: pFetching }">
+				<template #default="{ items: messages }">
 					<XList
 						v-if="messages.length > 0"
 						v-slot="{ item: message }"
-						:class="{ messages: true, 'deny-move-transition': pFetching }"
+						:class="{ messages: true, 'deny-move-transition': false }"
 						:items="messages"
 						direction="up"
 						reversed
@@ -50,8 +50,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, onMounted, nextTick, onBeforeUnmount, ref } from 'vue';
-import * as Misskey from 'misskey-js';
+import { requireValue } from '@/scripts/require-value';
+import type { PaginationExposed } from '@/types/paging';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import { shallowRef, computed, watch, onMounted, nextTick, onBeforeUnmount, ref } from 'vue';
+import * as Misskey from '@/misskey';
 import * as Acct from 'misskey-js/built/acct';
 import XMessage from './messaging-room.message.vue';
 import XForm from './messaging-room.form.vue';
@@ -62,7 +67,7 @@ import * as os from '@/os';
 import { stream } from '@/stream';
 import * as sound from '@/scripts/sound';
 import { i18n } from '@/i18n';
-import { $i } from '@/account';
+
 import { defaultStore } from '@/store';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
@@ -73,19 +78,19 @@ const props = defineProps<{
 
 let rootEl = ref<HTMLDivElement>();
 let formEl = ref<InstanceType<typeof XForm>>();
-let pagingComponent = ref<InstanceType<typeof MkPagination>>();
+let pagingComponent = ref<PaginationExposed<'messaging/messages'>>();
 
 let fetching = ref(true);
-let user: Misskey.entities.UserDetailed | null = ref(null);
-let group: Misskey.entities.UserGroup | null = ref(null);
-let typers: Misskey.entities.User[] = ref([]);
-let connection: Misskey.ChannelConnection<Misskey.Channels['messaging']> | null = ref(null);
+let user = ref<Misskey.entities.UserDetailed | null>(null);
+let group = ref<Misskey.entities.UserGroup | null>(null);
+let typers = ref<Misskey.entities.User[]>([]);
+let connection = ref<Misskey.ChannelConnection<Misskey.Channels['messaging']> | null>(null);
 let showIndicator = ref(false);
 const {
 	animation,
 } = defaultStore.reactiveState;
 
-let pagination: Paging | null = ref(null);
+let pagination = shallowRef<Paging<'messaging/messages'> | null>(null);
 
 watch([() => props.userAcct, () => props.groupId], () => {
 	if (connection.value) connection.value.dispose();
@@ -99,7 +104,7 @@ async function fetch() {
 		const acct = Acct.parse(props.userAcct);
 		user.value = await os.api('users/show', { username: acct.username, host: acct.host || undefined });
 		group.value = null;
-		
+
 		pagination.value = {
 			endpoint: 'messaging/messages',
 			limit: 20,
@@ -107,26 +112,24 @@ async function fetch() {
 				userId: user.value.id,
 			},
 			reversed: true,
-			pageEl: (rootEl).value,
 		};
 		connection.value = stream.useChannel('messaging', {
 			otherparty: user.value.id,
 		});
 	} else {
 		user.value = null;
-		group.value = await os.api('users/groups/show', { groupId: props.groupId });
+		group.value = await os.api('users/groups/show', { groupId: requireValue(props.groupId, 'Messaging group ID') });
 
 		pagination.value = {
 			endpoint: 'messaging/messages',
 			limit: 20,
 			params: {
-				groupId: group.value?.id,
+				groupId: requireValue(group.value, 'Messaging group').id,
 			},
 			reversed: true,
-			pageEl: (rootEl).value,
 		};
 		connection.value = stream.useChannel('messaging', {
-			group: group.value?.id,
+			group: requireValue(group.value, 'Messaging group').id,
 		});
 	}
 
@@ -134,7 +137,7 @@ async function fetch() {
 	connection.value.on('read', onRead);
 	connection.value.on('deleted', onDeleted);
 	connection.value.on('typers', _typers => {
-		typers.value = _typers.filter(u => u.id !== $i?.id);
+		typers.value = _typers.filter(u => u.id !== account?.id);
 	});
 
 	document.addEventListener('visibilitychange', onVisibilitychange);
@@ -148,26 +151,32 @@ async function fetch() {
 }
 
 function onDragover(ev: DragEvent) {
-	if (!ev.dataTransfer) return;
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
 
-	const isFile = ev.dataTransfer.items[0].kind === 'file';
-	const isDriveFile = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
+	if (!evdataTransfer) return;
+
+	const isFile = evdataTransfer.items[0].kind === 'file';
+	const isDriveFile = evdataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
 
 	if (isFile || isDriveFile) {
-		ev.dataTransfer.dropEffect = ev.dataTransfer.effectAllowed === 'all' ? 'copy' : 'move';
+		evdataTransfer.dropEffect = evdataTransfer.effectAllowed === 'all' ? 'copy' : 'move';
 	} else {
-		ev.dataTransfer.dropEffect = 'none';
+		evdataTransfer.dropEffect = 'none';
 	}
 }
 
 function onDrop(ev: DragEvent): void {
-	if (!ev.dataTransfer) return;
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
+	if (!evdataTransfer) return;
 
 	// ファイルだったら
-	if (ev.dataTransfer.files.length === 1) {
-		formEl.value.upload(ev.dataTransfer.files[0]);
+	if (evdataTransfer.files.length === 1) {
+		formEl.value?.upload(evdataTransfer.files[0]);
 		return;
-	} else if (ev.dataTransfer.files.length > 1) {
+	} else if (evdataTransfer.files.length > 1) {
 		os.alert({
 			type: 'error',
 			text: i18n.ts.onlyOneFileCanBeAttached,
@@ -176,21 +185,22 @@ function onDrop(ev: DragEvent): void {
 	}
 
 	//#region ドライブのファイル
-	const driveFile = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
+	const driveFile = evdataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
 	if (driveFile != null && driveFile !== '') {
 		const file = JSON.parse(driveFile);
-		formEl.value.file = file;
+		if (formEl.value) formEl.value.file = file;
 	}
 	//#endregion
 }
 
-function onMessage(message) {
+function onMessage(message: Misskey.entities.MessagingMessage) {
 	sound.play('chat');
 
+	if (rootEl.value == null) return;
 	const _isBottom = isBottomVisible(rootEl.value, 64);
 
-	pagingComponent.value.prepend(message);
-	if (message.userId !== $i?.id && !document.hidden) {
+	requireValue(pagingComponent.value, 'Messaging pagination').prepend(message);
+	if (message.userId !== account?.id && !document.hidden) {
 		connection.value?.send('read', {
 			id: message.id,
 		});
@@ -201,45 +211,46 @@ function onMessage(message) {
 		nextTick(() => {
 			thisScrollToBottom();
 		});
-	} else if (message.userId !== $i?.id) {
+	} else if (message.userId !== account?.id) {
 		// Notify
 		notifyNewMessage();
 	}
 }
 
-function onRead(x) {
+function onRead(x: string[] | { ids: string[]; userId: string }) {
 	if (user.value) {
-		if (!Array.isArray(x)) x = [x];
+		if (!Array.isArray(x)) return;
 		for (const id of x) {
-			if (pagingComponent.value.items.some(y => y.id === id)) {
-				const exist = pagingComponent.value.items.map(y => y.id).indexOf(id);
-				pagingComponent.value.items[exist] = {
-					...pagingComponent.value.items[exist],
+			if (requireValue(pagingComponent.value, 'Messaging pagination').items.some(y => y.id === id)) {
+				const exist = requireValue(pagingComponent.value, 'Messaging pagination').items.map(y => y.id).indexOf(id);
+				requireValue(pagingComponent.value, 'Messaging pagination').items[exist] = {
+					...requireValue(pagingComponent.value, 'Messaging pagination').items[exist],
 					isRead: true,
 				};
 			}
 		}
-	} else if (group.value) {
+	} else if (group.value && !Array.isArray(x)) {
 		for (const id of x.ids) {
-			if (pagingComponent.value.items.some(y => y.id === id)) {
-				const exist = pagingComponent.value.items.map(y => y.id).indexOf(id);
-				pagingComponent.value.items[exist] = {
-					...pagingComponent.value.items[exist],
-					reads: [...pagingComponent.value.items[exist].reads, x.userId],
+			if (requireValue(pagingComponent.value, 'Messaging pagination').items.some(y => y.id === id)) {
+				const exist = requireValue(pagingComponent.value, 'Messaging pagination').items.map(y => y.id).indexOf(id);
+				requireValue(pagingComponent.value, 'Messaging pagination').items[exist] = {
+					...requireValue(pagingComponent.value, 'Messaging pagination').items[exist],
+					reads: [...requireValue(pagingComponent.value, 'Messaging pagination').items[exist].reads, x.userId],
 				};
 			}
 		}
 	}
 }
 
-function onDeleted(id) {
-	const msg = pagingComponent.value.items.find(m => m.id === id);
+function onDeleted(id: string) {
+	const msg = requireValue(pagingComponent.value, 'Messaging pagination').items.find(m => m.id === id);
 	if (msg) {
-		pagingComponent.value.items = pagingComponent.value.items.filter(m => m.id !== msg.id);
+		requireValue(pagingComponent.value, 'Messaging pagination').items = requireValue(pagingComponent.value, 'Messaging pagination').items.filter(m => m.id !== msg.id);
 	}
 }
 
 function thisScrollToBottom() {
+	if ((rootEl).value == null) return;
 	scrollToBottom((rootEl).value, { behavior: 'smooth' });
 }
 
@@ -248,11 +259,12 @@ function onIndicatorClick() {
 	thisScrollToBottom();
 }
 
-let scrollRemove: (() => void) | null = ref(null);
+let scrollRemove = ref<(() => void) | null>(null);
 
 function notifyNewMessage() {
 	showIndicator.value = true;
 
+	if (rootEl.value == null) return;
 	scrollRemove.value = onScrollBottom(rootEl.value, () => {
 		showIndicator.value = false;
 		scrollRemove.value = null;
@@ -261,8 +273,8 @@ function notifyNewMessage() {
 
 function onVisibilitychange() {
 	if (document.hidden) return;
-	for (const message of pagingComponent.value.items) {
-		if (message.userId !== $i?.id && !message.isRead) {
+	for (const message of requireValue(pagingComponent.value, 'Messaging pagination').items) {
+		if (message.userId !== account?.id && !message.isRead) {
 			connection.value?.send('read', {
 				id: message.id,
 			});
@@ -281,10 +293,11 @@ onBeforeUnmount(() => {
 });
 
 definePageMetadata(computed(() => !fetching.value ? user.value ? {
-	userName: user.value,
+	title: user.value.name ?? user.value.username,
+    userName: user.value,
 	avatar: user.value,
 } : {
-	title: group.value?.name,
+	title: group.value?.name ?? '',
 	icon: 'fas fa-users',
 } : null));
 </script>

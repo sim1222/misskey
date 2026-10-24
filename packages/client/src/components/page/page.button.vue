@@ -35,7 +35,7 @@ export default defineComponent({
 			} else if (this.block.action === 'resetRandom') {
 				this.hpml.updateRandomSeed(Math.random());
 				this.hpml.eval();
-			} else if (this.block.action === 'pushEvent') {
+			} else if (this.block.action === 'pushEvent' && this.block.event) {
 				os.api('page-push', {
 					pageId: this.hpml.page.id,
 					event: this.block.event,
@@ -49,7 +49,7 @@ export default defineComponent({
 					text: this.hpml.interpolate(this.block.message)
 				});
 			} else if (this.block.action === 'callAiScript') {
-				this.hpml.callAiScript(this.block.fn);
+				if (this.block.fn) this.hpml.callAiScript(this.block.fn);
 			}
 		}
 	}

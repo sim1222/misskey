@@ -20,18 +20,18 @@
 					<button class="config _button" @click.prevent.stop="configWidget(element.id)"><i class="fas fa-cog"></i></button>
 					<button class="remove _button" @click.prevent.stop="removeWidget(element)"><i class="fas fa-times"></i></button>
 					<div class="handle">
-						<component :is="`mkw-${element.name}`" :ref="el => widgetRefs[element.id] = el" class="widget" :widget="element" @updateProps="updateWidget(element.id, $event)"/>
+						<component :is="`mkw-${element.name}`" :ref="(el: Element | ComponentPublicInstance | null) => setWidgetRef(element.id, el)" class="widget" :widget="element" @updateProps="updateWidget(element.id, $event)"/>
 					</div>
 				</div>
 			</template>
 		</XDraggable>
 	</template>
-	<component :is="`mkw-${widget.name}`" v-for="widget in widgets" v-else :key="widget.id" :ref="el => widgetRefs[widget.id] = el" class="widget" :widget="widget" @updateProps="updateWidget(widget.id, $event)" @contextmenu.stop="onContextmenu(widget, $event)"/>
+	<component :is="`mkw-${widget.name}`" v-for="widget in widgets" v-else :key="widget.id" :ref="(el: Element | ComponentPublicInstance | null) => setWidgetRef(widget.id, el)" class="widget" :widget="widget" @updateProps="updateWidget(widget.id, $event)" @contextmenu.stop="onContextmenu(widget, $event)"/>
 </div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive, ref, computed } from 'vue';
+import { defineAsyncComponent, ref, computed, type ComponentPublicInstance } from 'vue';
 import { v4 as uuid } from 'uuid';
 import MkSelect from '@/components/form/select.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -41,11 +41,7 @@ import { i18n } from '@/i18n';
 
 const XDraggable = defineAsyncComponent(() => import('vuedraggable'));
 
-type Widget = {
-	name: string;
-	id: string;
-	data: Record<string, any>;
-};
+import type { WidgetSpec as Widget, WidgetUpdate } from '@/types/widget';
 
 const props = defineProps<{
 	widgets: Widget[];
@@ -56,15 +52,18 @@ const emit = defineEmits<{
 	(ev: 'updateWidgets', widgets: Widget[]): void;
 	(ev: 'addWidget', widget: Widget): void;
 	(ev: 'removeWidget', widget: Widget): void;
-	(ev: 'updateWidget', widget: Partial<Widget>): void;
+	(ev: 'updateWidget', widget: WidgetUpdate): void;
 	(ev: 'exit'): void;
 }>();
 
-const widgetRefs = {};
+const widgetRefs: Record<string, { configure(): void } | undefined> = {};
+function setWidgetRef(id: string, value: Element | ComponentPublicInstance | null): void {
+ widgetRefs[id] = value != null && 'configure' in value && typeof value.configure === 'function' ? { configure: () => { if ('configure' in value && typeof value.configure === 'function') value.configure(); } } : undefined;
+}
 const configWidget = (id: string) => {
-	widgetRefs[id].configure();
+	widgetRefs[id]?.configure();
 };
-const widgetAdderSelected = ref(null);
+const widgetAdderSelected = ref<string | null>(null);
 const addWidget = () => {
 	if (widgetAdderSelected.value == null) return;
 
@@ -76,10 +75,10 @@ const addWidget = () => {
 
 	widgetAdderSelected.value = null;
 };
-const removeWidget = (widget) => {
+const removeWidget = (widget: Widget) => {
 	emit('removeWidget', widget);
 };
-const updateWidget = (id, data) => {
+const updateWidget = (id: string, data: Record<string, unknown>) => {
 	emit('updateWidget', { id, data });
 };
 const widgets_ = computed({
@@ -90,14 +89,17 @@ const widgets_ = computed({
 });
 
 function onContextmenu(widget: Widget, ev: MouseEvent) {
-	const isLink = (el: HTMLElement) => {
+	const isLink = (el: EventTarget | null): boolean => {
+ if (!(el instanceof HTMLElement)) return false;
 		if (el.tagName === 'A') return true;
 		if (el.parentElement) {
 			return isLink(el.parentElement);
 		}
+ return false;
 	};
 	if (isLink(ev.target)) return;
-	if (['INPUT', 'TEXTAREA', 'IMG', 'VIDEO', 'CANVAS'].includes(ev.target.tagName) || ev.target.attributes['contenteditable']) return;
+	if (!(ev.target instanceof HTMLElement)) return;
+ if (['INPUT', 'TEXTAREA', 'IMG', 'VIDEO', 'CANVAS'].includes(ev.target.tagName) || ev.target.hasAttribute('contenteditable')) return;
 	if (window.getSelection()?.toString() !== '') return;
 
 	os.contextMenu([{

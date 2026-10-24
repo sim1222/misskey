@@ -1,12 +1,18 @@
+import type { Statusbar } from '@/types/statusbar';
 import { markRaw, ref } from 'vue';
+import type { entities } from '@/misskey';
+import type { ApiRequest } from '@/types/api';
+import type { Form } from '@/scripts/form';
+import type { serialize } from '@syuilo/aiscript/built/serializer';
+import { StorageWatchers } from './scripts/storage-watchers';
 import { Storage } from './pizzax';
-import { Theme } from './scripts/theme';
 
-export const postFormActions = [];
-export const userActions = [];
-export const noteActions = [];
-export const noteViewInterruptors = [];
-export const notePostInterruptors = [];
+
+export const postFormActions: { title: string; handler: (form: { text: string }, update: (key: string, value: string) => void) => void }[] = [];
+export const userActions: { title: string; handler: (user: entities.UserDetailed) => void }[] = [];
+export const noteActions: { title: string; handler: (note: entities.Note) => void }[] = [];
+export const noteViewInterruptors: { handler: (note: entities.Note) => Promise<entities.Note> }[] = [];
+export const notePostInterruptors: { handler: (note: ApiRequest<'notes/create'>) => Promise<ApiRequest<'notes/create'>> }[] = [];
 
 // TODO: それぞれいちいちwhereとかdefaultというキーを付けなきゃいけないの冗長なのでなんとかする(ただ型定義が面倒になりそう)
 //       あと、現行の定義の仕方なら「whereが何であるかに関わらずキー名の重複不可」という制約を付けられるメリットもあるからそのメリットを引き継ぐ方法も考えないといけない
@@ -29,7 +35,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	defaultNoteVisibility: {
 		where: 'account',
-		default: 'public',
+		default: 'public' as import('../../shared/constants').NoteVisibility,
 	},
 	defaultNoteLocalOnly: {
 		where: 'account',
@@ -49,7 +55,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	memo: {
 		where: 'account',
-		default: null,
+		default: null as string | null,
 	},
 	reactions: {
 		where: 'account',
@@ -57,7 +63,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	mutedWords: {
 		where: 'account',
-		default: [],
+		default: [] as (string | string[])[],
 	},
 	mutedAds: {
 		where: 'account',
@@ -89,22 +95,15 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	statusbars: {
 		where: 'deviceAccount',
-		default: [] as {
-			name: string;
-			id: string;
-			type: string;
-			size: 'verySmall' | 'small' | 'medium' | 'large' | 'veryLarge';
-			black: boolean;
-			props: Record<string, any>;
-		}[],
+		default: [] as Statusbar[],
 	},
 	widgets: {
 		where: 'deviceAccount',
 		default: [] as {
 			name: string;
 			id: string;
-			place: string | null;
-			data: Record<string, any>;
+			place?: string | null;
+			data: Record<string, unknown>;
 		}[],
 	},
 	tl: {
@@ -261,18 +260,20 @@ export const defaultStore = markRaw(new Storage('base', {
 
 const PREFIX = 'miux:';
 
-type Plugin = {
+export type Plugin = {
+ version: string; author: string; description?: string; permissions?: string[]; config?: Form;
 	id: string;
 	name: string;
 	active: boolean;
-	configData: Record<string, any>;
-	token: string;
-	ast: any[];
+	configData: Record<string, unknown>;
+	token: string | null;
+	ast: ReturnType<typeof serialize>;
 };
 
 /**
  * 常にメモリにロードしておく必要がないような設定情報を保管するストレージ(非リアクティブ)
  */
+import { defaultSound } from '@/scripts/sound-settings';
 import lightTheme from '@/themes/l-simkey.json5';
 import darkTheme from '@/themes/d-simkey.json5';
 
@@ -284,16 +285,16 @@ export class ColdDeviceStorage {
 		plugins: [] as Plugin[],
 		mediaVolume: 0.5,
 		sound_masterVolume: 0.3,
-		sound_note: { type: 'syuilo/down', volume: 1 },
-		sound_noteMy: { type: 'syuilo/up', volume: 1 },
-		sound_notification: { type: 'syuilo/pope2', volume: 1 },
-		sound_chat: { type: 'syuilo/pope1', volume: 1 },
-		sound_chatBg: { type: 'syuilo/waon', volume: 1 },
-		sound_antenna: { type: 'syuilo/triple', volume: 1 },
-		sound_channel: { type: 'syuilo/square-pico', volume: 1 },
+		sound_note: defaultSound('syuilo/down'),
+		sound_noteMy: defaultSound('syuilo/up'),
+		sound_notification: defaultSound('syuilo/pope2'),
+		sound_chat: defaultSound('syuilo/pope1'),
+		sound_chatBg: defaultSound('syuilo/waon'),
+		sound_antenna: defaultSound('syuilo/triple'),
+		sound_channel: defaultSound('syuilo/square-pico'),
 	};
 
-	public static watchers = [];
+	public static watchers = new StorageWatchers<typeof ColdDeviceStorage.default>();
 
 	public static get<T extends keyof typeof ColdDeviceStorage.default>(key: T): typeof ColdDeviceStorage.default[T] {
 		// TODO: indexedDBにする
@@ -318,13 +319,11 @@ export class ColdDeviceStorage {
 
 		localStorage.setItem(PREFIX + key, JSON.stringify(value));
 
-		for (const watcher of this.watchers) {
-			if (watcher.key === key) watcher.callback(value);
-		}
+		this.watchers.emit(key, value);
 	}
 
-	public static watch(key, callback) {
-		this.watchers.push({ key, callback });
+	public static watch<K extends keyof typeof ColdDeviceStorage.default>(key: K, callback: (value: typeof ColdDeviceStorage.default[K]) => void) {
+		this.watchers.on(key, callback);
 	}
 
 	// TODO: VueのcustomRef使うと良い感じになるかも
@@ -349,7 +348,7 @@ export class ColdDeviceStorage {
 			get: () => {
 				return valueRef.value;
 			},
-			set: (value: unknown) => {
+			set: (value: typeof ColdDeviceStorage.default[K]) => {
 				const val = value;
 				ColdDeviceStorage.set(key, val);
 			},

@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, watch, ref, computed } from 'vue';
+import { ref } from 'vue';
 import XAntenna from './editor.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
@@ -28,9 +28,9 @@ os.api('antennas/show', { antennaId: props.antennaId }).then((antennaResponse) =
 	antenna.value = antennaResponse;
 });
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.manageAntennas,

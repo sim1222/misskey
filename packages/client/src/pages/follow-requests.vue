@@ -18,9 +18,7 @@
 								<MkA v-user-preview="req.follower.id" class="name" :to="userPage(req.follower)"><MkUserName :user="req.follower"/></MkA>
 								<p class="acct">@{{ acct(req.follower) }}</p>
 							</div>
-							<div v-if="req.follower.description" class="description" :title="req.follower.description">
-								<Mfm :text="req.follower.description" :is-note="false" :author="req.follower" :i="$i" :custom-emojis="req.follower.emojis" :plain="true" :nowrap="true"/>
-							</div>
+
 							<div class="actions">
 								<button class="_button" @click="accept(req.follower)"><i class="fas fa-check"></i></button>
 								<button class="_button" @click="reject(req.follower)"><i class="fas fa-times"></i></button>
@@ -35,6 +33,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { PaginationExposed } from '@/types/paging';
 import { ref, computed } from 'vue';
 import MkPagination from '@/components/MkPagination.vue';
 import { userPage, acct } from '@/filters/user';
@@ -42,28 +41,28 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const paginationComponent = ref<InstanceType<typeof MkPagination>>();
+const paginationComponent = ref<PaginationExposed<'following/requests/list'>>();
 
 const pagination = {
 	endpoint: 'following/requests/list' as const,
 	limit: 10,
 };
 
-function accept(user) {
+function accept(user: { id: string }) {
 	os.api('following/requests/accept', { userId: user.id }).then(() => {
-		paginationComponent.value.reload();
+		paginationComponent.value?.reload();
 	});
 }
 
-function reject(user) {
+function reject(user: { id: string }) {
 	os.api('following/requests/reject', { userId: user.id }).then(() => {
-		paginationComponent.value.reload();
+		paginationComponent.value?.reload();
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata(computed(() => ({
 	title: i18n.ts.followRequests,

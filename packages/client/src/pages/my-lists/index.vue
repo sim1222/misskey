@@ -17,6 +17,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { PaginationExposed } from '@/types/paging';
 import { ref, computed } from 'vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -25,7 +26,7 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const pagingComponent = ref<InstanceType<typeof MkPagination>>();
+const pagingComponent = ref<PaginationExposed<'users/lists/list'>>();
 
 const pagination = {
 	endpoint: 'users/lists/list' as const,
@@ -36,9 +37,9 @@ async function create() {
 	const { canceled, result: name } = await os.inputText({
 		title: i18n.ts.enterListName,
 	});
-	if (canceled) return;
+	if (canceled || name == null) return;
 	await os.apiWithDialog('users/lists/create', { name: name });
-	pagingComponent.value.reload();
+	pagingComponent.value?.reload();
 }
 
 const headerActions = computed(() => []);

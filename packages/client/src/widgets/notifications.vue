@@ -4,14 +4,15 @@
 	<template #func><button class="_button" @click="configureNotification()"><i class="fas fa-cog"></i></button></template>
 
 	<div>
-		<XNotifications :include-types="widgetProps.includingTypes"/>
+		<XNotifications :include-types="widgetProps.includingTypes ?? undefined"/>
 	</div>
 </MkContainer>
 </template>
 
 <script lang="ts" setup>
 import { defineAsyncComponent } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
+import { isNotificationTypes, type NotificationType } from '@/misskey';
 import { GetFormResultType } from '@/scripts/form';
 import MkContainer from '@/components/MkContainer.vue';
 import XNotifications from '@/components/MkNotifications.vue';
@@ -31,7 +32,8 @@ const widgetPropsDef = {
 	},
 	includingTypes: {
 		type: 'array' as const,
-		hidden: true,
+		validate: isNotificationTypes,
+		hidden: true as const,
 		default: null,
 	},
 };
@@ -42,7 +44,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure, save } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -54,7 +56,7 @@ const configureNotification = () => {
 	os.popup(defineAsyncComponent(() => import('@/components/MkNotificationSettingWindow.vue')), {
 		includingTypes: widgetProps.includingTypes,
 	}, {
-		done: async (res) => {
+		done: async (res: { includingTypes: NotificationType[] | null }) => {
 			const { includingTypes } = res;
 			widgetProps.includingTypes = includingTypes;
 			save();

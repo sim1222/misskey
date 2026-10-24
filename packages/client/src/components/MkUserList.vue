@@ -16,18 +16,19 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+
 import MkUserInfo from '@/components/MkUserInfo.vue';
-import MkPagination, { Paging } from '@/components/MkPagination.vue';
-import { userPage } from '@/filters/user';
+import type { entities } from '@/misskey';
+import type { EndpointOf, Paging } from '@/types/paging';
+import MkPagination from '@/components/MkPagination.vue';
+
 import { i18n } from '@/i18n';
 
-const props = defineProps<{
-	pagination: Paging;
+defineProps<{
+	pagination: Paging<EndpointOf<entities.UserDetailed>>;
 	noGap?: boolean;
 }>();
 
-const pagingComponent = ref<InstanceType<typeof MkPagination>>();
 </script>
 
 <style lang="scss" scoped>

@@ -22,16 +22,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, inject, nextTick, onActivated, onMounted, onUnmounted, provide, ref, watch } from 'vue';
+
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import type { PageMetadataRef } from '@/scripts/page-metadata';
+import { shallowReactive, computed, onActivated, onMounted, onUnmounted, ref, watch } from 'vue';
 import { i18n } from '@/i18n';
 import MkInfo from '@/components/MkInfo.vue';
 import MkSuperMenu from '@/components/MkSuperMenu.vue';
-import { scroll } from '@/scripts/scroll';
-import { signout , $i } from '@/account';
+
+import { signout } from '@/account';
 import { unisonReload } from '@/scripts/unison-reload';
 import { instance } from '@/instance';
 import { useRouter } from '@/router';
-import { definePageMetadata, provideMetadataReceiver, setPageMetadata } from '@/scripts/page-metadata';
+import { definePageMetadata, provideMetadataReceiver } from '@/scripts/page-metadata';
 import * as os from '@/os';
 
 const indexInfo = {
@@ -41,7 +46,7 @@ const indexInfo = {
 };
 const INFO = ref(indexInfo);
 const el = ref<HTMLElement | null>(null);
-const childInfo = ref(null);
+const childInfo = shallowReactive<{ current: PageMetadataRef | null }>({ current: null });
 
 const router = useRouter();
 
@@ -55,7 +60,7 @@ const ro = new ResizeObserver((entries, observer) => {
 	narrow.value = entries[0].borderBoxSize[0].inlineSize < NARROW_THRESHOLD;
 });
 
-const menuDef = computed(() => [{
+const menuDef = computed<import('@/components/MkSuperMenu.vue').SuperMenuGroup[]>(() => [{
 	title: i18n.ts.basicSettings,
 	items: [{
 		icon: 'fas fa-user',
@@ -209,8 +214,10 @@ watch((narrow), () => {
 });
 
 onMounted(() => {
+	if (el.value == null) return;
 	ro.observe(el.value);
 
+	if (el.value == null) return;
 	narrow.value = el.value.offsetWidth < NARROW_THRESHOLD;
 
 	if (!narrow.value && currentPage.value?.route.name == null) {
@@ -219,6 +226,7 @@ onMounted(() => {
 });
 
 onActivated(() => {
+	if (el.value == null) return;
 	narrow.value = el.value.offsetWidth < NARROW_THRESHOLD;
 
 	if (!narrow.value && currentPage.value?.route.name == null) {
@@ -230,13 +238,13 @@ onUnmounted(() => {
 	ro.disconnect();
 });
 
-const emailNotConfigured = computed(() => instance.enableEmail && ($i.email == null || !$i.emailVerified));
+const emailNotConfigured = computed(() => instance.enableEmail && (account.email == null || !account.emailVerified));
 
 provideMetadataReceiver((info) => {
 	if (info == null) {
-		childInfo.value = null;
+		childInfo.current = null;
 	} else {
-		childInfo.value = info;
+		childInfo.current = info;
 	}
 });
 

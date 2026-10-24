@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, markRaw } from 'vue';
+import { defineComponent, markRaw, type ComponentPublicInstance } from 'vue';
 import {
   Chart,
   ArcElement,
@@ -92,7 +92,7 @@ Chart.register(
   SubTitle
 );
 
-const alpha = (hex, a) => {
+const alpha = (hex: string, a: number) => {
 	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)!;
 	const r = parseInt(result[1], 16);
 	const g = parseInt(result[2], 16);
@@ -100,7 +100,19 @@ const alpha = (hex, a) => {
 	return `rgba(${r}, ${g}, ${b}, ${a})`;
 };
 import * as os from '@/os';
+import type { ApiResponse } from '@/types/api';
+import type { ChannelConnection, Channels } from '@/misskey';
+import type { ServerStats } from 'misskey-js/built/streaming';
 import { stream } from '@/stream';
+
+type MetricChart = Chart<'line', (number | string)[], string>;
+interface MetricsState {
+ version: string; url: string; stats: null; serverInfo: ApiResponse<'admin/server-info'> | null;
+ connection: ChannelConnection<Channels['serverStats']> | null; queueConnection: ChannelConnection<Channels['queueStats']>;
+ memUsage: number; chartCpuMem: MetricChart | null; chartNet: MetricChart | null; chartDisk: MetricChart | null;
+ jobs: ApiResponse<'admin/queue/deliver-delayed'>; logs: unknown[]; logLevel: string; logDomain: string;
+ modLogs: unknown[]; dbInfo: null; overviewHeight: string; queueHeight: string; paused: boolean;
+}
 
 export default defineComponent({
 	components: {
@@ -112,7 +124,7 @@ export default defineComponent({
 		MkwFederation,
 	},
 
-	data() {
+	data(): MetricsState {
 		return {
 			version,
 			url,
@@ -123,6 +135,7 @@ export default defineComponent({
 			memUsage: 0,
 			chartCpuMem: null,
 			chartNet: null,
+			chartDisk: null,
 			jobs: [],
 			logs: [],
 			logLevel: 'all',
@@ -177,9 +190,9 @@ export default defineComponent({
 	},
 
 	methods: {
-		cpumem(el) {
-			if (this.chartCpuMem != null) return;
-			this.chartCpuMem = markRaw(new Chart(el, {
+		cpumem(el: Element | ComponentPublicInstance | null) {
+			if (!(el instanceof HTMLCanvasElement) || this.chartCpuMem != null) return;
+			this.chartCpuMem = markRaw(new Chart<'line', (number | string)[], string>(el, {
 				type: 'line',
 				data: {
 					labels: [],
@@ -220,18 +233,17 @@ export default defineComponent({
 							bottom: 0
 						}
 					},
-					legend: {
+					plugins: { legend: {
 						position: 'bottom',
 						labels: {
 							boxWidth: 16,
 						}
-					},
+					} },
 					scales: {
 						x: {
-							gridLines: {
+							grid: {
 								display: false,
 								color: this.gridColor,
-								zeroLineColor: this.gridColor,
 							},
 							ticks: {
 								display: false,
@@ -239,18 +251,16 @@ export default defineComponent({
 						},
 						y: {
 							position: 'right',
-							gridLines: {
+							grid: {
 								display: true,
 								color: this.gridColor,
-								zeroLineColor: this.gridColor,
 							},
 							ticks: {
-								display: false,
-								max: 100
+								display: false
 							}
 						}
 					},
-					tooltips: {
+					interaction: {
 						intersect: false,
 						mode: 'index',
 					}
@@ -258,9 +268,9 @@ export default defineComponent({
 			}));
 		},
 
-		net(el) {
-			if (this.chartNet != null) return;
-			this.chartNet = markRaw(new Chart(el, {
+		net(el: Element | ComponentPublicInstance | null) {
+			if (!(el instanceof HTMLCanvasElement) || this.chartNet != null) return;
+			this.chartNet = markRaw(new Chart<'line', (number | string)[], string>(el, {
 				type: 'line',
 				data: {
 					labels: [],
@@ -292,18 +302,17 @@ export default defineComponent({
 							bottom: 0
 						}
 					},
-					legend: {
+					plugins: { legend: {
 						position: 'bottom',
 						labels: {
 							boxWidth: 16,
 						}
-					},
+					} },
 					scales: {
 						x: {
-							gridLines: {
+							grid: {
 								display: false,
 								color: this.gridColor,
-								zeroLineColor: this.gridColor,
 							},
 							ticks: {
 								display: false
@@ -311,17 +320,16 @@ export default defineComponent({
 						},
 						y: {
 							position: 'right',
-							gridLines: {
+							grid: {
 								display: true,
 								color: this.gridColor,
-								zeroLineColor: this.gridColor,
 							},
 							ticks: {
 								display: false,
 							}
 						}
 					},
-					tooltips: {
+					interaction: {
 						intersect: false,
 						mode: 'index',
 					}
@@ -329,9 +337,9 @@ export default defineComponent({
 			}));
 		},
 
-		disk(el) {
-			if (this.chartDisk != null) return;
-			this.chartDisk = markRaw(new Chart(el, {
+		disk(el: Element | ComponentPublicInstance | null) {
+			if (!(el instanceof HTMLCanvasElement) || this.chartDisk != null) return;
+			this.chartDisk = markRaw(new Chart<'line', (number | string)[], string>(el, {
 				type: 'line',
 				data: {
 					labels: [],
@@ -363,18 +371,17 @@ export default defineComponent({
 							bottom: 0
 						}
 					},
-					legend: {
+					plugins: { legend: {
 						position: 'bottom',
 						labels: {
 							boxWidth: 16,
 						}
-					},
+					} },
 					scales: {
 						x: {
-							gridLines: {
+							grid: {
 								display: false,
 								color: this.gridColor,
-								zeroLineColor: this.gridColor,
 							},
 							ticks: {
 								display: false
@@ -382,17 +389,16 @@ export default defineComponent({
 						},
 						y: {
 							position: 'right',
-							gridLines: {
+							grid: {
 								display: true,
 								color: this.gridColor,
-								zeroLineColor: this.gridColor,
 							},
 							ticks: {
 								display: false,
 							}
 						}
 					},
-					tooltips: {
+					interaction: {
 						intersect: false,
 						mode: 'index',
 					}
@@ -406,33 +412,33 @@ export default defineComponent({
 			});
 		},
 
-		onStats(stats) {
-			if (this.paused) return;
+		onStats(stats: ServerStats) {
+			if (this.paused || !this.serverInfo || !this.chartCpuMem || !this.chartNet || !this.chartDisk) return;
 
 			const cpu = (stats.cpu * 100).toFixed(0);
 			const memActive = (stats.mem.active / this.serverInfo.mem.total * 100).toFixed(0);
 			const memUsed = (stats.mem.used / this.serverInfo.mem.total * 100).toFixed(0);
 			this.memUsage = stats.mem.active;
 
-			this.chartCpuMem.data.labels.push('');
+			this.chartCpuMem.data.labels?.push('');
 			this.chartCpuMem.data.datasets[0].data.push(cpu);
 			this.chartCpuMem.data.datasets[1].data.push(memActive);
 			this.chartCpuMem.data.datasets[2].data.push(memUsed);
-			this.chartNet.data.labels.push('');
+			this.chartNet.data.labels?.push('');
 			this.chartNet.data.datasets[0].data.push(stats.net.rx);
 			this.chartNet.data.datasets[1].data.push(stats.net.tx);
-			this.chartDisk.data.labels.push('');
+			this.chartDisk.data.labels?.push('');
 			this.chartDisk.data.datasets[0].data.push(stats.fs.r);
 			this.chartDisk.data.datasets[1].data.push(stats.fs.w);
 			if (this.chartCpuMem.data.datasets[0].data.length > 150) {
-				this.chartCpuMem.data.labels.shift();
+				this.chartCpuMem.data.labels?.shift();
 				this.chartCpuMem.data.datasets[0].data.shift();
 				this.chartCpuMem.data.datasets[1].data.shift();
 				this.chartCpuMem.data.datasets[2].data.shift();
-				this.chartNet.data.labels.shift();
+				this.chartNet.data.labels?.shift();
 				this.chartNet.data.datasets[0].data.shift();
 				this.chartNet.data.datasets[1].data.shift();
-				this.chartDisk.data.labels.shift();
+				this.chartDisk.data.labels?.shift();
 				this.chartDisk.data.datasets[0].data.shift();
 				this.chartDisk.data.datasets[1].data.shift();
 			}
@@ -441,7 +447,7 @@ export default defineComponent({
 			this.chartDisk.update();
 		},
 
-		onStatsLog(statsLog) {
+		onStatsLog(statsLog: ServerStats[]) {
 			for (const stats of [...statsLog].reverse()) {
 				this.onStats(stats);
 			}

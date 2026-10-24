@@ -9,7 +9,7 @@ export function extractUrlFromMfm(nodes: mfm.MfmNode[], respectSilentFlag = true
 	const urlNodes = mfm.extract(nodes, (node) => {
 		return (node.type === 'url') || (node.type === 'link' && (!respectSilentFlag || !node.props.silent));
 	});
-	const urls: string[] = unique(urlNodes.map(x => x.props.url));
+	const urls: string[] = unique(urlNodes.filter((node): node is mfm.MfmUrl | mfm.MfmLink => node.type === 'url' || node.type === 'link').map(x => x.props.url));
 
 	return urls.reduce((array, url) => {
 		const urlWithoutHash = removeHash(url);

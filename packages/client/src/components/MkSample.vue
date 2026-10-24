@@ -85,14 +85,14 @@ export default defineComponent({
 		},
 
 		async openDrive() {
-			os.selectDriveFile();
+			os.selectDriveFile(false);
 		},
 
 		async selectUser() {
 			os.selectUser();
 		},
 
-		async openMenu(ev) {
+		async openMenu(ev: MouseEvent) {
 			os.popupMenu([{
 				type: 'label',
 				text: 'Fruits'

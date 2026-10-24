@@ -1,8 +1,8 @@
 {
 	"compilerOptions": {
 		"allowJs": true,
-		"noEmitOnError": false,
-		"noImplicitAny": false,
+		"noEmitOnError": true,
+		"noImplicitAny": true,
 		"noImplicitReturns": true,
 		"noUnusedParameters": false,
 		"noUnusedLocals": true,
@@ -11,7 +11,7 @@
 		"sourceMap": false,
 		"target": "es2017",
 		"module": "esnext",
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"removeComments": false,
 		"noLib": false,
 		"strict": true,
@@ -23,13 +23,47 @@
 		"useDefineForClassFields": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": [
+				"./src/*"
+			],
+			"misskey-js": [
+				"./node_modules/misskey-js"
+			],
+			"vuedraggable": [
+				"./@types/vuedraggable/index.d.ts"
+			],
+			"misskey-js/built/streaming": [
+				"./@types/misskey-stream/index.d.ts"
+			]
 		},
-		"typeRoots": ["node_modules/@types", "node_modules/", "@types"],
-		"types": ["vite/client"],
-		"lib": ["esnext", "dom"],
-		"jsx": "preserve"
+		"typeRoots": [
+			"node_modules/@types",
+			"node_modules/",
+			"@types"
+		],
+		"types": [
+			"vite/client",
+			"node"
+		],
+		"lib": [
+			"esnext",
+			"dom",
+			"dom.iterable"
+		],
+		"jsx": "preserve",
+		"allowImportingTsExtensions": true
+	},
+	"vueCompilerOptions": {
+		"strictTemplates": true,
+		"fallthroughAttributes": true,
+		"dataAttributes": [
+			"data-*"
+		]
 	},
 	"compileOnSave": false,
-	"include": [".eslintrc.js", "./**/*.ts", "./**/*.vue"]
+	"include": [
+		".eslintrc.js",
+		"./**/*.ts",
+		"./**/*.vue"
+	]
 }

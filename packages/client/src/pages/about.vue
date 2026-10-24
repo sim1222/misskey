@@ -47,11 +47,11 @@
 					<FormSplit>
 						<MkKeyValue class="_formBlock">
 							<template #key>{{ i18n.ts.users }}</template>
-							<template #value>{{ number(stats.originalUsersCount) }}</template>
+							<template #value>{{ number(stats?.originalUsersCount) }}</template>
 						</MkKeyValue>
 						<MkKeyValue class="_formBlock">
 							<template #key>{{ i18n.ts.notes }}</template>
-							<template #value>{{ number(stats.originalNotesCount) }}</template>
+							<template #value>{{ number(stats?.originalNotesCount) }}</template>
 						</MkKeyValue>
 					</FormSplit>
 				</FormSection>
@@ -82,10 +82,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { ApiResponse } from '@/types/api';
 import { ref, computed } from 'vue';
 import XEmojis from './about.emojis.vue';
 import XFederation from './about.federation.vue';
-import { version, instanceName, host } from '@/config';
+import { version, host } from '@/config';
 import FormLink from '@/components/form/link.vue';
 import FormSection from '@/components/form/section.vue';
 import FormSuspense from '@/components/form/suspense.vue';
@@ -103,7 +104,7 @@ const props = withDefaults(defineProps<{
 	initialTab: 'overview',
 });
 
-let stats = ref(null);
+let stats = ref<ApiResponse<'stats'> | null>(null);
 let tab = ref(props.initialTab);
 
 const initStats = () => os.api('stats', {

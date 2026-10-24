@@ -2,7 +2,7 @@
 <div ref="rootEl" class="swhvrteh _popup blur _shadow" :style="{ zIndex }" @contextmenu.prevent="() => {}">
 	<ol v-if="type === 'user'" ref="suggests" class="users">
 		<li v-for="user in users" tabindex="-1" class="user" @click="complete(type, user)" @keydown="onKeydown">
-			<img class="avatar" :src="user.avatarUrl"/>
+			<img class="avatar" :src="(user.avatarUrl) ?? undefined"/>
 			<span class="name">
 				<MkUserName :key="user.id" :user="user"/>
 			</span>
@@ -17,11 +17,11 @@
 	</ol>
 	<ol v-else-if="emojis.length > 0" ref="suggests" class="emojis">
 		<li v-for="emoji in emojis" tabindex="-1" @click="complete(type, emoji.emoji)" @keydown="onKeydown">
-			<span v-if="emoji.isCustomEmoji" class="emoji"><img :src="defaultStore.state.disableShowingAnimatedImages ? getStaticImageUrl(emoji.url) : emoji.url" :alt="emoji.emoji"/></span>
+			<span v-if="emoji.isCustomEmoji" class="emoji"><img :src="defaultStore.state.disableShowingAnimatedImages ? getStaticImageUrl(emoji.url ?? '') : emoji.url" :alt="emoji.emoji"/></span>
 			<span v-else-if="!defaultStore.state.useOsNativeEmojis" class="emoji"><img :src="emoji.url" :alt="emoji.emoji"/></span>
 			<span v-else class="emoji">{{ emoji.emoji }}</span>
 			<!-- eslint-disable-next-line vue/no-v-html -->
-			<span class="name" v-html="emoji.name.replace(q, `<b>${q}</b>`)"></span>
+			<span class="name" v-html="emoji.name.replace(q ?? '', `<b>${q}</b>`)"></span>
 			<span v-if="emoji.aliasOf" class="alias">({{ emoji.aliasOf }})</span>
 		</li>
 	</ol>
@@ -34,6 +34,8 @@
 </template>
 
 <script lang="ts">
+import type { AutocompleteResult } from '@/types/autocomplete';
+import type { entities } from '@/misskey';
 import { markRaw, ref, onUpdated, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 import contains from '@/scripts/contains';
 import { char2filePath } from '@/scripts/twemoji-base';
@@ -78,7 +80,7 @@ for (const x of lib) {
 emjdb.sort((a, b) => a.name.length - b.name.length);
 
 //#region Construct Emoji DB
-const customEmojis = instance.emojis;
+const customEmojis = instance.emojis ?? [];
 const emojiDefinitions: EmojiDef[] = [];
 
 for (const x of customEmojis) {
@@ -117,16 +119,16 @@ export default {
 
 <script lang="ts" setup>
 const props = defineProps<{
-	type: string;
+	type: AutocompleteResult['type'];
 	q: string | null;
-	textarea: HTMLTextAreaElement;
+	textarea: HTMLTextAreaElement | HTMLInputElement;
 	close: () => void;
 	x: number;
 	y: number;
 }>();
 
 const emit = defineEmits<{
-	(event: 'done', value: { type: string; value: any }): void;
+	(event: 'done', value: AutocompleteResult): void;
 	(event: 'closed'): void;
 }>();
 
@@ -134,18 +136,24 @@ const suggests = ref<Element>();
 const rootEl = ref<HTMLDivElement>();
 
 const fetching = ref(true);
-const users = ref<any[]>([]);
-const hashtags = ref<any[]>([]);
+const users = ref<entities.User[]>([]);
+const hashtags = ref<string[]>([]);
 const emojis = ref<(EmojiDef)[]>([]);
 const items = ref<Element[] | HTMLCollection>([]);
 const mfmTags = ref<string[]>([]);
 const select = ref(-1);
 const zIndex = os.claimZIndex('high');
 
-function complete(type: string, value: any) {
-	emit('done', { type, value });
+function complete(type: AutocompleteResult['type'], value: entities.User | string) {
+ if (type === 'user') {
+  if (typeof value === 'string') return;
+  emit('done', { type, value });
+ } else {
+  if (typeof value !== 'string') return;
+  emit('done', { type, value });
+ }
 	emit('closed');
-	if (type === 'emoji') {
+	if (type === 'emoji' && typeof value === 'string') {
 		let recents = defaultStore.state.recentlyUsedEmojis;
 		recents = recents.filter((emoji: any) => emoji !== value);
 		recents.unshift(value);
@@ -265,10 +273,11 @@ function exec() {
 }
 
 function onMousedown(event: Event) {
-	if (!contains(rootEl.value, event.target) && (rootEl.value !== event.target)) props.close();
+	if (!contains(rootEl.value ?? null, event.target) && (rootEl.value !== event.target)) props.close();
 }
 
-function onKeydown(event: KeyboardEvent) {
+function onKeydown(event: Event) {
+	if (!(event instanceof KeyboardEvent)) return;
 	const cancel = () => {
 		event.preventDefault();
 		event.stopPropagation();
@@ -278,7 +287,8 @@ function onKeydown(event: KeyboardEvent) {
 		case 'Enter':
 			if (select.value !== -1) {
 				cancel();
-				(items.value[select.value] as any).click();
+				const item = items.value[select.value];
+				if (item instanceof HTMLElement) item.click();
 			} else {
 				props.close();
 			}
@@ -328,7 +338,8 @@ function applySelect() {
 
 	if (select.value !== -1) {
 		items.value[select.value].setAttribute('data-selected', 'true');
-		(items.value[select.value] as any).focus();
+		const item = items.value[select.value];
+		if (item instanceof HTMLElement) item.focus();
 	}
 }
 

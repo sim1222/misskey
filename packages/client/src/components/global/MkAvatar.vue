@@ -1,17 +1,17 @@
 <template>
 <span v-if="disableLink" v-user-preview="disablePreview ? undefined : user.id" class="eiwwqkts _noSelect" :class="{ cat: user.isCat, square: $store.state.squareAvatars }" :style="{ color }" :title="acct(user)" @click="onClick">
-	<img class="inner" :src="url" decoding="async"/>
+	<img class="inner" :src="(url) ?? undefined" decoding="async"/>
 	<MkUserOnlineIndicator v-if="showIndicator" class="indicator" :user="user"/>
 </span>
-<MkA v-else v-user-preview="disablePreview ? undefined : user.id" class="eiwwqkts _noSelect" :class="{ cat: user.isCat, square: $store.state.squareAvatars }" :style="{ color }" :to="userPage(user)" :title="acct(user)" :target="target">
-	<img class="inner" :src="url" decoding="async"/>
+<MkA v-else v-user-preview="disablePreview ? undefined : user.id" class="eiwwqkts _noSelect" :class="{ cat: user.isCat, square: $store.state.squareAvatars }" :style="{ color }" :to="userPage(user)" :title="acct(user)" :target="target ?? undefined">
+	<img class="inner" :src="(url) ?? undefined" decoding="async"/>
 	<MkUserOnlineIndicator v-if="showIndicator" class="indicator" :user="user"/>
 </MkA>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import { watch, ref } from 'vue';
+import * as misskey from '@/misskey';
 import { getStaticImageUrl } from '@/scripts/get-static-image-url';
 import { extractAvgColorFromBlurhash } from '@/scripts/extract-avg-color-from-blurhash';
 import { acct, userPage } from '@/filters/user';
@@ -51,7 +51,7 @@ function onClick(ev: MouseEvent) {
 let color = ref();
 
 watch(() => props.user.avatarBlurhash, () => {
-	color.value = extractAvgColorFromBlurhash(props.user.avatarBlurhash);
+	color.value = props.user.avatarBlurhash ? extractAvgColorFromBlurhash(props.user.avatarBlurhash) : undefined;
 }, {
 	immediate: true,
 });

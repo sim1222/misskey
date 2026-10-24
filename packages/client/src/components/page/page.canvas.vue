@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, Ref, ref } from 'vue';
-import * as os from '@/os';
+import { defineComponent, onMounted, PropType, ref } from 'vue';
+
 import { CanvasBlock } from '@/scripts/hpml/block';
 import { Hpml } from '@/scripts/hpml/evaluator';
 
@@ -22,10 +22,10 @@ export default defineComponent({
 		}
 	},
 	setup(props, ctx) {
-		const canvas: Ref<any> = ref(null);
+		const canvas = ref<HTMLCanvasElement | null>(null);
 
 		onMounted(() => {
-			props.hpml.registerCanvas(props.block.name, canvas.value);
+			if (props.block.name && canvas.value) props.hpml.registerCanvas(props.block.name, canvas.value);
 		});
 
 		return {

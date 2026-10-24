@@ -1,14 +1,14 @@
 <template>
-<MkModal ref="modal" v-slot="{ type, maxHeight }" :prefer-type="preferedModalType" :anchor="anchor" :transparent-bg="true" :src="src" @click="modal.close()" @closed="emit('closed')">
+<MkModal ref="modal" v-slot="{ type, maxHeight }" :prefer-type="preferedModalType" :anchor="anchor" :transparent-bg="true" :src="src" @click="modal?.close()" @closed="emit('closed')">
 	<div class="szkkfdyq _popup blur _shadow" :class="{ asDrawer: type === 'drawer' }" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : '' }">
 		<div class="main">
 			<template v-for="item in items">
-				<button v-if="item.action" v-click-anime class="_button" @click="$event => { item.action($event); close(); }">
+				<button v-if="item.action" v-click-anime class="_button" @click="$event => { item.action?.($event); close(); }">
 					<i class="icon" :class="item.icon"></i>
 					<div class="text">{{ item.text }}</div>
 					<span v-if="item.indicate" class="indicator"><i class="fas fa-circle"></i></span>
 				</button>
-				<MkA v-else v-click-anime :to="item.to" @click.passive="close()">
+				<MkA v-else-if="item.to" v-click-anime :to="item.to" @click.passive="close()">
 					<i class="icon" :class="item.icon"></i>
 					<div class="text">{{ item.text }}</div>
 					<span v-if="item.indicate" class="indicator"><i class="fas fa-circle"></i></span>
@@ -20,18 +20,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, unref } from 'vue';
 import MkModal from '@/components/MkModal.vue';
 import { navbarItemDef } from '@/navbar';
-import { instanceName } from '@/config';
+
 import { defaultStore } from '@/store';
 import { i18n } from '@/i18n';
 import { deviceKind } from '@/scripts/device-kind';
-import * as os from '@/os';
+
 
 const props = withDefaults(defineProps<{
 	src?: HTMLElement;
-	anchor?: { x: string; y: string; };
+	anchor?: import('@/scripts/modal-anchor').ModalAnchor;
 }>(), {
 	anchor: () => ({ x: 'right', y: 'center' }),
 });
@@ -48,17 +48,17 @@ const modal = ref<InstanceType<typeof MkModal>>();
 
 const menu = defaultStore.state.menu;
 
-const items = Object.keys(navbarItemDef).filter(k => !menu.includes(k)).map(k => navbarItemDef[k]).filter(def => def.show == null ? true : def.show).map(def => ({
+const items = Object.keys(navbarItemDef).filter(k => !menu.includes(k)).map(k => navbarItemDef[k]).filter(def => def != null).filter(def => def.show == null ? true : unref(def.show)).map(def => ({
 	type: def.to ? 'link' : 'button',
 	text: i18n.ts[def.title],
 	icon: def.icon,
 	to: def.to,
 	action: def.action,
-	indicate: def.indicated,
+	indicate: unref(def.indicated),
 }));
 
 function close() {
-	modal.value.close();
+	modal.value?.close();
 }
 </script>
 

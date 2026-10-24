@@ -9,7 +9,7 @@ import { I18n } from '@/scripts/i18n';
 class SwLang {
 	public cacheName = `mk-cache-${_VERSION_}`;
 
-	public lang: Promise<string> = get('lang').then(async prelang => {
+	public lang: Promise<string> = get<string>('lang').then(async prelang => {
 		if (!prelang) return 'en-US';
 		return prelang;
 	});
@@ -34,8 +34,8 @@ class SwLang {
 		// _DEV_がtrueの場合は常に最新化
 		if (!localeRes || _DEV_) {
 			localeRes = await fetch(localeUrl);
-			const clone = localeRes?.clone();
-			if (!clone?.clone().ok) Error('locale fetching error');
+			const clone = localeRes.clone();
+			if (!clone.clone().ok) Error('locale fetching error');
 
 			caches.open(this.cacheName).then(cache => cache.put(localeUrl, clone));
 		}

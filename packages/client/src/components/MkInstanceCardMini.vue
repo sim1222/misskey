@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import MkMiniChart from '@/components/MkMiniChart.vue';
 import * as os from '@/os';
 

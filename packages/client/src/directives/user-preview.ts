@@ -1,16 +1,16 @@
-import { defineAsyncComponent, Directive, ref } from 'vue';
+import { defineAsyncComponent, ObjectDirective, ref } from 'vue';
 import autobind from 'autobind-decorator';
 import { popup } from '@/os';
 
 export class UserPreview {
-	private el;
-	private user;
-	private showTimer;
-	private hideTimer;
-	private checkTimer;
-	private promise;
+	private el: HTMLElement;
+	private user: string;
+	private showTimer: number|undefined;
+	private hideTimer: number|undefined;
+	private checkTimer: number|undefined;
+	private promise: { cancel: () => void } | null = null;
 
-	constructor(el, user) {
+	constructor(el: HTMLElement, user: string) {
 		this.el = el;
 		this.user = user;
 
@@ -98,21 +98,15 @@ export class UserPreview {
 	}
 }
 
+const previews = new WeakMap<HTMLElement, UserPreview>();
 export default {
-	mounted(el: HTMLElement, binding, vn) {
-		if (binding.value == null) return;
-
-		// TODO: 新たにプロパティを作るのをやめMapを使う
-		// ただメモリ的には↓の方が省メモリかもしれないので検討中
-		const self = (el as any)._userPreviewDirective_ = {} as any;
-
-		self.preview = new UserPreview(el, binding.value);
-	},
-
-	unmounted(el, binding, vn) {
-		if (binding.value == null) return;
-
-		const self = el._userPreviewDirective_;
-		self.preview.detach();
-	}
-} as Directive;
+ mounted(el, binding) {
+  if (binding.value == null) return;
+  const preview = new UserPreview(el, binding.value);
+  previews.set(el, preview);
+ },
+ unmounted(el) {
+  previews.get(el)?.detach();
+  previews.delete(el);
+ },
+} satisfies ObjectDirective<HTMLElement, string | null | undefined>;

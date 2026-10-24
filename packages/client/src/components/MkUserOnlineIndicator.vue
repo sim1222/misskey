@@ -4,7 +4,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
@@ -17,6 +17,7 @@ const text = computed(() => {
 		case 'active': return i18n.ts.active;
 		case 'offline': return i18n.ts.offline;
 		case 'unknown': return i18n.ts.unknown;
+        default: return undefined;
 	}
 });
 </script>

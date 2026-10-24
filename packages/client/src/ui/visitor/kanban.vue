@@ -38,7 +38,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, defineAsyncComponent } from 'vue';
+import type { entities } from '@/misskey';
+import { defineComponent } from 'vue';
 import { host, instanceName } from '@/config';
 import * as os from '@/os';
 import MkPagination from '@/components/MkPagination.vue';
@@ -75,10 +76,10 @@ export default defineComponent({
 			host,
 			instanceName,
 			pageInfo: null,
-			meta: null,
+			meta: null as entities.DetailedInstanceMetadata | null,
 			narrow: window.innerWidth < 1280,
 			announcements: {
-				endpoint: 'announcements',
+				endpoint: 'announcements' as const,
 				limit: 10,
 			},
 		};

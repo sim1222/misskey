@@ -18,7 +18,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, watch, ref } from 'vue';
+import type { ApiResponse } from '@/types/api';
+import { computed, watch, ref } from 'vue';
 import XTimeline from '@/components/MkTimeline.vue';
 import { scroll } from '@/scripts/scroll';
 import * as os from '@/os';
@@ -32,7 +33,7 @@ const props = defineProps<{
 	antennaId: string;
 }>();
 
-let antenna = ref(null);
+let antenna = ref<ApiResponse<'antennas/show'> | null>(null);
 let queue = ref(0);
 let rootEl = ref<HTMLElement>();
 let tlEl = ref<InstanceType<typeof XTimeline>>();
@@ -40,11 +41,12 @@ const keymap = computed(() => ({
 	't': focus,
 }));
 
-function queueUpdated(q) {
+function queueUpdated(q: number) {
 	queue.value = q;
 }
 
 function top() {
+	if (rootEl.value == null) return;
 	scroll(rootEl.value, { top: 0 });
 }
 
@@ -54,7 +56,7 @@ async function timetravel() {
 	});
 	if (canceled) return;
 
-	tlEl.value.timetravel(date);
+	tlEl.value?.timetravel(date);
 }
 
 function settings() {
@@ -62,7 +64,7 @@ function settings() {
 }
 
 function focus() {
-	tlEl.value.focus();
+	tlEl.value?.focus();
 }
 
 watch(() => props.antennaId, async () => {

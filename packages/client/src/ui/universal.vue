@@ -4,7 +4,7 @@
 
 	<MkStickyContainer class="contents">
 		<template #header><XStatusBars :class="$style.statusbars"/></template>
-		<main style="min-width: 0;" :style="{ background: pageMetadata?.value?.bg }" @contextmenu.stop="onContextmenu">
+		<main style="min-width: 0;" :style="{ background: pageMetadata.current?.value?.bg }" @contextmenu.stop="onContextmenu">
 			<div :class="$style.content">
 				<RouterView/>
 			</div>
@@ -57,7 +57,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, provide, onMounted, computed, ref, watch, ComputedRef } from 'vue';
+import { keepsBrowserMenu } from '@/scripts/contextmenu-target';
+import { shallowReactive } from 'vue';
+
+import { defineAsyncComponent, provide, onMounted, computed, ref } from 'vue';
 import XCommon from './_common_/common.vue';
 import { instanceName } from '@/config';
 import { StickySidebar } from '@/scripts/sticky-sidebar';
@@ -67,9 +70,9 @@ import { defaultStore } from '@/store';
 import { navbarItemDef } from '@/navbar';
 import { i18n } from '@/i18n';
 import { $i } from '@/account';
-import { Router } from '@/nirax';
+
 import { mainRouter } from '@/router';
-import { PageMetadata, provideMetadataReceiver, setPageMetadata } from '@/scripts/page-metadata';
+import { type PageMetadataRef, provideMetadataReceiver } from '@/scripts/page-metadata';
 import { deviceKind } from '@/scripts/device-kind';
 const XWidgets = defineAsyncComponent(() => import('./universal.widgets.vue'));
 const XSidebar = defineAsyncComponent(() => import('@/ui/_common_/navbar.vue'));
@@ -85,22 +88,22 @@ window.addEventListener('resize', () => {
 	isMobile.value = deviceKind === 'smartphone' || window.innerWidth <= MOBILE_THRESHOLD;
 });
 
-let pageMetadata = ref<null | ComputedRef<PageMetadata>>();
+let pageMetadata = shallowReactive<{ current: PageMetadataRef | null }>({ current: null });
 const widgetsEl = ref<HTMLElement>();
 const widgetsShowing = ref(false);
 
 provide('router', mainRouter);
 provideMetadataReceiver((info) => {
-	pageMetadata.value = info;
-	if (pageMetadata.value.value) {
-		document.title = `${pageMetadata.value.value.title} | ${instanceName}`;
+	pageMetadata.current = info;
+	if (pageMetadata.current?.value) {
+		document.title = `${pageMetadata.current?.value.title} | ${instanceName}`;
 	}
 });
 
 const menuIndicated = computed(() => {
 	for (const def in navbarItemDef) {
 		if (def === 'notifications') continue; // 通知は下にボタンとして表示されてるから
-		if (navbarItemDef[def].indicated) return true;
+		if (navbarItemDef[def]?.indicated) return true;
 	}
 	return false;
 });
@@ -134,15 +137,8 @@ onMounted(() => {
 	}
 });
 
-const onContextmenu = (ev) => {
-	const isLink = (el: HTMLElement) => {
-		if (el.tagName === 'A') return true;
-		if (el.parentElement) {
-			return isLink(el.parentElement);
-		}
-	};
-	if (isLink(ev.target)) return;
-	if (['INPUT', 'TEXTAREA', 'IMG', 'VIDEO', 'CANVAS'].includes(ev.target.tagName) || ev.target.attributes['contenteditable']) return;
+const onContextmenu = (ev: MouseEvent) => {
+	if (keepsBrowserMenu(ev.target)) return;
 	if (window.getSelection()?.toString() !== '') return;
 	const path = mainRouter.getCurrentPath();
 	os.contextMenu([{
@@ -157,7 +153,8 @@ const onContextmenu = (ev) => {
 	}], ev);
 };
 
-const attachSticky = (el) => {
+const attachSticky = () => {
+	if (widgetsEl.value == null) return;
 	const sticky = new StickySidebar(widgetsEl.value);
 	window.addEventListener('scroll', () => {
 		sticky.calc(window.scrollY);

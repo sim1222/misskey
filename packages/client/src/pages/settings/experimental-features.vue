@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import FormInput from '@/components/form/input.vue';
 import FormButton from '@/components/MkButton.vue';
 import { i18n } from '@/i18n';
@@ -34,9 +34,9 @@ const reset = ():void => {
 	});
 };
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts._simkey.experimentalFeatures,

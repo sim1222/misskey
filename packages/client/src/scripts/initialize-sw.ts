@@ -21,9 +21,10 @@ export async function initializeSw() {
 			})
 			.then(subscription => {
 				function encode(buffer: ArrayBuffer | null) {
-					return btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)));
+					if (buffer === null) throw new Error('Push subscription key is unavailable');
+					return btoa(String.fromCharCode(...new Uint8Array(buffer)));
 				}
-		
+
 				// Register
 				api('sw/register', {
 					endpoint: subscription.endpoint,
@@ -37,7 +38,7 @@ export async function initializeSw() {
 				if (err.name === 'NotAllowedError') {
 					return;
 				}
-		
+
 				// 違うapplicationServerKey (または gcm_sender_id)のサブスクリプションが
 				// 既に存在していることが原因でエラーになった可能性があるので、
 				// そのサブスクリプションを解除しておく
@@ -52,7 +53,7 @@ export async function initializeSw() {
  * Convert the URL safe base64 string to a Uint8Array
  * @param base64String base64 string
  */
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
+function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
 	const padding = '='.repeat((4 - base64String.length % 4) % 4);
 	const base64 = (base64String + padding)
 		.replace(/-/g, '+')

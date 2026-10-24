@@ -8,28 +8,33 @@
 			<i v-else-if="widgetProps.src === 'global'" class="fas fa-globe"></i>
 			<i v-else-if="widgetProps.src === 'list'" class="fas fa-list-ul"></i>
 			<i v-else-if="widgetProps.src === 'antenna'" class="fas fa-satellite"></i>
-			<span style="margin-left: 8px;">{{ widgetProps.src === 'list' ? widgetProps.list.name : widgetProps.src === 'antenna' ? widgetProps.antenna.name : $t('_timelines.' + widgetProps.src) }}</span>
+			<span style="margin-left: 8px;">{{ widgetProps.src === 'list' ? widgetProps.list?.name : widgetProps.src === 'antenna' ? widgetProps.antenna?.name : $t('_timelines.' + widgetProps.src) }}</span>
 			<i :class="menuOpened ? 'fas fa-angle-up' : 'fas fa-angle-down'" style="margin-left: 8px;"></i>
 		</button>
 	</template>
 
 	<div>
-		<XTimeline :key="widgetProps.src === 'list' ? `list:${widgetProps.list.id}` : widgetProps.src === 'antenna' ? `antenna:${widgetProps.antenna.id}` : widgetProps.src" :src="widgetProps.src" :list="widgetProps.list ? widgetProps.list.id : null" :antenna="widgetProps.antenna ? widgetProps.antenna.id : null"/>
+		<XTimeline :key="widgetProps.src === 'list' ? `list:${widgetProps.list?.id}` : widgetProps.src === 'antenna' ? `antenna:${widgetProps.antenna?.id}` : widgetProps.src" :src="widgetProps.src" :list="widgetProps.list?.id" :antenna="widgetProps.antenna?.id"/>
 	</div>
 </MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import { ref } from 'vue';
+import { isRecord } from '@/scripts/form';
 import { GetFormResultType } from '@/scripts/form';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import * as os from '@/os';
 import MkContainer from '@/components/MkContainer.vue';
 import XTimeline from '@/components/MkTimeline.vue';
-import { $i } from '@/account';
+
 import { i18n } from '@/i18n';
 
 const name = 'timeline';
+
+function isTimelineReference(value: unknown): value is { id: string; name: string } {
+ return isRecord(value) && typeof value.id === 'string' && typeof value.name === 'string';
+}
 
 const widgetPropsDef = {
 	showHeader: {
@@ -41,19 +46,22 @@ const widgetPropsDef = {
 		default: 300,
 	},
 	src: {
-		type: 'string' as const,
+		type: 'enum' as const,
+        enum: (['home', 'local', 'social', 'global', 'list', 'antenna'] as const).map(value => ({ label: value, value })),
 		default: 'home',
-		hidden: true,
+		hidden: true as const,
 	},
 	antenna: {
 		type: 'object' as const,
 		default: null,
-		hidden: true,
+		validate: isTimelineReference,
+		hidden: true as const,
 	},
 	list: {
 		type: 'object' as const,
 		default: null,
-		hidden: true,
+		validate: isTimelineReference,
+		hidden: true as const,
 	},
 };
 
@@ -63,7 +71,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure, save } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -73,12 +81,12 @@ const { widgetProps, configure, save } = useWidgetPropsManager(name,
 
 const menuOpened = ref(false);
 
-const setSrc = (src) => {
+const setSrc = (src: WidgetProps['src']) => {
 	widgetProps.src = src;
 	save();
 };
 
-const choose = async (ev) => {
+const choose = async (ev: MouseEvent) => {
 	menuOpened.value = true;
 	const [antennas, lists] = await Promise.all([
 		os.api('antennas/list'),

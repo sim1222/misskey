@@ -7,15 +7,14 @@
 </div>
 <div v-else class="kkjnbbplepmiyuadieoenjgutgcmtsvu">
 	<video
-		:poster="video.thumbnailUrl"
-		:title="video.comment"
-		:alt="video.comment"
+		:poster="(video.thumbnailUrl) ?? undefined"
+		:title="(video.comment) ?? undefined"
 		preload="none"
 		controls
 		@contextmenu.stop
 	>
 		<source
-			:src="video.url"
+			:src="(video.url) ?? undefined"
 			:type="video.type === 'video/quicktime' ? 'video/mp4' : video.type"
 		>
 	</video>
@@ -25,7 +24,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import { defaultStore } from '@/store';
 
 const props = defineProps<{

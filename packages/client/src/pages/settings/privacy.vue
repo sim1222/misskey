@@ -7,7 +7,7 @@
 		{{ i18n.ts.makeReactionsPublic }}
 		<template #caption>{{ i18n.ts.makeReactionsPublicDescription }}</template>
 	</FormSwitch>
-		
+
 	<FormSelect v-model="ffVisibility" class="_formBlock" @update:modelValue="save()">
 		<template #label>{{ i18n.ts.ffVisibility }}</template>
 		<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
@@ -15,7 +15,7 @@
 		<option value="private">{{ i18n.ts._ffVisibility.private }}</option>
 		<template #caption>{{ i18n.ts.ffVisibilityDescription }}</template>
 	</FormSelect>
-		
+
 	<FormSwitch v-model="hideOnlineStatus" class="_formBlock" @update:modelValue="save()">
 		{{ i18n.ts.hideOnlineStatus }}
 		<template #caption>{{ i18n.ts.hideOnlineStatusDescription }}</template>
@@ -53,6 +53,9 @@
 </template>
 
 <script lang="ts" setup>
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
 import { ref, computed } from 'vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormSelect from '@/components/form/select.vue';
@@ -61,16 +64,16 @@ import FormFolder from '@/components/form/folder.vue';
 import * as os from '@/os';
 import { defaultStore } from '@/store';
 import { i18n } from '@/i18n';
-import { $i } from '@/account';
+
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let isLocked = ref($i.isLocked);
-let autoAcceptFollowed = ref($i.autoAcceptFollowed);
-let noCrawle = ref($i.noCrawle);
-let isExplorable = ref($i.isExplorable);
-let hideOnlineStatus = ref($i.hideOnlineStatus);
-let publicReactions = ref($i.publicReactions);
-let ffVisibility = ref($i.ffVisibility);
+let isLocked = ref(account.isLocked);
+let autoAcceptFollowed = ref(account.autoAcceptFollowed);
+let noCrawle = ref(account.noCrawle);
+let isExplorable = ref(account.isExplorable);
+let hideOnlineStatus = ref(account.hideOnlineStatus);
+let publicReactions = ref(account.publicReactions);
+let ffVisibility = ref(account.ffVisibility);
 
 let defaultNoteVisibility = computed(defaultStore.makeGetterSetter('defaultNoteVisibility'));
 let defaultNoteLocalOnly = computed(defaultStore.makeGetterSetter('defaultNoteLocalOnly'));
@@ -89,9 +92,9 @@ function save() {
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.privacy,

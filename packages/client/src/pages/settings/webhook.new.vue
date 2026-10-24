@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import FormInput from '@/components/form/input.vue';
 import FormSection from '@/components/form/section.vue';
 import FormSwitch from '@/components/form/switch.vue';
@@ -54,7 +54,7 @@ let event_reaction = ref(true);
 let event_mention = ref(true);
 
 async function create(): Promise<void> {
-	const events = [];
+	const events: import('@/types/api').ApiRequest<'i/webhooks/create'>['on'] = [];
 	if (event_follow.value) events.push('follow');
 	if (event_followed.value) events.push('followed');
 	if (event_note.value) events.push('note');
@@ -71,9 +71,9 @@ async function create(): Promise<void> {
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: 'Create new webhook',

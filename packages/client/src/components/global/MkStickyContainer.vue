@@ -18,7 +18,6 @@ const CURRENT_STICKY_TOP = 'CURRENT_STICKY_TOP';
 <script lang="ts" setup>
 import { onMounted, onUnmounted, provide, inject, Ref, ref, watch } from 'vue';
 
-const rootEl = ref<HTMLElement>();
 const headerEl = ref<HTMLElement>();
 const bodyEl = ref<HTMLElement>();
 
@@ -28,7 +27,9 @@ const parentStickyTop = inject<Ref<number>>(CURRENT_STICKY_TOP, ref(0));
 provide(CURRENT_STICKY_TOP, (childStickyTop));
 
 const calc = () => {
+	if (headerEl.value == null) return;
 	childStickyTop.value = parentStickyTop.value + headerEl.value.offsetHeight;
+	if (headerEl.value == null) return;
 	headerHeight.value = headerEl.value.offsetHeight.toString();
 };
 
@@ -44,11 +45,13 @@ onMounted(() => {
 	watch(parentStickyTop, calc);
 
 	watch((childStickyTop), () => {
+		if (bodyEl.value == null) return;
 		bodyEl.value.style.setProperty('--stickyTop', `${childStickyTop.value}px`);
 	}, {
 		immediate: true,
 	});
 
+	if (headerEl.value == null) return;
 	headerEl.value.style.position = 'sticky';
 	headerEl.value.style.top = 'var(--stickyTop, 0)';
 	headerEl.value.style.zIndex = '1000';

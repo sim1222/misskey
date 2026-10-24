@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import { GetFormResultType } from '@/scripts/form';
 import MkContainer from '@/components/MkContainer.vue';
 import MkAnalogClock from '@/components/MkAnalogClock.vue';
@@ -60,11 +60,11 @@ const widgetPropsDef = {
 		type: 'radio' as const,
 		default: 'numbers',
 		options: [{
-			value: 'none', label: 'None',
+			value: 'none' as const, label: 'None',
 		}, {
-			value: 'dots', label: 'Dots',
+			value: 'dots' as const, label: 'Dots',
 		}, {
-			value: 'numbers', label: 'Numbers',
+			value: 'numbers' as const, label: 'Numbers',
 		}],
 	},
 	fadeGraduations: {
@@ -75,11 +75,11 @@ const widgetPropsDef = {
 		type: 'radio' as const,
 		default: 'elastic',
 		options: [{
-			value: 'none', label: 'None',
+			value: 'none' as const, label: 'None',
 		}, {
-			value: 'elastic', label: 'Elastic',
+			value: 'elastic' as const, label: 'Elastic',
 		}, {
-			value: 'easeOut', label: 'Ease out',
+			value: 'easeOut' as const, label: 'Ease out',
 		}],
 	},
 	twentyFour: {
@@ -90,7 +90,7 @@ const widgetPropsDef = {
 		type: 'radio' as const,
 		default: 'none',
 		options: [{
-			value: 'none', label: 'None',
+			value: 'none' as const, label: 'None',
 		}, {
 			value: 'time', label: 'Time',
 		}, {
@@ -118,7 +118,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure } = useWidgetPropsManager(name,
 	widgetPropsDef,

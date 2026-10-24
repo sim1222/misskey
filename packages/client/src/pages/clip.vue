@@ -12,15 +12,16 @@
 				</div>
 			</div>
 
-			<XNotes :pagination="pagination" :detail="true"/>
+			<XNotes :pagination="pagination"/>
 		</div>
 	</MkSpacer>
 </MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
+import { requireValue } from '@/scripts/require-value';
 import { computed, watch, provide, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import XNotes from '@/components/MkNotes.vue';
 import { $i } from '@/account';
 import { i18n } from '@/i18n';
@@ -31,7 +32,8 @@ const props = defineProps<{
 	clipId: string,
 }>();
 
-let clip: misskey.entities.Clip = ref<misskey.entities.Clip>();
+const clip = ref<misskey.entities.Clip>();
+const getClip = () => requireValue(clip.value, 'Clip');
 const pagination = {
 	endpoint: 'clips/notes' as const,
 	limit: 10,
@@ -40,7 +42,7 @@ const pagination = {
 	})),
 };
 
-const isOwned: boolean | null = computed<boolean | null>(() => $i && clip.value && ($i.id === clip.value.userId));
+const isOwned = computed(() => !!$i && !!clip.value && $i.id === getClip().userId);
 
 watch(() => props.clipId, async () => {
 	clip.value = await os.api('clips/show', {
@@ -56,29 +58,29 @@ const headerActions = computed(() => clip.value && isOwned.value ? [{
 	icon: 'fas fa-pencil-alt',
 	text: i18n.ts.edit,
 	handler: async (): Promise<void> => {
-		const { canceled, result } = await os.form(clip.value.name, {
+		const { canceled, result } = await os.form(getClip().name, {
 			name: {
 				type: 'string',
 				label: i18n.ts.name,
-				default: clip.value.name,
+				default: getClip().name,
 			},
 			description: {
 				type: 'string',
 				required: false,
 				multiline: true,
 				label: i18n.ts.description,
-				default: clip.value.description,
+				default: getClip().description,
 			},
 			isPublic: {
 				type: 'boolean',
 				label: i18n.ts.public,
-				default: clip.value.isPublic,
+				default: getClip().isPublic,
 			},
 		});
 		if (canceled) return;
 
 		os.apiWithDialog('clips/update', {
-			clipId: clip.value.id,
+			clipId: getClip().id,
 			...result,
 		});
 	},
@@ -89,18 +91,18 @@ const headerActions = computed(() => clip.value && isOwned.value ? [{
 	handler: async (): Promise<void> => {
 		const { canceled } = await os.confirm({
 			type: 'warning',
-			text: i18n.t('deleteAreYouSure', { x: clip.value.name }),
+			text: i18n.t('deleteAreYouSure', { x: getClip().name }),
 		});
 		if (canceled) return;
 
 		await os.apiWithDialog('clips/delete', {
-			clipId: clip.value.id,
+			clipId: getClip().id,
 		});
 	},
 }] : null);
 
 definePageMetadata(computed(() => clip.value ? {
-	title: clip.value.name,
+	title: getClip().name,
 	icon: 'fas fa-paperclip',
 } : null));
 </script>

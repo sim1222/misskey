@@ -32,7 +32,7 @@ const pagination = {
 };
 
 // TODO: これは実質的に親コンポーネントから子コンポーネントのプロパティを変更してるのでなんとかしたい
-function read(items, announcement, i) {
+function read(items: import('@/types/api').ApiResponse<'announcements'>, announcement: import('@/types/api').ApiResponse<'announcements'>[number], i: number) {
 	items[i] = {
 		...announcement,
 		isRead: true,

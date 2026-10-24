@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch, PropType, onBeforeUnmount } from 'vue';
+import { onMounted, ref, watch, onBeforeUnmount } from 'vue';
 import tinycolor from 'tinycolor2';
 
 const loaded = !!window.TagCanvas;
@@ -20,13 +20,11 @@ const idForCanvas = Array.from(Array(16)).map(() => SAFE_FOR_HTML_ID[Math.floor(
 const idForTags = Array.from(Array(16)).map(() => SAFE_FOR_HTML_ID[Math.floor(Math.random() * SAFE_FOR_HTML_ID.length)]).join('');
 let available = ref(false);
 let rootEl = ref<HTMLElement | null>(null);
-let canvasEl = ref<HTMLCanvasElement | null>(null);
-let tagsEl = ref<HTMLElement | null>(null);
 let width = ref(300);
 
 watch((available), () => {
 	try {
-		window.TagCanvas.Start(idForCanvas, idForTags, {
+		window.TagCanvas?.Start(idForCanvas, idForTags, {
 			textColour: '#ffffff',
 			outlineColour: tinycolor(computedStyle.getPropertyValue('--accent')).toHexString(),
 			outlineRadius: 10,
@@ -47,6 +45,7 @@ watch((available), () => {
 });
 
 onMounted(() => {
+	if (rootEl.value == null) return;
 	width.value = rootEl.value.offsetWidth;
 
 	if (loaded) {
@@ -65,7 +64,7 @@ onBeforeUnmount(() => {
 
 defineExpose({
 	update: () => {
-		window.TagCanvas.Update(idForCanvas);
+		window.TagCanvas?.Update(idForCanvas);
 	},
 });
 </script>

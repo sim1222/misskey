@@ -9,16 +9,16 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import type { entities } from '@/misskey';
 import * as os from '@/os';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
-	emoji: Record<string, unknown>; // TODO
+	emoji: entities.CustomEmoji;
 }>();
 
-function menu(ev) {
+function menu(ev: MouseEvent) {
 	os.popupMenu([{
 		type: 'label',
 		text: ':' + props.emoji.name + ':',

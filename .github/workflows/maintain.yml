@@ -68,6 +68,8 @@ jobs:
           cp .github/misskey/test.yml .config/test.yml
       - name: Check backend source and type contracts
         run: yarn typecheck:backend
+      - name: Check all client TypeScript, Vue templates, service worker and generated contracts
+        run: yarn typecheck:frontend
       - run: yarn build
       - run: yarn migrate
       - name: Start application and check HTTP behavior
@@ -87,6 +89,11 @@ jobs:
             fi
           done
           node node_modules/playwright-core/cli.js install --with-deps chromium
+      - name: Compare frontend inputs against v12 behavior in Chromium
+        run: |
+          yarn test:frontend:inputs
+          yarn test:frontend:ui
+          yarn test:frontend:libraries
       - name: Observe HTTP, database, federation, streaming and browser behavior
         run: yarn test:regression
         env:
@@ -116,4 +123,5 @@ jobs:
             .maintenance-ci-install.log
             .maintenance-regression/latest
             .maintenance-federation/latest
+            .maintenance-frontend/latest
             packages/backend/coverage

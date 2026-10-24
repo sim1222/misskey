@@ -9,7 +9,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, defineAsyncComponent } from 'vue';
+import type { WidgetSpec, WidgetUpdate } from '@/types/widget';
+import { defineComponent, type PropType } from 'vue';
 import XWidgets from '@/components/MkWidgets.vue';
 
 export default defineComponent({
@@ -19,7 +20,7 @@ export default defineComponent({
 
 	props: {
 		place: {
-			type: String,
+			type: String as PropType<string | null>,
 		}
 	},
 
@@ -36,25 +37,25 @@ export default defineComponent({
 	},
 
 	methods: {
-		addWidget(widget) {
+		addWidget(widget: WidgetSpec) {
 			this.$store.set('widgets', [{
 				...widget,
-				place: this.place,
+				place: this.place ?? null,
 			}, ...this.$store.state.widgets]);
 		},
 
-		removeWidget(widget) {
+		removeWidget(widget: { id: string; }) {
 			this.$store.set('widgets', this.$store.state.widgets.filter(w => w.id !== widget.id));
 		},
 
-		updateWidget({ id, data }) {
+		updateWidget({ id, data }: WidgetUpdate) {
 			this.$store.set('widgets', this.$store.state.widgets.map(w => w.id === id ? {
 				...w,
 				data,
 			} : w));
 		},
 
-		updateWidgets(widgets) {
+		updateWidgets(widgets: WidgetSpec[]) {
 			this.$store.set('widgets', [
 				...this.$store.state.widgets.filter(w => w.place !== this.place),
 				...widgets

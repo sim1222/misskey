@@ -31,9 +31,9 @@
 		<MkSwitch v-model="statusbar.props.shuffle" class="_formBlock">
 			<template #label>{{ i18n.ts.shuffle }}</template>
 		</MkSwitch>
-		<MkInput v-model="statusbar.props.refreshIntervalSec" manual-save class="_formBlock" type="number">
+		<MkNumberInput v-model="statusbar.props.refreshIntervalSec" manual-save class="_formBlock" type="number">
 			<template #label>{{ i18n.ts.refreshInterval }}</template>
-		</MkInput>
+		</MkNumberInput>
 		<FormRange v-model="statusbar.props.marqueeDuration" :min="5" :max="150" :step="1" class="_formBlock">
 			<template #label>{{ i18n.ts.speed }}</template>
 			<template #caption>{{ i18n.ts.fast }} &lt;-&gt; {{ i18n.ts.slow }}</template>
@@ -43,9 +43,9 @@
 		</MkSwitch>
 	</template>
 	<template v-else-if="statusbar.type === 'federation'">
-		<MkInput v-model="statusbar.props.refreshIntervalSec" manual-save class="_formBlock" type="number">
+		<MkNumberInput v-model="statusbar.props.refreshIntervalSec" manual-save class="_formBlock" type="number">
 			<template #label>{{ i18n.ts.refreshInterval }}</template>
-		</MkInput>
+		</MkNumberInput>
 		<FormRange v-model="statusbar.props.marqueeDuration" :min="5" :max="150" :step="1" class="_formBlock">
 			<template #label>{{ i18n.ts.speed }}</template>
 			<template #caption>{{ i18n.ts.fast }} &lt;-&gt; {{ i18n.ts.slow }}</template>
@@ -62,9 +62,9 @@
 			<template #label>{{ i18n.ts.userList }}</template>
 			<option v-for="list in userLists" :value="list.id">{{ list.name }}</option>
 		</FormSelect>
-		<MkInput v-model="statusbar.props.refreshIntervalSec" manual-save class="_formBlock" type="number">
+		<MkNumberInput v-model="statusbar.props.refreshIntervalSec" manual-save class="_formBlock" type="number">
 			<template #label>{{ i18n.ts.refreshInterval }}</template>
-		</MkInput>
+		</MkNumberInput>
 		<FormRange v-model="statusbar.props.marqueeDuration" :min="5" :max="150" :step="1" class="_formBlock">
 			<template #label>{{ i18n.ts.speed }}</template>
 			<template #caption>{{ i18n.ts.fast }} &lt;-&gt; {{ i18n.ts.slow }}</template>
@@ -81,23 +81,28 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref, watch } from 'vue';
+import type { Statusbar } from '@/types/statusbar';
+import type { entities } from '@/misskey';
+import { requireValue } from '@/scripts/require-value';
+import { reactive, watch } from 'vue';
 import FormSelect from '@/components/form/select.vue';
 import MkInput from '@/components/form/input.vue';
+import MkNumberInput from '@/components/form/number-input.vue';
 import MkSwitch from '@/components/form/switch.vue';
 import FormRadios from '@/components/form/radios.vue';
 import FormButton from '@/components/MkButton.vue';
 import FormRange from '@/components/form/range.vue';
-import * as os from '@/os';
+
 import { defaultStore } from '@/store';
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
 	_id: string;
-	userLists: any[] | null;
+	userLists: entities.UserList[] | null;
 }>();
 
-const statusbar = reactive(JSON.parse(JSON.stringify(defaultStore.state.statusbars.find(x => x.id === props._id))));
+const stored: Statusbar = JSON.parse(JSON.stringify(requireValue(defaultStore.state.statusbars.find(x => x.id === props._id), 'Status bar')));
+const statusbar = reactive({ ...stored, props: { marqueeDuration: 100, refreshIntervalSec: 120, ...stored.props } });
 
 watch(() => statusbar.type, () => {
 	if (statusbar.type === 'rss') {
@@ -128,7 +133,8 @@ watch(statusbar, save);
 
 async function save() {
 	const i = defaultStore.state.statusbars.findIndex(x => x.id === props._id);
-	const statusbars = JSON.parse(JSON.stringify(defaultStore.state.statusbars));
+ if (i === -1) return;
+	const statusbars: Statusbar[] = JSON.parse(JSON.stringify(defaultStore.state.statusbars));
 	statusbars[i] = JSON.parse(JSON.stringify(statusbar));
 	defaultStore.set('statusbars', statusbars);
 }

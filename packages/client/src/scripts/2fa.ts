@@ -13,8 +13,7 @@ export function byteify(string: string, encoding: 'ascii' | 'base64' | 'hex') {
 			);
 		case 'hex':
 			return new Uint8Array(
-				string
-					.match(/.{1,2}/g)
+				(string.match(/.{1,2}/g) ?? [])
 					.map(byte => parseInt(byte, 16))
 			);
 	}

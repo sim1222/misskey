@@ -15,6 +15,6 @@ const props = defineProps<{
 	inline?: boolean;
 }>();
 
-const prismLang = computed(() => Prism.languages[props.lang] ? props.lang : 'js');
+const prismLang = computed(() => props.lang && Prism.languages[props.lang] ? props.lang : 'js');
 const html = computed(() => Prism.highlight(props.code, Prism.languages[prismLang.value], prismLang.value));
 </script>

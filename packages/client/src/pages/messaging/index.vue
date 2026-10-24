@@ -11,19 +11,19 @@
 					:key="message.id"
 					v-anim="i"
 					class="message _block blur"
-					:class="{ isMe: isMe(message), isRead: message.groupId ? message.reads.includes($i.id) : message.isRead }"
-					:to="message.groupId ? `/my/messaging/group/${message.groupId}` : `/my/messaging/${getAcct(isMe(message) ? message.recipient : message.user)}`"
+					:class="{ isMe: isMe(message), isRead: message.groupId ? message.reads.includes(account.id) : message.isRead }"
+					:to="message.groupId ? `/my/messaging/group/${message.groupId}` : `/my/messaging/${getAcct(isMe(message) ? requireValue(message.recipient, 'Conversation recipient') : message.user)}`"
 					:data-index="i"
 				>
 					<div>
-						<MkAvatar class="avatar" :user="message.groupId ? message.user : isMe(message) ? message.recipient : message.user" :show-indicator="true"/>
+						<MkAvatar class="avatar" :user="message.groupId ? message.user : isMe(message) ? requireValue(message.recipient, 'Conversation recipient') : message.user" :show-indicator="true"/>
 						<header v-if="message.groupId">
-							<span class="name">{{ message.group.name }}</span>
+							<span class="name">{{ requireValue(message.group, 'Conversation group').name }}</span>
 							<MkTime :time="message.createdAt" class="time"/>
 						</header>
 						<header v-else>
-							<span class="name"><MkUserName :user="isMe(message) ? message.recipient : message.user"/></span>
-							<span class="username">@{{ acct(isMe(message) ? message.recipient : message.user) }}</span>
+							<span class="name"><MkUserName :user="isMe(message) ? requireValue(message.recipient, 'Conversation recipient') : message.user"/></span>
+							<span class="username">@{{ acct(isMe(message) ? requireValue(message.recipient, 'Conversation recipient') : message.user) }}</span>
 							<MkTime :time="message.createdAt" class="time"/>
 						</header>
 						<div class="body">
@@ -43,7 +43,12 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, defineComponent, inject, markRaw, onMounted, onUnmounted, ref, computed } from 'vue';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import { requireValue } from '@/scripts/require-value';
+import type { entities } from '@/misskey';
+import { markRaw, onMounted, onUnmounted, ref, computed } from 'vue';
 import * as Acct from 'misskey-js/built/acct';
 import MkButton from '@/components/MkButton.vue';
 import { acct } from '@/filters/user';
@@ -52,22 +57,22 @@ import { stream } from '@/stream';
 import { useRouter } from '@/router';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
-import { $i } from '@/account';
+
 
 const router = useRouter();
 
 let fetching = ref(true);
-let moreFetching = ref(false);
-let messages = ref([]);
-let connection = ref(null);
+
+let messages = ref<entities.MessagingMessage[]>([]);
+let connection = ref<ReturnType<typeof stream.useChannel<'messagingIndex'>> | null>(null);
 
 const getAcct = Acct.toString;
 
-function isMe(message) {
-	return message.userId === $i.id;
+function isMe(message: entities.MessagingMessage) {
+	return message.userId === account.id;
 }
 
-function onMessage(message) {
+function onMessage(message: entities.MessagingMessage) {
 	if (message.recipientId) {
 		messages.value = messages.value.filter(m => !(
 			(m.recipientId === message.recipientId && m.userId === message.userId) ||
@@ -80,20 +85,20 @@ function onMessage(message) {
 	}
 }
 
-function onRead(ids) {
+function onRead(ids: string[]) {
 	for (const id of ids) {
 		const found = messages.value.find(m => m.id === id);
 		if (found) {
 			if (found.recipientId) {
 				found.isRead = true;
 			} else if (found.groupId) {
-				found.reads.push($i.id);
+				found.reads.push(account.id);
 			}
 		}
 	}
 }
 
-function start(ev) {
+function start(ev: MouseEvent) {
 	os.popupMenu([{
 		text: i18n.ts.messagingWithUser,
 		icon: 'fas fa-user',
@@ -128,7 +133,7 @@ async function startGroup() {
 			value: group, text: group.name,
 		})),
 	});
-	if (canceled) return;
+	if (canceled || group == null) return;
 	router.push(`/my/messaging/group/${group.id}`);
 }
 

@@ -31,8 +31,8 @@ export default defineComponent({
 	},
 
 	setup() {
-		const onNotification = notification => {
-			if ($i.mutingNotificationTypes.includes(notification.type)) return;
+		const onNotification = (notification: import('@/misskey').entities.Notification) => {
+			if ($i?.mutingNotificationTypes?.includes(notification.type)) return;
 
 			if (document.visibilityState === 'visible') {
 				stream.send('readNotification', {

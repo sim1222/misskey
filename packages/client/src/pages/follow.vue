@@ -9,8 +9,9 @@ import * as Acct from 'misskey-js/built/acct';
 import * as os from '@/os';
 import { mainRouter } from '@/router';
 import { i18n } from '@/i18n';
+import { UserDetailed } from '../../../shared/entities';
 
-async function follow(user): Promise<void> {
+async function follow(user: UserDetailed): Promise<void> {
 	const { canceled } = await os.confirm({
 		type: 'question',
 		text: i18n.t('followConfirm', { name: user.name || user.username }),
@@ -20,7 +21,7 @@ async function follow(user): Promise<void> {
 		window.close();
 		return;
 	}
-	
+
 	os.apiWithDialog('following/create', {
 		userId: user.id,
 	});
@@ -58,5 +59,5 @@ if (acct.startsWith('https://')) {
 	});
 }
 
-os.promiseDialog(promise, null, null, i18n.ts.fetchingAsApObject);
+os.promiseDialog<unknown>(promise, null, null, i18n.ts.fetchingAsApObject);
 </script>

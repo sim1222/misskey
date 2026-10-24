@@ -94,17 +94,17 @@
 						</FormSwitch>
 
 						<FormSplit :min-width="280">
-							<FormInput v-model="localDriveCapacityMb" type="number" class="_formBlock">
+							<FormNumberInput v-model="localDriveCapacityMb" type="number" class="_formBlock">
 								<template #label>{{ i18n.ts.driveCapacityPerLocalAccount }}</template>
 								<template #suffix>MB</template>
 								<template #caption>{{ i18n.ts.inMb }}</template>
-							</FormInput>
+							</FormNumberInput>
 
-							<FormInput v-model="remoteDriveCapacityMb" type="number" :disabled="!cacheRemoteFiles" class="_formBlock">
+							<FormNumberInput v-model="remoteDriveCapacityMb" type="number" :disabled="!cacheRemoteFiles" class="_formBlock">
 								<template #label>{{ i18n.ts.driveCapacityPerRemoteAccount }}</template>
 								<template #suffix>MB</template>
 								<template #caption>{{ i18n.ts.inMb }}</template>
-							</FormInput>
+							</FormNumberInput>
 						</FormSplit>
 					</FormSection>
 
@@ -152,6 +152,7 @@ import { ref, computed } from 'vue';
 import XHeader from './_header_.vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormInput from '@/components/form/input.vue';
+import FormNumberInput from '@/components/form/number-input.vue';
 import FormTextarea from '@/components/form/textarea.vue';
 import FormInfo from '@/components/MkInfo.vue';
 import FormSection from '@/components/form/section.vue';
@@ -162,30 +163,30 @@ import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let name: string | null = ref(null);
-let description: string | null = ref(null);
-let tosUrl: string | null = ref(null);
-let maintainerName: string | null = ref(null);
-let maintainerEmail: string | null = ref(null);
-let iconUrl: string | null = ref(null);
-let bannerUrl: string | null = ref(null);
-let backgroundImageUrl: string | null = ref(null);
+let name = ref<string | null>(null);
+let description = ref<string | null>(null);
+let tosUrl = ref<string | null>(null);
+let maintainerName = ref<string | null>(null);
+let maintainerEmail = ref<string | null>(null);
+let iconUrl = ref<string | null>(null);
+let bannerUrl = ref<string | null>(null);
+let backgroundImageUrl = ref<string | null>(null);
 let themeColor: any = ref(null);
 let defaultLightTheme: any = ref(null);
 let defaultDarkTheme: any = ref(null);
-let enableLocalTimeline: boolean = ref(false);
-let enableGlobalTimeline: boolean = ref(false);
-let pinnedUsers: string = ref('');
-let cacheRemoteFiles: boolean = ref(false);
+let enableLocalTimeline = ref<boolean>(false);
+let enableGlobalTimeline = ref<boolean>(false);
+let pinnedUsers = ref<string>('');
+let cacheRemoteFiles = ref<boolean>(false);
 let localDriveCapacityMb: any = ref(0);
 let remoteDriveCapacityMb: any = ref(0);
-let enableRegistration: boolean = ref(false);
-let emailRequiredForSignup: boolean = ref(false);
-let enableServiceWorker: boolean = ref(false);
+let enableRegistration = ref<boolean>(false);
+let emailRequiredForSignup = ref<boolean>(false);
+let enableServiceWorker = ref<boolean>(false);
 let swPublicKey: any = ref(null);
 let swPrivateKey: any = ref(null);
-let deeplAuthKey: string = ref('');
-let deeplIsPro: boolean = ref(false);
+let deeplAuthKey = ref<string | null>('');
+let deeplIsPro = ref<boolean>(false);
 
 async function init() {
 	const meta = await os.api('admin/meta');

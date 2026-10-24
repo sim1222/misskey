@@ -1,5 +1,5 @@
 <template>
-<XDraggable v-model="blocks" tag="div" item-key="id" handle=".drag-handle" :group="{ name: 'blocks' }" animation="150" swap-threshold="0.5">
+<XDraggable v-model="blocks" tag="div" item-key="id" handle=".drag-handle" :group="{ name: 'blocks' }" animation="150" :swap-threshold="0.5">
 	<template #item="{element}">
 		<component :is="'x-' + element.type" :value="element" :hpml="hpml" @update:value="updateItem" @remove="() => removeItem(element)"/>
 	</template>
@@ -7,7 +7,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, defineAsyncComponent } from 'vue';
+import { defineComponent, defineAsyncComponent, type PropType } from 'vue';
+import type { BlockDraft } from '@/scripts/hpml/block';
+import type { HpmlTypeChecker } from '@/scripts/hpml/type-checker';
 import XSection from './els/page-editor.el.section.vue';
 import XText from './els/page-editor.el.text.vue';
 import XTextarea from './els/page-editor.el.textarea.vue';
@@ -23,7 +25,7 @@ import XCounter from './els/page-editor.el.counter.vue';
 import XRadioButton from './els/page-editor.el.radio-button.vue';
 import XCanvas from './els/page-editor.el.canvas.vue';
 import XNote from './els/page-editor.el.note.vue';
-import * as os from '@/os';
+
 
 export default defineComponent({
 	components: {
@@ -33,10 +35,11 @@ export default defineComponent({
 
 	props: {
 		modelValue: {
-			type: Array,
+			type: Array as PropType<BlockDraft[]>,
 			required: true
 		},
 		hpml: {
+			type: Object as PropType<HpmlTypeChecker>,
 			required: true,
 		},
 	},
@@ -48,14 +51,14 @@ export default defineComponent({
 			get() {
 				return this.modelValue;
 			},
-			set(value) {
+			set(value: BlockDraft[]) {
 				this.$emit('update:modelValue', value);
 			}
 		}
 	},
 
 	methods: {
-		updateItem(v) {
+		updateItem(v: BlockDraft) {
 			const i = this.blocks.findIndex(x => x.id === v.id);
 			const newValue = [
 				...this.blocks.slice(0, i),
@@ -65,7 +68,7 @@ export default defineComponent({
 			this.$emit('update:modelValue', newValue);
 		},
 
-		removeItem(el) {
+		removeItem(el: BlockDraft) {
 			const i = this.blocks.findIndex(x => x.id === el.id);
 			const newValue = [
 				...this.blocks.slice(0, i),

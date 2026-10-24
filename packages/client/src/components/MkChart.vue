@@ -13,7 +13,7 @@
   id-denylist violation when setting it. This is causing about 60+ lint issues.
   As this is part of Chart.js's API it makes sense to disable the check here.
 */
-import { onMounted, ref, watch, PropType, onUnmounted } from 'vue';
+import { onMounted, ref, watch, PropType } from 'vue';
 import {
 	Chart,
 	ArcElement,
@@ -38,6 +38,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 // We can't use gradient because Vite throws a error.
 //import gradient from 'chartjs-plugin-gradient';
 import * as os from '@/os';
+import { optionalNumberSeries } from '@/scripts/chart-data';
 import { defaultStore } from '@/store';
 import { useChartTooltip } from '@/scripts/use-chart-tooltip';
 
@@ -47,7 +48,7 @@ const props = defineProps({
 		required: true,
 	},
 	args: {
-		type: Object,
+		type: Object as PropType<{ host?: string; user?: { id: string }; withoutAll?: boolean }>,
 		required: false,
 	},
 	limit: {
@@ -100,9 +101,9 @@ Chart.register(
 	//gradient,
 );
 
-const sum = (...arr) => arr.reduce((r, a) => r.map((b, i) => a[i] + b));
-const negate = arr => arr.map(x => -x);
-const alpha = (hex, a) => {
+const sum = (...arr: number[][]) => arr.reduce((r, a) => r.map((b, i) => a[i] + b));
+const negate = (arr: number[]) => arr.map((x) => -x);
+const alpha = (hex: string, a: number) => {
 	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)!;
 	const r = parseInt(result[1], 16);
 	const g = parseInt(result[2], 16);
@@ -121,13 +122,14 @@ const colors = {
 	cyan: '#00e0e0',
 };
 const colorSets = [colors.blue, colors.green, colors.yellow, colors.red, colors.purple];
-const getColor = (i) => {
+const getColor = (i: number) => {
 	return colorSets[i % colorSets.length];
 };
 
 const now = new Date();
-let chartInstance: Chart = null;
-let chartData: {
+let chartInstance: Chart<'line' | 'bar', { x: number; y: number }[], string> | null = null;
+type ChartData = {
+ bytes?: boolean;
 	series: {
 		name: string;
 		type: 'line' | 'area';
@@ -139,9 +141,10 @@ let chartData: {
 			y: number;
 		}[];
 	}[];
-} = null;
+};
+let chartData: ChartData | null = null;
 
-const chartEl = ref<HTMLCanvasElement>(null);
+const chartEl = ref<HTMLCanvasElement | null>(null);
 const fetching = ref(true);
 
 const getDate = (ago: number) => {
@@ -153,7 +156,7 @@ const getDate = (ago: number) => {
 	return props.span === 'day' ? new Date(y, m, d - ago) : new Date(y, m, d, h - ago);
 };
 
-const format = (arr) => {
+const format = (arr: number[]) => {
 	return arr.map((v, i) => ({
 		x: getDate(i).getTime(),
 		y: v,
@@ -163,6 +166,7 @@ const format = (arr) => {
 const { handler: externalTooltipHandler } = useChartTooltip();
 
 const render = () => {
+	if (!chartEl.value || !chartData) return;
 	if (chartInstance) {
 		chartInstance.destroy();
 	}
@@ -173,7 +177,6 @@ const render = () => {
 	// フォントカラー
 	Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--fg');
 
-	const maxes = chartData.series.map((x, i) => Math.max(...x.data.map(d => d.y)));
 
 	chartInstance = new Chart(chartEl.value, {
 		type: props.bar ? 'bar' : 'line',
@@ -223,16 +226,16 @@ const render = () => {
 					stacked: props.stacked,
 					offset: false,
 					time: {
-						stepSize: 1,
-						unit: props.span === 'day' ? 'month' : 'day',
+												unit: props.span === 'day' ? 'month' : 'day',
 					},
 					grid: {
 						color: gridColor,
-						borderColor: 'rgb(0, 0, 0, 0)',
 					},
+					border: { color: 'rgb(0, 0, 0, 0)' },
 					ticks: {
 						display: props.detailed,
 						maxRotation: 0,
+						stepSize: 1,
 						autoSkipPadding: 16,
 					},
 					adapters: {
@@ -248,8 +251,8 @@ const render = () => {
 					suggestedMax: 50,
 					grid: {
 						color: gridColor,
-						borderColor: 'rgb(0, 0, 0, 0)',
 					},
+					border: { color: 'rgb(0, 0, 0, 0)' },
 					ticks: {
 						display: props.detailed,
 						//mirror: true,
@@ -316,8 +319,8 @@ const render = () => {
 		plugins: [{
 			id: 'vLine',
 			beforeDraw(chart, args, options) {
-				if (chart.tooltip?._active?.length) {
-					const activePoint = chart.tooltip._active[0];
+				const activePoint = chart.tooltip?.getActiveElements()[0];
+				if (activePoint) {
 					const ctx = chart.ctx;
 					const x = activePoint.element.x;
 					const topY = chart.scales.y.top;
@@ -337,11 +340,7 @@ const render = () => {
 	});
 };
 
-const exportData = () => {
-	// TODO
-};
-
-const fetchFederationChart = async (): Promise<typeof chartData> => {
+const fetchFederationChart = async (): Promise<ChartData> => {
 	const raw = await os.apiGet('charts/federation', { limit: props.limit, span: props.span });
 	return {
 		series: [{
@@ -391,7 +390,7 @@ const fetchFederationChart = async (): Promise<typeof chartData> => {
 	};
 };
 
-const fetchApRequestChart = async (): Promise<typeof chartData> => {
+const fetchApRequestChart = async (): Promise<ChartData> => {
 	const raw = await os.apiGet('charts/ap-request', { limit: props.limit, span: props.span });
 	return {
 		series: [{
@@ -413,7 +412,7 @@ const fetchApRequestChart = async (): Promise<typeof chartData> => {
 	};
 };
 
-const fetchNotesChart = async (type: string): Promise<typeof chartData> => {
+const fetchNotesChart = async (type: 'combined' | 'local' | 'remote'): Promise<ChartData> => {
 	const raw = await os.apiGet('charts/notes', { limit: props.limit, span: props.span });
 	return {
 		series: [{
@@ -460,7 +459,7 @@ const fetchNotesChart = async (type: string): Promise<typeof chartData> => {
 	};
 };
 
-const fetchNotesTotalChart = async (): Promise<typeof chartData> => {
+const fetchNotesTotalChart = async (): Promise<ChartData> => {
 	const raw = await os.apiGet('charts/notes', { limit: props.limit, span: props.span });
 	return {
 		series: [{
@@ -479,7 +478,7 @@ const fetchNotesTotalChart = async (): Promise<typeof chartData> => {
 	};
 };
 
-const fetchUsersChart = async (total: boolean): Promise<typeof chartData> => {
+const fetchUsersChart = async (total: boolean): Promise<ChartData> => {
 	const raw = await os.apiGet('charts/users', { limit: props.limit, span: props.span });
 	return {
 		series: [{
@@ -507,7 +506,7 @@ const fetchUsersChart = async (total: boolean): Promise<typeof chartData> => {
 	};
 };
 
-const fetchActiveUsersChart = async (): Promise<typeof chartData> => {
+const fetchActiveUsersChart = async (): Promise<ChartData> => {
 	const raw = await os.apiGet('charts/active-users', { limit: props.limit, span: props.span });
 	return {
 		series: [{
@@ -559,7 +558,7 @@ const fetchActiveUsersChart = async (): Promise<typeof chartData> => {
 	};
 };
 
-const fetchDriveChart = async (): Promise<typeof chartData> => {
+const fetchDriveChart = async (): Promise<ChartData> => {
 	const raw = await os.apiGet('charts/drive', { limit: props.limit, span: props.span });
 	return {
 		bytes: true,
@@ -595,7 +594,7 @@ const fetchDriveChart = async (): Promise<typeof chartData> => {
 	};
 };
 
-const fetchDriveFilesChart = async (): Promise<typeof chartData> => {
+const fetchDriveFilesChart = async (): Promise<ChartData> => {
 	const raw = await os.apiGet('charts/drive', { limit: props.limit, span: props.span });
 	return {
 		series: [{
@@ -630,8 +629,19 @@ const fetchDriveFilesChart = async (): Promise<typeof chartData> => {
 	};
 };
 
-const fetchInstanceRequestsChart = async (): Promise<typeof chartData> => {
-	const raw = await os.apiGet('charts/instance', { host: props.args.host, limit: props.limit, span: props.span });
+function requireHost(): string {
+ const host = props.args?.host;
+ if (host == null) throw new Error('An instance chart requires a host');
+ return host;
+}
+function requireUserId(): string {
+ const id = props.args?.user?.id;
+ if (id == null) throw new Error('A user chart requires a user ID');
+ return id;
+}
+
+const fetchInstanceRequestsChart = async (): Promise<ChartData> => {
+	const raw = await os.apiGet('charts/instance', { host: requireHost(), limit: props.limit, span: props.span });
 	return {
 		series: [{
 			name: 'In',
@@ -652,8 +662,8 @@ const fetchInstanceRequestsChart = async (): Promise<typeof chartData> => {
 	};
 };
 
-const fetchInstanceUsersChart = async (total: boolean): Promise<typeof chartData> => {
-	const raw = await os.apiGet('charts/instance', { host: props.args.host, limit: props.limit, span: props.span });
+const fetchInstanceUsersChart = async (total: boolean): Promise<ChartData> => {
+	const raw = await os.apiGet('charts/instance', { host: requireHost(), limit: props.limit, span: props.span });
 	return {
 		series: [{
 			name: 'Users',
@@ -667,8 +677,8 @@ const fetchInstanceUsersChart = async (total: boolean): Promise<typeof chartData
 	};
 };
 
-const fetchInstanceNotesChart = async (total: boolean): Promise<typeof chartData> => {
-	const raw = await os.apiGet('charts/instance', { host: props.args.host, limit: props.limit, span: props.span });
+const fetchInstanceNotesChart = async (total: boolean): Promise<ChartData> => {
+	const raw = await os.apiGet('charts/instance', { host: requireHost(), limit: props.limit, span: props.span });
 	return {
 		series: [{
 			name: 'Notes',
@@ -682,8 +692,8 @@ const fetchInstanceNotesChart = async (total: boolean): Promise<typeof chartData
 	};
 };
 
-const fetchInstanceFfChart = async (total: boolean): Promise<typeof chartData> => {
-	const raw = await os.apiGet('charts/instance', { host: props.args.host, limit: props.limit, span: props.span });
+const fetchInstanceFfChart = async (total: boolean): Promise<ChartData> => {
+	const raw = await os.apiGet('charts/instance', { host: requireHost(), limit: props.limit, span: props.span });
 	return {
 		series: [{
 			name: 'Following',
@@ -705,24 +715,22 @@ const fetchInstanceFfChart = async (total: boolean): Promise<typeof chartData> =
 	};
 };
 
-const fetchInstanceDriveUsageChart = async (total: boolean): Promise<typeof chartData> => {
-	const raw = await os.apiGet('charts/instance', { host: props.args.host, limit: props.limit, span: props.span });
+const fetchInstanceDriveUsageChart = async (total: boolean): Promise<ChartData> => {
+
+	const raw = await os.apiGet('charts/instance', { host: requireHost(), limit: props.limit, span: props.span });
 	return {
 		bytes: true,
 		series: [{
 			name: 'Drive usage',
 			type: 'area',
 			color: '#008FFB',
-			data: format(total
-				? raw.drive.totalUsage
-				: sum(raw.drive.incUsage, negate(raw.drive.decUsage)),
-			),
+			data: format(total ? optionalNumberSeries('totalUsage' in raw.drive ? raw.drive.totalUsage : undefined) : sum(raw.drive.incUsage, negate(raw.drive.decUsage))),
 		}],
 	};
 };
 
-const fetchInstanceDriveFilesChart = async (total: boolean): Promise<typeof chartData> => {
-	const raw = await os.apiGet('charts/instance', { host: props.args.host, limit: props.limit, span: props.span });
+const fetchInstanceDriveFilesChart = async (total: boolean): Promise<ChartData> => {
+	const raw = await os.apiGet('charts/instance', { host: requireHost(), limit: props.limit, span: props.span });
 	return {
 		series: [{
 			name: 'Drive files',
@@ -736,12 +744,12 @@ const fetchInstanceDriveFilesChart = async (total: boolean): Promise<typeof char
 	};
 };
 
-const fetchPerUserNotesChart = async (): Promise<typeof chartData> => {
-	const raw = await os.apiGet('charts/user/notes', { userId: props.args.user.id, limit: props.limit, span: props.span });
+const fetchPerUserNotesChart = async (): Promise<ChartData> => {
+	const raw = await os.apiGet('charts/user/notes', { userId: requireUserId(), limit: props.limit, span: props.span });
 	return {
-		series: [...(props.args.withoutAll ? [] : [{
+		series: [...(props.args?.withoutAll ? [] : [{
 			name: 'All',
-			type: 'line',
+			type: 'line' as const,
 			data: format(sum(raw.inc, negate(raw.dec))),
 			color: '#888888',
 		}]), {
@@ -768,8 +776,8 @@ const fetchPerUserNotesChart = async (): Promise<typeof chartData> => {
 	};
 };
 
-const fetchPerUserFollowingChart = async (): Promise<typeof chartData> => {
-	const raw = await os.apiGet('charts/user/following', { userId: props.args.user.id, limit: props.limit, span: props.span });
+const fetchPerUserFollowingChart = async (): Promise<ChartData> => {
+	const raw = await os.apiGet('charts/user/following', { userId: requireUserId(), limit: props.limit, span: props.span });
 	return {
 		series: [{
 			name: 'Local',
@@ -783,8 +791,8 @@ const fetchPerUserFollowingChart = async (): Promise<typeof chartData> => {
 	};
 };
 
-const fetchPerUserFollowersChart = async (): Promise<typeof chartData> => {
-	const raw = await os.apiGet('charts/user/following', { userId: props.args.user.id, limit: props.limit, span: props.span });
+const fetchPerUserFollowersChart = async (): Promise<ChartData> => {
+	const raw = await os.apiGet('charts/user/following', { userId: requireUserId(), limit: props.limit, span: props.span });
 	return {
 		series: [{
 			name: 'Local',
@@ -798,8 +806,8 @@ const fetchPerUserFollowersChart = async (): Promise<typeof chartData> => {
 	};
 };
 
-const fetchPerUserDriveChart = async (): Promise<typeof chartData> => {
-	const raw = await os.apiGet('charts/user/drive', { userId: props.args.user.id, limit: props.limit, span: props.span });
+const fetchPerUserDriveChart = async (): Promise<ChartData> => {
+	const raw = await os.apiGet('charts/user/drive', { userId: requireUserId(), limit: props.limit, span: props.span });
 	return {
 		series: [{
 			name: 'Inc',
@@ -814,7 +822,7 @@ const fetchPerUserDriveChart = async (): Promise<typeof chartData> => {
 };
 
 const fetchAndRender = async () => {
-	const fetchData = () => {
+	const fetchData = (): Promise<ChartData> => {
 		switch (props.src) {
 			case 'federation': return fetchFederationChart();
 			case 'ap-request': return fetchApRequestChart();
@@ -843,6 +851,7 @@ const fetchAndRender = async () => {
 			case 'per-user-following': return fetchPerUserFollowingChart();
 			case 'per-user-followers': return fetchPerUserFollowersChart();
 			case 'per-user-drive': return fetchPerUserDriveChart();
+			default: throw new Error('Unknown chart source: ' + props.src);
 		}
 	};
 	fetching.value = true;

@@ -2,7 +2,7 @@
 <div v-if="chosen" class="qiivuoyo">
 	<div v-if="!showMenu" class="main" :class="chosen.place">
 		<a :href="chosen.url" target="_blank">
-			<img :src="chosen.imageUrl">
+			<img :src="chosen.imageUrl ?? undefined">
 			<button class="_button menu" @click.prevent.stop="toggleMenu"><span class="fas fa-info-circle info-circle"></span></button>
 		</a>
 	</div>
@@ -26,10 +26,11 @@ import MkButton from '@/components/MkButton.vue';
 import { defaultStore } from '@/store';
 import * as os from '@/os';
 
-type Ad = (typeof instance)['ads'][number];
+type PackedAd = NonNullable<(typeof instance)['ads']>[number];
+type Ad = Omit<PackedAd, 'id' | 'imageUrl'> & { id: string | null; imageUrl: string | null };
 
 const props = defineProps<{
-	prefer: string[];
+	prefer?: string[];
 	specify?: Ad;
 }>();
 
@@ -43,12 +44,12 @@ const choseAd = (): Ad | null => {
 		return props.specify;
 	}
 
-	const allAds = instance.ads.map(ad => defaultStore.state.mutedAds.includes(ad.id) ? {
+	const allAds = (instance.ads ?? []).map(ad => defaultStore.state.mutedAds.includes(ad.id) ? {
 		...ad,
 		ratio: 0,
 	} : ad);
 
-	let ads = allAds.filter(ad => props.prefer.includes(ad.place));
+	let ads = allAds.filter(ad => (props.prefer ?? []).includes(ad.place));
 
 	if (ads.length === 0) {
 		ads = allAds.filter(ad => ad.place === 'square');
@@ -83,7 +84,7 @@ const choseAd = (): Ad | null => {
 const chosen = ref(choseAd());
 
 function reduceFrequency(): void {
-	if (chosen.value == null) return;
+	if (chosen.value?.id == null) return;
 	if (defaultStore.state.mutedAds.includes(chosen.value.id)) return;
 	defaultStore.push('mutedAds', chosen.value.id);
 	os.success();

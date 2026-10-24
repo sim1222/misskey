@@ -157,12 +157,13 @@ const patrons = [
 ];
 
 let easterEggReady = false;
-let easterEggEmojis = ref([]);
-let easterEggEngine = ref(null);
+let easterEggEmojis = ref<{ id: string; top: number; left: number; emoji: string }[]>([]);
+let easterEggEngine = ref<ReturnType<typeof physics> | null>(null);
 const containerEl = ref<HTMLElement>();
 
 function iconLoaded() {
 	const emojis = defaultStore.state.reactions;
+	if (containerEl.value == null) return;
 	const containerWidth = containerEl.value.offsetWidth;
 	for (let i = 0; i < 32; i++) {
 		easterEggEmojis.value.push({
@@ -181,6 +182,7 @@ function iconLoaded() {
 function gravity() {
 	if (!easterEggReady) return;
 	easterEggReady = false;
+	if (containerEl.value == null) return;
 	easterEggEngine.value = physics(containerEl.value);
 }
 

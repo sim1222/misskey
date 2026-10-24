@@ -6,17 +6,14 @@
 			<button v-if="isMe" class="delete-button" :title="$ts.delete" @click="del">
 				<img src="/client-assets/remove.png" alt="Delete"/>
 			</button>
-			<div v-if="!message.isDeleted" class="content">
+			<div class="content">
 				<Mfm v-if="message.text" ref="text" class="text" :text="message.text" :i="$i"/>
 				<div v-if="message.file" class="file">
-					<a :href="message.file.url" rel="noopener" target="_blank" :title="message.file.name">
-						<img v-if="message.file.type.split('/')[0] == 'image'" :src="message.file.url" :alt="message.file.name"/>
+					<a :href="(message.file.url) ?? undefined" rel="noopener" target="_blank" :title="message.file.name">
+						<img v-if="message.file.type.split('/')[0] == 'image'" :src="(message.file.url) ?? undefined" :alt="message.file.name"/>
 						<p v-else>{{ message.file.name }}</p>
 					</a>
 				</div>
-			</div>
-			<div v-else class="content">
-				<p class="is-deleted">{{ $ts.deleted }}</p>
 			</div>
 		</div>
 		<div></div>
@@ -29,7 +26,6 @@
 				<span v-if="isMe && message.isRead" class="read">{{ $ts.messageRead }}</span>
 			</template>
 			<MkTime :time="message.createdAt"/>
-			<template v-if="message.is_edited"><i class="fas fa-pencil-alt"></i></template>
 		</footer>
 	</div>
 </div>
@@ -38,7 +34,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import * as mfm from 'mfm-js';
-import * as Misskey from 'misskey-js';
+import * as Misskey from '@/misskey';
 import { extractUrlFromMfm } from '@/scripts/extract-url-from-mfm';
 import MkUrlPreview from '@/components/MkUrlPreview.vue';
 import * as os from '@/os';
@@ -263,7 +259,7 @@ function del(): void {
 				::selection {
 					color: var(--accent);
 					background-color: #fff;
-				} 
+				}
 
 				&.noText {
 					background: transparent;

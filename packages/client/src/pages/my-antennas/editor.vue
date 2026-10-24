@@ -56,7 +56,7 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
-	antenna: any
+	antenna: import('@/types/api').ApiRequest<'antennas/create'> & { id?: string | null }
 }>();
 
 const emit = defineEmits<{
@@ -65,19 +65,19 @@ const emit = defineEmits<{
 	(ev: 'deleted'): void,
 }>();
 
-let name: string = ref(props.antenna.name);
-let src: string = ref(props.antenna.src);
-let userListId: any = ref(props.antenna.userListId);
-let userGroupId: any = ref(props.antenna.userGroupId);
-let users: string = ref(props.antenna.users.join('\n'));
-let keywords: string = ref(props.antenna.keywords.map(x => x.join(' ')).join('\n'));
-let excludeKeywords: string = ref(props.antenna.excludeKeywords.map(x => x.join(' ')).join('\n'));
-let caseSensitive: boolean = ref(props.antenna.caseSensitive);
-let withReplies: boolean = ref(props.antenna.withReplies);
-let withFile: boolean = ref(props.antenna.withFile);
-let notify: boolean = ref(props.antenna.notify);
-let userLists: any = ref(null);
-let userGroups: any = ref(null);
+let name = ref<string>(props.antenna.name);
+let src = ref<import('@/misskey').entities.Antenna['src']>(props.antenna.src);
+let userListId = ref(props.antenna.userListId);
+let userGroupId = ref(props.antenna.userGroupId);
+let users = ref<string>(props.antenna.users.join('\n'));
+let keywords = ref<string>(props.antenna.keywords.map(x => x.join(' ')).join('\n'));
+let excludeKeywords = ref<string>(props.antenna.excludeKeywords.map(x => x.join(' ')).join('\n'));
+let caseSensitive = ref<boolean>(props.antenna.caseSensitive);
+let withReplies = ref<boolean>(props.antenna.withReplies);
+let withFile = ref<boolean>(props.antenna.withFile);
+let notify = ref<boolean>(props.antenna.notify);
+let userLists = ref<import('@/misskey').entities.UserList[] | null>(null);
+let userGroups = ref<import('@/misskey').entities.UserGroup[] | null>(null);
 
 watch(() => src.value, async () => {
 	if (src.value === 'list' && userLists.value === null) {
@@ -111,8 +111,7 @@ async function saveAntenna() {
 		await os.apiWithDialog('antennas/create', antennaData);
 		emit('created');
 	} else {
-		antennaData['antennaId'] = props.antenna.id;
-		await os.apiWithDialog('antennas/update', antennaData);
+		await os.apiWithDialog('antennas/update', { ...antennaData, antennaId: props.antenna.id });
 		emit('updated');
 	}
 }
@@ -122,7 +121,7 @@ async function deleteAntenna() {
 		type: 'warning',
 		text: i18n.t('removeAreYouSure', { x: props.antenna.name }),
 	});
-	if (canceled) return;
+	if (canceled || props.antenna.id == null) return;
 
 	await os.api('antennas/delete', {
 		antennaId: props.antenna.id,

@@ -37,6 +37,6 @@ export default defineComponent({
 			str = str.substr(nextBracketClose + 1);
 		}
 
-		return h(this.tag, parsed.map(x => typeof x === 'string' ? (this.textTag ? h(this.textTag, x) : x) : this.$slots[x.arg]()));
+		return h(this.tag, parsed.map(x => typeof x === 'string' ? (this.textTag ? h(this.textTag, x) : x) : this.$slots[x.arg]?.()));
 	},
 });

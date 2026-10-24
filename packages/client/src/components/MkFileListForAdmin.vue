@@ -32,17 +32,18 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+
+import type { Paging } from '@/types/paging';
 import * as Acct from 'misskey-js/built/acct';
-import MkSwitch from '@/components/ui/switch.vue';
+
 import MkPagination from '@/components/MkPagination.vue';
 import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
 import bytes from '@/filters/bytes';
-import * as os from '@/os';
+
 import { i18n } from '@/i18n';
 
-const props = defineProps<{
-	pagination: any;
+defineProps<{
+	pagination: Paging<'admin/drive/files'>;
 	viewMode: 'grid' | 'list';
 }>();
 </script>
@@ -94,7 +95,7 @@ const props = defineProps<{
 		> .file {
 			position: relative;
 			aspect-ratio: 1;
-		
+
 			> .thumbnail {
 				width: 100%;
 				height: 100%;

@@ -48,8 +48,8 @@ onMounted(() => {
 		setType();
 	} else if ($i) {
 		disabled.value = !$i.isModerator && !$i.isAdmin && (
-			instance.disableLocalTimeline && ['local', 'social'].includes(props.column.tl) ||
-			instance.disableGlobalTimeline && ['global'].includes(props.column.tl));
+			instance.disableLocalTimeline === true && ['local', 'social'].includes(props.column.tl) ||
+			instance.disableGlobalTimeline === true && ['global'].includes(props.column.tl));
 	}
 });
 
@@ -66,7 +66,7 @@ async function setType() {
 			value: 'global' as const, text: i18n.ts._timelines.global
 		}],
 	});
-	if (canceled) {
+	if (canceled || src == null) {
 		if (props.column.tl == null) {
 			removeColumn(props.column.id);
 		}
@@ -77,7 +77,7 @@ async function setType() {
 	});
 }
 
-function queueUpdated(q) {
+function queueUpdated(q: number) {
 	if (columnActive.value) {
 		indicated.value = q !== 0;
 	}
@@ -89,7 +89,7 @@ function onNote() {
 	}
 }
 
-function onChangeActiveState(state) {
+function onChangeActiveState(state: boolean) {
 	columnActive.value = state;
 
 	if (columnActive.value) {

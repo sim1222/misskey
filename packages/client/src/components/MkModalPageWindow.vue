@@ -4,15 +4,15 @@
 		<div class="header" @contextmenu="onContextmenu">
 			<button v-if="history.length > 0" v-tooltip="$ts.goBack" class="_button" @click="back()"><i class="fas fa-arrow-left"></i></button>
 			<span v-else style="display: inline-block; width: 20px"></span>
-			<span v-if="pageMetadata?.value" class="title">
-				<i v-if="pageMetadata?.value.icon" class="icon" :class="pageMetadata?.value.icon"></i>
-				<span>{{ pageMetadata?.value.title }}</span>
+			<span v-if="pageMetadata.current?.value" class="title">
+				<i v-if="pageMetadata.current?.value.icon" class="icon" :class="pageMetadata.current?.value.icon"></i>
+				<span>{{ pageMetadata.current?.value.title }}</span>
 			</span>
-			<button class="_button" @click="$refs.modal.close()"><i class="fas fa-times"></i></button>
+			<button class="_button" @click="modal?.close()"><i class="fas fa-times"></i></button>
 		</div>
 		<div class="body">
 			<MkStickyContainer>
-				<template #header><MkPageHeader v-if="pageMetadata?.value && !pageMetadata?.value.hideHeader" :info="pageMetadata?.value"/></template>
+				<template #header><MkPageHeader v-if="pageMetadata.current?.value && !pageMetadata.current?.value.hideHeader" :info="pageMetadata.current?.value"/></template>
 				<RouterView :router="router"/>
 			</MkStickyContainer>
 		</div>
@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ComputedRef, provide, ref, computed } from 'vue';
+import { shallowReactive, provide, ref, computed } from 'vue';
 import MkModal from '@/components/MkModal.vue';
 import { popout as _popout } from '@/scripts/popout';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
@@ -29,7 +29,7 @@ import { url } from '@/config';
 import * as os from '@/os';
 import { mainRouter, routes } from '@/router';
 import { i18n } from '@/i18n';
-import { PageMetadata, provideMetadataReceiver, setPageMetadata } from '@/scripts/page-metadata';
+import { type PageMetadataRef, provideMetadataReceiver } from '@/scripts/page-metadata';
 import { Router } from '@/nirax';
 
 const props = defineProps<{
@@ -44,26 +44,26 @@ defineEmits<{
 const router = new Router(routes, props.initialPath);
 
 router.addListener('push', ctx => {
-	
+
 });
 
-let pageMetadata = ref<null | ComputedRef<PageMetadata>>();
-let rootEl = ref();
+let pageMetadata = shallowReactive<{ current: PageMetadataRef | null }>({ current: null });
+let rootEl = ref<HTMLDivElement>();
 let modal = ref<InstanceType<typeof MkModal>>();
 let path = ref(props.initialPath);
 let width = ref(860);
 let height = ref(660);
-const history = [];
+const history: string[] = [];
 
 provide('router', router);
 provideMetadataReceiver((info) => {
-	pageMetadata.value = info;
+	pageMetadata.current = info;
 });
 provide('shouldOmitHeaderTitle', true);
 provide('shouldHeaderThin', true);
 
 const pageUrl = computed(() => url + path.value);
-const contextmenu = computed(() => {
+const contextmenu = computed<import('@/types/menu').MenuItem[]>(() => {
 	return [{
 		type: 'label',
 		text: path.value,
@@ -80,7 +80,7 @@ const contextmenu = computed(() => {
 		text: i18n.ts.openInNewTab,
 		action: () => {
 			window.open(pageUrl.value, '_blank');
-			modal.value.close();
+			modal.value?.close();
 		},
 	}, {
 		icon: 'fas fa-link',
@@ -91,23 +91,24 @@ const contextmenu = computed(() => {
 	}];
 });
 
-function navigate(path, record = true) {
+function navigate(path: string, record = true) {
 	if (record) history.push(router.getCurrentPath());
 	router.push(path);
 }
 
 function back() {
-	navigate(history.pop(), false);
+	const path = history.pop();
+ if (path !== undefined) navigate(path, false);
 }
 
 function expand() {
 	mainRouter.push(path.value);
-	modal.value.close();
+	modal.value?.close();
 }
 
 function popout() {
 	_popout(path.value, rootEl.value);
-	modal.value.close();
+	modal.value?.close();
 }
 
 function onContextmenu(ev: MouseEvent) {

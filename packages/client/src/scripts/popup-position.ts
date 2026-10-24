@@ -1,14 +1,11 @@
-import { Ref } from 'vue';
+
 
 export function calcPopupPosition(el: HTMLElement, props: {
-	anchorElement: HTMLElement | null;
-	innerMargin: number;
+		innerMargin: number;
 	direction: 'top' | 'bottom' | 'left' | 'right';
 	align: 'top' | 'bottom' | 'left' | 'right' | 'center';
 	alignOffset?: number;
-	x?: number;
-	y?: number;
-}): { top: number; left: number; transformOrigin: string; } {
+	} & ({ anchorElement: HTMLElement; x?: number; y?: number } | { anchorElement: null; x: number; y: number })): { top: number; left: number; transformOrigin: string; } {
 	const contentWidth = el.offsetWidth;
 	const contentHeight = el.offsetHeight;
 
@@ -92,7 +89,8 @@ export function calcPopupPosition(el: HTMLElement, props: {
 				top = rect.top + window.pageYOffset;
 				if (props.alignOffset != null) top += props.alignOffset;
 			} else if (props.align === 'bottom') {
-				// TODO
+				top = rect.bottom + window.pageYOffset - contentHeight;
+				if (props.alignOffset != null) top -= props.alignOffset;
 			} else { // center
 				top = rect.top + window.pageYOffset + (props.anchorElement.offsetHeight / 2);
 				top -= (el.offsetHeight / 2);

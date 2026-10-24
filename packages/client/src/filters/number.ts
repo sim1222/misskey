@@ -1,1 +1,1 @@
-export default n => n == null ? 'N/A' : n.toLocaleString();
+export default (n: number | bigint | null | undefined) => n == null ? 'N/A' : n.toLocaleString();

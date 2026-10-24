@@ -23,7 +23,7 @@ type Captcha = {
 type CaptchaProvider = 'hcaptcha' | 'recaptcha';
 
 type CaptchaContainer = {
-	readonly [_ in CaptchaProvider]?: Captcha;
+	readonly [_ in 'hcaptcha' | 'grecaptcha']?: Captcha;
 };
 
 declare global {
@@ -60,7 +60,7 @@ const src = computed(() => {
 	}
 });
 
-const captcha = computed<Captcha>(() => window[variable.value] || {} as unknown as Captcha);
+const captcha = computed(() => window[variable.value]);
 
 if (loaded) {
 	available.value = true;
@@ -74,11 +74,11 @@ if (loaded) {
 }
 
 function reset() {
-	if (captcha.value.reset) captcha.value.reset();
+	captcha.value?.reset();
 }
 
 function requestRender() {
-	if (captcha.value.render && captchaEl.value instanceof Element) {
+	if (captcha.value?.render && captchaEl.value instanceof Element) {
 		captcha.value.render(captchaEl.value, {
 			sitekey: props.sitekey,
 			theme: defaultStore.state.darkMode ? 'dark' : 'light',

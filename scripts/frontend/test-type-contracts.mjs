@@ -7,7 +7,7 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 const client = resolve(root, 'packages/client');
 const directory = await mkdtemp(resolve(client, 'src/__type_contracts_'));
 const cases = [
- "import { api, apiGet, popup } from '@/os';",
+ "import { api, apiGet, apiWithDialog, popup } from '@/os';",
  "import UsersTooltip from '@/components/MkUsersTooltip.vue';",
  "import NotificationSettings from '@/components/MkNotificationSettingWindow.vue';",
  "import { defaultStore } from '@/store';",
@@ -16,16 +16,22 @@ const cases = [
  "api('notes/show', { noteId: 'note' }).then(note => note.text?.toUpperCase());",
  "api('users/show', { userIds: ['user'] }).then(users => users.map(user => user.username));",
  "api('admin/meta').then(meta => meta.maxNoteTextLength.toFixed());",
+ "api('meta').then(meta => meta.features.registration);",
  "apiGet('users/notes', { userId: 'user', _cacheKey_: 10 });",
  "popup(UsersTooltip, { showing: true, users: [], count: 0, targetElement: document.body }, {});",
  "popup(NotificationSettings, {}, { done: result => result.includingTypes?.includes('follow') });",
  "stream.useChannel('antenna', { antennaId: 'antenna' });",
  "stream.useChannel('messaging', { otherparty: 'user' }).send('read', { id: 'message' });",
+ "apiGet('meta', { detail: false }).then(meta => meta.features); // reject: lite GET response",
+ "apiWithDialog('meta', { detail: false }).then(meta => meta.features); // reject: lite dialog response",
+ "apiGet('users/notes', { userId: 'user', _cacheKey_: true }); // reject: cache key type",
+ "api('meta', {} as { detail?: boolean }).then(meta => meta.features); // reject: optional detail may be false",
  "api('notes/show'); // reject: missing required request",
  "api('notes/show', { noteId: 42 }); // reject: wrong request field type",
  "api('notes/show', { noteId: 'note', invented: true }); // reject: unknown request field",
  "api('notes/create', { text: 'note', visibility: 'private' }); // reject: invalid visibility",
  "api('users/show', { userIds: ['user'] }).then(users => users.username); // reject: conditional array response",
+ "api('users/search', { query: 'user', detail: false }).then(users => users[0].notesCount); // reject: conditional lite users",
  "api('meta', { detail: false }).then(meta => meta.features); // reject: conditional lite response",
  "popup(UsersTooltip, { showing: true, users: [], count: 0 }, {}); // reject: required popup anchor",
  "popup(NotificationSettings, {}, { done: (result: string) => result.length }); // reject: popup event payload",
@@ -40,6 +46,7 @@ const sfcCases = [
  '<script setup lang="ts">',
  "import { ref } from 'vue';",
  "import TextInput from '@/components/form/input.vue';",
+ "import Tabs from '@/components/MkTab.vue';",
  "import NumberInput from '@/components/form/number-input.vue';",
  "const text = ref('text'); const number = ref(1);",
  '</script>',
@@ -48,6 +55,7 @@ const sfcCases = [
  '<NumberInput v-model="number"/>',
  '<TextInput v-model="number"/> <!-- reject: numeric text model -->',
  '<NumberInput v-model="text"/> <!-- reject: string numeric model -->',
+ '<Tabs v-model="text" :choices="[42]"><option :value="42">invalid</option></Tabs> <!-- reject: numeric tab choice -->',
  '</template>',
 ];
 try {

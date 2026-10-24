@@ -22,6 +22,7 @@
 </template>
 
 <script lang="ts">
+import type { entities } from '@/misskey';
 import { defineComponent } from 'vue';
 import XReactionsViewer from '@/components/MkReactionsViewer.vue';
 import XMediaList from '@/components/MkMediaList.vue';
@@ -35,7 +36,7 @@ export default defineComponent({
 		XPoll
 	},
 
-	data() {
+	data(): { notes: entities.Note[]; isScrolling: boolean } {
 		return {
 			notes: [],
 			isScrolling: false,
@@ -49,7 +50,7 @@ export default defineComponent({
 	},
 
 	updated() {
-		if (this.$refs.scroll.clientHeight > window.innerHeight) {
+		if (this.$refs.scroll instanceof HTMLElement && this.$refs.scroll.clientHeight > window.innerHeight) {
 			this.isScrolling = true;
 		}
 	}

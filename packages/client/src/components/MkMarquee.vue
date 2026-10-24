@@ -1,7 +1,7 @@
 <script lang="ts">
-import { h, onMounted, onUnmounted, ref, watch } from 'vue';
+import { defineComponent, h, onMounted, onUnmounted, useCssModule, ref, watch } from 'vue';
 
-export default {
+export default defineComponent({
 	name: 'MarqueeText',
 	props: {
 		duration: {
@@ -22,9 +22,10 @@ export default {
 		},
 	},
 	setup(props) {
-		const contentEl = ref();
+		const contentEl = ref<HTMLElement>();
 
 		function calc() {
+			if (!contentEl.value) return;
 			const eachLength = contentEl.value.offsetWidth / props.repeat;
 			const factor = 3000;
 			const duration = props.duration / ((1 / eachLength) * factor);
@@ -43,13 +44,12 @@ export default {
 
 		return {
 			contentEl,
+            css: useCssModule(),
 		};
 	},
-	render({
-		$slots, $style, $props: {
-			duration, repeat, paused, reverse,
-		},
-	}) {
+	render() {
+ const { $slots, css: $style } = this;
+ const { repeat, paused, reverse } = this.$props;
 		return h('div', { class: [$style.wrap] }, [
 			h('span', {
 				ref: 'contentEl',
@@ -67,11 +67,11 @@ export default {
 							? 'reverse'
 							: undefined,
 					},
-				}, $slots.default()),
+				}, $slots.default?.()),
 			)),
 		]);
 	},
-};
+});
 </script>
 
 <style lang="scss" module>

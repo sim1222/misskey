@@ -1,5 +1,5 @@
 <template>
-<MkModal ref="modal" :z-priority="'high'" :src="src" @click="modal.close()" @closed="emit('closed')">
+<MkModal ref="modal" :z-priority="'high'" :src="src" @click="modal?.close()" @closed="emit('closed')">
 	<div class="gqyayizv _popup blur">
 		<button key="public" class="_button" :class="{ active: v === 'public' }" data-index="1" @click="choose('public')">
 			<div><i class="fas fa-globe"></i></div>
@@ -44,7 +44,7 @@
 
 <script lang="ts" setup>
 import { nextTick, watch, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import MkModal from '@/components/MkModal.vue';
 import { i18n } from '@/i18n';
 
@@ -74,7 +74,7 @@ function choose(visibility: typeof misskey.noteVisibilities[number]): void {
 	v.value = visibility;
 	emit('changeVisibility', visibility);
 	nextTick(() => {
-		modal.value.close();
+		modal.value?.close();
 	});
 }
 </script>

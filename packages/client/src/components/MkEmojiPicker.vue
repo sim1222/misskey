@@ -80,7 +80,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, watch, onMounted } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from '@/misskey';
 import XSection from '@/components/MkEmojiPicker.section.vue';
 import { emojilist, UnicodeEmojiDef, unicodeEmojiCategories as categories } from '@/scripts/emojilist';
 import { getStaticImageUrl } from '@/scripts/get-static-image-url';
@@ -123,7 +123,7 @@ const size = computed(() => props.asReactionPicker ? reactionPickerSize.value : 
 const width = computed(() => props.asReactionPicker ? reactionPickerWidth.value : 3);
 const height = computed(() => props.asReactionPicker ? reactionPickerHeight.value : 2);
 const customEmojiCategories = emojiCategories;
-const customEmojis = instance.emojis;
+const customEmojis = instance.emojis ?? [];
 const q = ref<string | null>(null);
 const searchResultCustom = ref<Misskey.entities.CustomEmoji[]>([]);
 const searchResultUnicode = ref<UnicodeEmojiDef[]>([]);
@@ -285,7 +285,7 @@ function reset() {
 }
 
 function getKey(emoji: string | Misskey.entities.CustomEmoji | UnicodeEmojiDef): string {
-	return typeof emoji === 'string' ? emoji : (emoji.char || `:${emoji.name}:`);
+	return typeof emoji === 'string' ? emoji : ('char' in emoji ? emoji.char : `:${emoji.name}:`);
 }
 
 function chosen(emoji: any, ev?: MouseEvent) {
@@ -310,7 +310,10 @@ function chosen(emoji: any, ev?: MouseEvent) {
 }
 
 function paste(event: ClipboardEvent) {
-	const paste = (event.clipboardData || window.clipboardData).getData('text');
+ const eventclipboardData = event.clipboardData;
+ if (eventclipboardData == null) return;
+
+	const paste = eventclipboardData.getData('text');
 	if (done(paste)) {
 		event.preventDefault();
 	}

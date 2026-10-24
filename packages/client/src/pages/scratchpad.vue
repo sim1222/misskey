@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch } from 'vue';
 import 'prismjs';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
@@ -35,6 +35,7 @@ import * as os from '@/os';
 import { $i } from '@/account';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
+import { Value } from '@syuilo/aiscript/built/interpreter/value';
 
 const code = ref('');
 const logs = ref<any[]>([]);
@@ -54,7 +55,7 @@ async function run() {
 		storageKey: 'scratchpad',
 		token: $i?.token,
 	}), {
-		in: (q) => {
+		in: (q: string) => {
 			return new Promise(ok => {
 				os.inputText({
 					title: q,
@@ -63,14 +64,14 @@ async function run() {
 				});
 			});
 		},
-		out: (value) => {
+		out: (value: Value) => {
 			logs.value.push({
 				id: Math.random(),
 				text: value.type === 'str' ? value.value : utils.valToString(value),
 				print: true,
 			});
 		},
-		log: (type, params) => {
+		log: (type: string, params: { val: Value }) => {
 			switch (type) {
 				case 'end': logs.value.push({
 					id: Math.random(),
@@ -102,13 +103,13 @@ async function run() {
 	}
 }
 
-function highlighter(code) {
+function highlighter(code: string) {
 	return highlight(code, languages.js, 'javascript');
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.scratchpad,

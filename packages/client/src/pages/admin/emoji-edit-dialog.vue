@@ -3,7 +3,7 @@
 	ref="dialog"
 	:width="370"
 	:with-ok-button="true"
-	@close="$refs.dialog.close()"
+	@close="dialog?.close()"
 	@closed="$emit('closed')"
 	@ok="ok()"
 >
@@ -29,27 +29,28 @@
 </template>
 
 <script lang="ts" setup>
+import type { ApiResponse, ApiRequest } from '@/types/api';
 import { ref } from 'vue';
 import XModalWindow from '@/components/MkModalWindow.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/form/input.vue';
 import * as os from '@/os';
-import { unique } from '@/scripts/array';
+
 import { i18n } from '@/i18n';
 import { emojiCategories } from '@/instance';
 
 const props = defineProps<{
-	emoji: any,
+	emoji: ApiResponse<'admin/emoji/list'>[number],
 }>();
 
-let dialog = ref(null);
-let name: string = ref(props.emoji.name);
-let category: string = ref(props.emoji.category);
-let aliases: string = ref(props.emoji.aliases.join(' '));
-let categories: string[] = ref(emojiCategories);
+let dialog = ref<InstanceType<typeof XModalWindow> | null>(null);
+let name = ref<string>(props.emoji.name);
+let category = ref<string | null>(props.emoji.category);
+let aliases = ref<string>(props.emoji.aliases.join(' '));
+const categories = emojiCategories.value.filter((value): value is string => value !== null);
 
 const emit = defineEmits<{
-	(ev: 'done', v: { deleted?: boolean, updated?: any }): void,
+	(ev: 'done', v: { deleted?: boolean, updated?: ApiRequest<'admin/emoji/update'> }): void,
 	(ev: 'closed'): void
 }>();
 
@@ -74,7 +75,7 @@ async function update() {
 		},
 	});
 
-	dialog.value.close();
+	dialog.value?.close();
 }
 
 async function del() {
@@ -90,7 +91,7 @@ async function del() {
 		emit('done', {
 			deleted: true,
 		});
-		dialog.value.close();
+		dialog.value?.close();
 	});
 }
 </script>

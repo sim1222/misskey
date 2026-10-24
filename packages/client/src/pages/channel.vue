@@ -11,7 +11,7 @@
 				</button>
 				<div v-if="!showBanner" class="hideOverlay">
 				</div>
-				<div :style="{ backgroundImage: channel.bannerUrl ? `url(${channel.bannerUrl})` : null }" class="banner">
+				<div :style="{ backgroundImage: channel.bannerUrl ? `url(${channel.bannerUrl})` : undefined }" class="banner">
 					<div class="status">
 						<div><i class="fas fa-users fa-fw"></i><I18n :src="i18n.ts._channel.usersCount" tag="span" style="margin-left: 4px;"><template #n><b>{{ channel.usersCount }}</b></template></I18n></div>
 						<div><i class="fas fa-pencil-alt fa-fw"></i><I18n :src="i18n.ts._channel.notesCount" tag="span" style="margin-left: 4px;"><template #n><b>{{ channel.notesCount }}</b></template></I18n></div>
@@ -25,15 +25,16 @@
 
 			<XPostForm v-if="$i" :channel="channel" class="post-form _panel blur _gap" fixed/>
 
-			<XTimeline :key="channelId" class="_gap" src="channel" :channel="channelId" @before="before" @after="after"/>
+			<XTimeline :key="channelId" class="_gap" src="channel" :channel="channelId"/>
 		</div>
 	</MkSpacer>
 </MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, watch, ref } from 'vue';
-import MkContainer from '@/components/MkContainer.vue';
+import type { ApiResponse } from '@/types/api';
+import { computed, watch, ref } from 'vue';
+
 import XPostForm from '@/components/MkPostForm.vue';
 import XTimeline from '@/components/MkTimeline.vue';
 import XChannelFollowButton from '@/components/MkChannelFollowButton.vue';
@@ -49,15 +50,15 @@ const props = defineProps<{
 	channelId: string;
 }>();
 
-let channel = ref(null);
+let channel = ref<ApiResponse<'channels/show'> | null>(null);
 let showBanner = ref(true);
-const pagination = {
+({
 	endpoint: 'channels/timeline' as const,
 	limit: 10,
 	params: computed(() => ({
 		channelId: props.channelId,
 	})),
-};
+});
 
 watch(() => props.channelId, async () => {
 	channel.value = await os.api('channels/show', {
@@ -66,7 +67,7 @@ watch(() => props.channelId, async () => {
 }, { immediate: true });
 
 function edit() {
-	router.push(`/channels/${channel.value.id}/edit`);
+	router.push(`/channels/${props.channelId}/edit`);
 }
 
 const headerActions = computed(() => channel.value && channel.value.userId ? [{

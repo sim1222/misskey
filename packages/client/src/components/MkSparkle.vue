@@ -66,7 +66,7 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 
-const particles = ref([]);
+const particles = ref<{ id: string; x: number; y: number; size: number; dur: number; color: string }[]>([]);
 const el = ref<HTMLElement>();
 const width = ref(0);
 const height = ref(0);
@@ -76,9 +76,12 @@ let ro: ResizeObserver | undefined;
 
 onMounted(() => {
 	ro = new ResizeObserver((entries, observer) => {
+		if (el.value == null) return;
 		width.value = el.value?.offsetWidth + 64;
+		if (el.value == null) return;
 		height.value = el.value?.offsetHeight + 64;
 	});
+	if (el.value == null) return;
 	ro.observe(el.value);
 	const add = () => {
 		if (stop) return;

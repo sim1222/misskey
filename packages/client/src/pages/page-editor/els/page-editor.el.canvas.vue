@@ -8,31 +8,37 @@
 			<template #prefix><i class="fas fa-magic"></i></template>
 			<template #label>{{ $ts._pages.blocks._canvas.id }}</template>
 		</MkInput>
-		<MkInput v-model="value.width" type="number">
+		<MkNumberInput v-model="value.width" type="number">
 			<template #label>{{ $ts._pages.blocks._canvas.width }}</template>
 			<template #suffix>px</template>
-		</MkInput>
-		<MkInput v-model="value.height" type="number">
+		</MkNumberInput>
+		<MkNumberInput v-model="value.height" type="number">
 			<template #label>{{ $ts._pages.blocks._canvas.height }}</template>
 			<template #suffix>px</template>
-		</MkInput>
+		</MkNumberInput>
 	</section>
 </XContainer>
 </template>
 
 <script lang="ts" setup>
+import type { BlockDraftOf } from '@/scripts/hpml/block';
+
+
+
 /* eslint-disable vue/no-mutating-props */
 import { } from 'vue';
 import XContainer from '../page-editor.container.vue';
 import MkInput from '@/components/form/input.vue';
+import MkNumberInput from '@/components/form/number-input.vue';
 
 withDefaults(defineProps<{
-	value: any
+	value?: BlockDraftOf<'canvas'>
 }>(), {
-	value: {
+	value: () => ({ id: '', type: 'canvas',
 		name: '',
 		width: 300,
 		height: 200
-	}
+	})
 });
+defineEmits<{ (event: 'remove'): void }>();
 </script>

@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import {
 	Chart,
 	ArcElement,
@@ -20,9 +20,11 @@ import {
 	Tooltip,
 	SubTitle,
 	Filler,
+	Point,
+	BubbleDataPoint,
 } from 'chart.js';
-import number from '@/filters/number';
-import * as os from '@/os';
+
+
 import { defaultStore } from '@/store';
 import { useChartTooltip } from '@/scripts/use-chart-tooltip';
 
@@ -47,7 +49,7 @@ const props = defineProps<{
 	type: string;
 }>();
 
-const alpha = (hex, a) => {
+const alpha = (hex: string, a: number) => {
 	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)!;
 	const r = parseInt(result[1], 16);
 	const g = parseInt(result[2], 16);
@@ -55,7 +57,7 @@ const alpha = (hex, a) => {
 	return `rgba(${r}, ${g}, ${b}, ${a})`;
 };
 
-const chartEl = ref<HTMLCanvasElement>(null);
+const chartEl = ref<HTMLCanvasElement | null>(null);
 
 const gridColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
@@ -66,25 +68,25 @@ const { handler: externalTooltipHandler } = useChartTooltip();
 
 let chartInstance: Chart;
 
-function setData(values) {
+function setData(values: number[]) {
 	if (chartInstance == null) return;
 	for (const value of values) {
-		chartInstance.data.labels.push('');
+		chartInstance.data.labels?.push('');
 		chartInstance.data.datasets[0].data.push(value);
 		if (chartInstance.data.datasets[0].data.length > 200) {
-			chartInstance.data.labels.shift();
+			chartInstance.data.labels?.shift();
 			chartInstance.data.datasets[0].data.shift();
 		}
 	}
 	chartInstance.update();
 }
 
-function pushData(value) {
+function pushData(value: number|Point|[number,number]|BubbleDataPoint|null) {
 	if (chartInstance == null) return;
-	chartInstance.data.labels.push('');
+	chartInstance.data.labels?.push('');
 	chartInstance.data.datasets[0].data.push(value);
 	if (chartInstance.data.datasets[0].data.length > 200) {
-		chartInstance.data.labels.shift();
+		chartInstance.data.labels?.shift();
 		chartInstance.data.datasets[0].data.shift();
 	}
 	chartInstance.update();
@@ -105,7 +107,8 @@ const color =
 	'?' as never;
 
 onMounted(() => {
-	chartInstance = new Chart(chartEl.value, {
+	if (!chartEl.value) return;
+ chartInstance = new Chart(chartEl.value, {
 		type: 'line',
 		data: {
 			labels: [],
@@ -135,7 +138,6 @@ onMounted(() => {
 					grid: {
 						display: true,
 						color: gridColor,
-						borderColor: 'rgb(0, 0, 0, 0)',
 					},
 					ticks: {
 						display: false,
@@ -146,7 +148,6 @@ onMounted(() => {
 					min: 0,
 					grid: {
 						color: gridColor,
-						borderColor: 'rgb(0, 0, 0, 0)',
 					},
 				},
 			},

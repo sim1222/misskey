@@ -12,7 +12,7 @@
 							<option value="local">{{ i18n.ts.local }}</option>
 							<option value="remote">{{ i18n.ts.remote }}</option>
 						</MkSelect>
-						<MkInput v-model="searchHost" :debounce="true" type="search" style="margin: 0; flex: 1;" :disabled="pagination.params.origin === 'local'">
+						<MkInput v-model="searchHost" :debounce="true" type="search" style="margin: 0; flex: 1;" :disabled="origin === 'local'">
 							<template #label>{{ i18n.ts.host }}</template>
 						</MkInput>
 					</div>
@@ -33,23 +33,24 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref } from 'vue';
-import * as Acct from 'misskey-js/built/acct';
+import type { ApiRequest } from '@/types/api';
+import { computed, ref } from 'vue';
+
 import XHeader from './_header_.vue';
-import MkButton from '@/components/MkButton.vue';
+
 import MkInput from '@/components/form/input.vue';
 import MkSelect from '@/components/form/select.vue';
 import MkFileListForAdmin from '@/components/MkFileListForAdmin.vue';
-import bytes from '@/filters/bytes';
+
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let origin = ref('local');
-let type = ref(null);
+let origin = ref<NonNullable<ApiRequest<'admin/drive/files'>['origin']>>('local');
+let type = ref<string | null>(null);
 let searchHost = ref('');
 let userId = ref('');
-let viewMode = ref('grid');
+let viewMode = ref<'grid' | 'list'>('grid');
 const pagination = {
 	endpoint: 'admin/drive/files' as const,
 	limit: 10,
@@ -72,7 +73,7 @@ function clear() {
 	});
 }
 
-function show(file) {
+function show(file: { id: string }) {
 	os.pageWindow(`/admin/file/${file.id}`);
 }
 
@@ -81,7 +82,7 @@ async function find() {
 		title: i18n.ts.fileIdOrUrl,
 		allowEmpty: false,
 	});
-	if (canceled) return;
+	if (canceled || q == null) return;
 
 	os.api('admin/drive/show-file', q.startsWith('http://') || q.startsWith('https://') ? { url: q.trim() } : { fileId: q.trim() }).then(file => {
 		show(file);
@@ -105,7 +106,7 @@ const headerActions = computed(() => [{
 	handler: clear,
 }]);
 
-const headerTabs = computed(() => []);
+
 
 definePageMetadata(computed(() => ({
 	title: i18n.ts.files,

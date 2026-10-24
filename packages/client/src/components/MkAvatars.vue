@@ -7,6 +7,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { ApiResponse } from '@/types/api';
 import { onMounted, ref } from 'vue';
 import * as os from '@/os';
 
@@ -14,7 +15,7 @@ const props = defineProps<{
 	userIds: string[];
 }>();
 
-const users = ref([]);
+const users = ref<ApiResponse<'users/show', { userIds: string[] }>>([]);
 
 onMounted(async () => {
 	users.value = await os.api('users/show', {

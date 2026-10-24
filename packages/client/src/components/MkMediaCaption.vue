@@ -9,14 +9,14 @@
 					</header>
 					<textarea v-model="inputValue" autofocus :placeholder="input.placeholder" @keydown="onInputKeydown"></textarea>
 					<div v-if="(showOkButton || showCancelButton)" class="buttons">
-						<MkButton inline primary :disabled="remainingLength < 0" @click="ok">{{ $ts.ok }}</MkButton>
-						<MkButton inline @click="cancel" >{{ $ts.cancel }}</MkButton>
+						<MkButton inline primary :disabled="remainingLength < 0" @click="ok">{{ i18n.ts.ok }}</MkButton>
+						<MkButton inline @click="cancel" >{{ i18n.ts.cancel }}</MkButton>
 					</div>
 				</div>
 			</div>
 			<div class="hdrwpsaf fullwidth">
 				<header>{{ image.name }}</header>
-				<img :src="image.url" :alt="image.comment" :title="image.comment" @click="$refs.modal.close()"/>
+				<img :src="image.url ?? undefined" :alt="image.comment ?? undefined" :title="image.comment ?? undefined" @click="modal?.close()"/>
 				<footer>
 					<span>{{ image.type }}</span>
 					<span>{{ bytes(image.size) }}</span>
@@ -27,112 +27,40 @@
 	</MkModal>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { length } from 'stringz';
 import MkModal from '@/components/MkModal.vue';
 import MkButton from '@/components/MkButton.vue';
+import type { entities } from '@/misskey';
+import type { DialogResult } from '@/types/dialog';
+import { i18n } from '@/i18n';
 import bytes from '@/filters/bytes';
 import number from '@/filters/number';
-
-export default defineComponent({
-	components: {
-		MkModal,
-		MkButton,
-	},
-
-	props: {
-		image: {
-			type: Object,
-			required: true,
-		},
-		title: {
-			type: String,
-			required: false
-		},
-		input: {
-			required: true
-		},
-		showOkButton: {
-			type: Boolean,
-			default: true
-		},
-		showCancelButton: {
-			type: Boolean,
-			default: true
-		},
-		cancelableByBgClick: {
-			type: Boolean,
-			default: true
-		},
-	},
-
-	emits: ['done', 'closed'],
-
-	data() {
-		return {
-			inputValue: this.input.default ? this.input.default : null
-		};
-	},
-
-	computed: {
-		remainingLength(): number {
-			if (typeof this.inputValue !== "string") return 512;
-			return 512 - length(this.inputValue);
-		}
-	},
-
-	mounted() {
-		document.addEventListener('keydown', this.onKeydown);
-	},
-
-	beforeUnmount() {
-		document.removeEventListener('keydown', this.onKeydown);
-	},
-
-	methods: {
-		bytes,
-		number,
-
-		done(canceled, result?) {
-			this.$emit('done', { canceled, result });
-			this.$refs.modal.close();
-		},
-
-		async ok() {
-			if (!this.showOkButton) return;
-
-			const result = this.inputValue;
-			this.done(false, result);
-		},
-
-		cancel() {
-			this.done(true);
-		},
-
-		onBgClick() {
-			if (this.cancelableByBgClick) {
-				this.cancel();
-			}
-		},
-
-		onKeydown(evt) {
-			if (evt.which === 27) { // ESC
-				this.cancel();
-			}
-		},
-
-		onInputKeydown(evt) {
-			if (evt.which === 13) { // Enter
-				if (evt.ctrlKey) {
-					evt.preventDefault();
-					evt.stopPropagation();
-					this.ok();
-				}
-			}
-		}
-	}
-});
+const props = withDefaults(defineProps<{
+ image: entities.DriveFile; title?: string;
+ input: { placeholder?: string; default: string | null };
+ showOkButton?: boolean; showCancelButton?: boolean; cancelableByBgClick?: boolean;
+}>(), { showOkButton: true, showCancelButton: true, cancelableByBgClick: true });
+const emit = defineEmits<{
+ (event: 'done', result: DialogResult<string | null>): void;
+ (event: 'closed'): void;
+}>();
+const modal = ref<InstanceType<typeof MkModal>>();
+const inputValue = ref(props.input.default || null);
+const remainingLength = computed(() => typeof inputValue.value === 'string' ? 512 - length(inputValue.value) : 512);
+function done(canceled: boolean, result: string | null = null): void {
+ emit('done', canceled ? { canceled: true, result: undefined } : { canceled: false, result });
+ modal.value?.close();
+}
+function ok(): void { if (props.showOkButton) done(false, inputValue.value); }
+function cancel(): void { done(true); }
+function onKeydown(event: KeyboardEvent): void { if (event.which === 27) cancel(); }
+function onInputKeydown(event: KeyboardEvent): void {
+ if (event.which === 13 && event.ctrlKey) { event.preventDefault(); event.stopPropagation(); ok(); }
+}
+onMounted(() => document.addEventListener('keydown', onKeydown));
+onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
 </script>
 
 <style lang="scss" scoped>

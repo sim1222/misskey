@@ -1,7 +1,7 @@
 /**
  * Clipboardに値をコピー(TODO: 文字列以外も対応)
  */
-export default val => {
+export default (val: string) => {
 	// 空div 生成
 	const tmp = document.createElement('div');
 	// 選択用のタグ生成
@@ -21,7 +21,7 @@ export default val => {
 	// body に追加
 	document.body.appendChild(tmp);
 	// 要素を選択
-	document.getSelection().selectAllChildren(tmp);
+	document.getSelection()?.selectAllChildren(tmp);
 
 	// クリップボードにコピー
 	const result = document.execCommand('copy');

@@ -15,13 +15,13 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import MkContainer from '@/components/MkContainer.vue';
 import MkChart from '@/components/MkChart.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
 	user: misskey.entities.User;
 	limit?: number;
 }>(), {

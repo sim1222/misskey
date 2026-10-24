@@ -6,12 +6,12 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import { toUnicode } from 'punycode/';
 import { host as hostRaw } from '@/config';
 
 defineProps<{
-	user: misskey.entities.UserDetailed;
+	user: Pick<misskey.entities.UserLite, 'username' | 'host'>;
 	detail?: boolean;
 }>();
 

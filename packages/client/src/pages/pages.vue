@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 import MkPagePreview from '@/components/MkPagePreview.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';

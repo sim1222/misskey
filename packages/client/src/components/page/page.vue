@@ -19,7 +19,7 @@ export default defineComponent({
 	},
 	props: {
 		page: {
-			type: Object as PropType<Record<string, any>>,
+			type: Object as PropType<import('@/misskey').entities.Page>,
 			required: true
 		},
 	},

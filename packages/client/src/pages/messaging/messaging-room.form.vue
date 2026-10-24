@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { onMounted, watch, ref, computed } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from '@/misskey';
 import autosize from 'autosize';
 //import insertTextAtCursor from 'insert-text-at-cursor';
 import { throttle } from 'throttle-debounce';
@@ -53,7 +53,8 @@ let text = ref<string>('');
 let file = ref<Misskey.entities.DriveFile | null>(null);
 let sending = ref(false);
 const typing = throttle(3000, () => {
-	stream.send('typingOnMessaging', props.user ? { partner: props.user.id } : { group: props.group?.id });
+	if (props.user) stream.send('typingOnMessaging', { partner: props.user.id });
+ else if (props.group) stream.send('typingOnMessaging', { group: props.group.id });
 });
 
 let draftKey = computed(() => props.user ? 'user:' + props.user.id : 'group:' + props.group?.id);
@@ -62,9 +63,12 @@ let canSend = computed(() => (text.value != null && text.value !== '') || file.v
 watch([(text), (file)], saveDraft);
 
 async function onPaste(ev: ClipboardEvent) {
-	if (!ev.clipboardData) return;
+ const evclipboardData = ev.clipboardData;
+ if (evclipboardData == null) return;
 
-	const clipboardData = ev.clipboardData;
+	if (!evclipboardData) return;
+
+	const clipboardData = evclipboardData;
 	const items = clipboardData.items;
 
 	if (items.length === 1) {
@@ -87,25 +91,31 @@ async function onPaste(ev: ClipboardEvent) {
 }
 
 function onDragover(ev: DragEvent) {
-	if (!ev.dataTransfer) return;
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
 
-	const isFile = ev.dataTransfer.items[0].kind === 'file';
-	const isDriveFile = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
+	if (!evdataTransfer) return;
+
+	const isFile = evdataTransfer.items[0].kind === 'file';
+	const isDriveFile = evdataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
 	if (isFile || isDriveFile) {
 		ev.preventDefault();
-		ev.dataTransfer.dropEffect = ev.dataTransfer.effectAllowed === 'all' ? 'copy' : 'move';
+		evdataTransfer.dropEffect = evdataTransfer.effectAllowed === 'all' ? 'copy' : 'move';
 	}
 }
 
 function onDrop(ev: DragEvent): void {
-	if (!ev.dataTransfer) return;
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
+	if (!evdataTransfer) return;
 
 	// ファイルだったら
-	if (ev.dataTransfer.files.length === 1) {
+	if (evdataTransfer.files.length === 1) {
 		ev.preventDefault();
-		upload(ev.dataTransfer.files[0]);
+		upload(evdataTransfer.files[0]);
 		return;
-	} else if (ev.dataTransfer.files.length > 1) {
+	} else if (evdataTransfer.files.length > 1) {
 		ev.preventDefault();
 		os.alert({
 			type: 'error',
@@ -115,7 +125,7 @@ function onDrop(ev: DragEvent): void {
 	}
 
 	//#region ドライブのファイル
-	const driveFile = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
+	const driveFile = evdataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
 	if (driveFile != null && driveFile !== '') {
 		file.value = JSON.parse(driveFile);
 		ev.preventDefault();
@@ -141,7 +151,8 @@ function chooseFile(ev: MouseEvent) {
 }
 
 function onChangeFile() {
-	if (fileEl.value.files![0]) upload(fileEl.value.files[0]);
+	if (fileEl.value == null) return;
+	if (fileEl.value.files?.[0]) upload(fileEl.value.files[0]);
 }
 
 function upload(fileToUpload: File, name?: string) {
@@ -152,9 +163,10 @@ function upload(fileToUpload: File, name?: string) {
 
 function send() {
 	sending.value = true;
-	os.api('messaging/messages/create', {
-		userId: props.user ? props.user.id : undefined,
-		groupId: props.group ? props.group.id : undefined,
+	const recipient = props.user ? { userId: props.user.id } : props.group ? { groupId: props.group.id } : undefined;
+ if (!recipient) { sending.value = false; return; }
+ os.api('messaging/messages/create', {
+ ...recipient,
 		text: text.value ? text.value : undefined,
 		fileId: file.value ? file.value.id : undefined,
 	}).then(message => {
@@ -196,11 +208,12 @@ function deleteDraft() {
 }
 
 async function insertEmoji(ev: MouseEvent) {
-	os.openEmojiPicker(ev.currentTarget ?? ev.target, {}, textEl.value);
+	os.openEmojiPicker(ev.currentTarget ?? ev.target, {}, textEl.value ?? null);
 }
 
 onMounted(() => {
-	autosize(textEl.value);
+	if (textEl.value == null) return;
+autosize(textEl.value ?? null);
 
 	// TODO: detach when unmount
 	// TODO

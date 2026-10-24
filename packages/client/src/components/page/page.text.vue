@@ -1,6 +1,6 @@
 <template>
 <div class="mrdgzndn">
-	<Mfm :key="text" :text="text" :is-note="false" :i="$i"/>
+	<Mfm :key="text ?? undefined" :text="text" :is-note="false" :i="$i"/>
 	<MkUrlPreview v-for="url in urls" :key="url" :url="url" class="url"/>
 </div>
 </template>

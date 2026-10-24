@@ -107,7 +107,7 @@ import XHeader from './_header_.vue';
 import FormFolder from '@/components/form/folder.vue';
 import FormRadios from '@/components/form/radios.vue';
 import FormSwitch from '@/components/form/switch.vue';
-import FormInfo from '@/components/MkInfo.vue';
+
 import FormSuspense from '@/components/form/suspense.vue';
 import FormRange from '@/components/form/range.vue';
 import FormInput from '@/components/form/input.vue';
@@ -117,15 +117,15 @@ import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let summalyProxy: string = ref('');
-let enableHcaptcha: boolean = ref(false);
-let enableRecaptcha: boolean = ref(false);
-let sensitiveMediaDetection: string = ref('none');
-let sensitiveMediaDetectionSensitivity: number = ref(0);
-let setSensitiveFlagAutomatically: boolean = ref(false);
-let enableSensitiveMediaDetectionForVideos: boolean = ref(false);
-let enableIpLogging: boolean = ref(false);
-let enableActiveEmailValidation: boolean = ref(false);
+let summalyProxy = ref<string | null>('');
+let enableHcaptcha = ref<boolean>(false);
+let enableRecaptcha = ref<boolean>(false);
+let sensitiveMediaDetection = ref<'none' | 'all' | 'local' | 'remote'>('none');
+let sensitiveMediaDetectionSensitivity = ref<number>(0);
+let setSensitiveFlagAutomatically = ref<boolean>(false);
+let enableSensitiveMediaDetectionForVideos = ref<boolean>(false);
+let enableIpLogging = ref<boolean>(false);
+let enableActiveEmailValidation = ref<boolean>(false);
 
 async function init() {
 	const meta = await os.api('admin/meta');
@@ -155,7 +155,7 @@ function save() {
 			sensitiveMediaDetectionSensitivity.value === 2 ? 'medium' :
 			sensitiveMediaDetectionSensitivity.value === 3 ? 'high' :
 			sensitiveMediaDetectionSensitivity.value === 4 ? 'veryHigh' :
-			0,
+			'veryLow',
 		setSensitiveFlagAutomatically: setSensitiveFlagAutomatically.value,
 		enableSensitiveMediaDetectionForVideos: enableSensitiveMediaDetectionForVideos.value,
 		enableIpLogging: enableIpLogging.value,

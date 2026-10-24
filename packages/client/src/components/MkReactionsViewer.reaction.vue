@@ -14,8 +14,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
-import * as misskey from 'misskey-js';
+import { computed, onMounted, ref, watch } from 'vue';
+import * as misskey from '@/misskey';
 import XDetails from '@/components/MkReactionsViewer.details.vue';
 import XReactionIcon from '@/components/MkReactionIcon.vue';
 import * as os from '@/os';
@@ -32,7 +32,7 @@ const props = defineProps<{
 
 const buttonRef = ref<HTMLElement>();
 
-const canToggle = computed(() => !props.reaction.match(/@\w/) && $i);
+const canToggle = computed(() => !props.reaction.match(/@\w/) && $i !== null);
 
 const toggleReaction = (e: MouseEvent) => {
 	if (!canToggle.value) {
@@ -84,6 +84,7 @@ useTooltip(buttonRef, async (showing) => {
 
 	const users = reactions.map(x => x.user);
 
+ if (!buttonRef.value) return;
 	os.popup(XDetails, {
 		showing,
 		reaction: props.reaction,

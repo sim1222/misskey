@@ -29,13 +29,13 @@
 
 <script lang="ts" setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from '@/misskey';
 import * as os from '@/os';
 import { stream } from '@/stream';
 import { i18n } from '@/i18n';
 
 const props = withDefaults(defineProps<{
-	user: Misskey.entities.UserDetailed,
+	user: Misskey.entities.UserLite & Partial<Pick<Misskey.entities.UserDetailed, 'isFollowing' | 'hasPendingFollowRequestFromYou' | 'isLocked'>>,
 	full?: boolean,
 	large?: boolean,
 }>(), {
@@ -55,7 +55,7 @@ if (props.user.isFollowing == null) {
 	.then(onFollowChange);
 }
 
-function onFollowChange(user: Misskey.entities.UserDetailed) {
+function onFollowChange(user: Misskey.entities.UserLite & Partial<Pick<Misskey.entities.UserDetailed, 'isFollowing' | 'hasPendingFollowRequestFromYou'>>) {
 	if (user.id === props.user.id) {
 		isFollowing.value = user.isFollowing;
 		hasPendingFollowRequestFromYou.value = user.hasPendingFollowRequestFromYou;

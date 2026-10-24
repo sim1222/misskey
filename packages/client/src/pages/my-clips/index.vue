@@ -17,6 +17,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { PaginationExposed } from '@/types/paging';
 import { ref, computed } from 'vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -29,7 +30,7 @@ const pagination = {
 	limit: 10,
 };
 
-const pagingComponent = ref<InstanceType<typeof MkPagination>>();
+const pagingComponent = ref<PaginationExposed<'clips/list'>>();
 
 async function create() {
 	const { canceled, result } = await os.form(i18n.ts.createNewClip, {
@@ -49,20 +50,16 @@ async function create() {
 			default: false,
 		},
 	});
-	if (canceled) return;
+	if (canceled || result.name == null) return;
 
-	os.apiWithDialog('clips/create', result);
+	os.apiWithDialog('clips/create', { ...result, name: result.name });
 
-	pagingComponent.value.reload();
+	pagingComponent.value?.reload();
 }
 
-function onClipCreated() {
-	pagingComponent.value.reload();
-}
 
-function onClipDeleted() {
-	pagingComponent.value.reload();
-}
+
+
 
 const headerActions = computed(() => []);
 

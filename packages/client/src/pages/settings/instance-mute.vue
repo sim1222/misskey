@@ -10,22 +10,25 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import { ref, watch } from 'vue';
 import FormTextarea from '@/components/form/textarea.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
-import { $i } from '@/account';
+
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const instanceMutes = ref($i!.mutedInstances.join('\n'));
+const instanceMutes = ref((account.mutedInstances ?? []).join('\n'));
 const changed = ref(false);
 
 async function save() {
 	let mutes = instanceMutes.value
 		.trim().split('\n')
-		.map(el => el.trim())
+		.map((el) => el.trim())
 		.filter(el => el);
 
 	await os.api('i/update', {
@@ -42,9 +45,9 @@ watch(instanceMutes, () => {
 	changed.value = true;
 });
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.instanceMute,

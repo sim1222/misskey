@@ -1,6 +1,6 @@
 <template>
 <div class="_formRoot">
-	<MkTab v-model="tab" class="_formBlock">
+	<MkTab v-model="tab" class="_formBlock" :choices="['soft', 'hard']">
 		<option value="soft">{{ i18n.ts._wordMute.soft }}</option>
 		<option value="hard">{{ i18n.ts._wordMute.hard }}</option>
 	</MkTab>
@@ -29,7 +29,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import { ref, watch } from 'vue';
 import FormTextarea from '@/components/form/textarea.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -38,11 +41,11 @@ import MkTab from '@/components/MkTab.vue';
 import * as os from '@/os';
 import number from '@/filters/number';
 import { defaultStore } from '@/store';
-import { $i } from '@/account';
+
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const render = (mutedWords) => mutedWords.map(x => {
+const render = (mutedWords: (string | string[])[] | null) => (mutedWords ?? []).map(x => {
 	if (Array.isArray(x)) {
 		return x.join(' ');
 	} else {
@@ -52,8 +55,8 @@ const render = (mutedWords) => mutedWords.map(x => {
 
 const tab = ref('soft');
 const softMutedWords = ref(render(defaultStore.state.mutedWords));
-const hardMutedWords = ref(render($i!.mutedWords));
-const hardWordMutedNotesCount = ref(null);
+const hardMutedWords = ref(render(account.mutedWords));
+const hardWordMutedNotesCount = ref<number | null>(null);
 const changed = ref(false);
 
 os.api('i/get-word-muted-notes-count', {}).then(response => {
@@ -69,14 +72,15 @@ watch(hardMutedWords, () => {
 });
 
 async function save() {
-	const parseMutes = (mutes, tab) => {
+	const parseMutes = (mutes: string, tab: string) => {
 		// split into lines, remove empty lines and unnecessary whitespace
-		let lines = mutes.trim().split('\n').map(line => line.trim()).filter(line => line !== '');
+		let lines: (string | string[])[] = mutes.trim().split('\n').map((line: string) => line.trim()).filter((line: string) => line !== '');
 
 		// check each line if it is a RegExp or not
 		for (let i = 0; i < lines.length; i++) {
 			const line = lines[i];
-			const regexp = line.match(/^\/(.+)\/(.*)$/);
+			if (typeof line !== 'string') continue;
+            const regexp = line.match(/^\/(.+)\/(.*)$/);
 			if (regexp) {
 				// check that the RegExp is valid
 				try {
@@ -117,9 +121,9 @@ async function save() {
 	changed.value = false;
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.wordMute,

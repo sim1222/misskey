@@ -12,6 +12,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { BlockDraftOf } from '@/scripts/hpml/block';
+
+
+
 /* eslint-disable vue/no-mutating-props */
 import { } from 'vue';
 import XContainer from '../page-editor.container.vue';
@@ -19,12 +23,13 @@ import MkSwitch from '@/components/form/switch.vue';
 import MkInput from '@/components/form/input.vue';
 
 withDefaults(defineProps<{
-	value: any
+	value?: BlockDraftOf<'switch'>
 }>(), {
-	value: {
+	value: () => ({ id: '', type: 'switch',
 		name: ''
-	}
+	})
 });
+defineEmits<{ (event: 'remove'): void }>();
 </script>
 
 <style lang="scss" scoped>

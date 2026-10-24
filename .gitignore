@@ -49,3 +49,6 @@ ormconfig.json
 *.blend5
 
 start.sh
+
+# Isolated frontend compatibility observations
+/.maintenance-frontend/

@@ -5,8 +5,7 @@
 	:height="450"
 	:with-ok-button="true"
 	:ok-button-disabled="false"
-	:can-close="false"
-	@close="dialog.close()"
+	@close="dialog?.close()"
 	@closed="$emit('closed')"
 	@ok="ok()"
 >
@@ -30,7 +29,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { permissions as kinds } from 'misskey-js';
+import { permissions as kinds } from '@/misskey';
 import MkInput from './form/input.vue';
 import MkSwitch from './form/switch.vue';
 import MkButton from './MkButton.vue';
@@ -56,7 +55,7 @@ const emit = defineEmits<{
 
 const dialog = ref<InstanceType<typeof XModalWindow>>();
 let name = ref(props.initialName);
-let permissions = ref({});
+let permissions = ref<Record<string, boolean>>({});
 
 if (props.initialPermissions) {
 	for (const kind of props.initialPermissions) {
@@ -73,7 +72,7 @@ function ok(): void {
 		name: name.value,
 		permissions: Object.keys(permissions.value).filter(p => permissions.value[p]),
 	});
-	dialog.value.close();
+	dialog.value?.close();
 }
 
 function disableAll(): void {

@@ -55,8 +55,8 @@ export function physics(container: HTMLElement) {
 		//wallLeft,
 	]);
 
-	const objEls = Array.from(container.children);
-	const objs = [];
+	const objEls = Array.from(container.children).filter((element): element is HTMLElement => element instanceof HTMLElement);
+	const objs: Matter.Body[] = [];
 	for (const objEl of objEls) {
 		const left = objEl.dataset.physicsX ? parseInt(objEl.dataset.physicsX) : objEl.offsetLeft;
 		const top = objEl.dataset.physicsY ? parseInt(objEl.dataset.physicsY) : objEl.offsetTop;
@@ -84,7 +84,7 @@ export function physics(container: HTMLElement) {
 				}
 			);
 		}
-		objEl.id = obj.id;
+		objEl.id = String(obj.id);
 		objs.push(obj);
 	}
 
@@ -110,9 +110,9 @@ export function physics(container: HTMLElement) {
 
 	for (const objEl of objEls) {
 		objEl.style.position = `absolute`;
-		objEl.style.top = 0;
-		objEl.style.left = 0;
-		objEl.style.margin = 0;
+		objEl.style.top = '0';
+		objEl.style.left = '0';
+		objEl.style.margin = '0';
 	}
 
 	window.requestAnimationFrame(update);

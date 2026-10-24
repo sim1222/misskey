@@ -9,7 +9,7 @@
 			<i v-else-if="notification.type === 'receiveFollowRequest'" class="fas fa-clock"></i>
 			<i v-else-if="notification.type === 'followRequestAccepted'" class="fas fa-check"></i>
 			<i v-else-if="notification.type === 'groupInvited'" class="fas fa-id-card-alt"></i>
-			<i v-else-if="notification.type === 'renote'" class="fas fa-retweet"></i>
+			<i v-else-if="notification.type === 'renote' && notification.note.renote != null" class="fas fa-retweet"></i>
 			<i v-else-if="notification.type === 'reply'" class="fas fa-reply"></i>
 			<i v-else-if="notification.type === 'mention'" class="fas fa-at"></i>
 			<i v-else-if="notification.type === 'quote'" class="fas fa-quote-left"></i>
@@ -37,7 +37,7 @@
 			<Mfm :text="getNoteSummary(notification.note)" :plain="true" :nowrap="!full" :custom-emojis="notification.note.emojis"/>
 			<i class="fas fa-quote-right"></i>
 		</MkA>
-		<MkA v-if="notification.type === 'renote'" class="text" :to="notePage(notification.note)" :title="getNoteSummary(notification.note.renote)">
+		<MkA v-if="notification.type === 'renote' && notification.note.renote != null" class="text" :to="notePage(notification.note)" :title="getNoteSummary(notification.note.renote)">
 			<i class="fas fa-quote-left"></i>
 			<Mfm :text="getNoteSummary(notification.note.renote)" :plain="true" :nowrap="!full" :custom-emojis="notification.note.renote.emojis"/>
 			<i class="fas fa-quote-right"></i>
@@ -74,7 +74,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import XReactionIcon from '@/components/MkReactionIcon.vue';
 import MkFollowButton from '@/components/MkFollowButton.vue';
 import XReactionTooltip from '@/components/MkReactionTooltip.vue';
@@ -95,11 +95,11 @@ const props = withDefaults(defineProps<{
 	full: false,
 });
 
-const elRef = ref<HTMLElement>(null);
-const reactionRef = ref(null);
+const elRef = ref<HTMLElement | null>(null);
+const reactionRef = ref<InstanceType<typeof XReactionIcon> | null>(null);
 
 let readObserver: IntersectionObserver | undefined;
-let connection;
+let connection: misskey.ChannelConnection<misskey.Channels['main']> | undefined;
 
 onMounted(() => {
 	if (!props.notification.isRead) {
@@ -111,13 +111,13 @@ onMounted(() => {
 			observer.disconnect();
 		});
 
-		readObserver.observe(elRef.value);
+		if (elRef.value) readObserver.observe(elRef.value);
 
 		connection = stream.useChannel('main');
-		connection.on('readAllNotifications', () => readObserver.disconnect());
+		connection.on('readAllNotifications', () => readObserver?.disconnect());
 
-		watch(props.notification.isRead, () => {
-			readObserver.disconnect();
+		watch(() => props.notification.isRead, () => {
+			readObserver?.disconnect();
 		});
 	}
 });
@@ -131,26 +131,31 @@ const followRequestDone = ref(false);
 const groupInviteDone = ref(false);
 
 const acceptFollowRequest = () => {
+	if (props.notification.type !== 'receiveFollowRequest') return;
 	followRequestDone.value = true;
 	os.api('following/requests/accept', { userId: props.notification.user.id });
 };
 
 const rejectFollowRequest = () => {
+	if (props.notification.type !== 'receiveFollowRequest') return;
 	followRequestDone.value = true;
 	os.api('following/requests/reject', { userId: props.notification.user.id });
 };
 
 const acceptGroupInvitation = () => {
+	if (props.notification.type !== 'groupInvited') return;
 	groupInviteDone.value = true;
 	os.apiWithDialog('users/groups/invitations/accept', { invitationId: props.notification.invitation.id });
 };
 
 const rejectGroupInvitation = () => {
+	if (props.notification.type !== 'groupInvited') return;
 	groupInviteDone.value = true;
 	os.api('users/groups/invitations/reject', { invitationId: props.notification.invitation.id });
 };
 
 useTooltip(reactionRef, (showing) => {
+	if (props.notification.type !== 'reaction' || !reactionRef.value) return;
 	os.popup(XReactionTooltip, {
 		showing,
 		reaction: props.notification.reaction ? props.notification.reaction.replace(/^:(\w+):$/, ':$1@.:') : props.notification.reaction,

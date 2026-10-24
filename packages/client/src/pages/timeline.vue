@@ -1,6 +1,6 @@
 <template>
 <MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="headerTabs" :display-my-avatar="true"/></template>
+	<template #header><MkPageHeader :tab="src" @update:tab="setTimelineSource" :actions="headerActions" :tabs="headerTabs" :display-my-avatar="true"/></template>
 	<MkSpacer :content-max="800">
 		<div ref="rootEl" v-hotkey.global="keymap" class="cmuxhskf">
 			<XTutorial v-if="$store.reactiveState.tutorial.value != -1" class="tutorial _block blur"/>
@@ -54,6 +54,7 @@ function queueUpdated(q: number): void {
 }
 
 function top(): void {
+	if (rootEl.value == null) return;
 	scroll(rootEl.value, { top: 0 });
 }
 
@@ -89,6 +90,11 @@ async function chooseChannel(ev: MouseEvent): Promise<void> {
 	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
+function setTimelineSource(value: string) {
+ if (value === 'home' || value === 'local' || value === 'social' || value === 'global') saveSrc(value);
+ else throw new TypeError('Unknown timeline source');
+}
+
 function saveSrc(newSrc: 'home' | 'local' | 'social' | 'global'): void {
 	defaultStore.set('tl', {
 		...defaultStore.state.tl,
@@ -96,17 +102,10 @@ function saveSrc(newSrc: 'home' | 'local' | 'social' | 'global'): void {
 	});
 }
 
-async function timetravel(): Promise<void> {
-	const { canceled, result: date } = await os.inputDate({
-		title: i18n.ts.date,
-	});
-	if (canceled) return;
 
-	tlComponent.value.timetravel(date);
-}
 
 function focus(): void {
-	tlComponent.value.focus();
+	tlComponent.value?.focus();
 }
 
 const headerActions = computed(() => []);

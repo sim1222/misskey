@@ -19,7 +19,7 @@
 			</MkKeyValue>
 			<MkKeyValue class="_formBlock">
 				<template #key>{{ i18n.ts.permission }}</template>
-				<template #value>{{ plugin.permission }}</template>
+				<template #value>{{ plugin.permissions }}</template>
 			</MkKeyValue>
 
 			<div style="display: flex; gap: var(--margin); flex-wrap: wrap;">
@@ -32,13 +32,14 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, ref, computed } from 'vue';
+import { nextTick, ref } from 'vue';
 import FormLink from '@/components/form/link.vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormSection from '@/components/form/section.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
 import * as os from '@/os';
+import { isFormItemValue } from '@/scripts/form';
 import { ColdDeviceStorage } from '@/store';
 import { unisonReload } from '@/scripts/unison-reload';
 import { i18n } from '@/i18n';
@@ -46,7 +47,7 @@ import { definePageMetadata } from '@/scripts/page-metadata';
 
 const plugins = ref(ColdDeviceStorage.get('plugins'));
 
-function uninstall(plugin) {
+function uninstall(plugin: { id: string; }) {
 	ColdDeviceStorage.set('plugins', plugins.value.filter(x => x.id !== plugin.id));
 	os.success();
 	nextTick(() => {
@@ -55,10 +56,13 @@ function uninstall(plugin) {
 }
 
 // TODO: この処理をstore側にactionとして移動し、設定画面を開くAiScriptAPIを実装できるようにする
-async function config(plugin) {
+async function config(plugin: import('@/store').Plugin) {
 	const config = plugin.config;
+    if (!config) return;
 	for (const key in plugin.configData) {
-		config[key].default = plugin.configData[key];
+		const item = config[key];
+        const value = plugin.configData[key];
+        if (item && isFormItemValue(item, value)) Object.assign(item, { default: value });
 	}
 
 	const { canceled, result } = await os.form(plugin.name, config);
@@ -73,7 +77,7 @@ async function config(plugin) {
 	});
 }
 
-function changeActive(plugin, active) {
+function changeActive(plugin: { id: string; }, active: boolean) {
 	const coldPlugins = ColdDeviceStorage.get('plugins');
 	coldPlugins.find(p => p.id === plugin.id)!.active = active;
 	ColdDeviceStorage.set('plugins', coldPlugins);
@@ -83,9 +87,9 @@ function changeActive(plugin, active) {
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.plugins,

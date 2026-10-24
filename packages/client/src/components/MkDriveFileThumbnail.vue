@@ -16,7 +16,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from '@/misskey';
 import ImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
 
 const props = defineProps<{

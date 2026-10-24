@@ -6,12 +6,12 @@
 			v-if="state === 'writing'"
 			fixed
 			:instant="true"
-			:initial-text="initialText"
-			:initial-visibility="visibility"
+			:initial-text="initialText ?? undefined"
+			:initial-visibility="visibility ?? undefined"
 			:initial-files="files"
-			:initial-local-only="localOnly"
-			:reply="reply"
-			:renote="renote"
+			:initial-local-only="localOnly ?? undefined"
+			:reply="reply ?? undefined"
+			:renote="renote ?? undefined"
 			:initial-visible-users="visibleUsers"
 			class="_panel blur"
 			@posted="state = 'posted'"
@@ -22,12 +22,13 @@
 </template>
 
 <script lang="ts" setup>
+import { toApiError } from '@/types/api-error';
 // SPECIFICATION: https://misskey-hub.net/docs/features/share-form.html
 
 import { ref, computed } from 'vue';
-import { noteVisibilities } from 'misskey-js';
+import { isNoteVisibility } from '@/misskey';
 import * as Acct from 'misskey-js/built/acct';
-import * as Misskey from 'misskey-js';
+import * as Misskey from '@/misskey';
 import MkButton from '@/components/MkButton.vue';
 import XPostForm from '@/components/MkPostForm.vue';
 import * as os from '@/os';
@@ -46,7 +47,7 @@ const url = urlParams.get('url');
 let initialText = ref(null as string | null);
 let reply = ref(null as Misskey.entities.Note | null);
 let renote = ref(null as Misskey.entities.Note | null);
-let visibility = ref(noteVisibilities.includes(visibilityQuery) ? visibilityQuery : null);
+let visibility = ref(isNoteVisibility(visibilityQuery) ? visibilityQuery : null);
 let localOnly = ref(localOnlyQuery === '0' ? false : localOnlyQuery === '1' ? true : null);
 let files = ref([] as Misskey.entities.DriveFile[]);
 let visibleUsers = ref([] as Misskey.entities.User[]);
@@ -133,8 +134,8 @@ async function init() {
 	} catch (err) {
 		os.alert({
 			type: 'error',
-			title: err.message,
-			text: err.name,
+			title: toApiError(err).message,
+			text: err instanceof Error ? err.name : String(err),
 		});
 	}
 

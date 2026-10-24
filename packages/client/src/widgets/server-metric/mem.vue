@@ -11,21 +11,23 @@
 </template>
 
 <script lang="ts" setup>
+import type { ChannelConnection, Channels, ServerStats } from '@/misskey';
+import type { ApiResponse } from '@/types/api';
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import XPie from './pie.vue';
 import bytes from '@/filters/bytes';
 
 const props = defineProps<{
-	connection: any,
-	meta: any
+	connection: ChannelConnection<Channels['serverStats']>,
+	meta: ApiResponse<'server-info'>
 }>();
 
-let usage: number = ref(0);
-let total: number = ref(0);
-let used: number = ref(0);
-let free: number = ref(0);
+let usage = ref<number>(0);
+let total = ref<number>(0);
+let used = ref<number>(0);
+let free = ref<number>(0);
 
-function onStats(stats) {
+function onStats(stats: ServerStats) {
 	usage.value = stats.mem.active / props.meta.mem.total;
 	total.value = props.meta.mem.total;
 	used.value = stats.mem.active;

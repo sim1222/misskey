@@ -138,7 +138,7 @@ const useBlurEffect = computed(defaultStore.makeGetterSetter('useBlurEffect'));
 
 const installedThemes = ref(getThemes());
 const builtinThemes = getBuiltinThemesRef();
-const instanceThemes = [];
+const instanceThemes: never[] = [];
 
 const themes = computed(() => uniqueBy([...instanceThemes, ...builtinThemes.value, ...installedThemes.value], theme => theme.id));
 const darkThemes = computed(() => themes.value.filter(t => t.base === 'dark' || t.kind === 'dark'));
@@ -149,7 +149,8 @@ const darkThemeId = computed({
 		return darkTheme.value.id;
 	},
 	set(id) {
-		ColdDeviceStorage.set('darkTheme', themes.value.find(x => x.id === id));
+		const theme = themes.value.find(x => x.id === id);
+        if (theme) ColdDeviceStorage.set('darkTheme', theme);
 	}
 });
 const lightTheme = ColdDeviceStorage.ref('lightTheme');
@@ -158,7 +159,8 @@ const lightThemeId = computed({
 		return lightTheme.value.id;
 	},
 	set(id) {
-		ColdDeviceStorage.set('lightTheme', themes.value.find(x => x.id === id));
+		const theme = themes.value.find(x => x.id === id);
+        if (theme) ColdDeviceStorage.set('lightTheme', theme);
 	}
 });
 

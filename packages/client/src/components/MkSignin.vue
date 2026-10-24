@@ -1,7 +1,7 @@
 <template>
 <form class="eppvobhk _monolithic_" :class="{ signing, totpLogin }" @submit.prevent="onSubmit">
 	<div class="auth _section _formRoot">
-		<div v-show="withAvatar" class="avatar" :style="{ backgroundImage: user ? `url('${ user.avatarUrl }')` : null, marginBottom: message ? '1.5em' : null }"></div>
+		<div v-show="withAvatar" class="avatar" :style="{ backgroundImage: user ? `url('${ user.avatarUrl }')` : undefined, marginBottom: message ? '1.5em' : undefined }"></div>
 		<MkInfo v-if="message">
 			{{ message }}
 		</MkInfo>
@@ -49,6 +49,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { entities } from '@/misskey';
+import type { SigninResult, WebAuthnChallenge } from '../../../shared/auth';
 import { defineAsyncComponent, ref, computed } from 'vue';
 import { toUnicode } from 'punycode/';
 import MkButton from '@/components/MkButton.vue';
@@ -57,28 +59,28 @@ import MkInfo from '@/components/MkInfo.vue';
 import { apiUrl, host as configHost } from '@/config';
 import { byteify, hexify } from '@/scripts/2fa';
 import * as os from '@/os';
+import { toApiError } from '@/types/api-error';
 import { login } from '@/account';
 import { showSuspendedDialog } from '../scripts/show-suspended-dialog';
 import { instance } from '@/instance';
 import { i18n } from '@/i18n';
 
 let signing = ref(false);
-let user = ref(null);
+let user = ref<entities.UserDetailed | null>(null);
 let username = ref('');
 let password = ref('');
 let token = ref('');
 let host = ref(toUnicode(configHost));
 let totpLogin = ref(false);
-let credential = ref(null);
-let challengeData = ref(null);
+let challengeData = ref<WebAuthnChallenge | null>(null);
 let queryingKey = ref(false);
-let hCaptchaResponse = ref(null);
-let reCaptchaResponse = ref(null);
+let hCaptchaResponse = ref<string | null>(null);
+let reCaptchaResponse = ref<string | null>(null);
 
 const meta = computed(() => instance);
 
 const emit = defineEmits<{
-	(ev: 'login', v: any): void;
+	(ev: 'login', v: SigninResult): void;
 }>();
 
 const props = defineProps({
@@ -109,18 +111,18 @@ function onUsernameChange() {
 	});
 }
 
-function onLogin(res) {
-	if (props.autoSet) {
-		return login(res.i);
-	}
+function onLogin(res: SigninResult) {
+	return props.autoSet ? login(res.i) : undefined;
 }
 
 function queryKey() {
+	const challenge = challengeData.value;
+	if (!challenge) return;
 	queryingKey.value = true;
 	return navigator.credentials.get({
 		publicKey: {
-			challenge: byteify(challengeData.value.challenge, 'base64'),
-			allowCredentials: challengeData.value.securityKeys.map(key => ({
+			challenge: byteify(challenge.challenge, 'base64'),
+			allowCredentials: challenge.securityKeys.map(key => ({
 				id: byteify(key.id, 'hex'),
 				type: 'public-key',
 				transports: ['usb', 'nfc', 'ble', 'internal']
@@ -131,6 +133,7 @@ function queryKey() {
 		queryingKey.value = false;
 		return Promise.reject(null);
 	}).then(credential => {
+		if (!(credential instanceof PublicKeyCredential) || !(credential.response instanceof AuthenticatorAssertionResponse)) throw new TypeError('Expected a public-key assertion');
 		queryingKey.value = false;
 		signing.value = true;
 		return os.api('signin', {
@@ -140,7 +143,7 @@ function queryKey() {
 			authenticatorData: hexify(credential.response.authenticatorData),
 			clientDataJSON: hexify(credential.response.clientDataJSON),
 			credentialId: credential.id,
-			challengeId: challengeData.value.challengeId,
+			challengeId: challenge.challengeId,
       'hcaptcha-response': hCaptchaResponse.value,
 			'g-recaptcha-response': reCaptchaResponse.value,
 		});
@@ -170,8 +173,11 @@ function onSubmit() {
 			}).then(res => {
 				totpLogin.value = true;
 				signing.value = false;
-				challengeData.value = res;
-				return queryKey();
+				if ('challenge' in res) {
+					challengeData.value = res;
+					return queryKey();
+				}
+				return onLogin(res);
 			}).catch(loginFailed);
 		} else {
 			totpLogin.value = true;
@@ -185,13 +191,16 @@ function onSubmit() {
 			'g-recaptcha-response': reCaptchaResponse.value,
 			token: user.value && user.value.twoFactorEnabled ? token.value : undefined
 		}).then(res => {
-			emit('login', res);
-			onLogin(res);
+			if ('i' in res) {
+				emit('login', res);
+				onLogin(res);
+			}
 		}).catch(loginFailed);
 	}
 }
 
-function loginFailed(err) {
+function loginFailed(failure: unknown) {
+	const err = toApiError(failure);
 	switch (err.id) {
 		case '6cc579cc-885d-43d8-95c2-b8c7fc963280': {
 			os.alert({

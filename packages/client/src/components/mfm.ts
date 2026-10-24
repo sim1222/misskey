@@ -1,17 +1,18 @@
-import { VNode, defineComponent, h } from 'vue';
+import { VNode, defineComponent, h, PropType } from 'vue';
 import * as mfm from 'mfm-js';
 import MkUrl from '@/components/global/MkUrl.vue';
 import MkLink from '@/components/MkLink.vue';
 import MkMention from '@/components/MkMention.vue';
 import MkEmoji from '@/components/global/MkEmoji.vue';
-import { concat } from '@/scripts/array';
+
 import MkFormula from '@/components/MkFormula.vue';
 import MkCode from '@/components/MkCode.vue';
 import MkGoogle from '@/components/MkGoogle.vue';
 import MkSparkle from '@/components/MkSparkle.vue';
 import MkA from '@/components/global/MkA.vue';
+import type { entities } from '@/misskey';
 import { host } from '@/config';
-import { MFM_TAGS } from '@/scripts/mfm-tags';
+
 
 const QUOTE_STYLE = `
 display: block;
@@ -25,7 +26,7 @@ opacity: 0.7;
 export default defineComponent({
 	props: {
 		text: {
-			type: String,
+			type: String as PropType<string | null | undefined>,
 			required: true,
 		},
 		plain: {
@@ -37,14 +38,15 @@ export default defineComponent({
 			default: false,
 		},
 		author: {
-			type: Object,
+			type: Object as PropType<entities.User | null>,
 			default: null,
 		},
 		i: {
-			type: Object,
+			type: Object as PropType<entities.User | null>,
 			default: null,
 		},
 		customEmojis: {
+			type: Array as PropType<{ name: string; url: string | null }[]>,
 			required: false,
 		},
 		isNote: {
@@ -58,8 +60,8 @@ export default defineComponent({
 
 		const ast = (this.plain ? mfm.parseSimple : mfm.parse)(this.text);
 
-		const validTime = (t: string | null | undefined) => {
-			if (t == null) return null;
+		const validTime = (t: string | true | null | undefined) => {
+			if (typeof t !== 'string') return null;
 			return t.match(/^[0-9.]+s$/) ? t : null;
 		};
 
@@ -194,31 +196,31 @@ export default defineComponent({
 							return h(MkSparkle, {}, genEl(token.children));
 						}
 						case 'rotate': {
-							const degrees = parseFloat(token.props.args.deg) ?? '90';
+							const degrees = parseFloat(String(token.props.args.deg)) ?? '90';
 							style = `transform: rotate(${degrees}deg); transform-origin: center center;`;
 							break;
 						}
 						case 'position': {
-							const x = parseFloat(token.props.args.x ?? '0');
-							const y = parseFloat(token.props.args.y ?? '0');
+							const x = parseFloat(String(token.props.args.x ?? '0'));
+							const y = parseFloat(String(token.props.args.y ?? '0'));
 							style = `transform: translateX(${x}em) translateY(${y}em);`;
 							break;
 						}
 						case 'scale': {
-							const x = Math.min(parseFloat(token.props.args.x ?? '1'), 5);
-							const y = Math.min(parseFloat(token.props.args.y ?? '1'), 5);
+							const x = Math.min(parseFloat(String(token.props.args.x ?? '1')), 5);
+							const y = Math.min(parseFloat(String(token.props.args.y ?? '1')), 5);
 							style = `transform: scale(${x}, ${y});`;
 							break;
 						}
 						case 'fg': {
 							let color = token.props.args.color;
-							if (!/^[0-9a-f]{3,6}$/i.test(color)) color = 'f00';
+							if (!/^[0-9a-f]{3,6}$/i.test(String(color))) color = 'f00';
 							style = `color: #${color};`;
 							break;
 						}
 						case 'bg': {
 							let color = token.props.args.color;
-							if (!/^[0-9a-f]{3,6}$/i.test(color)) color = 'f00';
+							if (!/^[0-9a-f]{3,6}$/i.test(String(color))) color = 'f00';
 							style = `background-color: #${color};`;
 							break;
 						}
@@ -288,7 +290,7 @@ export default defineComponent({
 					return [h(MkCode, {
 						key: Math.random(),
 						code: token.props.code,
-						lang: token.props.lang,
+						lang: token.props.lang ?? undefined,
 					})];
 				}
 

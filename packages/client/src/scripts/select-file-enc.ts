@@ -1,9 +1,10 @@
 import { ref } from 'vue';
-import { DriveFile } from 'misskey-js/built/entities';
+import type { entities } from '@/misskey';
+type DriveFile = entities.DriveFile;
 import { defaultStore } from '@/store';
 import { uploadFile } from '@/scripts/upload';
 
-function select(src: any, label: string | null, multiple: boolean): Promise<DriveFile | DriveFile[]> {
+function select(_src: EventTarget | null | undefined, _label: string | null, multiple: boolean): Promise<DriveFile | DriveFile[]> {
 	return new Promise((res, rej) => {
 		const keepOriginal = ref(defaultStore.state.keepOriginalUploading);
 
@@ -13,7 +14,7 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 			input.accept = 'video/mp4';
 			input.multiple = multiple;
 			input.onchange = () => {
-				const promises = Array.from(input.files).map(file => uploadFile(file, defaultStore.state.uploadFolder, undefined, keepOriginal.value));
+				const promises = Array.from(input.files ?? []).map(file => uploadFile(file, defaultStore.state.uploadFolder, undefined, keepOriginal.value));
 
 				Promise.all(promises).then(driveFiles => {
 					res(multiple ? driveFiles : driveFiles[0]);
@@ -22,12 +23,12 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 				});
 
 				// 一応廃棄
-				(window as any).__misskey_input_ref__ = null;
+				window.__misskey_input_ref__ = null;
 			};
 
 			// https://qiita.com/fukasawah/items/b9dc732d95d99551013d
 			// iOS Safari で正常に動かす為のおまじない
-			(window as any).__misskey_input_ref__ = input;
+			window.__misskey_input_ref__ = input;
 
 			input.click();
 		};
@@ -36,6 +37,6 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 	});
 }
 
-export function selectFileEnc(src: any, label: string | null = null): Promise<DriveFile> {
+export function selectFileEnc(src: EventTarget | null | undefined, label: string | null = null): Promise<DriveFile> {
 	return select(src, label, false) as Promise<DriveFile>;
 }

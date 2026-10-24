@@ -37,7 +37,8 @@ window.uiFixture = {
   app?.unmount(); document.body.innerHTML = '<div id="host"></div>'; events = [];
   state = ref(options.modelValue ?? null); defaultStore.state.animation = options.animation ?? false;
   const component = kind === 'tab' ? (reference ? ReferenceTab : Tab) : kind === 'radios' ? (reference ? ReferenceRadios : Radios) : reference ? ReferenceDateList : DateList;
-  app = createApp({ setup: () => () => h(component, { ...options, modelValue: state.value,
+  const { choices, ...componentOptions } = options;
+  app = createApp({ setup: () => () => h(component, { ...componentOptions, ...(!reference && kind === 'tab' ? { choices } : {}), modelValue: state.value,
    class: 'fixture-class', 'data-fixture': 'kept', 'onUpdate:modelValue': value => { events.push(value); state.value = value; },
   }, kind === 'date-list' ? { default: ({ item }) => [h('article', { class: 'note' }, item.id)] } : {
    default: () => options.choices.map((value, index) => h('option', { value }, String(value))), label: () => 'Label', caption: () => 'Caption',

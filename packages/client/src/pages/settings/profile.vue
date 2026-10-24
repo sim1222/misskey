@@ -1,18 +1,18 @@
 <template>
 <div class="_formRoot">
-	<div class="llvierxe" :style="{ backgroundImage: $i.bannerUrl ? `url(${ $i.bannerUrl })` : null }">
+	<div class="llvierxe" :style="{ backgroundImage: account.bannerUrl ? `url(${ account.bannerUrl })` : undefined }">
 		<div class="avatar">
-			<MkAvatar class="avatar" :user="$i" :disable-link="true" @click="changeAvatar"/>
+			<MkAvatar class="avatar" :user="account" :disable-link="true" @click="changeAvatar"/>
 			<MkButton primary rounded class="avatarEdit" @click="changeAvatar">{{ i18n.ts._profile.changeAvatar }}</MkButton>
 		</div>
 		<MkButton primary rounded class="bannerEdit" @click="changeBanner">{{ i18n.ts._profile.changeBanner }}</MkButton>
 	</div>
 
-	<FormInput v-model="profile.name" :max="30" manual-save class="_formBlock">
+	<FormInput v-model="profile.name" manual-save class="_formBlock">
 		<template #label>{{ i18n.ts._profile.name }}</template>
 	</FormInput>
 
-	<FormTextarea v-model="profile.description" :max="500" tall manual-save class="_formBlock">
+	<FormTextarea v-model="profile.description" tall manual-save class="_formBlock">
 		<template #label>{{ i18n.ts._profile.description }}</template>
 		<template #caption>{{ i18n.ts._profile.youCanIncludeHashtags }}</template>
 	</FormTextarea>
@@ -29,7 +29,7 @@
 
 	<FormSelect v-model="profile.lang" class="_formBlock">
 		<template #label>{{ i18n.ts.language }}</template>
-		<option v-for="x in Object.keys(langmap)" :key="x" :value="x">{{ langmap[x].nativeName }}</option>
+		<option v-for="[code, language] in Object.entries(langmap)" :key="code" :value="code">{{ language.nativeName }}</option>
 	</FormSelect>
 
 	<FormSlot class="_formBlock">
@@ -60,7 +60,10 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, computed } from 'vue';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import { reactive, watch } from 'vue';
 import MkButton from '@/components/MkButton.vue';
 import FormInput from '@/components/form/input.vue';
 import FormTextarea from '@/components/form/textarea.vue';
@@ -69,23 +72,25 @@ import FormSelect from '@/components/form/select.vue';
 import FormSplit from '@/components/form/split.vue';
 import FormFolder from '@/components/form/folder.vue';
 import FormSlot from '@/components/form/slot.vue';
-import { host } from '@/config';
+
 import { selectFile } from '@/scripts/select-file';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
-import { $i } from '@/account';
+
 import { langmap } from '@/scripts/langmap';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
+function isLanguage(value: string): value is keyof typeof langmap { return Object.hasOwn(langmap, value); }
+
 const profile = reactive({
-	name: $i.name,
-	description: $i.description,
-	location: $i.location,
-	birthday: $i.birthday,
-	lang: $i.lang,
-	isBot: $i.isBot,
-	isCat: $i.isCat,
-	showTimelineReplies: $i.showTimelineReplies,
+	name: account.name,
+	description: account.description,
+	location: account.location,
+	birthday: account.birthday,
+	lang: account.lang,
+	isBot: account.isBot,
+	isCat: account.isCat,
+	showTimelineReplies: account.showTimelineReplies,
 });
 
 watch(() => profile, () => {
@@ -94,7 +99,7 @@ watch(() => profile, () => {
 	deep: true,
 });
 
-const fields = reactive($i.fields.map(field => ({ name: field.name, value: field.value })));
+const fields = reactive(account.fields.map(field => ({ name: field.name, value: field.value })));
 
 function addField() {
 	fields.push({
@@ -114,19 +119,21 @@ function saveFields() {
 }
 
 function save() {
+ const language = profile.lang;
+ if (language !== null && !isLanguage(language)) return;
 	os.apiWithDialog('i/update', {
 		name: profile.name || null,
 		description: profile.description || null,
 		location: profile.location || null,
 		birthday: profile.birthday || null,
-		lang: profile.lang || null,
+		lang: language || null,
 		isBot: !!profile.isBot,
 		isCat: !!profile.isCat,
 		showTimelineReplies: !!profile.showTimelineReplies,
 	});
 }
 
-function changeAvatar(ev) {
+function changeAvatar(ev: MouseEvent) {
 	selectFile(ev.currentTarget ?? ev.target, i18n.ts.avatar).then(async (file) => {
 		let originalOrCropped = file;
 
@@ -144,12 +151,12 @@ function changeAvatar(ev) {
 		const i = await os.apiWithDialog('i/update', {
 			avatarId: originalOrCropped.id,
 		});
-		$i.avatarId = i.avatarId;
-		$i.avatarUrl = i.avatarUrl;
+		account.avatarId = i.avatarId;
+		account.avatarUrl = i.avatarUrl;
 	});
 }
 
-function changeBanner(ev) {
+function changeBanner(ev: MouseEvent) {
 	selectFile(ev.currentTarget ?? ev.target, i18n.ts.banner).then(async (file) => {
 		let originalOrCropped = file;
 
@@ -167,14 +174,14 @@ function changeBanner(ev) {
 		const i = await os.apiWithDialog('i/update', {
 			bannerId: originalOrCropped.id,
 		});
-		$i.bannerId = i.bannerId;
-		$i.bannerUrl = i.bannerUrl;
+		account.bannerId = i.bannerId;
+		account.bannerUrl = i.bannerUrl;
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.profile,

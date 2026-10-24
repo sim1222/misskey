@@ -9,7 +9,7 @@
 			</div>
 		</div>
 		<div class="tabs">
-			<button v-for="tab in tabs" :ref="(el) => tabRefs[tab.key] = el" v-tooltip.noDelay="tab.title" class="tab _button" :class="{ active: tab.key != null && tab.key === props.tab }" @mousedown="(ev) => onTabMousedown(tab, ev)" @click="(ev) => onTabClick(tab, ev)">
+			<button v-for="tab in tabs" :ref="(el) => setTabRef(tab.key, el)" v-tooltip.noDelay="tab.title" class="tab _button" :class="{ active: tab.key != null && tab.key === props.tab }" @mousedown="(ev) => onTabMousedown(tab, ev)" @click="(ev) => onTabClick(tab, ev)">
 				<i v-if="tab.icon" class="icon" :class="tab.icon"></i>
 				<span v-if="!tab.iconOnly" class="title">{{ tab.title }}</span>
 			</button>
@@ -28,13 +28,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref, inject, watch, nextTick } from 'vue';
+import type { ComponentPublicInstance } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch, nextTick } from 'vue';
 import tinycolor from 'tinycolor2';
 import { popupMenu } from '@/os';
-import { url } from '@/config';
+
 import { scrollToTop } from '@/scripts/scroll';
 import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n';
+
 import { globalEvents } from '@/events';
 import { injectPageMetadata } from '@/scripts/page-metadata';
 
@@ -51,24 +52,25 @@ const props = defineProps<{
 	tab?: string;
 	actions?: {
 		text: string;
-		icon: string;
+		icon?: string;
 		asFullButton?: boolean;
 		handler: (ev: MouseEvent) => void;
+ highlighted?: boolean;
 	}[];
 	thin?: boolean;
 }>();
 
 const emit = defineEmits<{
-	(ev: 'update:tab', key: string);
+	(ev: 'update:tab', key: string): void;
 }>();
 
 const metadata = injectPageMetadata();
 
-const el = ref<HTMLElement>(null);
-const tabRefs = {};
+const el = ref<HTMLElement | null>(null);
+const tabRefs: Record<string, HTMLElement | undefined> = {};
 const tabHighlightEl = ref<HTMLElement | null>(null);
-const bg = ref(null);
-const height = ref(0);
+const bg = ref<string>();
+
 const hasTabs = computed(() => {
 	return props.tabs && props.tabs.length > 0;
 });
@@ -77,11 +79,11 @@ const showTabsPopup = (ev: MouseEvent) => {
 	if (!hasTabs.value) return;
 	ev.preventDefault();
 	ev.stopPropagation();
-	const menu = props.tabs.map(tab => ({
+	const menu = (props.tabs ?? []).map(tab => ({
 		text: tab.title,
 		icon: tab.icon,
 		active: tab.key != null && tab.key === props.tab,
-		action: (ev) => {
+		action: (ev: MouseEvent) => {
 			onTabClick(tab, ev);
 		},
 	}));
@@ -93,7 +95,7 @@ const preventDrag = (ev: TouchEvent) => {
 };
 
 const onClick = () => {
-	scrollToTop(el.value, { behavior: 'smooth' });
+	if (el.value) scrollToTop(el.value, { behavior: 'smooth' });
 };
 
 function onTabMousedown(tab: Tab, ev: MouseEvent): void {
@@ -115,11 +117,15 @@ function onTabClick(tab: Tab, ev: MouseEvent): void {
 }
 
 const calcBg = () => {
-	const rawBg = metadata?.bg || 'var(--bg)';
+	const rawBg = metadata?.value?.bg || 'var(--bg)';
 	const tinyBg = tinycolor(rawBg.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(rawBg.slice(4, -1)) : rawBg);
 	tinyBg.setAlpha(0.85);
 	bg.value = tinyBg.toRgbString();
 };
+
+function setTabRef(key: string | null | undefined, value: Element | ComponentPublicInstance | null): void {
+ if (key != null) tabRefs[key] = value instanceof HTMLElement ? value : undefined;
+}
 
 onMounted(() => {
 	calcBg();
@@ -127,8 +133,8 @@ onMounted(() => {
 
 	watch(() => [props.tab, props.tabs], () => {
 		nextTick(() => {
-			const tabEl = tabRefs[props.tab];
-			if (tabEl && tabHighlightEl.value) {
+			const tabEl = props.tab == null ? undefined : tabRefs[props.tab];
+			if (tabEl?.parentElement && tabHighlightEl.value) {
 				// offsetWidth や offsetLeft は少数を丸めてしまうため getBoundingClientRect を使う必要がある
 				// https://developer.mozilla.org/ja/docs/Web/API/HTMLElement/offsetWidth#%E5%80%A4
 				const parentRect = tabEl.parentElement.getBoundingClientRect();

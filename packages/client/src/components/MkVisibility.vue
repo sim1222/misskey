@@ -25,16 +25,16 @@ const specified = ref<HTMLElement>();
 
 if (props.note.visibility === 'specified') {
 	useTooltip((specified), async (showing) => {
-		const users = await os.api('users/show', {
-			userIds: props.note.visibleUserIds,
-			limit: 10,
-		});
+		const targetElement = specified.value;
+        const userIds = props.note.visibleUserIds;
+        if (!targetElement || !userIds) return;
+        const users = await os.api('users/show', { userIds });
 
 		os.popup(XDetails, {
 			showing,
 			users,
-			count: props.note.visibleUserIds.length,
-			targetElement: specified.value,
+			count: userIds.length,
+			targetElement,
 		}, {}, 'closed');
 	});
 }

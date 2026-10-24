@@ -10,21 +10,21 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { v4 as uuid } from 'uuid';
 import XStatusbar from './statusbar.statusbar.vue';
-import FormRadios from '@/components/form/radios.vue';
+
 import FormFolder from '@/components/form/folder.vue';
 import FormButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 import { defaultStore } from '@/store';
-import { unisonReload } from '@/scripts/unison-reload';
+
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
 const statusbars = defaultStore.reactiveState.statusbars;
 
-let userLists = ref();
+let userLists = ref<import('@/misskey').entities.UserList[] | null>(null);
 
 onMounted(() => {
 	os.api('users/lists/list').then(res => {
@@ -42,9 +42,9 @@ async function add() {
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.statusbar,

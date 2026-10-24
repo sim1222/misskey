@@ -52,8 +52,8 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import { onMounted, ref } from 'vue';
+import * as misskey from '@/misskey';
 import MkInput from '@/components/form/input.vue';
 import FormSplit from '@/components/form/split.vue';
 import XModalWindow from '@/components/MkModalWindow.vue';
@@ -62,17 +62,17 @@ import { defaultStore } from '@/store';
 import { i18n } from '@/i18n';
 
 const emit = defineEmits<{
-	(ev: 'ok', selected: misskey.entities.UserDetailed): void;
+	(ev: 'ok', selected: misskey.entities.User): void;
 	(ev: 'cancel'): void;
 	(ev: 'closed'): void;
 }>();
 
 let username = ref('');
 let host = ref('');
-let users: misskey.entities.UserDetailed[] = ref([]);
-let recentUsers: misskey.entities.UserDetailed[] = ref([]);
-let selected: misskey.entities.UserDetailed | null = ref(null);
-let dialogEl = ref();
+let users = ref<misskey.entities.User[]>([]);
+let recentUsers = ref<misskey.entities.UserDetailed[]>([]);
+let selected = ref<misskey.entities.User | null>(null);
+let dialogEl = ref<InstanceType<typeof XModalWindow>>();
 
 const search = () => {
 	if (username.value === '' && host.value === '') {
@@ -90,20 +90,21 @@ const search = () => {
 };
 
 const ok = () => {
-	if (selected.value == null) return;
-	emit('ok', selected.value);
-	dialogEl.value.close();
+	const user = selected.value;
+	if (user == null) return;
+	emit('ok', user);
+	dialogEl.value?.close();
 
 	// 最近使ったユーザー更新
 	let recents = defaultStore.state.recentlyUsedUsers;
-	recents = recents.filter(x => x !== selected.value.id);
-	recents.unshift(selected.value.id);
+	recents = recents.filter(x => x !== user.id);
+	recents.unshift(user.id);
 	defaultStore.set('recentlyUsedUsers', recents.splice(0, 16));
 };
 
 const cancel = () => {
 	emit('cancel');
-	dialogEl.value.close();
+	dialogEl.value?.close();
 };
 
 onMounted(() => {

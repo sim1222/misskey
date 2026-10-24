@@ -3,7 +3,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
+import type { QueueStats, Channels, ChannelConnection } from '@/misskey';
+import { onMounted, onUnmounted, ref } from 'vue';
 import {
 	Chart,
 	ArcElement,
@@ -21,8 +22,8 @@ import {
 	SubTitle,
 	Filler,
 } from 'chart.js';
-import number from '@/filters/number';
-import * as os from '@/os';
+
+
 import { defaultStore } from '@/store';
 import { useChartTooltip } from '@/scripts/use-chart-tooltip';
 
@@ -44,11 +45,11 @@ Chart.register(
 );
 
 const props = defineProps<{
-	domain: string;
-	connection: any;
+	domain: 'inbox' | 'deliver';
+	connection: ChannelConnection<Channels['queueStats']>;
 }>();
 
-const alpha = (hex, a) => {
+const alpha = (hex: string, a: number) => {
 	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)!;
 	const r = parseInt(result[1], 16);
 	const g = parseInt(result[2], 16);
@@ -56,9 +57,9 @@ const alpha = (hex, a) => {
 	return `rgba(${r}, ${g}, ${b}, ${a})`;
 };
 
-const chartEl = ref<HTMLCanvasElement>(null);
+const chartEl = ref<HTMLCanvasElement | null>(null);
 
-const gridColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
 // フォントカラー
 Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--fg');
@@ -67,14 +68,14 @@ const { handler: externalTooltipHandler } = useChartTooltip();
 
 let chartInstance: Chart;
 
-const onStats = (stats) => {
-	chartInstance.data.labels.push('');
+const onStats = (stats: QueueStats) => {
+	chartInstance.data.labels?.push('');
 	chartInstance.data.datasets[0].data.push(stats[props.domain].activeSincePrevTick);
 	chartInstance.data.datasets[1].data.push(stats[props.domain].active);
 	chartInstance.data.datasets[2].data.push(stats[props.domain].waiting);
 	chartInstance.data.datasets[3].data.push(stats[props.domain].delayed);
 	if (chartInstance.data.datasets[0].data.length > 100) {
-		chartInstance.data.labels.shift();
+		chartInstance.data.labels?.shift();
 		chartInstance.data.datasets[0].data.shift();
 		chartInstance.data.datasets[1].data.shift();
 		chartInstance.data.datasets[2].data.shift();
@@ -83,15 +84,15 @@ const onStats = (stats) => {
 	chartInstance.update();
 };
 
-const onStatsLog = (statsLog) => {
+const onStatsLog = (statsLog: QueueStats[]) => {
 	for (const stats of [...statsLog].reverse()) {
-		chartInstance.data.labels.push('');
+		chartInstance.data.labels?.push('');
 		chartInstance.data.datasets[0].data.push(stats[props.domain].activeSincePrevTick);
 		chartInstance.data.datasets[1].data.push(stats[props.domain].active);
 		chartInstance.data.datasets[2].data.push(stats[props.domain].waiting);
 		chartInstance.data.datasets[3].data.push(stats[props.domain].delayed);
 		if (chartInstance.data.datasets[0].data.length > 100) {
-			chartInstance.data.labels.shift();
+			chartInstance.data.labels?.shift();
 			chartInstance.data.datasets[0].data.shift();
 			chartInstance.data.datasets[1].data.shift();
 			chartInstance.data.datasets[2].data.shift();
@@ -102,7 +103,8 @@ const onStatsLog = (statsLog) => {
 };
 
 onMounted(() => {
-	chartInstance = new Chart(chartEl.value, {
+	if (!chartEl.value) return;
+ chartInstance = new Chart(chartEl.value, {
 		type: 'line',
 		data: {
 			labels: [],

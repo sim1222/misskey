@@ -15,7 +15,7 @@ export async function fetchThemes(): Promise<void> {
 		const themes = await api('i/registry/get', { scope: ['client'], key: 'themes' });
 		localStorage.setItem(lsCacheKey, JSON.stringify(themes));
 	} catch (err) {
-		if (err.code === 'NO_SUCH_KEY') return;
+		if (typeof err === 'object' && err !== null && 'code' in err && err.code === 'NO_SUCH_KEY') return;
 		throw err;
 	}
 }

@@ -4,6 +4,7 @@
 
 import autobind from 'autobind-decorator';
 import { Hpml } from './evaluator';
+import { isExprType } from './expr';
 import { funcDefs } from './lib';
 
 export type Fn = {
@@ -11,7 +12,8 @@ export type Fn = {
 	exec: (args: Record<string, any>) => ReturnType<Hpml['evaluate']>;
 };
 
-export type Type = 'string' | 'number' | 'boolean' | 'stringArray' | null;
+export type { Type } from '../../../../shared/page-expr';
+import type { Type } from '../../../../shared/page-expr';
 
 export const literalDefs: Record<string, { out: any; category: string; icon: any; }> = {
 	text: { out: 'string', category: 'value', icon: 'fas fa-quote-right', },
@@ -24,12 +26,12 @@ export const literalDefs: Record<string, { out: any; category: string; icon: any
 };
 
 export const blockDefs = [
-	...Object.entries(literalDefs).map(([k, v]) => ({
+	...Object.entries(literalDefs).flatMap(([k, v]) => isExprType(k) ? [{
 		type: k, out: v.out, category: v.category, icon: v.icon
-	})),
-	...Object.entries(funcDefs).map(([k, v]) => ({
+	}] : []),
+	...Object.entries(funcDefs).flatMap(([k, v]) => isExprType(k) ? [{
 		type: k, out: v.out, category: v.category, icon: v.icon
-	}))
+	}] : [])
 ];
 
 export type PageVar = { name: string; value: any; type: Type; };

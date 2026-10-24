@@ -33,7 +33,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from '@/misskey';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
 import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
 import bytes from '@/filters/bytes';
@@ -60,7 +60,7 @@ const isDragging = ref(false);
 
 const title = computed(() => `${props.file.name}\n${props.file.type} ${bytes(props.file.size)}`);
 
-function getMenu() {
+function getMenu(): import('@/types/menu').MenuItem[] {
 	return [{
 		text: i18n.ts.rename,
 		icon: 'fas fa-i-cursor',
@@ -79,7 +79,7 @@ function getMenu() {
 		action: copyUrl,
 	}, {
 		type: 'a',
-		href: props.file.url,
+		href: props.file.url ?? undefined,
 		target: '_blank',
 		text: i18n.ts.download,
 		icon: 'fas fa-download',
@@ -105,9 +105,12 @@ function onContextmenu(ev: MouseEvent) {
 }
 
 function onDragstart(ev: DragEvent) {
-	if (ev.dataTransfer) {
-		ev.dataTransfer.effectAllowed = 'move';
-		ev.dataTransfer.setData(_DATA_TRANSFER_DRIVE_FILE_, JSON.stringify(props.file));
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
+	if (evdataTransfer) {
+		evdataTransfer.effectAllowed = 'move';
+		evdataTransfer.setData(_DATA_TRANSFER_DRIVE_FILE_, JSON.stringify(props.file));
 	}
 	isDragging.value = true;
 
@@ -125,7 +128,7 @@ function rename() {
 		placeholder: i18n.ts.inputNewFileName,
 		default: props.file.name,
 	}).then(({ canceled, result: name }) => {
-		if (canceled) return;
+		if (canceled || name == null) return;
 		os.api('drive/files/update', {
 			fileId: props.file.id,
 			name: name,
@@ -142,9 +145,9 @@ function describe() {
 		},
 		image: props.file,
 	}, {
-		done: result => {
+		done: (result: import('@/types/dialog').DialogResult<string | null>) => {
 			if (!result || result.canceled) return;
-			let comment = result.result;
+			let comment = result.result ?? '';
 			os.api('drive/files/update', {
 				fileId: props.file.id,
 				comment: comment.length === 0 ? null : comment,
@@ -161,7 +164,7 @@ function toggleSensitive() {
 }
 
 function copyUrl() {
-	copyToClipboard(props.file.url);
+	copyToClipboard(props.file.url ?? '');
 	os.success();
 }
 /*
@@ -175,7 +178,7 @@ async function deleteFile() {
 		text: i18n.t('driveFileDeleteConfirm', { name: props.file.name }),
 	});
 
-	if (canceled) return;
+	if (canceled || name == null) return;
 	os.api('drive/files/delete', {
 		fileId: props.file.id,
 	});

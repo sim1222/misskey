@@ -42,7 +42,9 @@ const toggle = () => {
 	emit('update:modelValue', !checked.value);
 
 	if (!checked.value) {
+		if (button.value == null) return;
 		const rect = button.value.getBoundingClientRect();
+		if (button.value == null) return;
 		const x = rect.left + (button.value.offsetWidth / 2);
 		const y = rect.top + (button.value.offsetHeight / 2);
 		os.popup(Ripple, { x, y, particle: false }, {}, 'end');

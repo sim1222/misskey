@@ -4,7 +4,8 @@
  */
 declare var self: ServiceWorkerGlobalScope;
 
-import * as Misskey from 'misskey-js';
+import * as Misskey from '@/misskey';
+import type { Endpoints as SDKEndpoints } from 'misskey-js';
 import { SwMessage, swMessageOrderType } from '@/types';
 import { acct as getAcct } from '@/filters/user';
 import { getAccountFromId } from '@/scripts/get-account-from-id';
@@ -12,7 +13,9 @@ import { getUrlWithLoginId } from '@/scripts/login-id';
 
 export const cli = new Misskey.api.APIClient({ origin, fetch: (...args) => fetch(...args) });
 
-export async function api<E extends keyof Misskey.Endpoints>(endpoint: E, userId: string, options?: Misskey.Endpoints[E]['req']) {
+export function api(endpoint: 'notifications/read', userId: string, options: { notificationIds: string[] }): Promise<unknown>;
+export function api<E extends keyof SDKEndpoints>(endpoint: E, userId: string, options?: SDKEndpoints[E]['req']): Promise<unknown>;
+export async function api(endpoint: keyof SDKEndpoints, userId: string, options?: SDKEndpoints[keyof SDKEndpoints]['req']) {
 	const account = await getAccountFromId(userId);
 	if (!account) return;
 

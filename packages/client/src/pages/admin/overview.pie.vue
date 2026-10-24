@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import {
 	Chart,
 	ArcElement,
@@ -22,8 +22,8 @@ import {
 	Filler,
 	DoughnutController,
 } from 'chart.js';
-import number from '@/filters/number';
-import { defaultStore } from '@/store';
+
+
 import { useChartTooltip } from '@/scripts/use-chart-tooltip';
 
 Chart.register(
@@ -45,10 +45,10 @@ Chart.register(
 );
 
 const props = defineProps<{
-	data: { name: string; value: number; color: string; onClick?: () => void }[];
+	data: { name: string; value: number; color: string | null; onClick?: () => void }[];
 }>();
 
-const chartEl = ref<HTMLCanvasElement>(null);
+const chartEl = ref<HTMLCanvasElement | null>(null);
 
 // フォントカラー
 Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--fg');
@@ -58,12 +58,13 @@ const { handler: externalTooltipHandler } = useChartTooltip();
 let chartInstance: Chart;
 
 onMounted(() => {
-	chartInstance = new Chart(chartEl.value, {
+	if (!chartEl.value) return;
+ chartInstance = new Chart(chartEl.value, {
 		type: 'doughnut',
 		data: {
 			labels: props.data.map(x => x.name),
 			datasets: [{
-				backgroundColor: props.data.map(x => x.color),
+				backgroundColor: props.data.map(x => x.color ?? undefined),
 				borderColor: getComputedStyle(document.documentElement).getPropertyValue('--panel'),
 				borderWidth: 2,
 				hoverOffset: 0,
@@ -80,9 +81,9 @@ onMounted(() => {
 				},
 			},
 			onClick: (ev) => {
-				const hit = chartInstance.getElementsAtEventForMode(ev, 'nearest', { intersect: true }, false)[0];
+				const hit = chartInstance.getElementsAtEventForMode(ev.native ?? new Event(ev.type), 'nearest', { intersect: true }, false)[0];
 				if (hit && props.data[hit.index].onClick) {
-					props.data[hit.index].onClick();
+					props.data[hit.index].onClick?.();
 				}
 			},
 			plugins: {

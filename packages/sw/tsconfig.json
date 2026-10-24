@@ -1,8 +1,8 @@
 {
 	"compilerOptions": {
 		"allowJs": true,
-		"noEmitOnError": false,
-		"noImplicitAny": false,
+		"noEmitOnError": true,
+		"noImplicitAny": true,
 		"noImplicitReturns": true,
 		"noUnusedParameters": false,
 		"noUnusedLocals": true,
@@ -21,16 +21,22 @@
 		"isolatedModules": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"],
+			"@/*": [
+				"./src/*"
+			],
+			"misskey-js": [
+				"./node_modules/misskey-js"
+			]
 		},
 		"typeRoots": [
 			"node_modules/@types",
-			"@types",
+			"@types"
 		],
 		"lib": [
 			"esnext",
 			"webworker"
-		]
+		],
+		"allowImportingTsExtensions": true
 	},
 	"compileOnSave": false,
 	"include": [

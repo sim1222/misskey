@@ -5,11 +5,11 @@
 </template>
 
 <script lang="ts" setup>
-import { on } from 'events';
-import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from 'vue';
+
+import { nextTick, onMounted, ref } from 'vue';
 import MkMenu from './MkMenu.vue';
 import { MenuItem } from '@/types/menu';
-import * as os from '@/os';
+
 
 const props = defineProps<{
 	items: MenuItem[];
@@ -32,6 +32,7 @@ function setPosition() {
 	const rect = props.targetElement.getBoundingClientRect();
 	const left = props.targetElement.offsetWidth;
 	const top = (rect.top - rootRect.top) - 8;
+	if (el.value == null) return;
 	el.value.style.left = left + 'px';
 	el.value.style.top = top + 'px';
 }
@@ -53,7 +54,7 @@ onMounted(() => {
 
 defineExpose({
 	checkHit: (ev: MouseEvent) => {
-		return (ev.target === el.value || el.value.contains(ev.target));
+		return (ev.target === el.value || (ev.target instanceof Node && el.value?.contains(ev.target) === true));
 	},
 });
 </script>

@@ -12,6 +12,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { BlockDraftOf } from '@/scripts/hpml/block';
+
+
+
 /* eslint-disable vue/no-mutating-props */
 import { } from 'vue';
 import XContainer from '../page-editor.container.vue';
@@ -19,10 +23,11 @@ import MkTextarea from '@/components/form/textarea.vue';
 import MkInput from '@/components/form/input.vue';
 
 withDefaults(defineProps<{
-	value: any
+	value?: BlockDraftOf<'textareaInput'>
 }>(), {
-	value: {
+	value: () => ({ id: '', type: 'textareaInput',
 		name: ''
-	}
+	})
 });
+defineEmits<{ (event: 'remove'): void }>();
 </script>

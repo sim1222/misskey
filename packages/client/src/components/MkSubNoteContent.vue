@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import XMediaList from '@/components/MkMediaList.vue';
 import XPoll from '@/components/MkPoll.vue';
 import { i18n } from '@/i18n';

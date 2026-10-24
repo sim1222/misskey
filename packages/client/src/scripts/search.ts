@@ -36,7 +36,6 @@ export async function search() {
 		//v.$root.$emit('warp', date);
 		os.alert({
 			icon: 'fas fa-history',
-			iconOnly: true, autoClose: true,
 		});
 		return;
 	}

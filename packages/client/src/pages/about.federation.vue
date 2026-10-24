@@ -47,19 +47,21 @@
 </template>
 
 <script lang="ts" setup>
+import type { ApiRequest } from '@/types/api';
+import type { entities } from '@/misskey';
 import { computed, ref } from 'vue';
-import MkButton from '@/components/MkButton.vue';
+
 import MkInput from '@/components/form/input.vue';
 import MkSelect from '@/components/form/select.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkInstanceCardMini from '@/components/MkInstanceCardMini.vue';
 import FormSplit from '@/components/form/split.vue';
-import * as os from '@/os';
+
 import { i18n } from '@/i18n';
 
 let host = ref('');
 let state = ref('federating');
-let sort = ref('+pubSub');
+let sort = ref<NonNullable<ApiRequest<'federation/instances'>['sort']>>('+pubSub');
 const pagination = {
 	endpoint: 'federation/instances' as const,
 	limit: 10,
@@ -78,7 +80,7 @@ const pagination = {
 	})),
 };
 
-function getStatus(instance) {
+function getStatus(instance: entities.Instance) {
 	if (instance.isSuspended) return 'Suspended';
 	if (instance.isBlocked) return 'Blocked';
 	if (instance.isNotResponding) return 'Error';

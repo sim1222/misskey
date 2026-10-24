@@ -12,14 +12,20 @@
 	</template>
 
 	<section class="ilrvjyvi">
-		<XBlocks v-model="value.children" class="children" :hpml="hpml"/>
+		<XBlocks v-model="children" class="children" :hpml="hpml"/>
 	</section>
 </XContainer>
 </template>
 
 <script lang="ts" setup>
+import type { HpmlTypeChecker } from '@/scripts/hpml/type-checker';
+import type { PageBlockList } from '@/types/page-editor';
+import type { BlockDraftOf } from '@/scripts/hpml/block';
+
+
+
 /* eslint-disable vue/no-mutating-props */
-import { defineAsyncComponent, inject, onMounted } from 'vue';
+import { computed, defineAsyncComponent, inject, onMounted } from 'vue';
 import { v4 as uuid } from 'uuid';
 import XContainer from '../page-editor.container.vue';
 import * as os from '@/os';
@@ -28,16 +34,18 @@ import { i18n } from '@/i18n';
 const XBlocks = defineAsyncComponent(() => import('../page-editor.blocks.vue'));
 
 const props = withDefaults(defineProps<{
-	value: any,
-	hpml: any
+	value?: BlockDraftOf<'section'>,
+	hpml: HpmlTypeChecker
 }>(), {
-	value: {
+	value: () => ({ id: '', type: 'section',
 		title: null,
 		children: []
-	}
+	})
 });
 
-const getPageBlockList = inject<(any) => any>('getPageBlockList');
+const children = computed({ get: () => props.value.children ?? (props.value.children = []), set: value => { props.value.children = value; } });
+
+const getPageBlockList = inject<PageBlockList>('getPageBlockList', () => []);
 
 async function rename() {
 	const { canceled, result: title } = await os.inputText({
@@ -53,10 +61,10 @@ async function add() {
 		title: i18n.ts._pages.chooseBlock,
 		groupedItems: getPageBlockList()
 	});
-	if (canceled) return;
+	if (canceled || type == null) return;
 
 	const id = uuid();
-	props.value.children.push({ id, type });
+	children.value.push({ id, type });
 }
 
 onMounted(() => {
@@ -64,6 +72,7 @@ onMounted(() => {
 		rename();
 	}
 });
+defineEmits<{ (event: 'remove'): void }>();
 </script>
 
 <style lang="scss" scoped>

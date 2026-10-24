@@ -10,17 +10,22 @@
 </template>
 
 <script lang="ts" setup>
+import type { BlockDraftOf } from '@/scripts/hpml/block';
+
+
+
 /* eslint-disable vue/no-mutating-props */
 import { } from 'vue';
 import XContainer from '../page-editor.container.vue';
 
 withDefaults(defineProps<{
-	value: any
+	value?: BlockDraftOf<'text'>
 }>(), {
-	value: {
+	value: () => ({ id: '', type: 'text',
 		text: ''
-	}
+	})
 });
+defineEmits<{ (event: 'remove'): void }>();
 </script>
 
 <style lang="scss" scoped>

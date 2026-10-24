@@ -3,7 +3,7 @@
 	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
 	<MkSpacer :content-max="700">
 		<div class="jqqmcavi">
-			<MkButton v-if="pageId" class="button" inline link :to="`/@${ author.username }/pages/${ currentName }`"><i class="fas fa-external-link-square-alt"></i> {{ $ts._pages.viewPage }}</MkButton>
+			<MkButton v-if="pageId && author" class="button" inline link :to="`/@${ author.username }/pages/${ currentName }`"><i class="fas fa-external-link-square-alt"></i> {{ $ts._pages.viewPage }}</MkButton>
 			<MkButton v-if="!readonly" inline primary class="button" @click="save"><i class="fas fa-save"></i> {{ $ts.save }}</MkButton>
 			<MkButton v-if="pageId" inline class="button" @click="duplicate"><i class="fas fa-copy"></i> {{ $ts.duplicate }}</MkButton>
 			<MkButton v-if="pageId && !readonly" inline class="button" danger @click="del"><i class="fas fa-trash-alt"></i> {{ $ts.delete }}</MkButton>
@@ -20,7 +20,7 @@
 				</MkInput>
 
 				<MkInput v-model="name" class="_formBlock">
-					<template #prefix>{{ url }}/@{{ author.username }}/pages/</template>
+					<template #prefix>{{ url }}/@{{ author?.username }}/pages/</template>
 					<template #label>{{ $ts._pages.url }}</template>
 				</MkInput>
 
@@ -37,7 +37,7 @@
 				<div class="eyeCatch">
 					<MkButton v-if="eyeCatchingImageId == null && !readonly" @click="setEyeCatchingImage"><i class="fas fa-plus"></i> {{ $ts._pages.eyeCatchingImageSet }}</MkButton>
 					<div v-else-if="eyeCatchingImage">
-						<img :src="eyeCatchingImage.url" :alt="eyeCatchingImage.name" style="max-width: 100%;"/>
+						<img :src="(eyeCatchingImage.url) ?? undefined" :alt="eyeCatchingImage.name" style="max-width: 100%;"/>
 						<MkButton v-if="!readonly" @click="removeEyeCatchingImage()"><i class="fas fa-trash-alt"></i> {{ $ts._pages.eyeCatchingImageRemove }}</MkButton>
 					</div>
 				</div>
@@ -54,7 +54,7 @@
 
 		<div v-else-if="tab === 'variables'">
 			<div class="qmuvgica">
-				<XDraggable v-show="variables.length > 0" v-model="variables" tag="div" class="variables" item-key="name" handle=".drag-handle" :group="{ name: 'variables' }" animation="150" swap-threshold="0.5">
+				<XDraggable v-show="variables.length > 0" v-model="variables" tag="div" class="variables" item-key="name" handle=".drag-handle" :group="{ name: 'variables' }" animation="150" :swap-threshold="0.5">
 					<template #item="{element}">
 						<XVariable
 							:model-value="element"
@@ -82,9 +82,16 @@
 </template>
 
 <script lang="ts" setup>
+import type { PageBlockList } from '@/types/page-editor';
+import { toApiError } from '@/types/api-error';
+import { isRecord } from '@/scripts/form';
+import type { ApiRequest } from '@/types/api';
+import type { BlockDraft } from '@/scripts/hpml/block';
+import type { Variable } from '@/scripts/hpml/expr';
+import type { entities } from '@/misskey';
 import { defineAsyncComponent, computed, provide, watch, ref } from 'vue';
 import 'prismjs';
-import { highlight, languages } from 'prismjs/components/prism-core';
+
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-okaidia.css';
@@ -97,6 +104,8 @@ import MkButton from '@/components/MkButton.vue';
 import MkSelect from '@/components/form/select.vue';
 import MkSwitch from '@/components/form/switch.vue';
 import MkInput from '@/components/form/input.vue';
+import type { Type } from '@/scripts/hpml';
+import type { Expr } from '@/scripts/hpml/expr';
 import { blockDefs } from '@/scripts/hpml/index';
 import { HpmlTypeChecker } from '@/scripts/hpml/type-checker';
 import { url } from '@/config';
@@ -116,22 +125,22 @@ const props = defineProps<{
 }>();
 
 let tab = ref('settings');
-let author = ref($i);
+let author = ref<entities.User | null>($i);
 let readonly = ref(false);
-let page = ref(null);
-let pageId = ref(null);
-let currentName = ref(null);
+let page = ref<entities.Page | null>(null);
+let pageId = ref<string | null>(null);
+let currentName = ref<string | null>(null);
 let title = ref('');
-let summary = ref(null);
+let summary = ref<string | null>(null);
 let name = ref(Date.now().toString());
-let eyeCatchingImage = ref(null);
-let eyeCatchingImageId = ref(null);
-let font = ref('sans-serif');
-let content = ref([]);
+let eyeCatchingImage = ref<entities.DriveFile | null>(null);
+let eyeCatchingImageId = ref<string | null>(null);
+let font = ref<'serif' | 'sans-serif'>('sans-serif');
+let content = ref<BlockDraft[]>([]);
 let alignCenter = ref(false);
 let hideTitleWhenPinned = ref(false);
-let variables = ref([]);
-let hpml = ref(null);
+let variables = ref<Variable[]>([]);
+const hpml = ref(new HpmlTypeChecker());
 let script = ref('');
 
 provide('readonly', readonly.value);
@@ -148,7 +157,7 @@ watch((eyeCatchingImageId), async () => {
 	}
 });
 
-function getSaveOptions() {
+function getSaveOptions(): ApiRequest<'pages/create'> {
 	return {
 		title: title.value.trim(),
 		name: name.value.trim(),
@@ -166,9 +175,10 @@ function getSaveOptions() {
 function save() {
 	const options = getSaveOptions();
 
-	const onError = err => {
+	const onError = (error: unknown) => {
+ const err = toApiError(error);
 		if (err.id === '3d81ceae-475f-4600-b2a8-2bc116157532') {
-			if (err.info.param === 'name') {
+			if (isRecord(err.info) && err.info.param === 'name') {
 				os.alert({
 					type: 'error',
 					title: i18n.ts._pages.invalidNameTitle,
@@ -184,8 +194,7 @@ function save() {
 	};
 
 	if (pageId.value) {
-		options.pageId = pageId.value;
-		os.api('pages/update', options)
+		os.api('pages/update', { ...options, pageId: pageId.value })
 		.then(page => {
 			currentName.value = name.value.trim();
 			os.alert({
@@ -212,7 +221,7 @@ function del() {
 		type: 'warning',
 		text: i18n.t('removeAreYouSure', { x: title.value.trim() }),
 	}).then(({ canceled }) => {
-		if (canceled) return;
+		if (canceled || pageId.value == null) return;
 		os.api('pages/delete', {
 			pageId: pageId.value,
 		}).then(() => {
@@ -241,11 +250,10 @@ function duplicate() {
 
 async function add() {
 	const { canceled, result: type } = await os.select({
-		type: null,
 		title: i18n.ts._pages.chooseBlock,
 		groupedItems: getPageBlockList(),
 	});
-	if (canceled) return;
+	if (canceled || type == null) return;
 
 	const id = uuid();
 	content.value.push({ id, type });
@@ -257,7 +265,8 @@ async function addVariable() {
 	});
 	if (canceled) return;
 
-	name = name.trim();
+	if (name == null) return;
+ name = name.trim();
 
 	if (hpml.value.isUsedName(name)) {
 		os.alert({
@@ -271,11 +280,11 @@ async function addVariable() {
 	variables.value.push({ id, name, type: null });
 }
 
-function removeVariable(v) {
+function removeVariable(v: Variable) {
 	variables.value = variables.value.filter(x => x.name !== v.name);
 }
 
-function getPageBlockList() {
+function getPageBlockList(): ReturnType<PageBlockList> {
 	return [{
 		label: i18n.ts._pages.contentBlocks,
 		items: [
@@ -306,8 +315,8 @@ function getPageBlockList() {
 	}];
 }
 
-function getScriptBlockList(type: string = null) {
-	const list = [];
+function getScriptBlockList(type: Type = null) {
+	const list: { category?: string; label: string; items: { value: Expr['type']; text: string }[] }[] = [];
 
 	const blocks = blockDefs.filter(block => type == null || block.out == null || block.out === type || typeof block.out === 'number');
 
@@ -335,7 +344,7 @@ function getScriptBlockList(type: string = null) {
 		list.unshift({
 			label: i18n.t('_pages.script.categories.fn'),
 			items: userFns.map(v => ({
-				value: 'fn:' + v.name,
+				value: `fn:${v.name}` as const,
 				text: v.name,
 			})),
 		});
@@ -344,7 +353,7 @@ function getScriptBlockList(type: string = null) {
 	return list;
 }
 
-function setEyeCatchingImage(img) {
+function setEyeCatchingImage(img: MouseEvent) {
 	selectFile(img.currentTarget ?? img.target, null).then(file => {
 		eyeCatchingImageId.value = file.id;
 	});
@@ -354,12 +363,9 @@ function removeEyeCatchingImage() {
 	eyeCatchingImageId.value = null;
 }
 
-function highlighter(code) {
-	return highlight(code, languages.js, 'javascript');
-}
+
 
 async function init() {
-	hpml.value = new HpmlTypeChecker();
 
 	watch((variables), () => {
 		hpml.value.variables = variables.value;
@@ -388,7 +394,8 @@ async function init() {
 		name.value = page.value.name;
 		currentName.value = page.value.name;
 		summary.value = page.value.summary;
-		font.value = page.value.font;
+		if (page.value.font !== 'serif' && page.value.font !== 'sans-serif') throw new TypeError('Invalid page font');
+ font.value = page.value.font;
 		script.value = page.value.script;
 		hideTitleWhenPinned.value = page.value.hideTitleWhenPinned;
 		alignCenter.value = page.value.alignCenter;

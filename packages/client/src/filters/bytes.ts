@@ -1,4 +1,4 @@
-export default (v, digits = 0) => {
+export default (v: number|null, digits = 0) => {
 	if (v == null) return '?';
 	const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
 	if (v === 0) return '0';

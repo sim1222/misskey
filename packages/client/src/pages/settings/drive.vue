@@ -19,7 +19,7 @@
 
 	<FormSection>
 		<template #label>{{ i18n.ts.statistics }}</template>
-		<MkChart src="per-user-drive" :args="{ user: $i }" span="day" :limit="7 * 5" :bar="true" :stacked="true" :detailed="false" :aspect-ratio="6"/>
+		<MkChart src="per-user-drive" :args="{ user: account }" span="day" :limit="7 * 5" :bar="true" :stacked="true" :detailed="false" :aspect-ratio="6"/>
 	</FormSection>
 
 	<FormSection>
@@ -44,6 +44,9 @@
 </template>
 
 <script lang="ts" setup>
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
 import { computed, ref } from 'vue';
 import tinycolor from 'tinycolor2';
 import FormLink from '@/components/form/link.vue';
@@ -57,14 +60,14 @@ import { defaultStore } from '@/store';
 import MkChart from '@/components/MkChart.vue';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
-import { $i } from '@/account';
+
 
 const fetching = ref(true);
 const usage = ref<any>(null);
 const capacity = ref<any>(null);
 const uploadFolder = ref<any>(null);
-let alwaysMarkNsfw = ref($i.alwaysMarkNsfw);
-let autoSensitive = ref($i.autoSensitive);
+let alwaysMarkNsfw = ref(account.alwaysMarkNsfw);
+let autoSensitive = ref(account.autoSensitive);
 
 const meterStyle = computed(() => {
 	return {
@@ -73,7 +76,7 @@ const meterStyle = computed(() => {
 			h: 180 - (usage.value / capacity.value * 180),
 			s: 0.7,
 			l: 0.5,
-		}),
+		}).toRgbString(),
 	};
 });
 
@@ -114,9 +117,9 @@ function saveProfile() {
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.drive,

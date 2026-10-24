@@ -5,20 +5,20 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, type PropType } from 'vue';
 import number from '@/filters/number';
 
 export default defineComponent({
 	props: {
 		value: {
-			type: Number,
+			type: Number as PropType<number | null>,
 			required: true,
 		},
 	},
 
 	setup(props) {
-		const isPlus = computed(() => props.value > 0);
-		const isMinus = computed(() => props.value < 0);
+		const isPlus = computed(() => props.value != null && props.value > 0);
+		const isMinus = computed(() => props.value != null && props.value < 0);
 		const isZero = computed(() => props.value === 0);
 		return {
 			isPlus,

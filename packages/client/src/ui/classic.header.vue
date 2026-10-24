@@ -2,7 +2,7 @@
 <div class="azykntjl">
 	<div class="body">
 		<div class="left">
-			<MkA v-click-anime v-tooltip="$ts.timeline" class="item index" active-class="active" to="/" exact>
+			<MkA v-click-anime v-tooltip="$ts.timeline" class="item index" active-class="active" to="/">
 				<i class="fas fa-home fa-fw"></i>
 			</MkA>
 			<template v-for="item in menu">
@@ -13,7 +13,7 @@
 				</component>
 			</template>
 			<div class="divider"></div>
-			<MkA v-if="$i.isAdmin || $i.isModerator" v-click-anime v-tooltip="$ts.controlPanel" class="item" active-class="active" to="/admin" :behavior="settingsWindowed ? 'modalWindow' : null">
+			<MkA v-if="account.isAdmin || account.isModerator" v-click-anime v-tooltip="$ts.controlPanel" class="item" active-class="active" to="/admin" :behavior="settingsWindowed ? 'modalWindow' : null">
 				<i class="fas fa-door-open fa-fw"></i>
 			</MkA>
 			<button v-click-anime class="item _button" @click="more">
@@ -26,7 +26,7 @@
 				<i class="fas fa-cog fa-fw"></i>
 			</MkA>
 			<button v-click-anime class="item _button account" @click="openAccountMenu">
-				<MkAvatar :user="$i" class="avatar"/><MkAcct class="acct" :user="$i"/>
+				<MkAvatar :user="account" class="avatar"/><MkAcct class="acct" :user="account"/>
 			</button>
 			<div class="post" @click="post">
 				<MkButton class="button" gradate full rounded>
@@ -39,6 +39,8 @@
 </template>
 
 <script lang="ts">
+import { requireAccount } from '@/account';
+import { eventElement } from '@/scripts/event-element';
 import { defineAsyncComponent, defineComponent } from 'vue';
 import { host } from '@/config';
 import { search } from '@/scripts/search';
@@ -55,6 +57,7 @@ export default defineComponent({
 	data() {
 		return {
 			host: host,
+            account: requireAccount(),
 			accounts: [],
 			connection: null,
 			navbarItemDef: navbarItemDef,
@@ -70,7 +73,7 @@ export default defineComponent({
 		otherNavItemIndicated(): boolean {
 			for (const def in this.navbarItemDef) {
 				if (this.menu.includes(def)) continue;
-				if (this.navbarItemDef[def].indicated) return true;
+				if (this.navbarItemDef[def]?.indicated) return true;
 			}
 			return false;
 		},
@@ -100,15 +103,15 @@ export default defineComponent({
 			search();
 		},
 
-		more(ev) {
+		more(ev: MouseEvent) {
 			os.popup(defineAsyncComponent(() => import('@/components/MkLaunchPad.vue')), {
-				src: ev.currentTarget ?? ev.target,
+				src: eventElement(ev),
 				anchor: { x: 'center', y: 'bottom' },
 			}, {
 			}, 'closed');
 		},
 
-		openAccountMenu: (ev) => {
+		openAccountMenu: (ev: MouseEvent) => {
 			openAccountMenu({
 				withExtraOperation: true,
 			}, ev);
@@ -188,7 +191,7 @@ export default defineComponent({
 
 			> .post {
 				display: inline-block;
-			
+
 				> .button {
 					width: 40px;
 					height: 40px;

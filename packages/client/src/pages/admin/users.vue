@@ -30,18 +30,18 @@
 						</MkSelect>
 					</div>
 					<div class="inputs">
-						<MkInput v-model="searchUsername" style="flex: 1;" type="text" :spellcheck="false" @update:modelValue="$refs.users.reload()">
+						<MkInput v-model="searchUsername" style="flex: 1;" type="text" :spellcheck="false">
 							<template #prefix>@</template>
 							<template #label>{{ i18n.ts.username }}</template>
 						</MkInput>
-						<MkInput v-model="searchHost" style="flex: 1;" type="text" :spellcheck="false" :disabled="pagination.params.origin === 'local'" @update:modelValue="$refs.users.reload()">
+						<MkInput v-model="searchHost" style="flex: 1;" type="text" :spellcheck="false" :disabled="origin === 'local'">
 							<template #prefix>@</template>
 							<template #label>{{ i18n.ts.host }}</template>
 						</MkInput>
 					</div>
 
 					<MkPagination v-slot="{items}" ref="paginationComponent" :pagination="pagination" class="users">
-						<MkA v-for="user in items" :key="user.id" v-tooltip.mfm="`Last posted: ${new Date(user.updatedAt).toLocaleString()}`" class="user" :to="`/user-info/${user.id}`">
+						<MkA v-for="user in items" :key="user.id" v-tooltip.mfm="`Last posted: ${new Date(user.updatedAt ?? 0).toLocaleString()}`" class="user" :to="`/user-info/${user.id}`">
 							<MkUserCardMini :user="user"/>
 						</MkA>
 					</MkPagination>
@@ -53,6 +53,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { ApiRequest } from '@/types/api';
+import type { PaginationExposed } from '@/types/paging';
 import { computed, ref } from 'vue';
 import XHeader from './_header_.vue';
 import MkInput from '@/components/form/input.vue';
@@ -63,12 +65,13 @@ import { lookupUser } from '@/scripts/lookup-user';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
+import { User } from '../../../../shared/entities';
 
-let paginationComponent = ref<InstanceType<typeof MkPagination>>();
+let paginationComponent = ref<PaginationExposed<'admin/show-users'>>();
 
-let sort = ref('+createdAt');
-let state = ref('all');
-let origin = ref('local');
+let sort = ref<NonNullable<ApiRequest<'admin/show-users'>['sort']>>('+createdAt');
+let state = ref<NonNullable<ApiRequest<'admin/show-users'>['state']>>('all');
+let origin = ref<NonNullable<ApiRequest<'admin/show-users'>['origin']>>('local');
 let searchUsername = ref('');
 let searchHost = ref('');
 const pagination = {
@@ -94,23 +97,23 @@ async function addUser() {
 	const { canceled: canceled1, result: username } = await os.inputText({
 		title: i18n.ts.username,
 	});
-	if (canceled1) return;
+	if (canceled1 || username == null) return;
 
 	const { canceled: canceled2, result: password } = await os.inputText({
 		title: i18n.ts.password,
 		type: 'password',
 	});
-	if (canceled2) return;
+	if (canceled2 || password == null) return;
 
 	os.apiWithDialog('admin/accounts/create', {
 		username: username,
 		password: password,
 	}).then(res => {
-		paginationComponent.value.reload();
+		paginationComponent.value?.reload();
 	});
 }
 
-function show(user) {
+function show(user: User) {
 	os.pageWindow(`/user-info/${user.id}`);
 }
 
@@ -154,7 +157,7 @@ definePageMetadata(computed(() => ({
 				}
 			}
 		}
-	
+
 		> .users {
 			margin-top: var(--margin);
 			display: grid;

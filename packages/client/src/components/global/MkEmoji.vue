@@ -1,13 +1,13 @@
 <template>
-<img v-if="customEmoji" class="mk-emoji custom" :class="{ normal, noStyle }" :src="url" :alt="alt" :title="alt" decoding="async"/>
-<img v-else-if="char && !useOsNativeEmojis" class="mk-emoji" :src="url" :alt="alt" :title="alt" decoding="async"/>
+<img v-if="customEmoji" class="mk-emoji custom" :class="{ normal, noStyle }" :src="(url) ?? undefined" :alt="(alt) ?? undefined" :title="(alt) ?? undefined" decoding="async"/>
+<img v-else-if="char && !useOsNativeEmojis" class="mk-emoji" :src="(url) ?? undefined" :alt="(alt) ?? undefined" :title="(alt) ?? undefined" decoding="async"/>
 <span v-else-if="char && useOsNativeEmojis">{{ char }}</span>
 <span v-else>{{ emoji }}</span>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
-import { CustomEmoji } from 'misskey-js/built/entities';
+import { computed } from 'vue';
+
 import { getStaticImageUrl } from '@/scripts/get-static-image-url';
 import { char2filePath } from '@/scripts/twemoji-base';
 import { defaultStore } from '@/store';
@@ -17,7 +17,7 @@ const props = defineProps<{
 	emoji: string;
 	normal?: boolean;
 	noStyle?: boolean;
-	customEmojis?: CustomEmoji[];
+	customEmojis?: { name: string; url: string | null }[];
 	isReaction?: boolean;
 }>();
 

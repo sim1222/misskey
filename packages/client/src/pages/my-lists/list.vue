@@ -38,6 +38,8 @@
 </template>
 
 <script lang="ts" setup>
+import { requireValue } from '@/scripts/require-value';
+import type { entities } from '@/misskey';
 import { computed, watch, ref } from 'vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
@@ -49,8 +51,9 @@ const props = defineProps<{
 	listId: string;
 }>();
 
-let list = ref(null);
-let users = ref([]);
+let list = ref<entities.UserList | null>(null);
+const getList = () => requireValue(list.value, 'User list');
+let users = ref<entities.User[]>([]);
 
 function fetchList() {
 	os.api('users/lists/show', {
@@ -58,7 +61,7 @@ function fetchList() {
 	}).then(_list => {
 		list.value = _list;
 		os.api('users/show', {
-			userIds: list.value.userIds,
+			userIds: getList().userIds,
 		}).then(_users => {
 			users.value = _users;
 		});
@@ -68,7 +71,7 @@ function fetchList() {
 function addUser() {
 	os.selectUser().then(user => {
 		os.apiWithDialog('users/lists/push', {
-			listId: list.value.id,
+			listId: getList().id,
 			userId: user.id,
 		}).then(() => {
 			users.value.push(user);
@@ -76,9 +79,9 @@ function addUser() {
 	});
 }
 
-function removeUser(user) {
+function removeUser(user: entities.User) {
 	os.api('users/lists/pull', {
-		listId: list.value.id,
+		listId: getList().id,
 		userId: user.id,
 	}).then(() => {
 		users.value = users.value.filter(x => x.id !== user.id);
@@ -88,27 +91,27 @@ function removeUser(user) {
 async function renameList() {
 	const { canceled, result: name } = await os.inputText({
 		title: i18n.ts.enterListName,
-		default: list.value.name,
+		default: getList().name,
 	});
-	if (canceled) return;
+	if (canceled || name == null) return;
 
 	await os.api('users/lists/update', {
-		listId: list.value.id,
+		listId: getList().id,
 		name: name,
 	});
 
-	list.value.name = name;
+	getList().name = name;
 }
 
 async function deleteList() {
 	const { canceled } = await os.confirm({
 		type: 'warning',
-		text: i18n.t('removeAreYouSure', { x: list.value.name }),
+		text: i18n.t('removeAreYouSure', { x: getList().name }),
 	});
 	if (canceled) return;
 
 	await os.api('users/lists/delete', {
-		listId: list.value.id,
+		listId: getList().id,
 	});
 	os.success();
 	mainRouter.push('/my/lists');
@@ -121,7 +124,7 @@ const headerActions = computed(() => []);
 const headerTabs = computed(() => []);
 
 definePageMetadata(computed(() => list.value ? {
-	title: list.value.name,
+	title: getList().name,
 	icon: 'fas fa-list-ul',
 } : null));
 </script>

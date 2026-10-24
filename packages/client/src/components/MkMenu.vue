@@ -21,7 +21,7 @@
 				<span>{{ item.text }}</span>
 				<span v-if="item.indicate" class="indicator"><i class="fas fa-circle"></i></span>
 			</MkA>
-			<a v-else-if="item.type === 'a'" :href="item.href" :target="item.target" :download="item.download" :tabindex="i" class="_button item" @click="close(true)" @mouseenter.passive="onItemMouseEnter(item)" @mouseleave.passive="onItemMouseLeave(item)">
+			<a v-else-if="item.type === 'a'" :href="item.href ?? undefined" :target="item.target" :download="item.download" :tabindex="i" class="_button item" @click="close(true)" @mouseenter.passive="onItemMouseEnter(item)" @mouseleave.passive="onItemMouseLeave(item)">
 				<i v-if="item.icon" class="fa-fw" :class="item.icon"></i>
 				<span>{{ item.text }}</span>
 				<span v-if="item.indicate" class="indicator"><i class="fas fa-circle"></i></span>
@@ -49,21 +49,25 @@
 			<span>{{ i18n.ts.none }}</span>
 		</span>
 	</div>
-	<div v-if="childMenu" class="child">
-		<XChild ref="child" :items="childMenu" :target-element="childTarget" :root-element="itemsEl" showing @actioned="childActioned"/>
+	<div v-if="childMenu && childTarget && itemsEl" class="child">
+		<XChild ref="child" :items="childMenu" :target-element="childTarget" :root-element="itemsEl" @actioned="childActioned"/>
 	</div>
 </div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, onUnmounted, Ref, ref, watch, computed } from 'vue';
+import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, watch, computed, reactive, type VNodeProps, type UnwrapRef } from 'vue';
 import { focusPrev, focusNext } from '@/scripts/focus';
 import FormSwitch from '@/components/form/switch.vue';
-import { MenuItem, InnerMenuItem, MenuPending, MenuAction } from '@/types/menu';
+import { MenuItem, InnerMenuItem, MenuPending, MenuAction, MenuParent } from '@/types/menu';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 
-const XChild = defineAsyncComponent(() => import('./MkMenu.child.vue'));
+type ChildMenu = new () => {
+ $props: { items: MenuItem[]; targetElement: HTMLElement; rootElement: HTMLElement; width?: number; viaKeyboard?: boolean; onActioned?: () => void; onClosed?: () => void } & VNodeProps;
+ checkHit: (event: MouseEvent) => boolean;
+};
+const XChild: ChildMenu = defineAsyncComponent(() => import('./MkMenu.child.vue'));
 
 const props = defineProps<{
 	items: MenuItem[];
@@ -80,9 +84,9 @@ const emit = defineEmits<{
 
 let itemsEl = ref<HTMLDivElement>();
 
-let items2: InnerMenuItem[] = ref([]);
+let items2 = ref<InnerMenuItem[]>([]);
 
-let child = ref<InstanceType<typeof XChild>>();
+let child = ref<{ checkHit: (event: MouseEvent) => boolean }>();
 
 let keymap = computed(() => ({
 	'up|k|shift+tab': focusUp,
@@ -90,7 +94,7 @@ let keymap = computed(() => ({
 	'esc': close,
 }));
 
-let childShowingItem = ref<MenuItem | null>();
+let childShowingItem = ref<UnwrapRef<MenuParent> | null>();
 
 watch(() => props.items, () => {
 	const items: (MenuItem | MenuPending)[] = [...props.items].filter(item => item !== undefined);
@@ -101,7 +105,7 @@ watch(() => props.items, () => {
 		if (item && 'then' in item) { // if item is Promise
 			items[i] = { type: 'pending' };
 			item.then(actualItem => {
-				items2.value[i] = actualItem;
+				items2.value[i] = actualItem === null ? null : reactive(actualItem);
 			});
 		}
 	}
@@ -125,27 +129,29 @@ function childActioned() {
 }
 
 function onGlobalMousedown(event: MouseEvent) {
-	if (childTarget.value && (event.target === childTarget.value || childTarget.value.contains(event.target))) return;
+	if (childTarget.value && (event.target === childTarget.value || event.target instanceof Node && childTarget.value.contains(event.target))) return;
 	if (child.value && child.value.checkHit(event)) return;
 	closeChild();
 }
 
 let childCloseTimer: null | number = null;
-function onItemMouseEnter(item) {
+function onItemMouseEnter(_item: UnwrapRef<InnerMenuItem>) {
 	childCloseTimer = window.setTimeout(() => {
 		closeChild();
 	}, 300);
 }
-function onItemMouseLeave(item) {
+function onItemMouseLeave(_item: UnwrapRef<InnerMenuItem>) {
 	if (childCloseTimer) window.clearTimeout(childCloseTimer);
 }
 
-async function showChildren(item: MenuItem, ev: MouseEvent) {
+async function showChildren(item: UnwrapRef<MenuParent>, ev: MouseEvent) {
+	const target = ev.currentTarget ?? ev.target;
+	if (!(target instanceof HTMLElement)) return;
 	if (props.asDrawer) {
-		os.popupMenu(item.children, ev.currentTarget ?? ev.target);
+		os.popupMenu(item.children, target);
 		close();
 	} else {
-		childTarget.value = ev.currentTarget ?? ev.target;
+		childTarget.value = target;
 		childMenu.value = item.children;
 		childShowingItem.value = item;
 	}
@@ -171,7 +177,8 @@ function focusDown() {
 onMounted(() => {
 	if (props.viaKeyboard) {
 		nextTick(() => {
-			focusNext(itemsEl.value.children[0], true, false);
+			if (itemsEl.value == null) return;
+			focusNext(itemsEl.value.children[0] ?? null, true, false);
 		});
 	}
 

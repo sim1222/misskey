@@ -44,27 +44,29 @@
 </template>
 
 <script lang="ts" setup>
+import type { ChannelConnection, Channels, ServerStats } from '@/misskey';
+import type { ApiResponse } from '@/types/api';
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import bytes from '@/filters/bytes';
 
 const props = defineProps<{
-	connection: any,
-	meta: any
+	connection: ChannelConnection<Channels['serverStats']>,
+	meta: ApiResponse<'server-info'>
 }>();
 
-let viewBoxX: number = ref(50);
-let viewBoxY: number = ref(30);
-let stats: any[] = ref([]);
-let inPolylinePoints: string = ref('');
-let outPolylinePoints: string = ref('');
-let inPolygonPoints: string = ref('');
-let outPolygonPoints: string = ref('');
+let viewBoxX = ref<number>(50);
+let viewBoxY = ref<number>(30);
+let stats = ref<ServerStats[]>([]);
+let inPolylinePoints = ref<string>('');
+let outPolylinePoints = ref<string>('');
+let inPolygonPoints = ref<string>('');
+let outPolygonPoints = ref<string>('');
 let inHeadX: any = ref(null);
 let inHeadY: any = ref(null);
 let outHeadX: any = ref(null);
 let outHeadY: any = ref(null);
-let inRecent: number = ref(0);
-let outRecent: number = ref(0);
+let inRecent = ref<number>(0);
+let outRecent = ref<number>(0);
 
 onMounted(() => {
 	props.connection.on('stats', onStats);
@@ -79,7 +81,7 @@ onBeforeUnmount(() => {
 	props.connection.off('statsLog', onStatsLog);
 });
 
-function onStats(connStats) {
+function onStats(connStats: ServerStats) {
 	stats.value.push(connStats);
 	if (stats.value.length > 50) stats.value.shift();
 
@@ -103,7 +105,7 @@ function onStats(connStats) {
 	outRecent.value = connStats.net.tx;
 }
 
-function onStatsLog(statsLog) {
+function onStatsLog(statsLog: ServerStats[]) {
 	for (const revStats of [...statsLog].reverse()) {
 		onStats(revStats);
 	}

@@ -13,17 +13,16 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
 import MkTooltip from './MkTooltip.vue';
 
-const props = defineProps<{
+defineProps<{
 	showing: boolean;
 	x: number;
 	y: number;
 	title?: string;
 	series?: {
-		backgroundColor: string;
-		borderColor: string;
+		backgroundColor?: string;
+		borderColor?: string;
 		text: string;
 	}[];
 }>();

@@ -18,17 +18,17 @@
 </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup generic="T">
 import { computed } from 'vue';
 
 const props = defineProps<{
-	modelValue: any;
-	value: any;
-	disabled: boolean;
+	modelValue: T;
+	value: T;
+	disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
-	(ev: 'update:modelValue', value: any): void;
+	(ev: 'update:modelValue', value: T): void;
 }>();
 
 let checked = computed(() => props.modelValue === props.value);

@@ -19,8 +19,9 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import type { ApiResponse } from '@/types/api';
+import { ref } from 'vue';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import { GetFormResultType } from '@/scripts/form';
 import MkContainer from '@/components/MkContainer.vue';
 import MkMiniChart from '@/components/MkMiniChart.vue';
@@ -43,7 +44,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps> & { foldable?: boolean; scrollable?: boolean; }>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; foldable?: boolean; scrollable?: boolean; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -51,8 +52,8 @@ const { widgetProps, configure } = useWidgetPropsManager(name,
 	emit,
 );
 
-const instances = ref([]);
-const charts = ref([]);
+const instances = ref<ApiResponse<'federation/instances'>>([]);
+const charts = ref<ApiResponse<'charts/instance'>[]>([]);
 const fetching = ref(true);
 
 const fetch = async () => {

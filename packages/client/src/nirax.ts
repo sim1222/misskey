@@ -1,11 +1,11 @@
 // NIRAX --- A lightweight router
 
 import { EventEmitter } from 'eventemitter3';
-import { Ref, Component, ref, shallowRef, ShallowRef } from 'vue';
+import { Component, shallowRef, ShallowRef } from 'vue';
 import { pleaseLogin } from '@/scripts/please-login';
 import { safeURIDecode } from '@/scripts/safe-uri-decode';
 
-type RouteDef = {
+export type RouteDef = {
 	path: string;
 	component: Component;
 	query?: Record<string, string>;
@@ -72,8 +72,8 @@ export class Router extends EventEmitter<{
 }> {
 	private routes: RouteDef[];
 	public current: Resolved;
-	public currentRef: ShallowRef<Resolved> = shallowRef();
-	public currentRoute: ShallowRef<RouteDef> = shallowRef();
+	public currentRef: ShallowRef<Resolved>;
+	public currentRoute: ShallowRef<RouteDef>;
 	private currentPath: string;
 	private currentKey = Date.now().toString();
 
@@ -84,6 +84,11 @@ export class Router extends EventEmitter<{
 
 		this.routes = routes;
 		this.currentPath = currentPath;
+		const initial = this.resolve(currentPath);
+		if (initial === null) throw new Error('no route found for: ' + currentPath);
+		this.current = initial;
+		this.currentRef = shallowRef(initial);
+		this.currentRoute = shallowRef(initial.route);
 		this.navigate(currentPath, null, false);
 	}
 
@@ -159,11 +164,11 @@ export class Router extends EventEmitter<{
 					if (route.hash != null && hash != null) {
 						props.set(route.hash, safeURIDecode(hash));
 					}
-	
+
 					if (route.query != null && queryString != null) {
 						const queryObject = [...new URLSearchParams(queryString).entries()]
-							.reduce((obj, entry) => ({ ...obj, [entry[0]]: entry[1] }), {});
-	
+							.reduce<Record<string, string>>((obj, entry) => ({ ...obj, [entry[0]]: entry[1] }), {});
+
 						for (const q in route.query) {
 							const as = route.query[q];
 							if (queryObject[q]) {
@@ -171,7 +176,7 @@ export class Router extends EventEmitter<{
 							}
 						}
 					}
-	
+
 					return {
 						route,
 						props,

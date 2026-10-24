@@ -33,7 +33,7 @@ import { defaultStore } from '@/store';
 
 withDefaults(defineProps<{
 	manualShowing?: boolean | null;
-	src?: HTMLElement;
+	src?: HTMLElement | null;
 	showPinned?: boolean;
 	asReactionPicker?: boolean;
 }>(), {
@@ -43,7 +43,7 @@ withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-	(ev: 'done', v: any): void;
+	(ev: 'done', v: string | { reaction: string; withRenote: boolean }): void;
 	(ev: 'close'): void;
 	(ev: 'closed'): void;
 }>();
@@ -51,7 +51,7 @@ const emit = defineEmits<{
 const modal = ref<InstanceType<typeof MkModal>>();
 const picker = ref<InstanceType<typeof MkEmojiPicker>>();
 
-function chosen(results: { reaction: string, withRenote: boolean }) {
+function chosen(results: string | { reaction: string; withRenote: boolean }) {
 	emit('done', results);
 	modal.value?.close();
 }

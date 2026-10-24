@@ -11,12 +11,14 @@
 </template>
 
 <script lang="ts" setup>
+
+import type { ApiResponse } from '@/types/api';
 import { computed } from 'vue';
 import XPie from './pie.vue';
 import bytes from '@/filters/bytes';
 
 const props = defineProps<{
-	meta: any; // TODO
+	meta: ApiResponse<'server-info'>; // TODO
 }>();
 
 const usage = computed(() => props.meta.fs.used / props.meta.fs.total);

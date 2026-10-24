@@ -6,7 +6,7 @@
 	:with-ok-button="true"
 	:ok-button-disabled="false"
 	@ok="ok()"
-	@close="dialog.close()"
+	@close="dialog?.close()"
 	@closed="emit('closed')"
 >
 	<template #header>{{ i18n.ts.notificationSetting }}</template>
@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { notificationTypes } from 'misskey-js';
+import { notificationTypes } from '@/misskey';
 import MkSwitch from './form/switch.vue';
 import MkInfo from './MkInfo.vue';
 import MkButton from './MkButton.vue';
@@ -37,7 +37,7 @@ import XModalWindow from '@/components/MkModalWindow.vue';
 import { i18n } from '@/i18n';
 
 const emit = defineEmits<{
-	(ev: 'done', v: { includingTypes: string[] | null }): void,
+	(ev: 'done', v: { includingTypes: typeof notificationTypes[number][] | null }): void,
 	(ev: 'closed'): void,
 }>();
 
@@ -53,7 +53,7 @@ let includingTypes = computed(() => props.includingTypes || []);
 
 const dialog = ref<InstanceType<typeof XModalWindow>>();
 
-let typesMap = ref<Record<typeof notificationTypes[number], boolean>>({});
+const typesMap = ref<Partial<Record<typeof notificationTypes[number], boolean>>>({});
 let useGlobalSetting = ref((includingTypes.value === null || includingTypes.value.length === 0) && props.showGlobalToggle);
 
 for (const ntype of notificationTypes) {
@@ -65,23 +65,22 @@ function ok() {
 		emit('done', { includingTypes: null });
 	} else {
 		emit('done', {
-			includingTypes: (Object.keys(typesMap.value) as typeof notificationTypes[number][])
-				.filter(type => typesMap.value[type]),
+			includingTypes: notificationTypes.filter(type => typesMap.value[type]),
 		});
 	}
 
-	dialog.value.close();
+	dialog.value?.close();
 }
 
 function disableAll() {
-	for (const type in typesMap.value) {
-		typesMap.value[type as typeof notificationTypes[number]] = false;
+	for (const type of notificationTypes) {
+		typesMap.value[type] = false;
 	}
 }
 
 function enableAll() {
-	for (const type in typesMap.value) {
-		typesMap.value[type as typeof notificationTypes[number]] = true;
+	for (const type of notificationTypes) {
+		typesMap.value[type] = true;
 	}
 }
 </script>

@@ -15,7 +15,7 @@ defineProps<{
 	notification: any; // TODO
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
 	(ev: 'closed'): void;
 }>();
 

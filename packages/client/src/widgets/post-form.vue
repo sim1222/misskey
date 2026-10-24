@@ -5,7 +5,7 @@
 <script lang="ts" setup>
 import { } from 'vue';
 import { GetFormResultType } from '@/scripts/form';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import XPostForm from '@/components/MkPostForm.vue';
 
 const name = 'postForm';
@@ -19,9 +19,9 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const { configure } = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,

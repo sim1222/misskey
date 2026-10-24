@@ -1,3 +1,4 @@
+import type { entities } from '@/misskey';
 import * as Acct from 'misskey-js/built/acct';
 import { defineAsyncComponent } from 'vue';
 import { i18n } from '@/i18n';
@@ -9,7 +10,7 @@ import { $i, iAmModerator } from '@/account';
 import { mainRouter } from '@/router';
 import { Router } from '@/nirax';
 
-export function getUserMenu(user, router: Router = mainRouter) {
+export function getUserMenu(user: entities.UserDetailed, router: Router = mainRouter) {
 	const meId = $i ? $i.id : null;
 
 	async function pushList() {
@@ -28,7 +29,7 @@ export function getUserMenu(user, router: Router = mainRouter) {
 				value: list.id, text: list.name,
 			})),
 		});
-		if (canceled) return;
+		if (canceled || listId === null) return;
 		os.apiWithDialog('users/lists/push', {
 			listId: listId,
 			userId: user.id,
@@ -50,7 +51,7 @@ export function getUserMenu(user, router: Router = mainRouter) {
 				value: group.id, text: group.name,
 			})),
 		});
-		if (canceled) return;
+		if (canceled || groupId === null) return;
 		os.apiWithDialog('users/groups/invite', {
 			groupId: groupId,
 			userId: user.id,

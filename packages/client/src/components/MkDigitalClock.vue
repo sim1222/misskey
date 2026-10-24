@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<{
 	offset: 0 - new Date().getTimezoneOffset(),
 });
 
-let intervalId;
+let intervalId: number|undefined;
 const hh = ref('');
 const mm = ref('');
 const ss = ref('');

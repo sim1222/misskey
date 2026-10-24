@@ -4,12 +4,13 @@
 
 	<div class="wtdtxvec">
 		<div v-if="!(column.widgets && column.widgets.length > 0) && !edit" class="intro">{{ i18n.ts._deck.widgetsIntroduction }}</div>
-		<XWidgets :edit="edit" :widgets="column.widgets" @add-widget="addWidget" @remove-widget="removeWidget" @update-widget="updateWidget" @update-widgets="updateWidgets" @exit="edit = false"/>
+		<XWidgets :edit="edit" :widgets="column.widgets ?? []" @add-widget="addWidget" @remove-widget="removeWidget" @update-widget="updateWidget" @update-widgets="updateWidgets" @exit="edit = false"/>
 	</div>
 </XColumn>
 </template>
 
 <script lang="ts" setup>
+import type { WidgetSpec, WidgetUpdate } from '@/types/widget';
 import { ref } from 'vue';
 import XColumn from './column.vue';
 import { addColumnWidget, Column, removeColumnWidget, setColumnWidgets, updateColumnWidget } from './deck-store';
@@ -27,19 +28,19 @@ const emit = defineEmits<{
 
 let edit = ref(false);
 
-function addWidget(widget) {
+function addWidget(widget: WidgetSpec) {
 	addColumnWidget(props.column.id, widget);
 }
 
-function removeWidget(widget) {
+function removeWidget(widget: WidgetSpec) {
 	removeColumnWidget(props.column.id, widget);
 }
 
-function updateWidget({ id, data }) {
+function updateWidget({ id, data }: WidgetUpdate) {
 	updateColumnWidget(props.column.id, id, data);
 }
 
-function updateWidgets(widgets) {
+function updateWidgets(widgets: WidgetSpec[]) {
 	setColumnWidgets(props.column.id, widgets);
 }
 

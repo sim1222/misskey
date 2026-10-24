@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from '@/misskey';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 
@@ -30,37 +30,36 @@ const emit = defineEmits<{
 	(ev: 'removeFolder', v: Misskey.entities.DriveFolder['id']): void;
 }>();
 
-const hover = ref(false);
+
 const draghover = ref(false);
 
 function onClick() {
 	emit('move', props.folder);
 }
 
-function onMouseover() {
-	hover.value = true;
-}
 
-function onMouseout() {
-	hover.value = false;
-}
+
+
 
 function onDragover(ev: DragEvent) {
-	if (!ev.dataTransfer) return;
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
+	if (!evdataTransfer) return;
 
 	// このフォルダがルートかつカレントディレクトリならドロップ禁止
 	if (props.folder == null && props.parentFolder == null) {
-		ev.dataTransfer.dropEffect = 'none';
+		evdataTransfer.dropEffect = 'none';
 	}
 
-	const isFile = ev.dataTransfer.items[0].kind === 'file';
-	const isDriveFile = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
-	const isDriveFolder = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FOLDER_;
+	const isFile = evdataTransfer.items[0].kind === 'file';
+	const isDriveFile = evdataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
+	const isDriveFolder = evdataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FOLDER_;
 
 	if (isFile || isDriveFile || isDriveFolder) {
-		ev.dataTransfer.dropEffect = ev.dataTransfer.effectAllowed === 'all' ? 'copy' : 'move';
+		evdataTransfer.dropEffect = evdataTransfer.effectAllowed === 'all' ? 'copy' : 'move';
 	} else {
-		ev.dataTransfer.dropEffect = 'none';
+		evdataTransfer.dropEffect = 'none';
 	}
 
 	return false;
@@ -75,20 +74,23 @@ function onDragleave() {
 }
 
 function onDrop(ev: DragEvent) {
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
 	draghover.value = false;
 
-	if (!ev.dataTransfer) return;
+	if (!evdataTransfer) return;
 
 	// ファイルだったら
-	if (ev.dataTransfer.files.length > 0) {
-		for (const file of Array.from(ev.dataTransfer.files)) {
+	if (evdataTransfer.files.length > 0) {
+		for (const file of Array.from(evdataTransfer.files)) {
 			emit('upload', file, props.folder);
 		}
 		return;
 	}
 
 	//#region ドライブのファイル
-	const driveFile = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
+	const driveFile = evdataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
 	if (driveFile != null && driveFile !== '') {
 		const file = JSON.parse(driveFile);
 		emit('removeFile', file.id);
@@ -100,7 +102,7 @@ function onDrop(ev: DragEvent) {
 	//#endregion
 
 	//#region ドライブのフォルダ
-	const driveFolder = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FOLDER_);
+	const driveFolder = evdataTransfer.getData(_DATA_TRANSFER_DRIVE_FOLDER_);
 	if (driveFolder != null && driveFolder !== '') {
 		const folder = JSON.parse(driveFolder);
 		// 移動先が自分自身ならreject

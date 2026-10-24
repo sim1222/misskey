@@ -50,7 +50,7 @@
 		<FormSwitch v-model="useSystemFont" class="_formBlock">{{ i18n.ts.useSystemFont }}</FormSwitch>
 		<FormSwitch v-model="useOsNativeEmojis" class="_formBlock">
 			{{ i18n.ts.useOsNativeEmojis }}
-			<div><Mfm :key="useOsNativeEmojis" text="🍮🍦🍭🍩🍰🍫🍬🥞🍪"/></div>
+			<div><Mfm :key="String(useOsNativeEmojis)" text="🍮🍦🍭🍩🍰🍫🍬🥞🍪"/></div>
 		</FormSwitch>
 		<FormSwitch v-model="disableDrawer" class="_formBlock">{{ i18n.ts.disableDrawer }}</FormSwitch>
 
@@ -179,9 +179,9 @@ watch([
 	await reloadAsk();
 });
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.general,

@@ -1,17 +1,18 @@
+import type { NoteUpdatedEvent } from 'misskey-js/built/streaming';
 import { onUnmounted, Ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import { stream } from '@/stream';
 import { $i } from '@/account';
 
 export function useNoteCapture(props: {
-	rootEl: Ref<HTMLElement>;
+	rootEl: Ref<HTMLElement | undefined>;
 	note: Ref<misskey.entities.Note>;
 	isDeletedRef: Ref<boolean>;
 }) {
 	const note = props.note;
 	const connection = $i ? stream : null;
 
-	function onStreamNoteUpdated(noteData): void {
+	function onStreamNoteUpdated(noteData: NoteUpdatedEvent): void {
 		const { type, id, body } = noteData;
 
 		if (id !== note.value.id) return;
@@ -55,7 +56,9 @@ export function useNoteCapture(props: {
 			case 'pollVoted': {
 				const choice = body.choice;
 
-				const choices = [...note.value.poll.choices];
+				const poll = note.value.poll;
+				if (!poll || !poll.choices[choice]) return;
+				const choices = [...poll.choices];
 				choices[choice] = {
 					...choices[choice],
 					votes: choices[choice].votes + 1,
@@ -64,7 +67,7 @@ export function useNoteCapture(props: {
 					} : {})
 				};
 
-				note.value.poll.choices = choices;
+				poll.choices = choices;
 				break;
 			}
 
@@ -78,7 +81,7 @@ export function useNoteCapture(props: {
 	function capture(withHandler = false): void {
 		if (connection) {
 			// TODO: このノートがストリーミング経由で流れてきた場合のみ sr する
-			connection.send(document.body.contains(props.rootEl.value) ? 'sr' : 's', { id: note.value.id });
+			connection.send(document.body.contains(props.rootEl.value ?? null) ? 'sr' : 's', { id: note.value.id });
 			if (withHandler) connection.on('noteUpdated', onStreamNoteUpdated);
 		}
 	}
@@ -95,12 +98,12 @@ export function useNoteCapture(props: {
 	function onStreamConnected() {
 		capture(false);
 	}
-	
+
 	capture(true);
 	if (connection) {
 		connection.on('_connected_', onStreamConnected);
 	}
-	
+
 	onUnmounted(() => {
 		decapture(true);
 		if (connection) {

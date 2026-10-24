@@ -1,8 +1,9 @@
+import type { ObjectDirective } from 'vue';
 import Ripple from '@/components/MkRipple.vue';
 import { popup } from '@/os';
 
 export default {
-	mounted(el, binding, vn) {
+	mounted(el, binding) {
 		// 明示的に false であればバインドしない
 		if (binding.value === false) return;
 
@@ -15,4 +16,4 @@ export default {
 			popup(Ripple, { x, y }, {}, 'end');
 		});
 	}
-};
+} satisfies ObjectDirective<HTMLElement, boolean | undefined>;

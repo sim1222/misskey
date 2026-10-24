@@ -54,7 +54,7 @@
 					@dragend="isDragSource = false"
 				/>
 				<!-- SEE: https://stackoverflow.com/questions/18744164/flex-box-align-last-row-to-grid -->
-				<div v-for="(n, i) in 16" :key="i" class="padding"></div>
+				<div v-for="i in 16" :key="i - 1" class="padding"></div>
 				<MkButton v-if="moreFolders" ref="moreFolders">{{ i18n.ts.loadMore }}</MkButton>
 			</div>
 			<div v-show="files.length > 0" ref="filesContainer" class="files">
@@ -71,7 +71,7 @@
 					@dragend="isDragSource = false"
 				/>
 				<!-- SEE: https://stackoverflow.com/questions/18744164/flex-box-align-last-row-to-grid -->
-				<div v-for="(n, i) in 16" :key="i" class="padding"></div>
+				<div v-for="i in 16" :key="i - 1" class="padding"></div>
 				<MkButton v-show="moreFiles" ref="loadMoreFiles" @click="fetchMoreFiles">{{ i18n.ts.loadMore }}</MkButton>
 			</div>
 			<div v-if="files.length == 0 && folders.length == 0 && !fetching" class="empty">
@@ -88,8 +88,9 @@
 </template>
 
 <script lang="ts" setup>
-import { markRaw, nextTick, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import * as Misskey from 'misskey-js';
+import type { MenuItem } from '@/types/menu';
+import { nextTick, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import * as Misskey from '@/misskey';
 import MkButton from './MkButton.vue';
 import XNavFolder from '@/components/MkDrive.navFolder.vue';
 import XFolder from '@/components/MkDrive.folder.vue';
@@ -183,22 +184,25 @@ function onStreamDriveFolderDeleted(folderId: string) {
 }
 
 function onDragover(ev: DragEvent): any {
-	if (!ev.dataTransfer) return;
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
+	if (!evdataTransfer) return;
 
 	// ドラッグ元が自分自身の所有するアイテムだったら
 	if (isDragSource.value) {
 		// 自分自身にはドロップさせない
-		ev.dataTransfer.dropEffect = 'none';
+		evdataTransfer.dropEffect = 'none';
 		return;
 	}
 
-	const isFile = ev.dataTransfer.items[0].kind === 'file';
-	const isDriveFile = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
-	const isDriveFolder = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FOLDER_;
+	const isFile = evdataTransfer.items[0].kind === 'file';
+	const isDriveFile = evdataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
+	const isDriveFolder = evdataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FOLDER_;
 	if (isFile || isDriveFile || isDriveFolder) {
-		ev.dataTransfer.dropEffect = ev.dataTransfer.effectAllowed === 'all' ? 'copy' : 'move';
+		evdataTransfer.dropEffect = evdataTransfer.effectAllowed === 'all' ? 'copy' : 'move';
 	} else {
-		ev.dataTransfer.dropEffect = 'none';
+		evdataTransfer.dropEffect = 'none';
 	}
 
 	return false;
@@ -213,20 +217,23 @@ function onDragleave() {
 }
 
 function onDrop(ev: DragEvent): any {
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
 	draghover.value = false;
 
-	if (!ev.dataTransfer) return;
+	if (!evdataTransfer) return;
 
 	// ドロップされてきたものがファイルだったら
-	if (ev.dataTransfer.files.length > 0) {
-		for (const file of Array.from(ev.dataTransfer.files)) {
+	if (evdataTransfer.files.length > 0) {
+		for (const file of Array.from(evdataTransfer.files)) {
 			upload(file, folder.value);
 		}
 		return;
 	}
 
 	//#region ドライブのファイル
-	const driveFile = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
+	const driveFile = evdataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
 	if (driveFile != null && driveFile !== '') {
 		const file = JSON.parse(driveFile);
 		if (files.value.some(f => f.id === file.id)) return;
@@ -239,7 +246,7 @@ function onDrop(ev: DragEvent): any {
 	//#endregion
 
 	//#region ドライブのフォルダ
-	const driveFolder = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FOLDER_);
+	const driveFolder = evdataTransfer.getData(_DATA_TRANSFER_DRIVE_FOLDER_);
 	if (driveFolder != null && driveFolder !== '') {
 		const droppedFolder = JSON.parse(driveFolder);
 
@@ -299,7 +306,7 @@ function createFolder() {
 		title: i18n.ts.createFolder,
 		placeholder: i18n.ts.folderName,
 	}).then(({ canceled, result: name }) => {
-		if (canceled) return;
+		if (canceled || name == null) return;
 		os.api('drive/folders/create', {
 			name: name,
 			parentId: folder.value ? folder.value.id : undefined,
@@ -315,7 +322,7 @@ function renameFolder(folderToRename: Misskey.entities.DriveFolder) {
 		placeholder: i18n.ts.inputNewFolderName,
 		default: folderToRename.name,
 	}).then(({ canceled, result: name }) => {
-		if (canceled) return;
+		if (canceled || name == null) return;
 		os.api('drive/folders/update', {
 			folderId: folderToRename.id,
 			name: name,
@@ -401,23 +408,22 @@ function chooseFolder(folderToChoose: Misskey.entities.DriveFolder) {
 	}
 }
 
-function move(target?: Misskey.entities.DriveFolder) {
+function move(target?: Misskey.entities.DriveFolder | string | null) {
 	if (!target) {
 		goRoot();
 		return;
-	} else if (typeof target === 'object') {
-		target = target.id;
 	}
+ const targetId = typeof target === 'string' ? target : target.id;
 
 	fetching.value = true;
 
 	os.api('drive/folders/show', {
-		folderId: target,
+		folderId: targetId,
 	}).then(folderToMove => {
 		folder.value = folderToMove;
 		hierarchyFolders.value = [];
 
-		const dive = folderToDive => {
+		const dive = (folderToDive: Misskey.entities.DriveFolder) => {
 			hierarchyFolders.value.unshift(folderToDive);
 			if (folderToDive.parent) dive(folderToDive.parent);
 		};
@@ -563,7 +569,7 @@ function fetchMoreFiles() {
 	});
 }
 
-function getMenu() {
+function getMenu(): MenuItem[] {
 	return [{
 		type: 'switch',
 		text: i18n.ts.keepOriginalUploading,
@@ -585,11 +591,11 @@ function getMenu() {
 	}, folder.value ? {
 		text: i18n.ts.renameFolder,
 		icon: 'fas fa-i-cursor',
-		action: () => { renameFolder(folder.value); },
+		action: () => { if (folder.value) renameFolder(folder.value); },
 	} : undefined, folder.value ? {
 		text: i18n.ts.deleteFolder,
 		icon: 'fas fa-trash-alt',
-		action: () => { deleteFolder(folder.value as Misskey.entities.DriveFolder); },
+		action: () => { if (folder.value) deleteFolder(folder.value); },
 	} : undefined, {
 		text: i18n.ts.createFolder,
 		icon: 'fas fa-folder-plus',

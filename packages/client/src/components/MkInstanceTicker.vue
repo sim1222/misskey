@@ -1,6 +1,6 @@
 <template>
 <div class="hpaizdrt" :style="bg">
-	<img v-if="instance.faviconUrl" class="icon" :src="faviconUrl"/>
+	<img v-if="instance.faviconUrl" class="icon" :src="faviconUrl ?? undefined"/>
 	<span class="name">{{ instance.name }}</span>
 </div>
 </template>
@@ -13,9 +13,9 @@ import { defaultStore } from '@/store';
 
 const props = defineProps<{
 	instance?: {
-		faviconUrl?: string
-		name: string
-		themeColor?: string
+		faviconUrl?: string | null
+		name: string | null
+		themeColor?: string | null
 	}
 }>();
 

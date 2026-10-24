@@ -1,6 +1,6 @@
 <template>
 <MkModal ref="modal" :prefer-type="'dialog'" @click="onBgClick" @closed="$emit('closed')">
-	<div ref="rootEl" class="ebkgoccj _narrow_" :style="{ width: `${width}px`, height: scroll ? (height ? `${height}px` : null) : (height ? `min(${height}px, 100%)` : '100%') }" @keydown="onKeydown">
+	<div ref="rootEl" class="ebkgoccj _narrow_" :style="{ width: `${width}px`, height: scroll ? (height ? `${height}px` : undefined) : (height ? `min(${height}px, 100%)` : '100%') }" @keydown="onKeydown">
 		<div ref="headerEl" class="header">
 			<button v-if="withOkButton" class="_button" @click="$emit('close')"><i class="fas fa-times"></i></button>
 			<span class="title">
@@ -20,12 +20,12 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import MkModal from './MkModal.vue';
 
-const props = withDefaults(defineProps<{
-	withOkButton: boolean;
-	okButtonDisabled: boolean;
-	width: number;
-	height: number | null;
-	scroll: boolean;
+withDefaults(defineProps<{
+	withOkButton?: boolean;
+	okButtonDisabled?: boolean;
+	width?: number;
+	height?: number | null;
+	scroll?: boolean;
 }>(), {
 	withOkButton: false,
 	okButtonDisabled: false,
@@ -48,14 +48,14 @@ let bodyWidth = ref(0);
 let bodyHeight = ref(0);
 
 const close = () => {
-	modal.value.close();
+	modal.value?.close();
 };
 
 const onBgClick = () => {
 	emit('click');
 };
 
-const onKeydown = (evt) => {
+const onKeydown = (evt: KeyboardEvent) => {
 	if (evt.which === 27) { // Esc
 		evt.preventDefault();
 		evt.stopPropagation();
@@ -64,13 +64,18 @@ const onKeydown = (evt) => {
 };
 
 const ro = new ResizeObserver((entries, observer) => {
+	if (rootEl.value == null) return;
 	bodyWidth.value = rootEl.value.offsetWidth;
+	if (rootEl.value == null) return; if (headerEl.value == null) return;
 	bodyHeight.value = rootEl.value.offsetHeight - headerEl.value.offsetHeight;
 });
 
 onMounted(() => {
+	if (rootEl.value == null) return;
 	bodyWidth.value = rootEl.value.offsetWidth;
+	if (rootEl.value == null) return; if (headerEl.value == null) return;
 	bodyHeight.value = rootEl.value.offsetHeight - headerEl.value.offsetHeight;
+	if (rootEl.value == null) return;
 	ro.observe(rootEl.value);
 });
 

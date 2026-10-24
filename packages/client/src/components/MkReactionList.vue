@@ -24,8 +24,10 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import * as misskey from 'misskey-js';
-import { NoteReaction, UserLite } from 'misskey-js/built/entities';
+import * as misskey from '@/misskey';
+import type { entities } from '@/misskey';
+type NoteReaction = entities.NoteReaction;
+type UserLite = entities.UserLite;
 import FormFolder from '@/components/form/folder.vue';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
 import MkReactionIcon from '@/components/MkReactionIcon.vue';
@@ -44,7 +46,6 @@ type reactionUsers = {
 }[]
 
 const dialog = ref<InstanceType<typeof MkModalWindow>>();
-const el = ref<HTMLElement>();
 const reactions = ref([] as NoteReaction[]);
 const reactUsers = ref([] as reactionUsers);
 const fetching = ref(true);

@@ -1,13 +1,13 @@
 export default (input: string): string[] => {
 	if (Object.keys(aliases).some(a => a.toLowerCase() === input.toLowerCase())) {
-		const codes = aliases[input];
+		const codes = aliases[input.toLowerCase()];
 		return Array.isArray(codes) ? codes : [codes];
 	} else {
 		return [input];
 	}
 };
 
-export const aliases = {
+export const aliases: Record<string, string | string[]> = {
 	'esc': 'Escape',
 	'enter': ['Enter', 'NumpadEnter'],
 	'up': 'ArrowUp',

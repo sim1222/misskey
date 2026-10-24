@@ -1,3 +1,4 @@
+import type { entities } from '@/misskey';
 import autobind from 'autobind-decorator';
 import { PageVar, envVarsDef, Fn, HpmlScope, HpmlError } from '.';
 import { version } from '@/config';
@@ -20,10 +21,10 @@ export class Hpml {
 	public pageVarUpdatedCallback?: values.VFn;
 	public canvases: Record<string, HTMLCanvasElement> = {};
 	public vars: Ref<Record<string, any>> = ref({});
-	public page: Record<string, any>;
+	public page: entities.Page;
 
 	private opts: {
-		randomSeed: string; visitor?: any; url?: string;
+		randomSeed: string | number; visitor?: entities.UserDetailed | null; url?: string;
 		enableAiScript: boolean;
 	};
 
@@ -37,7 +38,7 @@ export class Hpml {
 			this.aiscript = markRaw(new AiScript({ ...createAiScriptEnv({
 				storageKey: 'pages:' + this.page.id
 			}), ...initAiLib(this) }, {
-				in: (q) => {
+				in: (q: string) => {
 					return new Promise(ok => {
 						os.inputText({
 							title: q,
@@ -46,10 +47,10 @@ export class Hpml {
 						});
 					});
 				},
-				out: (value) => {
+				out: (value: values.Value) => {
 					console.log(value);
 				},
-				log: (type, params) => {
+				log: (_type: string, _params: unknown) => {
 				},
 			}));
 
@@ -91,7 +92,7 @@ export class Hpml {
 	}
 
 	@autobind
-	public interpolate(str: string) {
+	public interpolate(str: string | null | undefined) {
 		if (str == null) return null;
 		return str.replace(/{(.+?)}/g, match => {
 			const v = unref(this.vars)[match.slice(1, -1).trim()];
@@ -102,7 +103,11 @@ export class Hpml {
 	@autobind
 	public callAiScript(fn: string) {
 		try {
-			if (this.aiscript) this.aiscript.execFn(this.aiscript.scope.get(fn), []);
+			if (this.aiscript) {
+				const value = this.aiscript.scope.get(fn);
+				utils.assertFunction(value);
+				this.aiscript.execFn(value, []);
+			}
 		} catch (err) {}
 	}
 
@@ -125,7 +130,7 @@ export class Hpml {
 	}
 
 	@autobind
-	public updateRandomSeed(seed: string) {
+	public updateRandomSeed(seed: string | number) {
 		this.opts.randomSeed = seed;
 		this.envVars.SEED = seed;
 	}

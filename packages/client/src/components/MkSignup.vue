@@ -58,13 +58,14 @@
 			</template>
 		</I18n>
 	</MkSwitch>
-	<MkCaptcha v-if="instance.enableHcaptcha" ref="hcaptcha" v-model="hCaptchaResponse" class="_formBlock captcha" provider="hcaptcha" :sitekey="instance.hcaptchaSiteKey"/>
-	<MkCaptcha v-if="instance.enableRecaptcha" ref="recaptcha" v-model="reCaptchaResponse" class="_formBlock captcha" provider="recaptcha" :sitekey="instance.recaptchaSiteKey"/>
+	<MkCaptcha v-if="instance.enableHcaptcha && instance.hcaptchaSiteKey" ref="hcaptcha" v-model="hCaptchaResponse" class="_formBlock captcha" provider="hcaptcha" :sitekey="instance.hcaptchaSiteKey"/>
+	<MkCaptcha v-if="instance.enableRecaptcha && instance.recaptchaSiteKey" ref="recaptcha" v-model="reCaptchaResponse" class="_formBlock captcha" provider="recaptcha" :sitekey="instance.recaptchaSiteKey"/>
 	<MkButton class="_formBlock" type="submit" :disabled="shouldDisableSubmitting" gradate data-cy-signup-submit>{{ i18n.ts.start }}</MkButton>
 </form>
 </template>
 
 <script lang="ts" setup>
+import type { SigninResult } from '../../../shared/auth';
 import { ref, computed } from 'vue';
 import getPasswordStrength from 'syuilo-password-strength';
 import { toUnicode } from 'punycode/';
@@ -85,28 +86,28 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-	(ev: 'signup', user: Record<string, any>): void;
+	(ev: 'signup', user: SigninResult): void;
 	(ev: 'signupEmailPending'): void;
 }>();
 
 const host = toUnicode(config.host);
 
-let hcaptcha = ref();
-let recaptcha = ref();
+let hcaptcha = ref<InstanceType<typeof MkCaptcha>>();
+let recaptcha = ref<InstanceType<typeof MkCaptcha>>();
 
-let username: string = ref('');
-let password: string = ref('');
-let retypedPassword: string = ref('');
-let invitationCode: string = ref('');
+let username = ref<string>('');
+let password = ref<string>('');
+let retypedPassword = ref<string>('');
+let invitationCode = ref<string>('');
 let email = ref('');
-let usernameState: null | 'wait' | 'ok' | 'unavailable' | 'error' | 'invalid-format' | 'min-range' | 'max-range' = ref(null);
-let emailState: null | 'wait' | 'ok' | 'unavailable:used' | 'unavailable:format' | 'unavailable:disposable' | 'unavailable:mx' | 'unavailable:smtp' | 'unavailable' | 'error' = ref(null);
-let passwordStrength: '' | 'low' | 'medium' | 'high' = ref('');
-let passwordRetypeState: null | 'match' | 'not-match' = ref(null);
-let submitting: boolean = ref(false);
-let ToSAgreement: boolean = ref(false);
-let hCaptchaResponse = ref(null);
-let reCaptchaResponse = ref(null);
+let usernameState = ref<null | 'wait' | 'ok' | 'unavailable' | 'error' | 'invalid-format' | 'min-range' | 'max-range'>(null);
+let emailState = ref<null | 'wait' | 'ok' | 'unavailable:used' | 'unavailable:format' | 'unavailable:disposable' | 'unavailable:mx' | 'unavailable:smtp' | 'unavailable' | 'error'>(null);
+let passwordStrength = ref<'' | 'low' | 'medium' | 'high'>('');
+let passwordRetypeState = ref<null | 'match' | 'not-match'>(null);
+let submitting = ref<boolean>(false);
+let ToSAgreement = ref<boolean>(false);
+let hCaptchaResponse = ref<string | null>(null);
+let reCaptchaResponse = ref<string | null>(null);
 
 const shouldDisableSubmitting = computed((): boolean => {
 	return submitting.value ||
@@ -212,6 +213,7 @@ function onSubmit(): void {
 				username: username.value,
 				password: password.value,
 			}).then(res => {
+ if (!('i' in res)) throw new TypeError('Signup signin unexpectedly requested two-factor authentication');
 				emit('signup', res);
 
 				if (props.autoSet) {
@@ -221,8 +223,8 @@ function onSubmit(): void {
 		}
 	}).catch(() => {
 		submitting.value = false;
-		hcaptcha.value.reset?.();
-		recaptcha.value.reset?.();
+		hcaptcha.value?.reset?.();
+		recaptcha.value?.reset?.();
 
 		os.alert({
 			type: 'error',

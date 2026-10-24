@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue';
+import { ref, computed } from 'vue';
 import JSON5 from 'json5';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
@@ -24,7 +24,7 @@ import FormLink from '@/components/form/link.vue';
 import FormSection from '@/components/form/section.vue';
 import MkButton from '@/components/MkButton.vue';
 
-let scopes = ref(null);
+let scopes = ref<string[][] | null>(null);
 
 function fetchScopes() {
 	os.api('i/registry/scopes').then(res => {
@@ -48,7 +48,7 @@ async function createKey() {
 			label: i18n.ts._registry.scope,
 		},
 	});
-	if (canceled) return;
+	if (canceled || result.key == null || result.value == null || result.scope == null) return;
 	os.apiWithDialog('i/registry/set', {
 		scope: result.scope.split('/'),
 		key: result.key,

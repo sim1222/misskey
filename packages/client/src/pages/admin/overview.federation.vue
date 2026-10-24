@@ -15,13 +15,14 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import type { ApiResponse } from '@/types/api';
+import { ref } from 'vue';
 import MkMiniChart from '@/components/MkMiniChart.vue';
 import * as os from '@/os';
 import { useInterval } from '@/scripts/use-interval';
 
-const instances = ref([]);
-const charts = ref([]);
+const instances = ref<ApiResponse<'federation/instances'>>([]);
+const charts = ref<ApiResponse<'charts/instance'>[]>([]);
 const fetching = ref(true);
 
 const fetch = async () => {

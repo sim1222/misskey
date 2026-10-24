@@ -21,13 +21,13 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'done');
-	(ev: 'closed');
+	(ev: 'done'): void;
+	(ev: 'closed'): void;
 }>();
 
 function done() {
 	emit('done');
-	modal.value.close();
+	modal.value?.close();
 }
 
 watch(() => props.showing, () => {

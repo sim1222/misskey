@@ -6,9 +6,9 @@ export async function lookupUser() {
 	const { canceled, result } = await os.inputText({
 		title: i18n.ts.usernameOrUserId,
 	});
-	if (canceled) return;
+	if (canceled || result === null) return;
 
-	const show = (user) => {
+	const show = (user: { id: string }) => {
 		os.pageWindow(`/user-info/${user.id}`);
 	};
 

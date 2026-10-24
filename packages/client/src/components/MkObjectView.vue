@@ -1,6 +1,6 @@
 <template>
 <div class="zhyxdalp">
-	<XValue :value="value" :collapsed="false"/>
+	<XValue :value="value"/>
 </div>
 </template>
 
@@ -8,7 +8,7 @@
 import { } from 'vue';
 import XValue from './MkObjectView.value.vue';
 
-const props = defineProps<{
+defineProps<{
 	value: Record<string, unknown>;
 }>();
 </script>

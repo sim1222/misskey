@@ -2,13 +2,13 @@
 <div class="_formRoot">
 	<MkKeyValue>
 		<template #key>ID</template>
-		<template #value><span class="_monospace">{{ $i.id }}</span></template>
+		<template #value><span class="_monospace">{{ account.id }}</span></template>
 	</MkKeyValue>
 
 	<FormSection>
 		<MkKeyValue>
 			<template #key>{{ i18n.ts.registeredDate }}</template>
-			<template #value><MkTime :time="$i.createdAt" mode="detail"/></template>
+			<template #value><MkTime :time="account.createdAt" mode="detail"/></template>
 		</MkKeyValue>
 	</FormSection>
 
@@ -100,40 +100,43 @@
 		<template #label>{{ i18n.ts.other }}</template>
 		<MkKeyValue oneline style="margin: 1em 0;">
 			<template #key>emailVerified</template>
-			<template #value>{{ $i.emailVerified ? i18n.ts.yes : i18n.ts.no }}</template>
+			<template #value>{{ account.emailVerified ? i18n.ts.yes : i18n.ts.no }}</template>
 		</MkKeyValue>
 		<MkKeyValue oneline style="margin: 1em 0;">
 			<template #key>twoFactorEnabled</template>
-			<template #value>{{ $i.twoFactorEnabled ? i18n.ts.yes : i18n.ts.no }}</template>
+			<template #value>{{ account.twoFactorEnabled ? i18n.ts.yes : i18n.ts.no }}</template>
 		</MkKeyValue>
 		<MkKeyValue oneline style="margin: 1em 0;">
 			<template #key>securityKeys</template>
-			<template #value>{{ $i.securityKeys ? i18n.ts.yes : i18n.ts.no }}</template>
+			<template #value>{{ account.securityKeys ? i18n.ts.yes : i18n.ts.no }}</template>
 		</MkKeyValue>
 		<MkKeyValue oneline style="margin: 1em 0;">
 			<template #key>usePasswordLessLogin</template>
-			<template #value>{{ $i.usePasswordLessLogin ? i18n.ts.yes : i18n.ts.no }}</template>
+			<template #value>{{ account.usePasswordLessLogin ? i18n.ts.yes : i18n.ts.no }}</template>
 		</MkKeyValue>
 		<MkKeyValue oneline style="margin: 1em 0;">
 			<template #key>isModerator</template>
-			<template #value>{{ $i.isModerator ? i18n.ts.yes : i18n.ts.no }}</template>
+			<template #value>{{ account.isModerator ? i18n.ts.yes : i18n.ts.no }}</template>
 		</MkKeyValue>
 		<MkKeyValue oneline style="margin: 1em 0;">
 			<template #key>isAdmin</template>
-			<template #value>{{ $i.isAdmin ? i18n.ts.yes : i18n.ts.no }}</template>
+			<template #value>{{ account.isAdmin ? i18n.ts.yes : i18n.ts.no }}</template>
 		</MkKeyValue>
 	</FormSection>
 </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, computed } from 'vue';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import { onMounted, ref } from 'vue';
 import FormSection from '@/components/form/section.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
 import * as os from '@/os';
 import number from '@/filters/number';
 import bytes from '@/filters/bytes';
-import { $i } from '@/account';
+
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
@@ -141,15 +144,15 @@ const stats = ref<any>({});
 
 onMounted(() => {
 	os.api('users/stats', {
-		userId: $i!.id,
+		userId: account.id,
 	}).then(response => {
 		stats.value = response;
 	});
 });
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.accountInfo,

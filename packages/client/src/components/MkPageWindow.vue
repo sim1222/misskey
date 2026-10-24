@@ -11,30 +11,30 @@
 	@closed="$emit('closed')"
 >
 	<template #header>
-		<template v-if="pageMetadata?.value">
-			<i v-if="pageMetadata.value.icon" class="icon" :class="pageMetadata.value.icon" style="margin-right: 0.5em;"></i>
-			<span>{{ pageMetadata.value.title }}</span>
+		<template v-if="pageMetadata.current?.value">
+			<i v-if="pageMetadata.current?.value.icon" class="icon" :class="pageMetadata.current?.value.icon" style="margin-right: 0.5em;"></i>
+			<span>{{ pageMetadata.current?.value.title }}</span>
 		</template>
 	</template>
 
-	<div class="yrolvcoq" :style="{ background: pageMetadata?.value?.bg }">
+	<div class="yrolvcoq" :style="{ background: pageMetadata.current?.value?.bg }">
 		<RouterView :router="router"/>
 	</div>
 </XWindow>
 </template>
 
 <script lang="ts" setup>
-import { ComputedRef, inject, provide, ref, computed } from 'vue';
+import { shallowReactive, provide, ref, computed } from 'vue';
 import RouterView from '@/components/global/RouterView.vue';
 import XWindow from '@/components/MkWindow.vue';
 import { popout as _popout } from '@/scripts/popout';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
 import { url } from '@/config';
-import * as os from '@/os';
+
 import { mainRouter, routes } from '@/router';
 import { Router } from '@/nirax';
 import { i18n } from '@/i18n';
-import { PageMetadata, provideMetadataReceiver, setPageMetadata } from '@/scripts/page-metadata';
+import { type PageMetadataRef, provideMetadataReceiver } from '@/scripts/page-metadata';
 
 const props = defineProps<{
 	initialPath: string;
@@ -46,7 +46,7 @@ defineEmits<{
 
 const router = new Router(routes, props.initialPath);
 
-let pageMetadata = ref<null | ComputedRef<PageMetadata>>();
+let pageMetadata = shallowReactive<{ current: PageMetadataRef | null }>({ current: null });
 let windowEl = ref<InstanceType<typeof XWindow>>();
 const history = ref<{ path: string; key: any; }[]>([{
 	path: router.getCurrentPath(),
@@ -80,7 +80,7 @@ router.addListener('push', ctx => {
 
 provide('router', router);
 provideMetadataReceiver((info) => {
-	pageMetadata.value = info;
+	pageMetadata.current = info;
 });
 provide('shouldOmitHeaderTitle', true);
 provide('shouldHeaderThin', true);
@@ -98,7 +98,7 @@ const contextmenu = computed(() => ([{
 	text: i18n.ts.openInNewTab,
 	action: () => {
 		window.open(url + router.getCurrentPath(), '_blank');
-		windowEl.value.close();
+		windowEl.value?.close();
 	},
 }, {
 	icon: 'fas fa-link',
@@ -108,9 +108,7 @@ const contextmenu = computed(() => ([{
 	},
 }]));
 
-function menu(ev) {
-	os.popupMenu(contextmenu.value, ev.currentTarget ?? ev.target);
-}
+
 
 function back() {
 	history.value.pop();
@@ -118,17 +116,17 @@ function back() {
 }
 
 function close() {
-	windowEl.value.close();
+	windowEl.value?.close();
 }
 
 function expand() {
 	mainRouter.push(router.getCurrentPath(), 'forcePage');
-	windowEl.value.close();
+	windowEl.value?.close();
 }
 
 function popout() {
-	_popout(router.getCurrentPath(), windowEl.value.$el);
-	windowEl.value.close();
+	_popout(router.getCurrentPath(), windowEl.value?.$el);
+	windowEl.value?.close();
 }
 
 defineExpose({

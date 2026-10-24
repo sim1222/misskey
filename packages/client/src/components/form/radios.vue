@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, h } from 'vue';
+import { defineComponent, h, isVNode } from 'vue';
 import MkRadio from './radio.vue';
 
 export default defineComponent({
@@ -8,7 +8,8 @@ export default defineComponent({
 	},
 	props: {
 		modelValue: {
-			required: false,
+			type: null,
+            required: false,
 		},
 	},
 	data() {
@@ -22,12 +23,12 @@ export default defineComponent({
 		},
 	},
 	render() {
-		let options = this.$slots.default();
+		let options = this.$slots.default?.() ?? [];
 		const label = this.$slots.label && this.$slots.label();
 		const caption = this.$slots.caption && this.$slots.caption();
 
 		// なぜかFragmentになることがあるため
-		if (options.length === 1 && options[0].props == null) options = options[0].children;
+		if (options.length === 1 && options[0].props == null) options = Array.isArray(options[0].children) ? options[0].children.filter(isVNode) : [];
 
 		return h('div', {
 			class: 'novjtcto',
@@ -37,12 +38,12 @@ export default defineComponent({
 			}, [label])] : []),
 			h('div', {
 				class: 'body',
-			}, options.map(option => h(MkRadio, {
-				key: option.key,
-				value: option.props.value,
+			}, options.filter(option => option.props != null).map(option => h(MkRadio<unknown>, {
+				key: option.key ?? undefined,
+				value: option.props?.value,
 				modelValue: this.value,
 				'onUpdate:modelValue': value => this.value = value,
-			}, option.children)),
+			}, { default: () => option.children })),
 			),
 			...(caption ? [h('div', {
 				class: 'caption',

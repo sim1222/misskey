@@ -12,7 +12,7 @@ export function countIf<T>(f: Predicate<T>, xs: T[]): number {
  * Count the number of elements that is equal to the element
  */
 export function count<T>(a: T, xs: T[]): number {
-	return countIf(x => x === a, xs);
+	return countIf((x) => x === a, xs);
 }
 
 /**
@@ -92,7 +92,7 @@ export function groupBy<T>(f: EndoRelation<T>, xs: T[]): T[][] {
  * The concatenation of the result is equal to the argument.
  */
 export function groupOn<T, S>(f: (x: T) => S, xs: T[]): T[][] {
-	return groupBy((a, b) => f(a) === f(b), xs);
+	return groupBy((a: T, b: T) => f(a) === f(b), xs);
 }
 
 export function groupByX<T>(collections: T[], keySelector: (x: T) => string) {

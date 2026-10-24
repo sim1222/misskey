@@ -18,7 +18,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, inject, ref } from 'vue';
+import type { ApiResponse } from '@/types/api';
+import { computed, watch, ref } from 'vue';
 import XTimeline from '@/components/MkTimeline.vue';
 import { scroll } from '@/scripts/scroll';
 import * as os from '@/os';
@@ -32,7 +33,7 @@ const props = defineProps<{
 	listId: string;
 }>();
 
-let list = ref(null);
+let list = ref<ApiResponse<'users/lists/show'> | null>(null);
 let queue = ref(0);
 let tlEl = ref<InstanceType<typeof XTimeline>>();
 let rootEl = ref<HTMLElement>();
@@ -43,11 +44,12 @@ watch(() => props.listId, async () => {
 	});
 }, { immediate: true });
 
-function queueUpdated(q) {
+function queueUpdated(q: number) {
 	queue.value = q;
 }
 
 function top() {
+	if (rootEl.value == null) return;
 	scroll(rootEl.value, { top: 0 });
 }
 
@@ -61,7 +63,7 @@ async function timetravel() {
 	});
 	if (canceled) return;
 
-	tlEl.value.timetravel(date);
+	tlEl.value?.timetravel(date);
 }
 
 const headerActions = computed(() => list.value ? [{

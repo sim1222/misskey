@@ -40,9 +40,9 @@ export default defineComponent({
 			default: null
 		},
 	},
-	data() {
+	data(): { bg: string | undefined; showBody: boolean } {
 		return {
-			bg: null,
+			bg: undefined,
 			showBody: (this.persistKey && localStorage.getItem(localStoragePrefix + this.persistKey)) ? localStorage.getItem(localStoragePrefix + this.persistKey) === 't' : this.expanded,
 		};
 	},
@@ -56,7 +56,7 @@ export default defineComponent({
 	mounted() {
 		function getParentBg(el: Element | null): string {
 			if (el == null || el.tagName === 'BODY') return 'var(--bg)';
-			const bg = el.style.background || el.style.backgroundColor;
+			const bg = el instanceof HTMLElement ? el.style.background || el.style.backgroundColor : '';
 			if (bg) {
 				return bg;
 			} else {
@@ -73,23 +73,27 @@ export default defineComponent({
 			this.showBody = show;
 		},
 
-		enter(el) {
+		enter(el: Element) {
+ if (!(el instanceof HTMLElement)) return;
 			const elementHeight = el.getBoundingClientRect().height;
-			el.style.height = 0;
+			el.style.height = '0px';
 			el.offsetHeight; // reflow
 			el.style.height = elementHeight + 'px';
 		},
-		afterEnter(el) {
-			el.style.height = null;
+		afterEnter(el: Element) {
+ if (!(el instanceof HTMLElement)) return;
+			el.style.height = '';
 		},
-		leave(el) {
+		leave(el: Element) {
+ if (!(el instanceof HTMLElement)) return;
 			const elementHeight = el.getBoundingClientRect().height;
 			el.style.height = elementHeight + 'px';
 			el.offsetHeight; // reflow
-			el.style.height = 0;
+			el.style.height = '0px';
 		},
-		afterLeave(el) {
-			el.style.height = null;
+		afterLeave(el: Element) {
+ if (!(el instanceof HTMLElement)) return;
+			el.style.height = '';
 		},
 	}
 });

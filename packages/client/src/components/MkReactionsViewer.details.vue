@@ -1,5 +1,5 @@
 <template>
-<MkTooltip ref="tooltip" :target-element="targetElement" :max-width="340" @closed="emit('closed')">
+<MkTooltip ref="tooltip" :showing="showing" :target-element="targetElement" :max-width="340" @closed="emit('closed')">
 	<div class="bqxuuuey">
 		<div class="reaction">
 			<XReactionIcon :reaction="reaction" :custom-emojis="emojis" class="icon" :no-style="true"/>
@@ -21,11 +21,12 @@ import { } from 'vue';
 import MkTooltip from './MkTooltip.vue';
 import XReactionIcon from '@/components/MkReactionIcon.vue';
 
-const props = defineProps<{
+defineProps<{
+ showing: boolean;
 	reaction: string;
-	users: any[]; // TODO
+	users: import('@/misskey').entities.User[];
 	count: number;
-	emojis: any[]; // TODO
+	emojis: { name: string; url: string | null }[];
 	targetElement: HTMLElement;
 }>();
 

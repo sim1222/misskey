@@ -45,12 +45,12 @@ async function reloadAsk() {
 }
 
 async function addItem() {
-	const menu = Object.keys(navbarItemDef).filter(k => !defaultStore.state.menu.includes(k));
+	const menu = Object.entries(navbarItemDef).filter(([key]) => !defaultStore.state.menu.includes(key));
 	const { canceled, result: item } = await os.select({
 		title: i18n.ts.addItem,
-		items: [...menu.map(k => ({
-			value: k, text: i18n.ts[navbarItemDef[k].title],
-		})), {
+		items: [...menu.flatMap(([key, item]) => item ? [{
+			value: key, text: i18n.ts[item.title],
+		}] : []), {
 			value: '-', text: i18n.ts.divider,
 		}],
 	});
@@ -76,9 +76,9 @@ watch(menuDisplay, async () => {
 	await reloadAsk();
 });
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.navbar,

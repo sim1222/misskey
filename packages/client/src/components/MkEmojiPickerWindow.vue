@@ -25,11 +25,11 @@ withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-	(ev: 'chosen', v: any): void;
+	(ev: 'chosen', v: string | { reaction: string; withRenote: boolean }): void;
 	(ev: 'closed'): void;
 }>();
 
-function chosen(emoji: any) {
+function chosen(emoji: string | { reaction: string; withRenote: boolean }) {
 	emit('chosen', emoji);
 }
 </script>
@@ -103,7 +103,7 @@ function chosen(emoji: any) {
 			min-height: var(--height);
 			position: relative;
 			border-bottom: solid 0.5px var(--divider);
-				
+
 			> .arrow {
 				position: absolute;
 				bottom: 0;

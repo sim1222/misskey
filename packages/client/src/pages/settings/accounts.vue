@@ -21,20 +21,23 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref, computed } from 'vue';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import { defineAsyncComponent, ref } from 'vue';
 import FormSuspense from '@/components/form/suspense.vue';
 import FormButton from '@/components/MkButton.vue';
 import * as os from '@/os';
-import { getAccounts, addAccount as addAccounts, removeAccount as _removeAccount, login, $i } from '@/account';
+import { getAccounts, addAccount as addAccounts, removeAccount as _removeAccount, login } from '@/account';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const storedAccounts = ref<any>(null);
-const accounts = ref<any>(null);
+const storedAccounts = ref<Awaited<ReturnType<typeof getAccounts>>>([]);
+const accounts = ref<import('@/misskey').entities.UserDetailed[]>([]);
 
 const init = async () => {
 	getAccounts().then(accounts => {
-		storedAccounts.value = accounts.filter(x => x.id !== $i!.id);
+		storedAccounts.value = accounts.filter(x => x.id !== account.id);
 
 		console.log(storedAccounts.value);
 
@@ -47,7 +50,7 @@ const init = async () => {
 	});
 };
 
-function menu(account, ev) {
+function menu(account: { id: string }, ev: MouseEvent) {
 	os.popupMenu([{
 		text: i18n.ts.switch,
 		icon: 'fas fa-exchange-alt',
@@ -60,7 +63,7 @@ function menu(account, ev) {
 	}], ev.currentTarget ?? ev.target);
 }
 
-function addAccount(ev) {
+function addAccount(ev: MouseEvent) {
 	os.popupMenu([{
 		text: i18n.ts.existingAccount,
 		action: () => { addExistingAccount(); },
@@ -70,13 +73,13 @@ function addAccount(ev) {
 	}], ev.currentTarget ?? ev.target);
 }
 
-function removeAccount(account) {
+function removeAccount(account: { id: string; }) {
 	_removeAccount(account.id);
 }
 
 function addExistingAccount() {
 	os.popup(defineAsyncComponent(() => import('@/components/MkSigninDialog.vue')), {}, {
-		done: res => {
+		done: (res: { id: string; i: string }) => {
 			addAccounts(res.id, res.i);
 			os.success();
 		},
@@ -85,16 +88,17 @@ function addExistingAccount() {
 
 function createAccount() {
 	os.popup(defineAsyncComponent(() => import('@/components/MkSignupDialog.vue')), {}, {
-		done: res => {
+		done: (res: { id: string; i: string }) => {
 			addAccounts(res.id, res.i);
 			switchAccountWithToken(res.i);
 		},
 	}, 'closed');
 }
 
-async function switchAccount(account: any) {
-	const fetchedAccounts: any[] = await getAccounts();
-	const token = fetchedAccounts.find(x => x.id === account.id).token;
+async function switchAccount(account: { id: string }) {
+	const fetchedAccounts = await getAccounts();
+	const token = fetchedAccounts.find(x => x.id === account.id)?.token;
+    if (!token) return;
 	switchAccountWithToken(token);
 }
 
@@ -102,9 +106,9 @@ function switchAccountWithToken(token: string) {
 	login(token);
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.accounts,

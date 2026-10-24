@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, ref, computed } from 'vue';
+import { ref } from 'vue';
 import XAntenna from './editor.vue';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
@@ -15,7 +15,7 @@ const router = useRouter();
 
 let draft = ref({
 	name: '',
-	src: 'all',
+	src: 'all' as const,
 	userListId: null,
 	userGroupId: null,
 	users: [],
@@ -31,9 +31,9 @@ function onAntennaCreated() {
 	router.push('/my/antennas');
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.manageAntennas,

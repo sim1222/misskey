@@ -1,6 +1,6 @@
 <template>
 <button
-	v-if="!link" class="bghgjjyj _button"
+	v-if="!link" v-bind="$attrs" :ref="setRoot" class="bghgjjyj _button"
 	:class="{ inline, primary, gradate, danger, rounded, full }"
 	:type="type"
 	@click="emit('click', $event)"
@@ -12,7 +12,7 @@
 	</div>
 </button>
 <MkA
-	v-else class="bghgjjyj _button"
+	v-else-if="to != null" v-bind="$attrs" :ref="setRoot" class="bghgjjyj _button"
 	:class="{ inline, primary, gradate, danger, rounded, full }"
 	:to="to"
 	@mousedown="onMousedown"
@@ -25,7 +25,9 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref, type ComponentPublicInstance } from 'vue';
+
+defineOptions({ inheritAttrs: false });
 
 const props = defineProps<{
 	type?: 'button' | 'submit' | 'reset';
@@ -51,16 +53,22 @@ let ripples = ref<HTMLElement | null>(null);
 onMounted(() => {
 	if (props.autofocus) {
 		nextTick(() => {
-			el.value!.focus();
+			el.value?.focus();
 		});
 	}
 });
 
-function distance(p, q): number {
+function setRoot(value: Element | ComponentPublicInstance | null): void {
+ const root = value instanceof Element ? value : value?.$el;
+ el.value = root instanceof HTMLElement ? root : null;
+}
+defineExpose({ focus: () => el.value?.focus() });
+
+function distance(p: { x: number; y: number }, q: { x: number; y: number }): number {
 	return Math.hypot(p.x - q.x, p.y - q.y);
 }
 
-function calcCircleScale(boxW, boxH, circleCenterX, circleCenterY): number {
+function calcCircleScale(boxW: number, boxH: number, circleCenterX: number, circleCenterY: number): number {
 	const origin = { x: circleCenterX, y: circleCenterY };
 	const dist1 = distance({ x: 0, y: 0 }, origin);
 	const dist2 = distance({ x: boxW, y: 0 }, origin);
@@ -70,14 +78,15 @@ function calcCircleScale(boxW, boxH, circleCenterX, circleCenterY): number {
 }
 
 function onMousedown(evt: MouseEvent): void {
-	const target = evt.target! as HTMLElement;
+	const target = evt.target;
+	if (!(target instanceof HTMLElement) || !ripples.value) return;
 	const rect = target.getBoundingClientRect();
 
 	const ripple = document.createElement('div');
 	ripple.style.top = (evt.clientY - rect.top - 1).toString() + 'px';
 	ripple.style.left = (evt.clientX - rect.left - 1).toString() + 'px';
 
-	ripples.value!.appendChild(ripple);
+	ripples.value.appendChild(ripple);
 
 	const circleCenterX = evt.clientX - rect.left;
 	const circleCenterY = evt.clientY - rect.top;

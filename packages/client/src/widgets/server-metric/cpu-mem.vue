@@ -70,31 +70,33 @@
 </template>
 
 <script lang="ts" setup>
+import type { ChannelConnection, Channels, ServerStats } from '@/misskey';
+import type { ApiResponse } from '@/types/api';
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { v4 as uuid } from 'uuid';
 
 const props = defineProps<{
-	connection: any,
-	meta: any
+	connection: ChannelConnection<Channels['serverStats']>,
+	meta: ApiResponse<'server-info'>
 }>();
 
-let viewBoxX: number = ref(50);
-let viewBoxY: number = ref(30);
-let stats: any[] = ref([]);
+let viewBoxX = ref<number>(50);
+let viewBoxY = ref<number>(30);
+let stats = ref<ServerStats[]>([]);
 const cpuGradientId = uuid();
 const cpuMaskId = uuid();
 const memGradientId = uuid();
 const memMaskId = uuid();
-let cpuPolylinePoints: string = ref('');
-let memPolylinePoints: string = ref('');
-let cpuPolygonPoints: string = ref('');
-let memPolygonPoints: string = ref('');
+let cpuPolylinePoints = ref<string>('');
+let memPolylinePoints = ref<string>('');
+let cpuPolygonPoints = ref<string>('');
+let memPolygonPoints = ref<string>('');
 let cpuHeadX: any = ref(null);
 let cpuHeadY: any = ref(null);
 let memHeadX: any = ref(null);
 let memHeadY: any = ref(null);
-let cpuP: string = ref('');
-let memP: string = ref('');
+let cpuP = ref<string>('');
+let memP = ref<string>('');
 
 onMounted(() => {
 	props.connection.on('stats', onStats);
@@ -109,7 +111,7 @@ onBeforeUnmount(() => {
 	props.connection.off('statsLog', onStatsLog);
 });
 
-function onStats(connStats) {
+function onStats(connStats: ServerStats) {
 	stats.value.push(connStats);
 	if (stats.value.length > 50) stats.value.shift();
 
@@ -130,7 +132,7 @@ function onStats(connStats) {
 	memP.value = (connStats.mem.active / props.meta.mem.total * 100).toFixed(0);
 }
 
-function onStatsLog(statsLog) {
+function onStatsLog(statsLog: ServerStats[]) {
 	for (const revStats of [...statsLog].reverse()) {
 		onStats(revStats);
 	}

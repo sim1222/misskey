@@ -1,5 +1,5 @@
 <template>
-<div v-show="hpml.vars.value[block.var]">
+<div v-show="block.var != null && hpml.vars.value[block.var]">
 	<XBlock v-for="child in block.children" :key="child.id" :block="child" :hpml="hpml" :h="h"/>
 </div>
 </template>

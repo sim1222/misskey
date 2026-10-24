@@ -10,13 +10,16 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed } from 'vue';
-import { notificationTypes } from 'misskey-js';
-import FormButton from '@/components/MkButton.vue';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import { defineAsyncComponent } from 'vue';
+import { notificationTypes } from '@/misskey';
+
 import FormLink from '@/components/form/link.vue';
 import FormSection from '@/components/form/section.vue';
 import * as os from '@/os';
-import { $i } from '@/account';
+
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
@@ -33,7 +36,7 @@ async function readAllNotifications() {
 }
 
 function configure() {
-	const includingTypes = notificationTypes.filter(x => !$i!.mutingNotificationTypes.includes(x));
+	const includingTypes = notificationTypes.filter(x => !account.mutingNotificationTypes?.includes(x));
 	os.popup(defineAsyncComponent(() => import('@/components/MkNotificationSettingWindow.vue')), {
 		includingTypes,
 		showGlobalToggle: false,
@@ -41,17 +44,17 @@ function configure() {
 		done: async (res) => {
 			const { includingTypes: value } = res;
 			await os.apiWithDialog('i/update', {
-				mutingNotificationTypes: notificationTypes.filter(x => !value.includes(x)),
+				mutingNotificationTypes: notificationTypes.filter(x => !value?.includes(x)),
 			}).then(i => {
-				$i!.mutingNotificationTypes = i.mutingNotificationTypes;
+				account.mutingNotificationTypes = i.mutingNotificationTypes;
 			});
 		},
 	}, 'closed');
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.notifications,

@@ -1,17 +1,18 @@
 <template>
-<MfmCore :text="text" :plain="plain" :nowrap="nowrap" :author="author" :customEmojis="customEmojis" :isNote="isNote" class="havbbuyv" :class="{ nowrap }"/>
+<MfmCore :text="text" :plain="plain" :nowrap="nowrap" :author="author" :i="i" :customEmojis="customEmojis" :isNote="isNote" class="havbbuyv" :class="{ nowrap }"/>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import type { entities } from '@/misskey';
 import MfmCore from '@/components/mfm';
 
-const props = withDefaults(defineProps<{
-	text: string;
+withDefaults(defineProps<{
+	text: string | null | undefined;
 	plain?: boolean;
 	nowrap?: boolean;
-	author?: any;
-	customEmojis?: any;
+	author?: entities.User | null;
+ i?: entities.User | null;
+	customEmojis?: { name: string; url: string | null }[];
 	isNote?: boolean;
 }>(), {
 	plain: false,

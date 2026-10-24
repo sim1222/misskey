@@ -13,9 +13,10 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { ref } from 'vue';
+import type { Value } from '@syuilo/aiscript/built/interpreter/value';
 import { AiScript, parse, utils } from '@syuilo/aiscript';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import { GetFormResultType } from '@/scripts/form';
 import * as os from '@/os';
 import MkContainer from '@/components/MkContainer.vue';
@@ -44,7 +45,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -64,7 +65,7 @@ const run = async () => {
 		storageKey: 'widget',
 		token: $i?.token,
 	}), {
-		in: (q) => {
+		in: (q: string) => {
 			return new Promise(ok => {
 				os.inputText({
 					title: q,
@@ -73,14 +74,14 @@ const run = async () => {
 				});
 			});
 		},
-		out: (value) => {
+		out: (value: Value) => {
 			logs.value.push({
 				id: Math.random().toString(),
 				text: value.type === 'str' ? value.value : utils.valToString(value),
 				print: true,
 			});
 		},
-		log: (type, params) => {
+		log: (type: string, params: { val: Value }) => {
 			switch (type) {
 				case 'end': logs.value.push({
 					id: Math.random().toString(),
@@ -107,7 +108,7 @@ const run = async () => {
 	} catch (err) {
 		os.alert({
 			type: 'error',
-			text: err,
+			text: String(err),
 		});
 	}
 };

@@ -24,7 +24,7 @@
 					<p>{{ $ts.followers }}</p><span>{{ user.followersCount }}</span>
 				</div>
 			</div>
-			<MkFollowButton v-if="$i && user.id != $i.id" class="koudoku-button" :user="user" mini/>
+			<MkFollowButton v-if="$i && user.id != $i.id" class="koudoku-button" :user="user"/>
 		</div>
 		<div v-else>
 			<MkLoading/>
@@ -36,7 +36,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import * as Acct from 'misskey-js/built/acct';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import MkFollowButton from '@/components/MkFollowButton.vue';
 import { userPage } from '@/filters/user';
 import * as os from '@/os';

@@ -6,7 +6,7 @@
 
 	<FormSection>
 		<template #label>{{ i18n.ts.sounds }}</template>
-		<FormLink v-for="type in Object.keys(sounds)" :key="type" style="margin-bottom: 8px;" @click="edit(type)">
+		<FormLink v-for="type in soundTypes" :key="type" style="margin-bottom: 8px;" @click="edit(type)">
 			{{ $t('_sfx.' + type) }}
 			<template #suffix>{{ sounds[type].type || i18n.ts.none }}</template>
 			<template #suffixIcon><i class="fas fa-chevron-down"></i></template>
@@ -18,6 +18,7 @@
 </template>
 
 <script lang="ts" setup>
+import { soundTypes, soundKey, type SoundType } from '@/scripts/sound-settings';
 import { computed, ref } from 'vue';
 import FormRange from '@/components/form/range.vue';
 import FormButton from '@/components/MkButton.vue';
@@ -38,7 +39,7 @@ const masterVolume = computed({
 	},
 });
 
-const volumeIcon = computed(() => masterVolume.value === 0 ? 'fas fa-volume-mute' : 'fas fa-volume-up');
+
 
 const sounds = ref({
 	note: ColdDeviceStorage.get('sound_note'),
@@ -77,7 +78,7 @@ const soundsTypes = [
 	'noizenecio/kick_gaba2',
 ];
 
-async function edit(type) {
+async function edit(type: SoundType) {
 	const { canceled, result } = await os.form(i18n.t('_sfx.' + type), {
 		type: {
 			type: 'enum',
@@ -93,7 +94,7 @@ async function edit(type) {
 			min: 0,
 			max: 1,
 			step: 0.05,
-			textConverter: (v) => `${Math.floor(v * 100)}%`,
+			textConverter: (v: number) => `${Math.floor(v * 100)}%`,
 			label: i18n.ts.volume,
 			default: sounds.value[type].volume,
 		},
@@ -101,7 +102,7 @@ async function edit(type) {
 			type: 'button',
 			content: i18n.ts.listen,
 			action: (_, values) => {
-				playFile(values.type, values.volume);
+				if ((typeof values.type === 'string' || values.type === null) && typeof values.volume === 'number') playFile(values.type, values.volume);
 			},
 		},
 	});
@@ -112,21 +113,21 @@ async function edit(type) {
 		volume: result.volume,
 	};
 
-	ColdDeviceStorage.set('sound_' + type, v);
+	ColdDeviceStorage.set(soundKey(type), v);
 	sounds.value[type] = v;
 }
 
 function reset() {
-	for (const sound of Object.keys(sounds.value)) {
-		const v = ColdDeviceStorage.default['sound_' + sound];
-		ColdDeviceStorage.set('sound_' + sound, v);
+	for (const sound of soundTypes) {
+		const v = ColdDeviceStorage.default[soundKey(sound)];
+		ColdDeviceStorage.set(soundKey(sound), v);
 		sounds.value[sound] = v;
 	}
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.sounds,

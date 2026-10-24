@@ -32,11 +32,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, provide, Ref, watch, ref, computed } from 'vue';
-import { updateColumn, swapLeftColumn, swapRightColumn, swapUpColumn, swapDownColumn, stackLeftColumn, popRightColumn, removeColumn, swapColumn, Column , deckStore } from './deck-store';
+import type { MenuItem } from '@/types/menu';
+import { onBeforeUnmount, onMounted, provide, watch, ref, computed } from 'vue';
+import { updateColumn, swapLeftColumn, swapRightColumn, swapUpColumn, swapDownColumn, stackLeftColumn, popRightColumn, removeColumn, swapColumn, Column } from './deck-store';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
-import { MenuItem } from '@/types/menu';
+
 
 provide('shouldHeaderThin', true);
 provide('shouldOmitHeaderTitle', true);
@@ -104,7 +105,7 @@ function toggleActive() {
 }
 
 function getMenu() {
-	let items = [{
+	let items: MenuItem[] = [{
 		icon: 'fas fa-cog',
 		text: i18n.ts._deck.configureColumn,
 		action: async () => {
@@ -195,15 +196,19 @@ function onContextmenu(ev: MouseEvent) {
 }
 
 function goTop() {
+	if (body.value == null) return;
 	body.value.scrollTo({
 		top: 0,
 		behavior: 'smooth',
 	});
 }
 
-function onDragstart(ev) {
-	ev.dataTransfer.effectAllowed = 'move';
-	ev.dataTransfer.setData(_DATA_TRANSFER_DECK_COLUMN_, props.column.id);
+function onDragstart(ev: DragEvent) {
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
+	evdataTransfer.effectAllowed = 'move';
+	evdataTransfer.setData(_DATA_TRANSFER_DECK_COLUMN_, props.column.id);
 
 	// Chromeのバグで、Dragstartハンドラ内ですぐにDOMを変更する(=リアクティブなプロパティを変更する)とDragが終了してしまう
 	// SEE: https://stackoverflow.com/questions/19639969/html5-dragend-event-firing-immediately
@@ -212,19 +217,22 @@ function onDragstart(ev) {
 	}, 10);
 }
 
-function onDragend(ev) {
+function onDragend(ev: DragEvent) {
 	dragging.value = false;
 }
 
-function onDragover(ev) {
+function onDragover(ev: DragEvent) {
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
 	// 自分自身がドラッグされている場合
 	if (dragging.value) {
 		// 自分自身にはドロップさせない
-		ev.dataTransfer.dropEffect = 'none';
+		evdataTransfer.dropEffect = 'none';
 	} else {
-		const isDeckColumn = ev.dataTransfer.types[0] === _DATA_TRANSFER_DECK_COLUMN_;
+		const isDeckColumn = evdataTransfer.types[0] === _DATA_TRANSFER_DECK_COLUMN_;
 
-		ev.dataTransfer.dropEffect = isDeckColumn ? 'move' : 'none';
+		evdataTransfer.dropEffect = isDeckColumn ? 'move' : 'none';
 
 		if (isDeckColumn) draghover.value = true;
 	}
@@ -234,11 +242,14 @@ function onDragleave() {
 	draghover.value = false;
 }
 
-function onDrop(ev) {
+function onDrop(ev: DragEvent) {
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
 	draghover.value = false;
 	os.deckGlobalEvents.emit('column.dragEnd');
 
-	const id = ev.dataTransfer.getData(_DATA_TRANSFER_DECK_COLUMN_);
+	const id = evdataTransfer.getData(_DATA_TRANSFER_DECK_COLUMN_);
 	if (id != null && id !== '') {
 		swapColumn(props.column.id, id);
 	}

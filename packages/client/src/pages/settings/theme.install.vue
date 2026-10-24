@@ -5,14 +5,14 @@
 	</FormTextarea>
 
 	<div class="_formBlock" style="display: flex; gap: var(--margin); flex-wrap: wrap;">
-		<FormButton :disabled="installThemeCode == null" inline @click="() => preview(installThemeCode)"><i class="fas fa-eye"></i> {{ i18n.ts.preview }}</FormButton>
-		<FormButton :disabled="installThemeCode == null" primary inline @click="() => install(installThemeCode)"><i class="fas fa-check"></i> {{ i18n.ts.install }}</FormButton>
+		<FormButton :disabled="installThemeCode == null" inline @click="() => installThemeCode != null && preview(installThemeCode)"><i class="fas fa-eye"></i> {{ i18n.ts.preview }}</FormButton>
+		<FormButton :disabled="installThemeCode == null" primary inline @click="() => installThemeCode != null && install(installThemeCode)"><i class="fas fa-check"></i> {{ i18n.ts.install }}</FormButton>
 	</div>
 </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import JSON5 from 'json5';
 import FormTextarea from '@/components/form/textarea.vue';
 import FormButton from '@/components/MkButton.vue';
@@ -22,7 +22,7 @@ import { addTheme, getThemes } from '@/theme-store';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let installThemeCode = ref(null);
+let installThemeCode = ref<string | null>(null);
 
 function parseThemeCode(code: string) {
 	let theme;
@@ -69,9 +69,9 @@ async function install(code: string): Promise<void> {
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts._theme.install,

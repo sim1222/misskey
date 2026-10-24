@@ -39,6 +39,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { HpmlTypeChecker } from '@/scripts/hpml/type-checker';
+import type { BlockDraftOf } from '@/scripts/hpml/block';
+
+
+
 /* eslint-disable vue/no-mutating-props */
 import { } from 'vue';
 import XContainer from '../page-editor.container.vue';
@@ -47,10 +52,10 @@ import MkInput from '@/components/form/input.vue';
 import MkSwitch from '@/components/form/switch.vue';
 
 withDefaults(defineProps<{
-	value: any,
-	hpml: any
+	value?: BlockDraftOf<'button'>,
+	hpml: HpmlTypeChecker
 }>(), {
-	value: {
+	value: () => ({ id: '', type: 'button',
 		text: '',
 		action: 'dialog',
 		content: null,
@@ -59,8 +64,9 @@ withDefaults(defineProps<{
 		primary: false,
 		var: null,
 		fn: null
-	}
+	})
 });
+defineEmits<{ (event: 'remove'): void }>();
 </script>
 
 <style lang="scss" scoped>

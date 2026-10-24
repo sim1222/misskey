@@ -5,7 +5,7 @@
 			Create webhook
 		</FormLink>
 	</FormSection>
-	
+
 	<FormSection>
 		<MkPagination :pagination="pagination">
 			<template #default="{items}">
@@ -28,13 +28,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+
 import MkPagination from '@/components/MkPagination.vue';
 import FormSection from '@/components/form/section.vue';
 import FormLink from '@/components/form/link.vue';
-import { userPage } from '@/filters/user';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+
+
+
 import { definePageMetadata } from '@/scripts/page-metadata';
 
 const pagination = {
@@ -42,9 +42,9 @@ const pagination = {
 	limit: 10,
 };
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: 'Webhook',

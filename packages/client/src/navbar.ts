@@ -1,4 +1,5 @@
-import { computed, ref, reactive } from 'vue';
+import { computed, reactive, type MaybeRef } from 'vue';
+import type { Locale } from '../../shared/locale';
 import { $i } from './account';
 import { search } from '@/scripts/search';
 import * as os from '@/os';
@@ -6,7 +7,12 @@ import { i18n } from '@/i18n';
 import { ui } from '@/config';
 import { unisonReload } from '@/scripts/unison-reload';
 
-export const navbarItemDef = reactive({
+type LocaleLabel = { [K in keyof Locale]: Locale[K] extends string ? K : never }[keyof Locale];
+interface NavbarItem {
+ title: LocaleLabel; icon: string; show?: MaybeRef<boolean>; indicated?: MaybeRef<boolean>;
+ active?: boolean; to?: string; action?: (event: MouseEvent) => void;
+}
+const definitions: Record<string, NavbarItem | undefined> = {
 	notifications: {
 		title: 'notifications',
 		icon: 'fas fa-bell',
@@ -100,7 +106,7 @@ export const navbarItemDef = reactive({
 	ui: {
 		title: 'switchUi',
 		icon: 'fas fa-columns',
-		action: (ev) => {
+		action: (ev: MouseEvent) => {
 			os.popupMenu([{
 				text: i18n.ts.default,
 				active: ui === 'default' || ui === null,
@@ -129,14 +135,15 @@ export const navbarItemDef = reactive({
 					localStorage.setItem('ui', 'classic');
 					unisonReload();
 				},
-			}], ev.currentTarget ?? ev.target);
+			}], ev.currentTarget instanceof HTMLElement ? ev.currentTarget : undefined);
 		},
 	},
 	reload: {
 		title: 'reload',
 		icon: 'fas fa-refresh',
-		action: (ev) => {
+		action: (ev: MouseEvent) => {
 			location.reload();
 		},
 	},
-});
+};
+export const navbarItemDef = reactive(definitions);

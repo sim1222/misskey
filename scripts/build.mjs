@@ -3,6 +3,7 @@ import { execa } from "execa";
 const __dirname = import.meta.dirname;
 
 (async () => {
+	await execa("npm", ["run", "check:frontend-contracts"], { cwd: __dirname + "/../", stdout: process.stdout, stderr: process.stderr });
 	console.log("building packages/backend ...");
 
 	await execa("npm", ["run", "build"], {

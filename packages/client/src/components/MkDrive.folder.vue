@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from '@/misskey';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
@@ -46,7 +46,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
 	(ev: 'chosen', v: Misskey.entities.DriveFolder): void;
 	(ev: 'move', v: Misskey.entities.DriveFolder): void;
-	(ev: 'upload', file: File, folder: Misskey.entities.DriveFolder);
+	(ev: 'upload', file: File, folder: Misskey.entities.DriveFolder): void;
 	(ev: 'removeFile', v: Misskey.entities.DriveFile['id']): void;
 	(ev: 'removeFolder', v: Misskey.entities.DriveFolder['id']): void;
 	(ev: 'dragstart'): void;
@@ -76,23 +76,26 @@ function onMouseout() {
 }
 
 function onDragover(ev: DragEvent) {
-	if (!ev.dataTransfer) return;
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
+	if (!evdataTransfer) return;
 
 	// 自分自身がドラッグされている場合
 	if (isDragging.value) {
 		// 自分自身にはドロップさせない
-		ev.dataTransfer.dropEffect = 'none';
+		evdataTransfer.dropEffect = 'none';
 		return;
 	}
 
-	const isFile = ev.dataTransfer.items[0].kind === 'file';
-	const isDriveFile = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
-	const isDriveFolder = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FOLDER_;
+	const isFile = evdataTransfer.items[0].kind === 'file';
+	const isDriveFile = evdataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
+	const isDriveFolder = evdataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FOLDER_;
 
 	if (isFile || isDriveFile || isDriveFolder) {
-		ev.dataTransfer.dropEffect = ev.dataTransfer.effectAllowed === 'all' ? 'copy' : 'move';
+		evdataTransfer.dropEffect = evdataTransfer.effectAllowed === 'all' ? 'copy' : 'move';
 	} else {
-		ev.dataTransfer.dropEffect = 'none';
+		evdataTransfer.dropEffect = 'none';
 	}
 }
 
@@ -105,20 +108,23 @@ function onDragleave() {
 }
 
 function onDrop(ev: DragEvent) {
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
 	draghover.value = false;
 
-	if (!ev.dataTransfer) return;
+	if (!evdataTransfer) return;
 
 	// ファイルだったら
-	if (ev.dataTransfer.files.length > 0) {
-		for (const file of Array.from(ev.dataTransfer.files)) {
+	if (evdataTransfer.files.length > 0) {
+		for (const file of Array.from(evdataTransfer.files)) {
 			emit('upload', file, props.folder);
 		}
 		return;
 	}
 
 	//#region ドライブのファイル
-	const driveFile = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
+	const driveFile = evdataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
 	if (driveFile != null && driveFile !== '') {
 		const file = JSON.parse(driveFile);
 		emit('removeFile', file.id);
@@ -130,7 +136,7 @@ function onDrop(ev: DragEvent) {
 	//#endregion
 
 	//#region ドライブのフォルダ
-	const driveFolder = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FOLDER_);
+	const driveFolder = evdataTransfer.getData(_DATA_TRANSFER_DRIVE_FOLDER_);
 	if (driveFolder != null && driveFolder !== '') {
 		const folder = JSON.parse(driveFolder);
 
@@ -163,10 +169,13 @@ function onDrop(ev: DragEvent) {
 }
 
 function onDragstart(ev: DragEvent) {
-	if (!ev.dataTransfer) return;
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
 
-	ev.dataTransfer.effectAllowed = 'move';
-	ev.dataTransfer.setData(_DATA_TRANSFER_DRIVE_FOLDER_, JSON.stringify(props.folder));
+	if (!evdataTransfer) return;
+
+	evdataTransfer.effectAllowed = 'move';
+	evdataTransfer.setData(_DATA_TRANSFER_DRIVE_FOLDER_, JSON.stringify(props.folder));
 	isDragging.value = true;
 
 	// 親ブラウザに対して、ドラッグが開始されたフラグを立てる
@@ -179,9 +188,7 @@ function onDragend() {
 	emit('dragend');
 }
 
-function go() {
-	emit('move', props.folder.id);
-}
+
 
 function rename() {
 	os.inputText({
@@ -189,7 +196,7 @@ function rename() {
 		placeholder: i18n.ts.inputNewFolderName,
 		default: props.folder.name,
 	}).then(({ canceled, result: name }) => {
-		if (canceled) return;
+		if (canceled || name == null) return;
 		os.api('drive/folders/update', {
 			folderId: props.folder.id,
 			name: name,
@@ -222,9 +229,7 @@ function deleteFolder() {
 	});
 }
 
-function setAsUploadFolder() {
-	defaultStore.set('uploadFolder', props.folder.id);
-}
+
 
 function onContextmenu(ev: MouseEvent) {
 	os.contextMenu([{

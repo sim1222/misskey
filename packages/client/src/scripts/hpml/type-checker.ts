@@ -63,6 +63,7 @@ export class HpmlTypeChecker {
 
 	@autobind
 	public getExpectedType(v: Expr, slot: number): Type {
+		if (isLiteralValue(v)) return null;
 		const def = funcDefs[v.type || ''];
 		if (def == null) {
 			throw new Error('Unknown type: ' + v.type);
@@ -117,6 +118,7 @@ export class HpmlTypeChecker {
 		if (v.type === 'aiScriptVar') return null;
 		if (v.type === 'fn') return null; // todo
 		if (v.type.startsWith('fn:')) return null; // todo
+		if (isLiteralValue(v)) return null;
 
 		const generic: Type[] = [];
 
@@ -155,19 +157,19 @@ export class HpmlTypeChecker {
 	}
 
 	@autobind
-	public getVarsByType(type: Type): Variable[] {
+	public getVarsByType(type: Type = null): Variable[] {
 		if (type == null) return this.variables;
 		return this.variables.filter(x => (this.infer(x) === null) || (this.infer(x) === type));
 	}
 
 	@autobind
-	public getEnvVarsByType(type: Type): string[] {
+	public getEnvVarsByType(type: Type = null): string[] {
 		if (type == null) return Object.keys(envVarsDef);
 		return Object.entries(envVarsDef).filter(([k, v]) => v === null || type === v).map(([k, v]) => k);
 	}
 
 	@autobind
-	public getPageVarsByType(type: Type): string[] {
+	public getPageVarsByType(type: Type = null): string[] {
 		if (type == null) return this.pageVars.map(v => v.name);
 		return this.pageVars.filter(v => type === v.type).map(v => v.name);
 	}

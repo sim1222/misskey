@@ -1,5 +1,5 @@
 <template>
-<div :class="[$style.root, { yellow: user.isSilenced, red: user.isSuspended, gray: false }]">
+<div :class="[$style.root, { yellow: ('isSilenced' in user && user.isSilenced), red: ('isSuspended' in user && user.isSuspended), gray: false }]">
 	<MkAvatar class="avatar" :user="user" :disable-link="true" :show-indicator="true"/>
 	<div class="body">
 		<span class="name"><MkUserName class="name" :user="user"/></span>
@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import MkMiniChart from '@/components/MkMiniChart.vue';
 import * as os from '@/os';
 import { acct } from '@/filters/user';

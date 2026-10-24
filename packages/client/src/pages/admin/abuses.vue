@@ -47,24 +47,26 @@
 </template>
 
 <script lang="ts" setup>
+import type { ApiRequest } from '@/types/api';
+import type { PaginationExposed } from '@/types/paging';
 import { computed, ref } from 'vue';
 
 import XHeader from './_header_.vue';
-import MkInput from '@/components/form/input.vue';
+
 import MkSelect from '@/components/form/select.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import XAbuseReport from '@/components/MkAbuseReport.vue';
-import * as os from '@/os';
+
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let reports = ref<InstanceType<typeof MkPagination>>();
+let reports = ref<PaginationExposed<'admin/abuse-user-reports'>>();
 
-let state = ref('unresolved');
-let reporterOrigin = ref('combined');
-let targetUserOrigin = ref('combined');
-let searchUsername = ref('');
-let searchHost = ref('');
+let state = ref<NonNullable<ApiRequest<'admin/abuse-user-reports'>['state']>>('unresolved');
+let reporterOrigin = ref<NonNullable<ApiRequest<'admin/abuse-user-reports'>['reporterOrigin']>>('combined');
+let targetUserOrigin = ref<NonNullable<ApiRequest<'admin/abuse-user-reports'>['targetUserOrigin']>>('combined');
+
+
 
 const pagination = {
 	endpoint: 'admin/abuse-user-reports' as const,
@@ -76,8 +78,8 @@ const pagination = {
 	})),
 };
 
-function resolved(reportId) {
-	reports.value.removeItem(item => item.id === reportId);
+function resolved(reportId: string) {
+	reports.value?.removeItem(item => item.id === reportId);
 }
 
 const headerActions = computed(() => []);

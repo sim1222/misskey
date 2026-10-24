@@ -7,19 +7,20 @@
 </template>
 
 <script lang="ts" setup>
-import { provide, ComputedRef, ref } from 'vue';
+import { shallowReactive } from 'vue';
+import { provide } from 'vue';
 import XCommon from './_common_/common.vue';
 import { mainRouter } from '@/router';
-import { PageMetadata, provideMetadataReceiver, setPageMetadata } from '@/scripts/page-metadata';
+import { type PageMetadataRef, provideMetadataReceiver } from '@/scripts/page-metadata';
 import { instanceName } from '@/config';
 
-let pageMetadata = ref<null | ComputedRef<PageMetadata>>();
+let pageMetadata = shallowReactive<{ current: PageMetadataRef | null }>({ current: null });
 
 provide('router', mainRouter);
 provideMetadataReceiver((info) => {
-	pageMetadata.value = info;
-	if (pageMetadata.value.value) {
-		document.title = `${pageMetadata.value.value.title} | ${instanceName}`;
+	pageMetadata.current = info;
+	if (pageMetadata.current?.value) {
+		document.title = `${pageMetadata.current?.value.title} | ${instanceName}`;
 	}
 });
 

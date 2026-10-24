@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import { $i } from '@/account';
 import XReaction from '@/components/MkReactionsViewer.reaction.vue';
 

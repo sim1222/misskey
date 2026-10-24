@@ -22,7 +22,7 @@ if (idbAvailable) {
 
 export async function get(key: string) {
 	if (idbAvailable) return iget(key);
-	return JSON.parse(localStorage.getItem(fallbackName(key)));
+	return JSON.parse(localStorage.getItem(fallbackName(key)) ?? 'null');
 }
 
 export async function set(key: string, val: any) {

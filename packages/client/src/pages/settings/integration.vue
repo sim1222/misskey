@@ -24,20 +24,23 @@
 </template>
 
 <script lang="ts" setup>
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
 import { computed, onMounted, ref, watch } from 'vue';
 import { apiUrl } from '@/config';
 import FormSection from '@/components/form/section.vue';
 import MkButton from '@/components/MkButton.vue';
-import { $i } from '@/account';
+
 import { instance } from '@/instance';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const twitterForm = ref<Window | null>(null);
-const discordForm = ref<Window | null>(null);
-const githubForm = ref<Window | null>(null);
+const twitterForm = ref<WindowProxy | null>(null);
+const discordForm = ref<WindowProxy | null>(null);
+const githubForm = ref<WindowProxy | null>(null);
 
-const integrations = computed(() => $i!.integrations);
+const integrations = computed(() => account.integrations);
 
 function openWindow(service: string, type: string) {
 	return window.open(`${apiUrl}/${type}/${service}`,
@@ -71,7 +74,7 @@ function disconnectGithub() {
 }
 
 onMounted(() => {
-	document.cookie = `igi=${$i!.token}; path=/;` +
+	document.cookie = `igi=${account.token}; path=/;` +
 		' max-age=31536000;' +
 		(document.location.protocol.startsWith('https') ? ' secure' : '');
 
@@ -88,9 +91,9 @@ onMounted(() => {
 	});
 });
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.integration,

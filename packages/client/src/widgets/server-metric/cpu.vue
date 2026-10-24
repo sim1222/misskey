@@ -10,17 +10,19 @@
 </template>
 
 <script lang="ts" setup>
+import type { ChannelConnection, Channels, ServerStats } from '@/misskey';
+import type { ApiResponse } from '@/types/api';
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import XPie from './pie.vue';
 
 const props = defineProps<{
-	connection: any,
-	meta: any
+	connection: ChannelConnection<Channels['serverStats']>,
+	meta: ApiResponse<'server-info'>
 }>();
 
-let usage: number = ref(0);
+let usage = ref<number>(0);
 
-function onStats(stats) {
+function onStats(stats: ServerStats) {
 	usage.value = stats.cpu;
 }
 

@@ -56,6 +56,7 @@
 </template>
 
 <script lang="ts">
+import type { entities } from '@/misskey';
 import { defineComponent } from 'vue';
 import { toUnicode } from 'punycode/';
 import XSigninDialog from '@/components/MkSigninDialog.vue';
@@ -80,10 +81,10 @@ export default defineComponent({
 		return {
 			host: toUnicode(host),
 			instanceName,
-			meta: null,
-			stats: null,
-			tags: [],
-			onlineUsersCount: null,
+			meta: null as entities.DetailedInstanceMetadata | null,
+			stats: null as import('@/types/api').ApiResponse<'stats'> | null,
+			tags: [] as entities.Hashtag[],
+			onlineUsersCount: null as number | null,
 		};
 	},
 
@@ -121,7 +122,7 @@ export default defineComponent({
 			}, {}, 'closed');
 		},
 
-		showMenu(ev) {
+		showMenu(ev: MouseEvent) {
 			os.popupMenu([{
 				text: this.$t('aboutX', { x: instanceName }),
 				icon: 'fas fa-info-circle',

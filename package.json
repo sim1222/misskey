@@ -39,7 +39,16 @@
 		"test:regression:harness": "node --test scripts/test/*.test.mjs",
 		"test:regression:patch": "node scripts/regression/changed-coverage.mjs",
 		"test:services": "node scripts/regression/services.mjs",
-		"test:federation": "node scripts/regression/build.mjs && node scripts/federation/run.mjs"
+		"test:federation": "node scripts/regression/build.mjs && node scripts/federation/run.mjs",
+		"check:frontend-contracts": "node scripts/frontend/generate-api-types.mjs --check && node scripts/frontend/generate-entity-types.mjs --check && node scripts/frontend/generate-locale-types.mjs --check && node scripts/frontend/generate-constants.mjs --check && node scripts/frontend/generate-preference-types.mjs --check",
+		"typecheck:client": "yarn --cwd packages/client typecheck:vue",
+		"typecheck:sw": "yarn --cwd packages/sw typecheck",
+		"typecheck:frontend": "yarn check:frontend-contracts && yarn typecheck:client && yarn typecheck:sw && yarn test:frontend:types",
+		"test:frontend:inputs": "node scripts/frontend/test-inputs.mjs",
+		"test:frontend:unit": "node --test scripts/test/frontend-contracts.test.mjs",
+		"test:frontend:types": "node scripts/frontend/test-type-contracts.mjs",
+		"test:frontend:ui": "node scripts/frontend/test-ui.mjs",
+		"test:frontend:libraries": "node scripts/frontend/test-libraries.mjs"
 	},
 	"dependencies": {
 		"cssnano": "9.9.0",

@@ -70,7 +70,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { toApiError } from '@/types/api-error';
+import { ref } from 'vue';
 import MkButton from '@/components/MkButton.vue';
 import FormSection from '@/components/form/section.vue';
 import FormFolder from '@/components/form/folder.vue';
@@ -97,10 +98,10 @@ const onImportSuccess = () => {
 	});
 };
 
-const onError = (ev) => {
+const onError = (ev: unknown) => {
 	os.alert({
 		type: 'error',
-		text: ev.message,
+		text: toApiError(ev).message,
 	});
 };
 
@@ -128,29 +129,29 @@ const exportMuting = () => {
 	os.api('i/export-mute', {}).then(onExportSuccess).catch(onError);
 };
 
-const importFollowing = async (ev) => {
+const importFollowing = async (ev: MouseEvent) => {
 	const file = await selectFile(ev.currentTarget ?? ev.target);
 	os.api('i/import-following', { fileId: file.id }).then(onImportSuccess).catch(onError);
 };
 
-const importUserLists = async (ev) => {
+const importUserLists = async (ev: MouseEvent) => {
 	const file = await selectFile(ev.currentTarget ?? ev.target);
 	os.api('i/import-user-lists', { fileId: file.id }).then(onImportSuccess).catch(onError);
 };
 
-const importMuting = async (ev) => {
+const importMuting = async (ev: MouseEvent) => {
 	const file = await selectFile(ev.currentTarget ?? ev.target);
 	os.api('i/import-muting', { fileId: file.id }).then(onImportSuccess).catch(onError);
 };
 
-const importBlocking = async (ev) => {
+const importBlocking = async (ev: MouseEvent) => {
 	const file = await selectFile(ev.currentTarget ?? ev.target);
 	os.api('i/import-blocking', { fileId: file.id }).then(onImportSuccess).catch(onError);
 };
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.importAndExport,

@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, reactive, ref } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import MkContainer from '@/components/MkContainer.vue';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import { GetFormResultType } from '@/scripts/form';
 
 const name = 'ai';
@@ -24,7 +25,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -39,8 +40,10 @@ const touched = () => {
 };
 
 const onMousemove = (ev: MouseEvent) => {
+	if (live2d.value == null) return;
 	const iframeRect = live2d.value.getBoundingClientRect();
-	live2d.value.contentWindow.postMessage({
+	if (live2d.value == null) return;
+	live2d.value.contentWindow?.postMessage({
 		type: 'moveCursor',
 		body: {
 			x: ev.clientX - iframeRect.left,

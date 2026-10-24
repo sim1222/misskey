@@ -1,7 +1,10 @@
 import { url as instanceUrl } from '@/config';
 import * as url from '@/scripts/url';
 
-export function getStaticImageUrl(baseUrl: string): string {
+export function getStaticImageUrl(baseUrl: string): string;
+export function getStaticImageUrl(baseUrl: string | null | undefined): string | undefined;
+export function getStaticImageUrl(baseUrl: string | null | undefined): string | undefined {
+ if (baseUrl == null) return undefined;
 	const u = new URL(baseUrl);
 	if (u.href.startsWith(`${instanceUrl}/proxy/`)) {
 		// もう既にproxyっぽそうだったらsearchParams付けるだけ

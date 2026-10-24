@@ -1,6 +1,6 @@
 <template>
 <div class="_formRoot">
-	<MkTab v-model="tab" style="margin-bottom: var(--margin);">
+	<MkTab v-model="tab" style="margin-bottom: var(--margin);" :choices="['mute', 'block']">
 		<option value="mute">{{ i18n.ts.mutedUsers }}</option>
 		<option value="block">{{ i18n.ts.blockedUsers }}</option>
 	</MkTab>
@@ -28,13 +28,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkTab from '@/components/MkTab.vue';
 import FormInfo from '@/components/MkInfo.vue';
 import FormLink from '@/components/form/link.vue';
 import { userPage } from '@/filters/user';
-import * as os from '@/os';
+
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
@@ -50,9 +50,9 @@ const blockingPagination = {
 	limit: 10,
 };
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.muteAndBlock,

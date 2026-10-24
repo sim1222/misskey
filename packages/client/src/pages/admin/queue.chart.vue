@@ -30,7 +30,7 @@
 		<div v-if="jobs.length > 0">
 			<div v-for="job in jobs" :key="job[0]">
 				<span>{{ job[0] }}</span>
-				<span style="margin-left: 8px; opacity: 0.7;">({{ number(job[1]) }} jobs)</span>
+				<span style="margin-left: 8px; opacity: 0.7;">({{ number(Number(job[1])) }} jobs)</span>
 			</div>
 		</div>
 		<span v-else style="opacity: 0.5;">{{ i18n.ts.noJobs }}</span>
@@ -39,6 +39,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { QueueStats } from '@/misskey';
+import type { ApiResponse } from '@/types/api';
 import { markRaw, onMounted, onUnmounted, ref } from 'vue';
 import XChart from './queue.chart.chart.vue';
 import number from '@/filters/number';
@@ -52,29 +54,29 @@ const activeSincePrevTick = ref(0);
 const active = ref(0);
 const delayed = ref(0);
 const waiting = ref(0);
-const jobs = ref([]);
+const jobs = ref<ApiResponse<'admin/queue/inbox-delayed'>>([]);
 let chartProcess = ref<InstanceType<typeof XChart>>();
 let chartActive = ref<InstanceType<typeof XChart>>();
 let chartDelayed = ref<InstanceType<typeof XChart>>();
 let chartWaiting = ref<InstanceType<typeof XChart>>();
 
 const props = defineProps<{
-	domain: string;
+	domain: 'inbox' | 'deliver';
 }>();
 
-const onStats = (stats) => {
+const onStats = (stats: QueueStats) => {
 	activeSincePrevTick.value = stats[props.domain].activeSincePrevTick;
 	active.value = stats[props.domain].active;
 	delayed.value = stats[props.domain].delayed;
 	waiting.value = stats[props.domain].waiting;
 
-	chartProcess.value.pushData(stats[props.domain].activeSincePrevTick);
-	chartActive.value.pushData(stats[props.domain].active);
-	chartDelayed.value.pushData(stats[props.domain].delayed);
-	chartWaiting.value.pushData(stats[props.domain].waiting);
+	chartProcess.value?.pushData(stats[props.domain].activeSincePrevTick);
+	chartActive.value?.pushData(stats[props.domain].active);
+	chartDelayed.value?.pushData(stats[props.domain].delayed);
+	chartWaiting.value?.pushData(stats[props.domain].waiting);
 };
 
-const onStatsLog = (statsLog) => {
+const onStatsLog = (statsLog: QueueStats[]) => {
 	const dataProcess = [];
 	const dataActive = [];
 	const dataDelayed = [];
@@ -87,14 +89,14 @@ const onStatsLog = (statsLog) => {
 		dataWaiting.push(stats[props.domain].waiting);
 	}
 
-	chartProcess.value.setData(dataProcess);
-	chartActive.value.setData(dataActive);
-	chartDelayed.value.setData(dataDelayed);
-	chartWaiting.value.setData(dataWaiting);
+	chartProcess.value?.setData(dataProcess);
+	chartActive.value?.setData(dataActive);
+	chartDelayed.value?.setData(dataDelayed);
+	chartWaiting.value?.setData(dataWaiting);
 };
 
 onMounted(() => {
-	os.api(props.domain === 'inbox' ? 'admin/queue/inbox-delayed' : props.domain === 'deliver' ? 'admin/queue/deliver-delayed' : null, {}).then(result => {
+	os.api(props.domain === 'inbox' ? 'admin/queue/inbox-delayed' : 'admin/queue/deliver-delayed', {}).then(result => {
 		jobs.value = result;
 	});
 

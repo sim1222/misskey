@@ -148,15 +148,15 @@ fetchThemes().then(() => {
 	installedThemes.value = getThemes();
 });
 
-function setWallpaper(event) {
+function setWallpaper(event: MouseEvent) {
 	selectFile(event.currentTarget ?? event.target, null).then(file => {
 		wallpaper.value = file.url;
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.theme,

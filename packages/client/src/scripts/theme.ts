@@ -7,6 +7,8 @@ export type Theme = {
 	name: string;
 	author: string;
 	desc?: string;
+ /** Legacy themes used kind before base. */
+ kind?: 'light' | 'dark';
 	base?: 'dark' | 'light';
 	props: Record<string, string>;
 };
@@ -50,9 +52,12 @@ export const getBuiltinThemesRef = () => {
 	return builtinThemes;
 };
 
-let timeout = null;
+let timeout: number|null|undefined = null;
 
-export function applyTheme(theme: Theme, persist = true) {
+export type ThemeColors = Pick<Theme, 'base' | 'props'>;
+export type ThemeDraft = ThemeColors & Partial<Omit<Theme, 'base' | 'props'>>;
+
+export function applyTheme(theme: ThemeColors, persist = true) {
 	if (timeout) window.clearTimeout(timeout);
 
 	document.documentElement.classList.add('_themeChanging_');
@@ -64,7 +69,7 @@ export function applyTheme(theme: Theme, persist = true) {
 	const colorSchema = theme.base === 'dark' ? 'dark' : 'light';
 
 	// Deep copy
-	const _theme = JSON.parse(JSON.stringify(theme));
+	const _theme: ThemeColors = JSON.parse(JSON.stringify(theme));
 
 	if (_theme.base) {
 		const base = [lightTheme, darkTheme].find(x => x.id === _theme.base);
@@ -95,7 +100,7 @@ export function applyTheme(theme: Theme, persist = true) {
 	globalEvents.emit('themeChanged');
 }
 
-function compile(theme: Theme): Record<string, string> {
+function compile(theme: ThemeColors): Record<string, string> {
 	function getColor(val: string): tinycolor.Instance {
 		// ref (prop)
 		if (val[0] === '@') {
@@ -110,8 +115,8 @@ function compile(theme: Theme): Record<string, string> {
 		// func
 		else if (val[0] === ':') {
 			const parts = val.split('<');
-			const func = parts.shift().substr(1);
-			const arg = parseFloat(parts.shift());
+			const func = (parts.shift() ?? '').substr(1);
+			const arg = parseFloat(parts.shift() ?? '');
 			const color = getColor(parts.join('<'));
 
 			switch (func) {
@@ -127,7 +132,7 @@ function compile(theme: Theme): Record<string, string> {
 		return tinycolor(val);
 	}
 
-	const props = {};
+	const props: Record<string, string> = {};
 
 	for (const [k, v] of Object.entries(theme.props)) {
 		if (k.startsWith('$')) continue; // ignore const

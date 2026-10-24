@@ -47,17 +47,17 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { toUnicode } from 'punycode/';
+
 import XTimeline from './welcome.timeline.vue';
 import MarqueeText from '@/components/MkMarquee.vue';
 import XSigninDialog from '@/components/MkSigninDialog.vue';
 import XSignupDialog from '@/components/MkSignupDialog.vue';
 import MkButton from '@/components/MkButton.vue';
-import XNote from '@/components/MkNote.vue';
+
 import MkFeaturedPhotos from '@/components/MkFeaturedPhotos.vue';
-import { host, instanceName } from '@/config';
+import { instanceName } from '@/config';
 import * as os from '@/os';
-import number from '@/filters/number';
+
 import { i18n } from '@/i18n';
 
 let meta = ref();
@@ -104,7 +104,7 @@ function signup() {
 	}, {}, 'closed');
 }
 
-function showMenu(ev) {
+function showMenu(ev: MouseEvent) {
 	os.popupMenu([{
 		text: i18n.ts.instanceInfo,
 		icon: 'fas fa-info-circle',

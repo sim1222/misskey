@@ -7,7 +7,7 @@
 	<div v-else-if="isArray(value) && isEmpty(value)" class="array empty">[]</div>
 	<div v-else-if="isArray(value)" class="array">
 		<div v-for="i in value.length" class="element">
-			{{ i }}: <XValue :value="value[i - 1]" collapsed/>
+			{{ i }}: <XValue :value="value[i - 1]"/>
 		</div>
 	</div>
 	<div v-else-if="isObject(value) && isEmpty(value)" class="object empty">{}</div>
@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref } from 'vue';
+import { defineComponent, reactive } from 'vue';
 import number from '@/filters/number';
 
 export default defineComponent({
@@ -42,7 +42,7 @@ export default defineComponent({
 	},
 
 	setup(props) {
-		const collapsed = reactive({});
+		const collapsed = reactive<Record<string, boolean>>({});
 
 		if (isObject(props.value)) {
 			for (const key in props.value) {
@@ -50,19 +50,19 @@ export default defineComponent({
 			}
 		}
 
-		function isObject(v): boolean {
+		function isObject(v: unknown): v is Record<string, unknown> {
 			return typeof v === 'object' && !Array.isArray(v) && v !== null;
 		}
 
-		function isArray(v): boolean {
+		function isArray(v: unknown): v is unknown[] {
 			return Array.isArray(v);
 		}
 
-		function isEmpty(v): boolean {
+		function isEmpty(v: unknown): boolean {
 			return (isArray(v) && v.length === 0) || (isObject(v) && Object.keys(v).length === 0);
 		}
 
-		function collapsable(v): boolean {
+		function collapsable(v: unknown): boolean {
 			return (isObject(v) || isArray(v)) && !isEmpty(v);
 		}
 

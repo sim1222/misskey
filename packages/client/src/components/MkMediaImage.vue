@@ -10,7 +10,7 @@
 </div>
 <div v-else class="gqnyydlz">
 	<a
-		:href="image.url"
+		:href="(image.url) ?? undefined"
 		:title="image.name"
 	>
 		<ImgWithBlurhash :hash="image.blurhash" :src="url" :alt="image.comment" :title="image.comment" :cover="false"/>
@@ -22,7 +22,7 @@
 
 <script lang="ts" setup>
 import { watch, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import { getStaticImageUrl } from '@/scripts/get-static-image-url';
 import ImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
 import { defaultStore } from '@/store';

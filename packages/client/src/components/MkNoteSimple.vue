@@ -2,7 +2,7 @@
 <div v-size="{ min: [350, 500] }" class="yohlumlk">
 	<MkAvatar class="avatar" :user="note.user"/>
 	<div class="main">
-		<XNoteHeader class="header" :note="note" :mini="true"/>
+		<XNoteHeader class="header" :note="note"/>
 		<div class="body">
 			<p v-if="note.cw != null" class="cw">
 				<Mfm v-if="note.cw != ''" class="text" :text="note.cw" :author="note.user" :i="$i" :custom-emojis="note.emojis"/>
@@ -18,12 +18,12 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import XNoteHeader from '@/components/MkNoteHeader.vue';
 import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
 import XCwButton from '@/components/MkCwButton.vue';
 
-const props = defineProps<{
+defineProps<{
 	note: misskey.entities.Note;
 	pinned?: boolean;
 }>();

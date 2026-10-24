@@ -17,6 +17,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { entities } from '@/misskey';
+import type { BlockDraftOf } from '@/scripts/hpml/block';
+
+
+
 /* eslint-disable vue/no-mutating-props */
 import { watch, ref } from 'vue';
 import XContainer from '../page-editor.container.vue';
@@ -27,26 +32,27 @@ import XNoteDetailed from '@/components/MkNoteDetailed.vue';
 import * as os from '@/os';
 
 const props = withDefaults(defineProps<{
-	value: any
+	value?: BlockDraftOf<'note'>
 }>(), {
-	value: {
+	value: () => ({ id: '', type: 'note',
 		note: null,
 		detailed: false
-	}
+	})
 });
 
-let id: any = ref(props.value.note);
-let note: any = ref(null);
+let id = ref(props.value.note);
+let note = ref<entities.Note | null>(null);
 
-watch(id.value, async () => {
+watch(id, async () => {
 	if (id.value && (id.value.startsWith('http://') || id.value.startsWith('https://'))) {
-		props.value.note = (id.value.endsWith('/') ? id.value.slice(0, -1) : id.value).split('/').pop();
+		props.value.note = (id.value.endsWith('/') ? id.value.slice(0, -1) : id.value).split('/').pop() ?? null;
 	} else {
 		props.value.note = id.value;
 	}
 
-	note.value = await os.api('notes/show', { noteId: props.value.note });
+	note.value = props.value.note ? await os.api('notes/show', { noteId: props.value.note }) : null;
 }, {
 	immediate: true
 });
+defineEmits<{ (event: 'remove'): void }>();
 </script>

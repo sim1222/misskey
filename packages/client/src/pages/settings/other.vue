@@ -1,6 +1,6 @@
 <template>
 <div class="_formRoot">
-	<FormSwitch v-model="$i.injectFeaturedNote" class="_formBlock" @update:modelValue="onChangeInjectFeaturedNote">
+	<FormSwitch v-model="account.injectFeaturedNote" class="_formBlock" @update:modelValue="onChangeInjectFeaturedNote">
 		{{ i18n.ts.showFeaturedNotesInTimeline }}
 	</FormSwitch>
 
@@ -17,28 +17,31 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+
 import FormSwitch from '@/components/form/switch.vue';
 import FormLink from '@/components/form/link.vue';
 import * as os from '@/os';
-import { defaultStore } from '@/store';
-import { $i } from '@/account';
+
+
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const reportError = computed(defaultStore.makeGetterSetter('reportError'));
 
-function onChangeInjectFeaturedNote(v) {
+
+function onChangeInjectFeaturedNote(v: boolean) {
 	os.api('i/update', {
 		injectFeaturedNote: v,
 	}).then((i) => {
-		$i!.injectFeaturedNote = i.injectFeaturedNote;
+		account.injectFeaturedNote = i.injectFeaturedNote;
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.other,

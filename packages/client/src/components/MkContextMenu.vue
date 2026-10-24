@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import MkMenu from './MkMenu.vue';
-import { MenuItem } from './types/menu.vue';
+import { MenuItem } from '@/types/menu';
 import contains from '@/scripts/contains';
 import * as os from '@/os';
 
@@ -30,6 +30,7 @@ onMounted(() => {
 	let left = props.ev.pageX + 1; // 間違って右ダブルクリックした場合に意図せずアイテムがクリックされるのを防ぐため + 1
 	let top = props.ev.pageY + 1; // 間違って右ダブルクリックした場合に意図せずアイテムがクリックされるのを防ぐため + 1
 
+	if (rootEl.value == null) return;
 	const width = rootEl.value.offsetWidth;
 	const height = rootEl.value.offsetHeight;
 

@@ -10,9 +10,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { ApiResponse } from '@/types/api';
 import { ref } from 'vue'
 
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import MkMiniChart from '@/components/MkMiniChart.vue';
 import * as os from '@/os';
 import { acct } from '@/filters/user';
@@ -21,7 +22,7 @@ const props = defineProps<{
 	user: misskey.entities.User;
 }>();
 
-let chart = ref(null);
+let chart = ref<ApiResponse<'charts/user/notes'> | null>(null);
 
 os.apiGet('charts/user/notes', { userId: props.user.id, limit: 16, span: 'day' }).then(res => {
 	chart.value = res;

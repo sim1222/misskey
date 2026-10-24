@@ -7,7 +7,7 @@
 
 		<template v-if="enableGithubIntegration">
 			<FormInfo class="_formBlock">Callback URL: {{ `${uri}/api/gh/cb` }}</FormInfo>
-		
+
 			<FormInput v-model="githubClientId" class="_formBlock">
 				<template #prefix><i class="fas fa-key"></i></template>
 				<template #label>Client ID</template>
@@ -35,10 +35,10 @@ import * as os from '@/os';
 import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
 
-let uri: string = ref('');
-let enableGithubIntegration: boolean = ref(false);
-let githubClientId: string | null = ref(null);
-let githubClientSecret: string | null = ref(null);
+let uri = ref<string>('');
+let enableGithubIntegration = ref<boolean>(false);
+let githubClientId = ref<string | null>(null);
+let githubClientSecret = ref<string | null>(null);
 
 async function init() {
 	const meta = await os.api('admin/meta');

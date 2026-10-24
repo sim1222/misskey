@@ -15,6 +15,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { BlockDraftOf } from '@/scripts/hpml/block';
+
+
+
 /* eslint-disable vue/no-mutating-props */
 import { onMounted, ref } from 'vue';
 import XContainer from '../page-editor.container.vue';
@@ -22,11 +26,11 @@ import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
 import * as os from '@/os';
 
 const props = withDefaults(defineProps<{
-	value: any
+	value?: BlockDraftOf<'image'>
 }>(), {
-	value: {
+	value: () => ({ id: '', type: 'image',
 		fileId: null
-	}
+	})
 });
 
 let file: any = ref(null);
@@ -49,6 +53,7 @@ onMounted(async () => {
 		});
 	}
 });
+defineEmits<{ (event: 'remove'): void }>();
 </script>
 
 <style lang="scss" scoped>

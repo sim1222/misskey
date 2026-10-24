@@ -18,8 +18,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
-import * as misskey from 'misskey-js';
+import { ref } from 'vue';
+import * as misskey from '@/misskey';
 import MkButton from '@/components/MkButton.vue';
 import { version } from '@/config';
 import * as os from '@/os';
@@ -27,7 +27,7 @@ import { unisonReload } from '@/scripts/unison-reload';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
 	error?: Error;
 }>(), {
 });
@@ -52,9 +52,9 @@ function reload() {
 	unisonReload();
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.error,

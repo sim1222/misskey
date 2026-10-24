@@ -20,7 +20,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import { getStaticImageUrl } from '@/scripts/get-static-image-url';
 import { notePage } from '@/filters/note';
 import * as os from '@/os';
@@ -38,10 +38,10 @@ let images = ref<{
 	file: misskey.entities.DriveFile;
 }[]>([]);
 
-function thumbnail(image: misskey.entities.DriveFile): string {
+function thumbnail(image: misskey.entities.DriveFile): string | undefined {
 	return defaultStore.state.disableShowingAnimatedImages
 		? getStaticImageUrl(image.thumbnailUrl)
-		: image.thumbnailUrl;
+		: image.thumbnailUrl ?? undefined;
 }
 
 onMounted(() => {

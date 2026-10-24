@@ -4,13 +4,13 @@
 		<template #label>{{ i18n.ts.emailAddress }}</template>
 		<FormInput v-model="emailAddress" type="email" manual-save>
 			<template #prefix><i class="fas fa-envelope"></i></template>
-			<template v-if="$i.email && !$i.emailVerified" #caption>{{ i18n.ts.verificationEmailSent }}</template>
-			<template v-else-if="emailAddress === $i.email && $i.emailVerified" #caption><i class="fas fa-check" style="color: var(--success);"></i> {{ i18n.ts.emailVerified }}</template>
+			<template v-if="account.email && !account.emailVerified" #caption>{{ i18n.ts.verificationEmailSent }}</template>
+			<template v-else-if="emailAddress === account.email && account.emailVerified" #caption><i class="fas fa-check" style="color: var(--success);"></i> {{ i18n.ts.emailVerified }}</template>
 		</FormInput>
 	</FormSection>
 
 	<FormSection>
-		<FormSwitch :model-value="$i.receiveAnnouncementEmail" @update:modelValue="onChangeReceiveAnnouncementEmail">
+		<FormSwitch :model-value="account.receiveAnnouncementEmail" @update:modelValue="onChangeReceiveAnnouncementEmail">
 			{{ i18n.ts.receiveAnnouncementFromInstance }}
 		</FormSwitch>
 	</FormSection>
@@ -40,18 +40,21 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch, computed } from 'vue';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import { onMounted, ref, watch } from 'vue';
 import FormSection from '@/components/form/section.vue';
 import FormInput from '@/components/form/input.vue';
 import FormSwitch from '@/components/form/switch.vue';
 import * as os from '@/os';
-import { $i } from '@/account';
+
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const emailAddress = ref($i!.email);
+const emailAddress = ref(account.email);
 
-const onChangeReceiveAnnouncementEmail = (v) => {
+const onChangeReceiveAnnouncementEmail = (v: boolean) => {
 	os.api('i/update', {
 		receiveAnnouncementEmail: v,
 	});
@@ -62,7 +65,7 @@ const saveEmailAddress = () => {
 		title: i18n.ts.password,
 		type: 'password',
 	}).then(({ canceled, result: password }) => {
-		if (canceled) return;
+		if (canceled || password == null) return;
 		os.apiWithDialog('i/update-email', {
 			password: password,
 			email: emailAddress.value,
@@ -70,12 +73,12 @@ const saveEmailAddress = () => {
 	});
 };
 
-const emailNotification_mention = ref($i!.emailNotificationTypes.includes('mention'));
-const emailNotification_reply = ref($i!.emailNotificationTypes.includes('reply'));
-const emailNotification_quote = ref($i!.emailNotificationTypes.includes('quote'));
-const emailNotification_follow = ref($i!.emailNotificationTypes.includes('follow'));
-const emailNotification_receiveFollowRequest = ref($i!.emailNotificationTypes.includes('receiveFollowRequest'));
-const emailNotification_groupInvited = ref($i!.emailNotificationTypes.includes('groupInvited'));
+const emailNotification_mention = ref((account.emailNotificationTypes ?? []).includes('mention'));
+const emailNotification_reply = ref((account.emailNotificationTypes ?? []).includes('reply'));
+const emailNotification_quote = ref((account.emailNotificationTypes ?? []).includes('quote'));
+const emailNotification_follow = ref((account.emailNotificationTypes ?? []).includes('follow'));
+const emailNotification_receiveFollowRequest = ref((account.emailNotificationTypes ?? []).includes('receiveFollowRequest'));
+const emailNotification_groupInvited = ref((account.emailNotificationTypes ?? []).includes('groupInvited'));
 
 const saveNotificationSettings = () => {
 	os.api('i/update', {
@@ -100,9 +103,9 @@ onMounted(() => {
 	});
 });
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.email,

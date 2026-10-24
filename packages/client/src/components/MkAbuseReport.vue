@@ -41,7 +41,7 @@ import { ref } from 'vue'
 import MkButton from '@/components/MkButton.vue';
 import MkSwitch from '@/components/form/switch.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
-import { acct, userPage } from '@/filters/user';
+
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 

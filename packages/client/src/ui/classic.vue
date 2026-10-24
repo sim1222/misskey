@@ -10,7 +10,7 @@
 			<XWidgets :place="'left'" @mounted="attachSticky(widgetsLeft)"/>
 		</div>
 
-		<main class="main" :style="{ background: pageMetadata?.value?.bg }" @contextmenu.stop="onContextmenu">
+		<main class="main" :style="{ background: pageMetadata.current?.value?.bg }" @contextmenu.stop="onContextmenu">
 			<div class="content">
 				<RouterView/>
 			</div>
@@ -41,14 +41,17 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, markRaw, ComputedRef, ref, onMounted, provide, computed } from 'vue';
+import { keepsBrowserMenu } from '@/scripts/contextmenu-target';
+import { shallowReactive } from 'vue';
+
+import { defineAsyncComponent, ref, onMounted, provide, computed } from 'vue';
 import XSidebar from './classic.sidebar.vue';
 import XCommon from './_common_/common.vue';
 import { instanceName } from '@/config';
 import { StickySidebar } from '@/scripts/sticky-sidebar';
 import * as os from '@/os';
 import { mainRouter } from '@/router';
-import { PageMetadata, provideMetadataReceiver, setPageMetadata } from '@/scripts/page-metadata';
+import { type PageMetadataRef, provideMetadataReceiver } from '@/scripts/page-metadata';
 import { defaultStore } from '@/store';
 import { i18n } from '@/i18n';
 const XHeaderMenu = defineAsyncComponent(() => import('./classic.header.vue'));
@@ -58,47 +61,39 @@ const DESKTOP_THRESHOLD = 1100;
 
 let isDesktop = ref(window.innerWidth >= DESKTOP_THRESHOLD);
 
-let pageMetadata = ref<null | ComputedRef<PageMetadata>>();
+let pageMetadata = shallowReactive<{ current: PageMetadataRef | null }>({ current: null });
 let widgetsShowing = ref(false);
 let fullView = ref(false);
 let globalHeaderHeight = ref(0);
 const wallpaper = localStorage.getItem('wallpaper') != null;
 const showMenuOnTop = computed(() => defaultStore.state.menuDisplay === 'top');
 let live2d = ref<HTMLIFrameElement>();
-let widgetsLeft = ref();
-let widgetsRight = ref();
+let widgetsLeft = ref<HTMLDivElement>();
+let widgetsRight = ref<HTMLDivElement>();
 
 provide('router', mainRouter);
 provideMetadataReceiver((info) => {
-	pageMetadata.value = info;
-	if (pageMetadata.value.value) {
-		document.title = `${pageMetadata.value.value.title} | ${instanceName}`;
+	pageMetadata.current = info;
+	if (pageMetadata.current?.value) {
+		document.title = `${pageMetadata.current?.value.title} | ${instanceName}`;
 	}
 });
 provide('shouldHeaderThin', showMenuOnTop.value);
 provide('shouldSpacerMin', true);
 
-function attachSticky(el) {
+function attachSticky(el: HTMLElement | undefined) {
+ if (!el) return;
 	const sticky = new StickySidebar(el, defaultStore.state.menuDisplay === 'top' ? 0 : 16, defaultStore.state.menuDisplay === 'top' ? 60 : 0); // TODO: ヘッダーの高さを60pxと決め打ちしているのを直す
 	window.addEventListener('scroll', () => {
 		sticky.calc(window.scrollY);
 	}, { passive: true });
 }
 
-function top() {
-	window.scroll({ top: 0, behavior: 'smooth' });
-}
+
 
 function onContextmenu(ev: MouseEvent) {
-	const isLink = (el: HTMLElement) => {
-		if (el.tagName === 'A') return true;
-		if (el.parentElement) {
-			return isLink(el.parentElement);
-		}
-	};
-	if (isLink(ev.target)) return;
-	if (['INPUT', 'TEXTAREA', 'IMG', 'VIDEO', 'CANVAS'].includes(ev.target.tagName) || ev.target.attributes['contenteditable']) return;
-	if (window.getSelection().toString() !== '') return;
+	if (keepsBrowserMenu(ev.target)) return;
+	if (window.getSelection()?.toString() !== '') return;
 	const path = mainRouter.getCurrentPath();
 	os.contextMenu([{
 		type: 'label',
@@ -118,9 +113,7 @@ function onContextmenu(ev: MouseEvent) {
 	}], ev);
 }
 
-function onAiClick(ev) {
-	//if (this.live2d) this.live2d.click(ev);
-}
+
 
 if (window.innerWidth < 1024) {
 	localStorage.setItem('ui', 'default');
@@ -148,9 +141,11 @@ onMounted(() => {
 	}, { passive: true });
 
 	if (defaultStore.state.aiChanMode) {
+		if (live2d.value == null) return;
 		const iframeRect = live2d.value.getBoundingClientRect();
 		window.addEventListener('mousemove', ev => {
-			live2d.value.contentWindow.postMessage({
+			if (live2d.value == null) return;
+			live2d.value.contentWindow?.postMessage({
 				type: 'moveCursor',
 				body: {
 					x: ev.clientX - iframeRect.left,
@@ -159,7 +154,8 @@ onMounted(() => {
 			}, '*');
 		}, { passive: true });
 		window.addEventListener('touchmove', ev => {
-			live2d.value.contentWindow.postMessage({
+			if (live2d.value == null) return;
+			live2d.value.contentWindow?.postMessage({
 				type: 'moveCursor',
 				body: {
 					x: ev.touches[0].clientX - iframeRect.left,
@@ -215,7 +211,7 @@ onMounted(() => {
 
 		&.fullView {
 			margin: 0;
-		
+
 			> .sidebar {
 				display: none;
 			}

@@ -1,9 +1,9 @@
 import { AsyncComponentLoader, defineAsyncComponent, inject } from 'vue';
-import { Router } from '@/nirax';
+import { Router, type RouteDef } from '@/nirax';
 import { $i, iAmModerator } from '@/account';
 import MkLoading from '@/pages/_loading_.vue';
 import MkError from '@/pages/_error_.vue';
-import { ui } from '@/config';
+
 
 const page = (loader: AsyncComponentLoader<any>) => defineAsyncComponent({
 	loader: loader,
@@ -11,7 +11,7 @@ const page = (loader: AsyncComponentLoader<any>) => defineAsyncComponent({
 	errorComponent: MkError,
 });
 
-export const routes = [{
+export const routes: RouteDef[] = [{
 	path: '/@:initUser/pages/:initPageName/view-source',
 	component: page(() => import('./pages/page-editor/page-editor.vue')),
 }, {

@@ -91,7 +91,7 @@ Chart.register(
 	Filler,
 );
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
 	chartLimit?: number;
 	detailed?: boolean;
 }>(), {
@@ -106,13 +106,15 @@ let pubDoughnutEl = ref<HTMLCanvasElement>();
 const { handler: externalTooltipHandler1 } = useChartTooltip();
 const { handler: externalTooltipHandler2 } = useChartTooltip();
 
-function createDoughnut(chartEl, tooltip, data) {
-	const chartInstance = new Chart(chartEl, {
+type ChartEntry = { name: string; color: string | null; value: number; onClick?: () => void };
+function createDoughnut(chartEl: HTMLCanvasElement | undefined, tooltip: typeof externalTooltipHandler1, data: ChartEntry[]) {
+	if (!chartEl) return;
+ const chartInstance = new Chart(chartEl, {
 		type: 'doughnut',
 		data: {
 			labels: data.map(x => x.name),
 			datasets: [{
-				backgroundColor: data.map(x => x.color),
+				backgroundColor: data.map(x => x.color ?? undefined),
 				borderColor: getComputedStyle(document.documentElement).getPropertyValue('--panel'),
 				borderWidth: 2,
 				hoverOffset: 0,
@@ -130,9 +132,9 @@ function createDoughnut(chartEl, tooltip, data) {
 				},
 			},
 			onClick: (ev) => {
-				const hit = chartInstance.getElementsAtEventForMode(ev, 'nearest', { intersect: true }, false)[0];
+				const hit = chartInstance.getElementsAtEventForMode(ev.native ?? new Event(ev.type), 'nearest', { intersect: true }, false)[0];
 				if (hit && data[hit.index].onClick) {
-					data[hit.index].onClick();
+					data[hit.index].onClick?.();
 				}
 			},
 			plugins: {
@@ -156,7 +158,7 @@ function createDoughnut(chartEl, tooltip, data) {
 
 onMounted(() => {
 	os.apiGet('federation/stats', { limit: 30 }).then(fedStats => {
-		createDoughnut(subDoughnutEl.value, externalTooltipHandler1, fedStats.topSubInstances.map(x => ({
+		createDoughnut(subDoughnutEl.value, externalTooltipHandler1, fedStats.topSubInstances.map((x): ChartEntry => ({
 			name: x.host,
 			color: x.themeColor,
 			value: x.followersCount,
@@ -165,7 +167,7 @@ onMounted(() => {
 			},
 		})).concat([{ name: '(other)', color: '#80808080', value: fedStats.otherFollowersCount }]));
 
-		createDoughnut(pubDoughnutEl.value, externalTooltipHandler2, fedStats.topPubInstances.map(x => ({
+		createDoughnut(pubDoughnutEl.value, externalTooltipHandler2, fedStats.topPubInstances.map((x): ChartEntry => ({
 			name: x.host,
 			color: x.themeColor,
 			value: x.followingCount,

@@ -38,21 +38,24 @@ const el = ref<HTMLElement>();
 const zIndex = os.claimZIndex('high');
 
 function setPosition() {
-	const data = calcPopupPosition(el.value, {
-		anchorElement: props.targetElement,
+	if (el.value == null) return;
+	let anchor: { anchorElement: HTMLElement; x?: number; y?: number } | { anchorElement: null; x: number; y: number };
+ if (props.targetElement) anchor = { anchorElement: props.targetElement };
+ else { if (props.x == null || props.y == null) return; anchor = { anchorElement: null, x: props.x, y: props.y }; }
+ const data = calcPopupPosition(el.value, {
+		...anchor,
 		direction: props.direction,
 		align: 'center',
 		innerMargin: props.innerMargin,
-		x: props.x,
-		y: props.y,
 	});
 
+	if (el.value == null) return;
 	el.value.style.transformOrigin = data.transformOrigin;
 	el.value.style.left = data.left + 'px';
 	el.value.style.top = data.top + 'px';
 }
 
-let loopHandler;
+let loopHandler: number;
 
 onMounted(() => {
 	nextTick(() => {

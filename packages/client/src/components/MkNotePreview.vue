@@ -1,13 +1,13 @@
 <template>
 <div v-size="{ min: [350, 500] }" class="fefdfafb">
-	<MkAvatar class="avatar" :user="$i"/>
+	<MkAvatar class="avatar" :user="account"/>
 	<div class="main">
 		<div class="header">
-			<MkUserName :user="$i"/>
+			<MkUserName :user="account"/>
 		</div>
 		<div class="body">
 			<div class="content">
-				<Mfm :text="text.trim()" :author="$i" :i="$i"/>
+				<Mfm :text="text.trim()" :author="account" :i="$i"/>
 			</div>
 		</div>
 	</div>
@@ -15,9 +15,11 @@
 </template>
 
 <script lang="ts" setup>
+import { requireAccount } from '@/account';
+const account = requireAccount();
 import { } from 'vue';
 
-const props = defineProps<{
+defineProps<{
 	text: string;
 }>();
 </script>

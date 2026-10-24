@@ -7,9 +7,10 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, watch } from 'vue';
-import { AiScript, parse, utils } from '@syuilo/aiscript';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+
+import type { Value } from '@syuilo/aiscript/built/interpreter/value';
+import { AiScript, parse } from '@syuilo/aiscript';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import { GetFormResultType } from '@/scripts/form';
 import * as os from '@/os';
 import { createAiScriptEnv } from '@/scripts/aiscript/api';
@@ -40,7 +41,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -53,7 +54,7 @@ const run = async () => {
 		storageKey: 'widget',
 		token: $i?.token,
 	}), {
-		in: (q) => {
+		in: (q: string) => {
 			return new Promise(ok => {
 				os.inputText({
 					title: q,
@@ -62,10 +63,10 @@ const run = async () => {
 				});
 			});
 		},
-		out: (value) => {
+		out: (_value: Value) => {
 			// nop
 		},
-		log: (type, params) => {
+		log: (_type: string, _params: { val: Value }) => {
 			// nop
 		},
 	});
@@ -85,7 +86,7 @@ const run = async () => {
 	} catch (err) {
 		os.alert({
 			type: 'error',
-			text: err,
+			text: String(err),
 		});
 	}
 };

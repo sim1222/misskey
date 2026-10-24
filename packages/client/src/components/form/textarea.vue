@@ -11,7 +11,6 @@
 			:required="required"
 			:readonly="readonly"
 			:placeholder="placeholder"
-			:pattern="pattern"
 			:autocomplete="autocomplete"
 			:spellcheck="spellcheck"
 			@focus="focused = true"
@@ -26,152 +25,44 @@
 </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, onUnmounted, nextTick, ref, watch, computed, toRefs } from 'vue';
+<script lang="ts" setup generic="T extends string | null | undefined">
+import { onMounted, nextTick, ref, shallowReactive, computed, watch, toRefs, type TextareaHTMLAttributes } from 'vue';
 import { debounce } from 'throttle-debounce';
 import MkButton from '@/components/MkButton.vue';
 import { i18n } from '@/i18n';
 
-export default defineComponent({
-	components: {
-		MkButton,
-	},
+const props = defineProps<{
+ modelValue: T; type?: string; required?: boolean; readonly?: boolean; disabled?: boolean;
+ pattern?: string; placeholder?: string; autofocus?: boolean;
+ autocomplete?: TextareaHTMLAttributes['autocomplete']; spellcheck?: TextareaHTMLAttributes['spellcheck'];
+ code?: boolean; tall?: boolean; pre?: boolean; debounce?: boolean; manualSave?: boolean;
+}>();
+const emit = defineEmits<{
+ (event: 'change', value: Event): void;
+ (event: 'keydown', value: KeyboardEvent): void;
+ (event: 'enter'): void;
+ (event: 'update:modelValue', value: string | T): void;
+}>();
+const { modelValue, autofocus } = toRefs(props);
+const state = shallowReactive<{ value: string | T }>({ value: modelValue.value });
+const v = computed<string | T>({ get: () => state.value, set: value => { state.value = value; } });
+const focused = ref(false);
+const changed = ref(false);
+const invalid = ref(false);
 
-	props: {
-		modelValue: {
-			required: true,
-		},
-		type: {
-			type: String,
-			required: false,
-		},
-		required: {
-			type: Boolean,
-			required: false,
-		},
-		readonly: {
-			type: Boolean,
-			required: false,
-		},
-		disabled: {
-			type: Boolean,
-			required: false,
-		},
-		pattern: {
-			type: String,
-			required: false,
-		},
-		placeholder: {
-			type: String,
-			required: false,
-		},
-		autofocus: {
-			type: Boolean,
-			required: false,
-			default: false,
-		},
-		autocomplete: {
-			required: false,
-		},
-		spellcheck: {
-			required: false,
-		},
-		code: {
-			type: Boolean,
-			required: false,
-		},
-		tall: {
-			type: Boolean,
-			required: false,
-			default: false,
-		},
-		pre: {
-			type: Boolean,
-			required: false,
-			default: false,
-		},
-		debounce: {
-			type: Boolean,
-			required: false,
-			default: false,
-		},
-		manualSave: {
-			type: Boolean,
-			required: false,
-			default: false,
-		},
-	},
-
-	emits: ['change', 'keydown', 'enter', 'update:modelValue'],
-
-	setup(props, context) {
-		const { modelValue, autofocus } = toRefs(props);
-		const v = ref(modelValue.value);
-		const focused = ref(false);
-		const changed = ref(false);
-		const invalid = ref(false);
-		const filled = computed(() => v.value !== '' && v.value != null);
-		const inputEl = ref(null);
-
-		const focus = () => inputEl.value.focus();
-		const onInput = (ev) => {
-			changed.value = true;
-			context.emit('change', ev);
-		};
-		const onKeydown = (ev: KeyboardEvent) => {
-			context.emit('keydown', ev);
-
-			if (ev.code === 'Enter') {
-				context.emit('enter');
-			}
-		};
-
-		const updated = () => {
-			changed.value = false;
-			context.emit('update:modelValue', v.value);
-		};
-
-		const debouncedUpdated = debounce(1000, updated);
-
-		watch(modelValue, newValue => {
-			v.value = newValue;
-		});
-
-		watch(v, newValue => {
-			if (!props.manualSave) {
-				if (props.debounce) {
-					debouncedUpdated();
-				} else {
-					updated();
-				}
-			}
-
-			invalid.value = inputEl.value.validity.badInput;
-		});
-
-		onMounted(() => {
-			nextTick(() => {
-				if (autofocus.value) {
-					focus();
-				}
-			});
-		});
-
-		return {
-			v,
-			focused,
-			invalid,
-			changed,
-			filled,
-			inputEl,
-			focus,
-			onInput,
-			onKeydown,
-			updated,
-			i18n,
-		};
-	},
+const inputEl = ref<HTMLTextAreaElement | null>(null);
+const focus = () => inputEl.value?.focus();
+function onInput(event: Event) { changed.value = true; emit('change', event); }
+function onKeydown(event: KeyboardEvent) { emit('keydown', event); if (event.code === 'Enter') emit('enter'); }
+function updated() { changed.value = false; emit('update:modelValue', v.value); }
+const debouncedUpdated = debounce(1000, updated);
+watch(modelValue, value => { v.value = value; });
+watch(v, () => {
+ if (!props.manualSave) { if (props.debounce) debouncedUpdated(); else updated(); }
+ if (inputEl.value) invalid.value = inputEl.value.validity.badInput;
 });
+onMounted(() => { nextTick(() => { if (autofocus?.value) focus(); }); });
+defineExpose({ focus });
 </script>
 
 <style lang="scss" scoped>

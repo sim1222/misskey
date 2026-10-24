@@ -7,7 +7,7 @@
 
 		<template v-if="enableDiscordIntegration">
 			<FormInfo class="_formBlock">Callback URL: {{ `${uri}/api/dc/cb` }}</FormInfo>
-		
+
 			<FormInput v-model="discordClientId" class="_formBlock">
 				<template #prefix><i class="fas fa-key"></i></template>
 				<template #label>Client ID</template>
@@ -35,10 +35,10 @@ import * as os from '@/os';
 import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
 
-let uri: string = ref('');
-let enableDiscordIntegration: boolean = ref(false);
-let discordClientId: string | null = ref(null);
-let discordClientSecret: string | null = ref(null);
+let uri = ref<string>('');
+let enableDiscordIntegration = ref<boolean>(false);
+let discordClientId = ref<string | null>(null);
+let discordClientSecret = ref<string | null>(null);
 
 async function init() {
 	const meta = await os.api('admin/meta');

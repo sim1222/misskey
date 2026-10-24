@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { notificationTypes } from 'misskey-js';
+import { notificationTypes } from '@/misskey';
 import XNotifications from '@/components/MkNotifications.vue';
 import XNotes from '@/components/MkNotes.vue';
 import * as os from '@/os';
@@ -25,7 +25,7 @@ import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
 let tab = ref('all');
-let includeTypes = ref<string[] | null>(null);
+let includeTypes = ref<import('../../../shared/constants').NotificationType[] | null>(null);
 let unreadOnly = computed(() => tab.value === 'unread');
 
 const mentionsPagination = {
@@ -41,10 +41,10 @@ const directNotesPagination = {
 	},
 };
 
-function setFilter(ev) {
+function setFilter(ev: MouseEvent) {
 	const typeItems = notificationTypes.map(t => ({
 		text: i18n.t(`_notification._types.${t}`),
-		active: includeTypes.value && includeTypes.value.includes(t),
+		active: includeTypes.value?.includes(t) ?? false,
 		action: () => {
 			includeTypes.value = [t];
 		},

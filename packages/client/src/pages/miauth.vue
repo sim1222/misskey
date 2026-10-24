@@ -80,7 +80,7 @@ function deny(): void {
 	state.value = 'denied';
 }
 
-function onLogin(res): void {
+function onLogin(res: { i: string; }): void {
 	login(res.i);
 }
 </script>

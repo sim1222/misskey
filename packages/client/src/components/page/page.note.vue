@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, Ref, ref } from 'vue';
+import { defineComponent, onMounted, PropType, ref } from 'vue';
 import XNote from '@/components/MkNote.vue';
 import XNoteDetailed from '@/components/MkNoteDetailed.vue';
 import * as os from '@/os';
@@ -24,10 +24,11 @@ export default defineComponent({
 		}
 	},
 	setup(props, ctx) {
-		const note: Ref<Record<string, any> | null> = ref(null);
+		const note = ref<import('@/misskey').entities.Note | null>(null);
 
 		onMounted(() => {
-			os.api('notes/show', { noteId: props.block.note })
+			if (!props.block.note) return;
+            os.api('notes/show', { noteId: props.block.note })
 			.then(result => {
 				note.value = result;
 			});

@@ -19,7 +19,7 @@
 					<template #value>{{ key }}</template>
 				</MkKeyValue>
 			</FormSplit>
-			
+
 			<FormTextarea v-model="valueForEditor" tall class="_formBlock _monospace">
 				<template #label>{{ i18n.ts.value }} (JSON)</template>
 			</FormTextarea>
@@ -38,13 +38,14 @@
 </template>
 
 <script lang="ts" setup>
+import type { ApiResponse } from '@/types/api';
 import { ref, watch, computed } from 'vue';
 import JSON5 from 'json5';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
-import FormLink from '@/components/form/link.vue';
-import FormSection from '@/components/form/section.vue';
+
+
 import MkButton from '@/components/MkButton.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
 import FormTextarea from '@/components/form/textarea.vue';
@@ -56,10 +57,10 @@ const props = defineProps<{
 }>();
 
 const scope = computed(() => props.path.split('/').slice(0, -1));
-const key = computed(() => props.path.split('/').at(-1));
+const key = computed(() => props.path.split('/').slice(-1).join(''));
 
-let value = ref(null);
-let valueForEditor = ref(null);
+let value = ref<ApiResponse<'i/registry/get-detail'> | null>(null);
+let valueForEditor = ref<string | null>(null);
 
 function fetchValue() {
 	os.api('i/registry/get-detail', {
@@ -72,6 +73,7 @@ function fetchValue() {
 }
 
 async function save() {
+    if (valueForEditor.value == null) return;
 	try {
 		JSON5.parse(valueForEditor.value);
 	} catch (err) {
@@ -85,7 +87,7 @@ async function save() {
 		type: 'warning',
 		text: i18n.ts.saveConfirm,
 	}).then(({ canceled }) => {
-		if (canceled) return;
+		if (canceled || valueForEditor.value == null) return;
 		os.apiWithDialog('i/registry/set', {
 			scope: scope.value,
 			key: key.value,

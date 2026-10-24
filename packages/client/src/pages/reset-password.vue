@@ -7,7 +7,7 @@
 				<template #prefix><i class="fas fa-lock"></i></template>
 				<template #label>{{ i18n.ts.newPassword }}</template>
 			</FormInput>
-		
+
 			<FormButton primary class="_formBlock" @click="save">{{ i18n.ts.save }}</FormButton>
 		</div>
 	</MkSpacer>
@@ -30,6 +30,7 @@ const props = defineProps<{
 let password = ref('');
 
 async function save() {
+    if (!props.token) return;
 	await os.apiWithDialog('reset-password', {
 		token: props.token,
 		password: password.value,

@@ -24,7 +24,7 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let relays: any[] = ref([]);
+let relays = ref<import('@/types/api').ApiResponse<'admin/relays/list'>>([]);
 
 async function addRelay() {
 	const { canceled, result: inbox } = await os.inputText({
@@ -32,10 +32,10 @@ async function addRelay() {
 		type: 'url',
 		placeholder: i18n.ts.inboxUrl,
 	});
-	if (canceled) return;
+	if (canceled || inbox == null) return;
 	os.api('admin/relays/add', {
 		inbox,
-	}).then((relay: any) => {
+	}).then(() => {
 		refresh();
 	}).catch((err: any) => {
 		os.alert({
@@ -59,7 +59,7 @@ function remove(inbox: string) {
 }
 
 function refresh() {
-	os.api('admin/relays/list').then((relayList: any) => {
+	os.api('admin/relays/list').then((relayList) => {
 		relays.value = relayList;
 	});
 }

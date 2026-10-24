@@ -24,12 +24,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, unref } from 'vue';
+import { defineComponent, type PropType } from 'vue';
+
+type MenuBase = { text: string; icon?: string; danger?: boolean; active?: boolean };
+export type SuperMenuGroup = { title?: string; items: (MenuBase & ({ type: 'a'; href: string; target?: string } | { type: 'button'; action: (event: MouseEvent) => void } | { type?: 'link'; to: string }))[] };
 
 export default defineComponent({
 	props: {
 		def: {
-			type: Array,
+			type: Array as PropType<SuperMenuGroup[]>,
 			required: true,
 		},
 		grid: {
@@ -55,7 +58,7 @@ export default defineComponent({
 			margin: 0 0 8px 0;
 			font-size: 0.9em;
 		}
-	
+
 		> .items {
 			> .item {
 				display: flex;

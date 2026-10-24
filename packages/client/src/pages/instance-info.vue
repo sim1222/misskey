@@ -4,7 +4,7 @@
 	<MkSpacer v-if="instance" :content-max="600" :margin-min="16" :margin-max="32">
 		<div v-if="tab === 'overview'" class="_formRoot">
 			<div class="fnfelxur">
-				<img :src="instance.iconUrl || instance.faviconUrl" alt="" class="icon"/>
+				<img :src="(instance.iconUrl || instance.faviconUrl) ?? undefined" alt="" class="icon"/>
 				<span class="name">{{ instance.name || `(${i18n.ts.unknown})` }}</span>
 			</div>
 			<MkKeyValue :copy="host" oneline style="margin: 1em 0;">
@@ -38,7 +38,7 @@
 				</MkKeyValue>
 				<MkKeyValue oneline style="margin: 1em 0;">
 					<template #key>{{ i18n.ts.updatedAt }}</template>
-					<template #value><MkTime mode="detail" :time="instance.infoUpdatedAt"/></template>
+					<template #value><MkTime mode="detail" v-if="instance.infoUpdatedAt" :time="instance.infoUpdatedAt"/></template>
 				</MkKeyValue>
 				<MkKeyValue oneline style="margin: 1em 0;">
 					<template #key>{{ i18n.ts.latestRequestSentAt }}</template>
@@ -53,7 +53,7 @@
 					<template #value><MkTime v-if="instance.latestRequestReceivedAt" :time="instance.latestRequestReceivedAt"/><span v-else>N/A</span></template>
 				</MkKeyValue>
 			</FormSection>
-	
+
 			<FormSection>
 				<MkKeyValue oneline style="margin: 1em 0;">
 					<template #key>Following (Pub)</template>
@@ -101,13 +101,13 @@
 		</div>
 		<div v-else-if="tab === 'users'" class="_formRoot">
 			<MkPagination v-slot="{items}" :pagination="usersPagination" style="display: grid; grid-template-columns: repeat(auto-fill,minmax(270px,1fr)); grid-gap: 12px;">
-				<MkA v-for="user in items" :key="user.id" v-tooltip.mfm="`Last posted: ${new Date(user.updatedAt).toLocaleString()}`" class="user" :to="`/user-info/${user.id}`">
+				<MkA v-for="user in items" :key="user.id" v-tooltip.mfm="`Last posted: ${new Date(user.updatedAt ?? 0).toLocaleString()}`" class="user" :to="`/user-info/${user.id}`">
 					<MkUserCardMini :user="user"/>
 				</MkA>
 			</MkPagination>
 		</div>
 		<div v-else-if="tab === 'raw'" class="_formRoot">
-			<MkObjectView tall :value="instance">
+			<MkObjectView v-if="instance" :value="instance">
 			</MkObjectView>
 		</div>
 	</MkSpacer>
@@ -115,8 +115,11 @@
 </template>
 
 <script lang="ts" setup>
+import { requireValue } from '@/scripts/require-value';
+import type { Paging } from '@/types/paging';
+import type { ApiResponse } from '@/types/api';
 import { ref, computed } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import MkChart from '@/components/MkChart.vue';
 import MkObjectView from '@/components/MkObjectView.vue';
 import FormLink from '@/components/form/link.vue';
@@ -128,7 +131,7 @@ import MkSelect from '@/components/form/select.vue';
 import FormSwitch from '@/components/form/switch.vue';
 import * as os from '@/os';
 import number from '@/filters/number';
-import bytes from '@/filters/bytes';
+
 import { iAmModerator } from '@/account';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { i18n } from '@/i18n';
@@ -141,47 +144,48 @@ const props = defineProps<{
 
 let tab = ref('overview');
 let chartSrc = ref('instance-requests');
-let meta = ref<misskey.entities.DetailedInstanceMetadata | null>(null);
+let meta = ref<ApiResponse<'admin/meta'> | null>(null);
 let instance = ref<misskey.entities.Instance | null>(null);
 let suspended = ref(false);
 let isBlocked = ref(false);
 
-const usersPagination = {
+const usersPagination: Paging<'admin/show-users' | 'users'> = {
 	endpoint: iAmModerator ? 'admin/show-users' : 'users' as const,
 	limit: 10,
 	params: {
-		sort: '+updatedAt',
-		state: 'all',
+		sort: '+updatedAt' as const,
+		state: 'all' as const,
 		hostname: props.host,
 	},
 	offsetMode: true,
 };
 
+const getInstance = () => requireValue(instance.value, 'Federated instance');
 async function fetch() {
 	instance.value = await os.api('federation/show-instance', {
 		host: props.host,
 	});
-	suspended.value = instance.value.isSuspended;
-	isBlocked.value = instance.value.isBlocked;
+	suspended.value = getInstance().isSuspended;
+	isBlocked.value = getInstance().isBlocked;
 }
 
-async function toggleBlock(ev) {
+async function toggleBlock() {
 	if (meta.value == null) return;
 	await os.api('admin/update-meta', {
-		blockedHosts: isBlocked.value ? meta.value.blockedHosts.concat([instance.value.host]) : meta.value.blockedHosts.filter(x => x !== instance.value.host),
+		blockedHosts: isBlocked.value ? (meta.value.blockedHosts ?? []).concat([getInstance().host]) : (meta.value.blockedHosts ?? []).filter((x) => x !== getInstance().host),
 	});
 }
 
-async function toggleSuspend(v) {
+async function toggleSuspend() {
 	await os.api('admin/federation/update-instance', {
-		host: instance.value.host,
+		host: getInstance().host,
 		isSuspended: suspended.value,
 	});
 }
 
 function refreshMetadata() {
 	os.api('admin/federation/refresh-remote-instance-metadata', {
-		host: instance.value.host,
+		host: getInstance().host,
 	});
 	os.alert({
 		text: 'Refresh requested',

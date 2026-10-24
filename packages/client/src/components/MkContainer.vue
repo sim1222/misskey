@@ -68,7 +68,7 @@ export default defineComponent({
 			default: null,
 		},
 	},
-	data() {
+	data(): { showBody: boolean; omitted: boolean | null; ignoreOmit: boolean } {
 		return {
 			showBody: this.expanded,
 			omitted: null,
@@ -77,7 +77,8 @@ export default defineComponent({
 	},
 	mounted() {
 		this.$watch('showBody', showBody => {
-			const headerHeight = this.showHeader ? this.$refs.header.offsetHeight : 0;
+			const header = this.$refs.header;
+			const headerHeight = this.showHeader && header instanceof HTMLElement ? header.offsetHeight : 0;
 			this.$el.style.minHeight = `${headerHeight}px`;
 			if (showBody) {
 				this.$el.style.flexBasis = 'auto';
@@ -92,14 +93,17 @@ export default defineComponent({
 
 		const calcOmit = () => {
 			if (this.omitted || this.ignoreOmit || this.maxHeight == null) return;
-			const height = this.$refs.content.offsetHeight;
+			const content = this.$refs.content;
+			if (!(content instanceof HTMLElement)) return;
+			const height = content.offsetHeight;
 			this.omitted = height > this.maxHeight;
 		};
 
 		calcOmit();
-		new ResizeObserver((entries, observer) => {
+		const observer = new ResizeObserver(() => {
 			calcOmit();
-		}).observe(this.$refs.content);
+		});
+		if (this.$refs.content instanceof HTMLElement) observer.observe(this.$refs.content);
 	},
 	methods: {
 		toggleContent(show: boolean) {
@@ -107,23 +111,27 @@ export default defineComponent({
 			this.showBody = show;
 		},
 
-		enter(el) {
+		enter(el: Element) {
+			if (!(el instanceof HTMLElement)) return;
 			const elementHeight = el.getBoundingClientRect().height;
-			el.style.height = 0;
+			el.style.height = "0";
 			el.offsetHeight; // reflow
 			el.style.height = elementHeight + 'px';
 		},
-		afterEnter(el) {
-			el.style.height = null;
+		afterEnter(el: Element) {
+			if (!(el instanceof HTMLElement)) return;
+			el.style.height = "";
 		},
-		leave(el) {
+		leave(el: Element) {
+			if (!(el instanceof HTMLElement)) return;
 			const elementHeight = el.getBoundingClientRect().height;
 			el.style.height = elementHeight + 'px';
 			el.offsetHeight; // reflow
-			el.style.height = 0;
+			el.style.height = "0";
 		},
-		afterLeave(el) {
-			el.style.height = null;
+		afterLeave(el: Element) {
+			if (!(el instanceof HTMLElement)) return;
+			el.style.height = "";
 		},
 	},
 });

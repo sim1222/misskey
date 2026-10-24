@@ -3,7 +3,7 @@
 	<FromSlot class="_formBlock">
 		<template #label>{{ i18n.ts.reactionSettingDescription }}</template>
 		<div v-panel style="border-radius: 6px;">
-			<XDraggable v-model="reactions" class="zoaiodol" :item-key="item => item" animation="150" delay="100" delay-on-touch-only="true">
+			<XDraggable v-model="reactions" class="zoaiodol" :item-key="(item: string) => item" animation="150" :delay="100" :delay-on-touch-only="true">
 				<template #item="{element}">
 					<button class="_button item" @click="remove(element, $event)">
 						<MkEmoji :emoji="element" :normal="true"/>
@@ -54,9 +54,10 @@
 </template>
 
 <script lang="ts" setup>
+import { eventElement } from '@/scripts/event-element';
 import { defineAsyncComponent, watch, ref, computed } from 'vue';
 import XDraggable from 'vuedraggable';
-import FormInput from '@/components/form/input.vue';
+
 import FormRadios from '@/components/form/radios.vue';
 import FromSlot from '@/components/form/slot.vue';
 import FormButton from '@/components/MkButton.vue';
@@ -67,7 +68,7 @@ import { defaultStore } from '@/store';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let reactions = ref(JSON.parse(JSON.stringify(defaultStore.state.reactions)));
+let reactions = ref<string[]>(JSON.parse(JSON.stringify(defaultStore.state.reactions)));
 
 const reactionPickerSize = computed(defaultStore.makeGetterSetter('reactionPickerSize'));
 const reactionPickerWidth = computed(defaultStore.makeGetterSetter('reactionPickerWidth'));
@@ -78,7 +79,7 @@ function save() {
 	defaultStore.set('reactions', reactions.value);
 }
 
-function remove(reaction, ev: MouseEvent) {
+function remove(reaction: string, ev: MouseEvent) {
 	os.popupMenu([{
 		text: i18n.ts.remove,
 		action: () => {
@@ -90,7 +91,7 @@ function remove(reaction, ev: MouseEvent) {
 function preview(ev: MouseEvent) {
 	os.popup(defineAsyncComponent(() => import('@/components/MkEmojiPickerDialog.vue')), {
 		asReactionPicker: true,
-		src: ev.currentTarget ?? ev.target,
+		src: eventElement(ev),
 	}, {}, 'closed');
 }
 
@@ -120,9 +121,9 @@ watch((reactions), () => {
 	deep: true,
 });
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.reaction,

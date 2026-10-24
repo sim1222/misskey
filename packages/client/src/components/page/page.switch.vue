@@ -5,9 +5,10 @@
 </template>
 
 <script lang="ts">
+import { pageVariable } from '@/scripts/hpml/page-variable';
 import { computed, defineComponent, PropType } from 'vue';
 import MkSwitch from '../form/switch.vue';
-import * as os from '@/os';
+
 import { Hpml } from '@/scripts/hpml/evaluator';
 import { SwitchVarBlock } from '@/scripts/hpml/block';
 
@@ -27,10 +28,12 @@ export default defineComponent({
 	},
 	setup(props, ctx) {
 		const value = computed(() => {
-			return props.hpml.vars.value[props.block.name];
+			const current = pageVariable(props.hpml, props.block.name);
+ return typeof current === 'boolean' ? current : false;
 		});
 
 		function updateValue(newValue: boolean) {
+			if (props.block.name == null) return;
 			props.hpml.updatePageVar(props.block.name, newValue);
 			props.hpml.eval();
 		}

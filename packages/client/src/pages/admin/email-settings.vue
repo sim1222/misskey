@@ -20,9 +20,9 @@
 							<FormInput v-model="smtpHost" class="_formBlock">
 								<template #label>{{ i18n.ts.smtpHost }}</template>
 							</FormInput>
-							<FormInput v-model="smtpPort" type="number" class="_formBlock">
+							<FormNumberInput v-model="smtpPort" type="number" class="_formBlock">
 								<template #label>{{ i18n.ts.smtpPort }}</template>
-							</FormInput>
+							</FormNumberInput>
 						</FormSplit>
 						<FormSplit :min-width="280">
 							<FormInput v-model="smtpUser" class="_formBlock">
@@ -50,6 +50,7 @@ import { ref, computed } from 'vue';
 import XHeader from './_header_.vue';
 import FormSwitch from '@/components/form/switch.vue';
 import FormInput from '@/components/form/input.vue';
+import FormNumberInput from '@/components/form/number-input.vue';
 import FormInfo from '@/components/MkInfo.vue';
 import FormSuspense from '@/components/form/suspense.vue';
 import FormSplit from '@/components/form/split.vue';
@@ -59,13 +60,13 @@ import { fetchInstance, instance } from '@/instance';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let enableEmail: boolean = ref(false);
-let email: any = ref(null);
-let smtpSecure: boolean = ref(false);
-let smtpHost: string = ref('');
-let smtpPort: number = ref(0);
-let smtpUser: string = ref('');
-let smtpPass: string = ref('');
+let enableEmail = ref<boolean>(false);
+let email = ref<string | null>(null);
+let smtpSecure = ref<boolean>(false);
+let smtpHost = ref<string | null>('');
+let smtpPort = ref<number | null>(0);
+let smtpUser = ref<string | null>('');
+let smtpPass = ref<string | null>('');
 
 async function init() {
 	const meta = await os.api('admin/meta');
@@ -84,7 +85,7 @@ async function testEmail() {
 		type: 'email',
 		placeholder: instance.maintainerEmail,
 	});
-	if (canceled) return;
+	if (canceled || destination == null) return;
 	os.apiWithDialog('admin/send-email', {
 		to: destination,
 		subject: 'Test email',

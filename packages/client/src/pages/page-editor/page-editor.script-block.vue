@@ -47,65 +47,87 @@
 		</MkTextarea>
 		<XV v-if="modelValue.value.expression" v-model="modelValue.value.expression" :title="$t(`_pages.script.blocks._fn.arg1`)" :get-expected-type="() => null" :hpml="hpml" :fn-slots="modelValue.value.slots" :name="name"/>
 	</section>
-	<section v-else-if="modelValue.type.startsWith('fn:')" class="" style="padding:16px;">
-		<XV v-for="(x, i) in modelValue.args" :key="i" v-model="modelValue.args[i]" :title="hpml.getVarByName(modelValue.type.split(':')[1]).value.slots[i].name" :get-expected-type="() => null" :hpml="hpml" :name="name"/>
+	<section v-else-if="!isLiteralValue(modelValue) && modelValue.type.startsWith('fn:')" class="" style="padding:16px;">
+		<XV v-for="(_x, i) in modelValue.args" :key="i" v-model="modelValue.args[i]" :title="getFunctionSlots(modelValue.type.split(':')[1])[i]?.name" :get-expected-type="() => null" :hpml="hpml" :name="name"/>
 	</section>
-	<section v-else class="" style="padding:16px;">
-		<XV v-for="(x, i) in modelValue.args" :key="i" v-model="modelValue.args[i]" :title="$t(`_pages.script.blocks._${modelValue.type}.arg${i + 1}`)" :get-expected-type="() => _getExpectedType(i)" :hpml="hpml" :name="name" :fn-slots="fnSlots"/>
+	<section v-else-if="!isLiteralValue(modelValue)" class="" style="padding:16px;">
+		<XV v-for="(_x, i) in modelValue.args" :key="i" v-model="modelValue.args[i]" :title="$t(`_pages.script.blocks._${modelValue.type}.arg${i + 1}`)" :get-expected-type="() => _getExpectedType(i)" :hpml="hpml" :name="name" :fn-slots="fnSlots"/>
 	</section>
 </XContainer>
 </template>
 
 <script lang="ts">
 /* eslint-disable vue/no-mutating-props */
-import { defineAsyncComponent, defineComponent } from 'vue';
+import { inject, defineAsyncComponent, defineComponent, type PropType, type VNodeProps } from 'vue';
 import { v4 as uuid } from 'uuid';
 import XContainer from './page-editor.container.vue';
 import MkTextarea from '@/components/form/textarea.vue';
-import { blockDefs } from '@/scripts/hpml/index';
+import { blockDefs, type Type } from '@/scripts/hpml/index';
 import * as os from '@/os';
-import { isLiteralValue } from '@/scripts/hpml/expr';
+import { isLiteralValue, type Expr, type UserFnValue } from '@/scripts/hpml/expr';
+import { HpmlTypeChecker } from '@/scripts/hpml/type-checker';
 import { funcDefs } from '@/scripts/hpml/lib';
 
+export type ScriptBlockList = (type: Type) => { label: string; items: { value: Expr['type']; text: string }[] }[];
+
+type ScriptBlockProps = {
+ modelValue: Expr; getExpectedType?: (() => Type) | null; title?: string; removable?: boolean;
+ hpml: HpmlTypeChecker; name: string; fnSlots?: { name: string; type: Type }[]; draggable?: boolean;
+ 'onUpdate:modelValue'?: (value: Expr) => void; onRemove?: () => void;
+};
+const XV: new () => { $props: ScriptBlockProps & VNodeProps } = defineAsyncComponent(() => import('./page-editor.script-block.vue'));
+
 export default defineComponent({
+    emits: ['remove'],
 	components: {
 		XContainer, MkTextarea,
-		XV: defineAsyncComponent(() => import('./page-editor.script-block.vue')),
+		XV,
 	},
 
-	inject: ['getScriptBlockList'],
+	setup() {
+ const getScriptBlockList = inject<ScriptBlockList>('getScriptBlockList', () => []);
+ return { getScriptBlockList, isLiteralValue };
+ },
 
 	props: {
 		getExpectedType: {
+			type: Function as PropType<(() => Type) | null>,
 			required: false,
 			default: null
 		},
 		modelValue: {
+			type: Object as PropType<Expr>,
 			required: true
 		},
 		title: {
+			type: String,
 			required: false
 		},
 		removable: {
+			type: Boolean,
 			required: false,
 			default: false
 		},
 		hpml: {
+			type: Object as PropType<HpmlTypeChecker>,
 			required: true,
 		},
 		name: {
+			type: String,
 			required: true,
 		},
 		fnSlots: {
+			type: Array as PropType<{ name: string; type: Type }[]>,
 			required: false,
 		},
 		draggable: {
+			type: Boolean,
 			required: false,
 			default: false
 		}
 	},
 
-	data() {
+	data(): { error: ReturnType<HpmlTypeChecker["typeCheck"]>; warn: { slot: number } | null; slots: string } {
 		return {
 			error: null,
 			warn: null,
@@ -114,12 +136,12 @@ export default defineComponent({
 	},
 
 	computed: {
-		icon(): any {
+		icon(): string | null | undefined {
 			if (this.modelValue.type === null) return null;
 			if (this.modelValue.type.startsWith('fn:')) return 'fas fa-plug';
-			return blockDefs.find(x => x.type === this.modelValue.type).icon;
+			return blockDefs.find(x => x.type === this.modelValue.type)?.icon;
 		},
-		typeText(): any {
+		typeText(): string | null {
 			if (this.modelValue.type === null) return null;
 			if (this.modelValue.type.startsWith('fn:')) return this.modelValue.type.split(':')[1];
 			return this.$t(`_pages.script.blocks.${this.modelValue.type}`);
@@ -129,6 +151,7 @@ export default defineComponent({
 	watch: {
 		slots: {
 			handler() {
+				if (this.modelValue.type !== 'fn') return;
 				this.modelValue.value.slots = this.slots.split('\n').map(x => ({
 					name: x,
 					type: null
@@ -139,9 +162,9 @@ export default defineComponent({
 	},
 
 	created() {
-		if (this.modelValue.value == null) this.modelValue.value = null;
+		if (this.modelValue.type === null && this.modelValue.value == null) this.modelValue.value = null;
 
-		if (this.modelValue.value && this.modelValue.value.slots) this.slots = this.modelValue.value.slots.map(x => x.name).join('\n');
+		if (this.modelValue.type === 'fn') this.slots = this.modelValue.value.slots.map(x => x.name).join('\n');
 
 		this.$watch(() => this.modelValue.type, (t) => {
 			this.warn = null;
@@ -157,10 +180,11 @@ export default defineComponent({
 
 			if (this.modelValue.type && this.modelValue.type.startsWith('fn:')) {
 				const fnName = this.modelValue.type.split(':')[1];
-				const fn = this.hpml.getVarByName(fnName);
+				const slots = this.getFunctionSlots(fnName);
+ if (isLiteralValue(this.modelValue)) return;
 
 				const empties = [];
-				for (let i = 0; i < fn.value.slots.length; i++) {
+				for (let i = 0; i < slots.length; i++) {
 					const id = uuid();
 					empties.push({ id, type: null });
 				}
@@ -186,7 +210,7 @@ export default defineComponent({
 			}
 		});
 
-		this.$watch(() => this.modelValue.args, (args) => {
+		this.$watch(() => isLiteralValue(this.modelValue) ? undefined : this.modelValue.args, (args) => {
 			if (args == null) {
 				this.warn = null;
 				return;
@@ -204,7 +228,7 @@ export default defineComponent({
 		});
 
 		this.$watch(() => this.hpml.variables, () => {
-			if (this.type != null && this.modelValue) {
+			if (this.modelValue.type != null && this.modelValue) {
 				this.error = this.hpml.typeCheck(this.modelValue);
 			}
 		}, {
@@ -213,6 +237,11 @@ export default defineComponent({
 	},
 
 	methods: {
+ getFunctionSlots(name: string): UserFnValue['value']['slots'] {
+ const variable = this.hpml.getVarByName(name);
+ if (variable.type !== 'fn') throw new TypeError('Expected a page function');
+ return variable.value.slots;
+ },
 		async changeType() {
 			const { canceled, result: type } = await os.select({
 				title: this.$ts._pages.selectType,

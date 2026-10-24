@@ -1,7 +1,7 @@
 <template>
 <MkStickyContainer>
 	<template #header>
-		<MkTab v-model="include" :class="$style.tab">
+		<MkTab v-model="include" :class="$style.tab" :choices="[null, 'replies', 'files']">
 			<option :value="null">{{ i18n.ts.notes }}</option>
 			<option value="replies">{{ i18n.ts.notesAndReplies }}</option>
 			<option value="files">{{ i18n.ts.withFiles }}</option>
@@ -13,10 +13,10 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import XNotes from '@/components/MkNotes.vue';
 import MkTab from '@/components/MkTab.vue';
-import * as os from '@/os';
+
 import { i18n } from '@/i18n';
 
 const props = defineProps<{

@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts" setup>
-import { toRefs, Ref, ref } from 'vue';
-import * as os from '@/os';
+import { computed, Ref, unref } from 'vue';
+
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
-	modelValue: boolean | Ref<boolean>;
+	modelValue?: boolean | Ref<boolean> | null;
 	disabled?: boolean;
 }>();
 
@@ -34,8 +34,7 @@ const emit = defineEmits<{
 	(ev: 'update:modelValue', v: boolean): void;
 }>();
 
-let button = ref<HTMLElement>();
-const checked = toRefs(props).modelValue;
+const checked = computed(() => unref(props.modelValue) ?? false);
 const toggle = () => {
 	if (props.disabled) return;
 	emit('update:modelValue', !checked.value);

@@ -14,9 +14,9 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, inject, onMounted, onUnmounted, watch, ref } from 'vue';
+import { computed, watch, ref } from 'vue';
 import * as Acct from 'misskey-js/built/acct';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import XFollowList from './follow-list.vue';
 import * as os from '@/os';
 import { definePageMetadata } from '@/scripts/page-metadata';
@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<{
 });
 
 let user = ref<null | misskey.entities.UserDetailed>(null);
-let error = ref(null);
+let error = ref<Error | null>(null);
 
 function fetchUser(): void {
 	if (props.acct == null) return;

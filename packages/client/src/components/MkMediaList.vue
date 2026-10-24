@@ -13,8 +13,8 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
+import * as misskey from '@/misskey';
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import PhotoSwipe from 'photoswipe';
 import 'photoswipe/style.css';
@@ -23,18 +23,20 @@ import XImage from '@/components/MkMediaImage.vue';
 import XVideo from '@/components/MkMediaVideo.vue';
 import * as os from '@/os';
 import { FILE_TYPE_BROWSERSAFE } from '@/const';
-import { defaultStore } from '@/store';
+
 
 const props = defineProps<{
 	mediaList: misskey.entities.DriveFile[];
 	raw?: boolean;
 }>();
 
-const gallery = ref(null);
-const pswpZIndex = os.claimZIndex('middle');
+const gallery = ref<HTMLDivElement | null>(null);
+os.claimZIndex('middle');
+let lightbox: PhotoSwipeLightbox | undefined;
 
 onMounted(() => {
-	const lightbox = new PhotoSwipeLightbox({
+	if (!gallery.value) return;
+	lightbox = new PhotoSwipeLightbox({
 		dataSource: props.mediaList
 			.filter(media => {
 				if (media.type === 'image/svg+xml') return true; // svgのwebpublicはpngなのでtrue
@@ -42,7 +44,7 @@ onMounted(() => {
 			})
 			.map(media => {
 				const item = {
-					src: media.url,
+					src: media.url ?? undefined,
 					w: media.properties.width,
 					h: media.properties.height,
 					alt: media.name,
@@ -78,21 +80,25 @@ onMounted(() => {
 		// element is children
 		const { element } = itemData;
 
+		if (!(element instanceof HTMLElement)) return;
 		const id = element.dataset.id;
 		const file = props.mediaList.find(media => media.id === id);
 
-		itemData.src = file.url;
+		if (!file) return;
+		itemData.src = file.url ?? undefined;
 		itemData.w = Number(file.properties.width);
 		itemData.h = Number(file.properties.height);
 		if (file.properties.orientation != null && file.properties.orientation >= 5) {
 			[itemData.w, itemData.h] = [itemData.h, itemData.w];
 		}
-		itemData.msrc = file.thumbnailUrl;
+		itemData.msrc = file.thumbnailUrl ?? undefined;
 		itemData.thumbCropped = true;
 	});
 
 	lightbox.init();
 });
+
+onBeforeUnmount(() => lightbox?.destroy());
 
 const previewable = (file: misskey.entities.DriveFile): boolean => {
 	if (file.type === 'image/svg+xml') return true; // svgのwebpublic/thumbnailはpngなのでtrue

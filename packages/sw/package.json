@@ -2,8 +2,9 @@
 	"private": true,
 	"scripts": {
 		"watch": "node build.js watch",
-		"build": "node build.js",
-		"lint": "eslint --quiet src/**/*.{ts}"
+		"build": "yarn typecheck && node build.js",
+		"lint": "eslint --quiet src/**/*.{ts}",
+		"typecheck": "tsc --noEmit"
 	},
 	"resolutions": {},
 	"dependencies": {

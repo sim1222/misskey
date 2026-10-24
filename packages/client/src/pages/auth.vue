@@ -4,7 +4,7 @@
 </div>
 <div v-else-if="$i">
 	<XForm
-		v-if="state == 'waiting'"
+		v-if="state == 'waiting' && session"
 		ref="form"
 		class="form"
 		:session="session"
@@ -14,7 +14,7 @@
 	<div v-if="state == 'denied'" class="denied">
 		<h1>{{ $ts._auth.denied }}</h1>
 	</div>
-	<div v-if="state == 'accepted'" class="accepted">
+	<div v-if="state == 'accepted' && session" class="accepted">
 		<h1>{{ session.app.isAuthorized ? $t('already-authorized') : $ts.allowed }}</h1>
 		<p v-if="session.app.callbackUrl">{{ $ts._auth.callback }}<MkEllipsis/></p>
 		<p v-if="!session.app.callbackUrl">{{ $ts._auth.pleaseGoBack }}</p>
@@ -29,6 +29,8 @@
 </template>
 
 <script lang="ts">
+import type { ApiResponse } from '@/types/api';
+import type { SigninResult } from '../../../shared/auth';
 import { defineComponent } from 'vue';
 import XForm from './auth.form.vue';
 import MkSignin from '@/components/MkSignin.vue';
@@ -40,8 +42,8 @@ export default defineComponent({
 		XForm,
 		MkSignin,
 	},
-	props: ['token'],
-	data() {
+	props: { token: { type: String, required: true } },
+	data(): { state: 'waiting' | 'accepted' | 'denied' | 'fetch-session-error' | null; session: ApiResponse<'auth/session/show'> | null; fetching: boolean } {
 		return {
 			state: null,
 			session: null,
@@ -75,11 +77,12 @@ export default defineComponent({
 	},
 	methods: {
 		accepted() {
+ if (!this.session) return;
 			this.state = 'accepted';
 			if (this.session.app.callbackUrl) {
 				location.href = `${this.session.app.callbackUrl}?token=${this.session.token}`;
 			}
-		}, onLogin(res) {
+		}, onLogin(res: SigninResult) {
 			login(res.i);
 		},
 	},

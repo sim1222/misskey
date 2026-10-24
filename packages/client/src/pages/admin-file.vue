@@ -54,7 +54,7 @@
 			</FormSection>
 		</div>
 		<div v-else-if="tab === 'raw'" class="_formRoot">
-			<MkObjectView v-if="info" tall :value="info">
+			<MkObjectView v-if="info" :value="info">
 			</MkObjectView>
 		</div>
 	</MkSpacer>
@@ -75,13 +75,13 @@ import bytes from '@/filters/bytes';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
-import { acct } from '@/filters/user';
+
 import { iAmAdmin, iAmModerator } from '@/account';
 
 let tab = ref('overview');
 let file: any = ref(null);
 let info: any = ref(null);
-let isSensitive: boolean = ref(false);
+let isSensitive = ref<boolean>(false);
 
 const props = defineProps<{
 	fileId: string,
@@ -107,7 +107,7 @@ async function del() {
 	});
 }
 
-async function toggleIsSensitive(v) {
+async function toggleIsSensitive(v: boolean) {
 	await os.api('drive/files/update', { fileId: props.fileId, isSensitive: v });
 	isSensitive.value = v;
 }

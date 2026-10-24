@@ -4,7 +4,7 @@
 		<MkTagCloud v-if="activeInstances">
 			<li v-for="instance in activeInstances" :key="instance.id">
 				<a @click.prevent="onInstanceClick(instance)">
-					<img style="width: 32px;" :src="instance.iconUrl">
+					<img style="width: 32px;" :src="(instance.iconUrl) ?? undefined">
 				</a>
 			</li>
 		</MkTagCloud>
@@ -13,8 +13,9 @@
 </template>
 
 <script lang="ts" setup>
+import type { ApiResponse } from '@/types/api';
 import { ref, shallowRef } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import { GetFormResultType } from '@/scripts/form';
 import MkContainer from '@/components/MkContainer.vue';
 import MkTagCloud from '@/components/MkTagCloud.vue';
@@ -36,7 +37,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -45,9 +46,9 @@ const { widgetProps, configure } = useWidgetPropsManager(name,
 );
 
 let cloud = ref<InstanceType<typeof MkTagCloud> | null>();
-let activeInstances = shallowRef(null);
+let activeInstances = shallowRef<ApiResponse<'federation/instances'> | null>(null);
 
-function onInstanceClick(i) {
+function onInstanceClick(i: ApiResponse<'federation/instances'>[number]) {
 	os.pageWindow(`/instance-info/${i.host}`);
 }
 

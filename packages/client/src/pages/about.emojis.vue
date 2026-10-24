@@ -18,8 +18,8 @@
 			<XEmoji v-for="emoji in searchEmojis" :key="emoji.name" class="emoji" :emoji="emoji"/>
 		</div>
 	</MkFolder>
-	
-	<MkFolder v-for="category in customEmojiCategories" :key="category" class="emojis">
+
+	<MkFolder v-for="category in customEmojiCategories" :key="category ?? undefined" class="emojis">
 		<template #header>{{ category || $ts.other }}</template>
 		<div class="zuvgdzyt">
 			<XEmoji v-for="emoji in customEmojis.filter(e => e.category === category)" :key="emoji.name" class="emoji" :emoji="emoji"/>
@@ -29,23 +29,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import type { entities } from '@/misskey';
+import { defineComponent } from 'vue';
 import XEmoji from './emojis.emoji.vue';
-import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/form/input.vue';
-import MkSelect from '@/components/form/select.vue';
 import MkFolder from '@/components/MkFolder.vue';
-import MkTab from '@/components/MkTab.vue';
-import * as os from '@/os';
+
 import { emojiCategories, emojiTags } from '@/instance';
 
 export default defineComponent({
 	components: {
-		MkButton,
 		MkInput,
-		MkSelect,
 		MkFolder,
-		MkTab,
 		XEmoji,
 	},
 
@@ -53,10 +48,10 @@ export default defineComponent({
 		return {
 			q: '',
 			customEmojiCategories: emojiCategories,
-			customEmojis: this.$instance.emojis,
+			customEmojis: this.$instance.emojis ?? [],
 			tags: emojiTags,
-			selectedTags: new Set(),
-			searchEmojis: null,
+			selectedTags: new Set<string>(),
+			searchEmojis: null as entities.CustomEmoji[] | null,
 		};
 	},
 
@@ -84,7 +79,7 @@ export default defineComponent({
 			}
 		},
 
-		toggleTag(tag) {
+		toggleTag(tag: string) {
 			if (this.selectedTags.has(tag)) {
 				this.selectedTags.delete(tag);
 			} else {

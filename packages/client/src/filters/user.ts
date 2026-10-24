@@ -1,4 +1,4 @@
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import * as Acct from 'misskey-js/built/acct';
 import { url } from '@/config';
 
@@ -10,6 +10,6 @@ export const userName = (user: misskey.entities.User) => {
 	return user.name || user.username;
 };
 
-export const userPage = (user: misskey.Acct, path?, absolute = false) => {
+export const userPage = (user: misskey.Acct, path?: string, absolute = false) => {
 	return `${absolute ? url : ''}/@${acct(user)}${(path ? `/${path}` : '')}`;
 };

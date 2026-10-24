@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { WidgetSpec, WidgetUpdate } from '@/types/widget';
 import { onMounted, ref } from 'vue';
 import XWidgets from '@/components/MkWidgets.vue';
 import { i18n } from '@/i18n';
@@ -21,28 +22,29 @@ let editMode = ref(false);
 let rootEl = ref<HTMLDivElement>();
 
 onMounted(() => {
+	if (rootEl.value == null) return;
 	emit('mounted', rootEl.value);
 });
 
-function addWidget(widget) {
+function addWidget(widget: WidgetSpec) {
 	defaultStore.set('widgets', [{
 		...widget,
 		place: null,
 	}, ...defaultStore.state.widgets]);
 }
 
-function removeWidget(widget) {
+function removeWidget(widget: { id: string; }) {
 	defaultStore.set('widgets', defaultStore.state.widgets.filter(w => w.id !== widget.id));
 }
 
-function updateWidget({ id, data }) {
+function updateWidget({ id, data }: WidgetUpdate) {
 	defaultStore.set('widgets', defaultStore.state.widgets.map(w => w.id === id ? {
 		...w,
 		data,
 	} : w));
 }
 
-function updateWidgets(widgets) {
+function updateWidgets(widgets: WidgetSpec[]) {
 	defaultStore.set('widgets', widgets);
 }
 </script>

@@ -312,7 +312,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, ref } from 'vue';
+import { ref } from 'vue';
 import MkTextarea from '@/components/form/textarea.vue';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { i18n } from '@/i18n';
@@ -322,7 +322,7 @@ let preview_mention = ref('@example');
 let preview_hashtag = ref('#test');
 let preview_url = ref('https://example.com');
 let preview_link = ref(`[${i18n.ts._mfm.dummy}](https://example.com)`);
-let preview_emoji = ref(instance.emojis.length ? `:${instance.emojis[0].name}:` : ':emojiname:');
+let preview_emoji = ref((instance.emojis ?? []).length ? `:${(instance.emojis ?? [])[0].name}:` : ':emojiname:');
 let preview_bold = ref(`**${i18n.ts._mfm.dummy}**`);
 let preview_small = ref(`<small>${i18n.ts._mfm.dummy}</small>`);
 let preview_center = ref(`<center>${i18n.ts._mfm.dummy}</center>`);
@@ -330,7 +330,7 @@ let preview_inlineCode = ref('`<: "Hello, world!"`');
 let preview_blockCode = ref('```\n~ (#i, 100) {\n\t<: ? ((i % 15) = 0) "FizzBuzz"\n\t\t.? ((i % 3) = 0) "Fizz"\n\t\t.? ((i % 5) = 0) "Buzz"\n\t\t. i\n}\n```');
 let preview_inlineMath = ref('\\(x= \\frac{-b\' \\pm \\sqrt{(b\')^2-ac}}{a}\\)');
 let preview_quote = ref(`> ${i18n.ts._mfm.dummy}`);
-let preview_search = ref(`${i18n.ts._mfm.dummy} 検索`);
+
 let preview_jelly = ref('$[jelly 🍮] $[jelly.speed=5s 🍮]');
 let preview_tada = ref('$[tada 🍮] $[tada.speed=5s 🍮]');
 let preview_jump = ref('$[jump 🍮] $[jump.speed=5s 🍮]');

@@ -902,6 +902,7 @@ pakuru: "パクる"
 duplicateEmoji: "同じ名前の絵文字が存在します。インポートしますか？"
 
 _sensitiveMediaDetection:
+  disallowUploadWhenPredictedAsPorn: "性的なメディアと判定されたファイルのアップロードを拒否する"
   description: "機械学習を使って自動でセンシティブなメディアを検出し、モデレーションに役立てることができます。サーバーの負荷が少し増えます。"
   sensitivity: "検出感度"
   sensitivityDescription: "感度を低くすると、誤検知(偽陽性)が減ります。感度を高くすると、検知漏れ(偽陰性)が減ります。"
@@ -936,6 +937,7 @@ _accountDelete:
   inProgress: "削除が進行中"
 
 _ad:
+  like: "いいね"
   back: "戻る"
   reduceFrequencyOfThisAd: "この広告の表示頻度を下げる"
 
@@ -1837,3 +1839,28 @@ _simkey:
     localMediaProxy: "ローカルメディアプロキシ"
     localMediaProxyInfo: "クライアント側でメディアプロキシを指定します"
     confirmReset: "リセットしてもよろしいですか？"
+
+waiting: "待機中"
+private: "非公開"
+plugin: "プラグイン"
+deleted: "削除済み"
+destination: "宛先"
+emojiApproval: "絵文字の承認"
+failedToUploadEmoji: "絵文字のアップロードに失敗しました"
+date: "日時"
+allowed: "許可済み"
+userGroup: "ユーザーグループ"
+keys: "キー"
+code: "コード"
+reactionSettingDescription: "リアクションピッカーに表示するリアクションを設定します。"
+sound: "サウンド"
+isAdmin: "管理者"
+isModerator: "モデレーター"
+isLocked: "フォローに承認を必要とする"
+isBot: "Bot"
+flexible: "幅を自動調整する"
+placeholder: "ここに入力してください"
+folder: "フォルダー"
+
+showPassword: "パスワードを表示"
+hidePassword: "パスワードを隠す"

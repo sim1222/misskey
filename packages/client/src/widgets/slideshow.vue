@@ -12,8 +12,9 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import type { entities } from '@/misskey';
+import { onMounted, ref } from 'vue';
+import { useWidgetPropsManager, Widget, WidgetComponentExpose } from './widget';
 import { GetFormResultType } from '@/scripts/form';
 import * as os from '@/os';
 import { useInterval } from '@/scripts/use-interval';
@@ -39,7 +40,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps): void; }>();
 
 const { widgetProps, configure, save } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -47,7 +48,7 @@ const { widgetProps, configure, save } = useWidgetPropsManager(name,
 	emit,
 );
 
-const images = ref([]);
+const images = ref<entities.DriveFile[]>([]);
 const fetching = ref(true);
 const slideA = ref<HTMLElement>();
 const slideB = ref<HTMLElement>();
@@ -58,6 +59,7 @@ const change = () => {
 	const index = Math.floor(Math.random() * images.value.length);
 	const img = `url(${ images.value[index].url })`;
 
+	if (slideB.value == null) return;
 	slideB.value.style.backgroundImage = img;
 
 	slideB.value.classList.add('anime');
@@ -67,6 +69,7 @@ const change = () => {
 
 		slideA.value.style.backgroundImage = img;
 
+		if (slideB.value == null) return;
 		slideB.value.classList.remove('anime');
 	}, 1000);
 };
@@ -81,7 +84,9 @@ const fetch = () => {
 	}).then(res => {
 		images.value = res;
 		fetching.value = false;
+		if (slideA.value == null) return;
 		slideA.value.style.backgroundImage = '';
+		if (slideB.value == null) return;
 		slideB.value.style.backgroundImage = '';
 		change();
 	});

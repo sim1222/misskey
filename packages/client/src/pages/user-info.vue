@@ -3,6 +3,7 @@
 	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
 	<MkSpacer :content-max="600" :margin-min="16" :margin-max="32">
 		<FormSuspense :p="init">
+		<template v-if="user">
 			<div v-if="tab === 'overview'" class="_formRoot">
 				<div class="_formBlock aeakzknw">
 					<MkAvatar class="avatar" :user="user" :show-indicator="true"/>
@@ -42,7 +43,7 @@
 						<template #key>{{ i18n.ts.createdAt }}</template>
 						<template #value><span class="_monospace"><MkTime :time="user.createdAt" :mode="'detail'"/></span></template>
 					</MkKeyValue>
-					<MkKeyValue v-if="info" oneline style="margin: 1em 0;">
+					<MkKeyValue v-if="info?.lastActiveDate" oneline style="margin: 1em 0;">
 						<template #key>{{ i18n.ts.lastActiveDate }}</template>
 						<template #value><span class="_monospace"><MkTime :time="info.lastActiveDate" :mode="'detail'"/></span></template>
 					</MkKeyValue>
@@ -79,19 +80,19 @@
 					<FormFolder class="_formBlock">
 						<template #label>Raw</template>
 
-						<MkObjectView v-if="ap" tall :value="ap">
+						<MkObjectView v-if="ap" :value="ap">
 						</MkObjectView>
 					</FormFolder>
 				</FormSection>
 			</div>
 			<div v-else-if="tab === 'moderation'" class="_formRoot">
-				<FormSwitch v-if="user.host == null && $i.isAdmin && (moderator || !user.isAdmin)" v-model="moderator" class="_formBlock" @update:modelValue="toggleModerator">{{ i18n.ts.moderator }}</FormSwitch>
+				<FormSwitch v-if="user.host == null && $i?.isAdmin && (moderator || !user.isAdmin)" v-model="moderator" class="_formBlock" @update:modelValue="toggleModerator">{{ i18n.ts.moderator }}</FormSwitch>
 				<FormSwitch v-model="silenced" class="_formBlock" @update:modelValue="toggleSilence">{{ i18n.ts.silence }}</FormSwitch>
 				<FormSwitch v-model="suspended" class="_formBlock" @update:modelValue="toggleSuspend">{{ i18n.ts.suspend }}</FormSwitch>
 				{{ i18n.ts.reflectMayTakeTime }}
 				<div class="_formBlock">
 					<FormButton v-if="user.host == null && iAmModerator" inline style="margin-right: 8px;" @click="resetPassword"><i class="fas fa-key"></i> {{ i18n.ts.resetPassword }}</FormButton>
-					<FormButton v-if="$i.isAdmin" inline danger @click="deleteAccount">{{ i18n.ts.deleteAccount }}</FormButton>
+					<FormButton v-if="$i?.isAdmin" inline danger @click="deleteAccount">{{ i18n.ts.deleteAccount }}</FormButton>
 				</div>
 				<FormTextarea v-model="moderationNote" manual-save class="_formBlock">
 					<template #label>Moderation note</template>
@@ -115,13 +116,13 @@
 				<FormSection>
 					<template #label>Drive Capacity Override</template>
 
-					<FormInput v-if="user.host == null" v-model="driveCapacityOverrideMb" inline :manual-save="true" type="number" :placeholder="i18n.t('defaultValueIs', { value: instance.driveCapacityPerLocalUserMb })" @update:model-value="applyDriveCapacityOverride">
+					<FormNumberInput v-if="user.host == null" v-model="driveCapacityOverrideMb" inline :manual-save="true" type="number" :placeholder="i18n.t('defaultValueIs', { value: instance.driveCapacityPerLocalUserMb ?? '' })" @update:model-value="applyDriveCapacityOverride">
 						<template #label>{{ i18n.ts.driveCapOverrideLabel }}</template>
 						<template #suffix>MB</template>
 						<template #caption>
 							{{ i18n.ts.driveCapOverrideCaption }}
 						</template>
-					</FormInput>
+					</FormNumberInput>
 				</FormSection>
 			</div>
 			<div v-else-if="tab === 'chart'" class="_formRoot">
@@ -140,20 +141,23 @@
 				</div>
 			</div>
 			<div v-else-if="tab === 'raw'" class="_formRoot">
-				<MkObjectView v-if="info && $i.isAdmin" tall :value="info">
+				<MkObjectView v-if="info && $i?.isAdmin" :value="info">
 				</MkObjectView>
 
-				<MkObjectView tall :value="user">
+				<MkObjectView :value="user">
 				</MkObjectView>
 			</div>
+		</template>
 		</FormSuspense>
 	</MkSpacer>
 </MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
+import { requireValue } from '@/scripts/require-value';
+import type { ApiResponse } from '@/types/api';
 import { computed, watch, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import MkChart from '@/components/MkChart.vue';
 import MkObjectView from '@/components/MkObjectView.vue';
 import FormTextarea from '@/components/form/textarea.vue';
@@ -161,8 +165,9 @@ import FormSwitch from '@/components/form/switch.vue';
 import FormLink from '@/components/form/link.vue';
 import FormSection from '@/components/form/section.vue';
 import FormButton from '@/components/MkButton.vue';
-import FormInput from '@/components/form/input.vue';
-import FormSplit from '@/components/form/split.vue';
+
+import FormNumberInput from '@/components/form/number-input.vue';
+
 import FormFolder from '@/components/form/folder.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
 import MkSelect from '@/components/form/select.vue';
@@ -170,8 +175,8 @@ import FormSuspense from '@/components/form/suspense.vue';
 import MkFileListForAdmin from '@/components/MkFileListForAdmin.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import * as os from '@/os';
-import number from '@/filters/number';
-import bytes from '@/filters/bytes';
+
+
 import { url } from '@/config';
 import { userPage, acct } from '@/filters/user';
 import { definePageMetadata } from '@/scripts/page-metadata';
@@ -186,15 +191,16 @@ const props = defineProps<{
 let tab = ref('overview');
 let chartSrc = ref('per-user-notes');
 let user = ref<null | misskey.entities.UserDetailed>();
-let init = ref<ReturnType<typeof createFetcher>>();
-let info = ref();
-let ips = ref(null);
-let ap = ref(null);
+const getUser = () => requireValue(user.value, 'User');
+let init = ref(createFetcher());
+const info = ref<ApiResponse<'admin/show-user'> | null>(null);
+let ips = ref<ApiResponse<'admin/get-user-ips'> | null>(null);
+let ap = ref<Record<string, unknown> | null>(null);
 let moderator = ref(false);
 let silenced = ref(false);
 let suspended = ref(false);
-let driveCapacityOverrideMb: number | null = ref(0);
-let moderationNote = ref('');
+let driveCapacityOverrideMb = ref<number | null>(0);
+const moderationNote = ref<string | null>('');
 const filesPagination = {
 	endpoint: 'admin/drive/files' as const,
 	limit: 10,
@@ -215,16 +221,12 @@ function createFetcher() {
 			user.value = _user;
 			info.value = _info;
 			ips.value = _ips;
-			moderator.value = info.value.isModerator;
-			silenced.value = info.value.isSilenced;
-			suspended.value = info.value.isSuspended;
-			driveCapacityOverrideMb.value = user.value.driveCapacityOverrideMb;
-			moderationNote.value = info.value.moderationNote;
+			moderator.value = _info.isModerator;
+			silenced.value = _info.isSilenced;
+			suspended.value = _info.isSuspended;
+			driveCapacityOverrideMb.value = getUser().driveCapacityOverrideMb;
+			moderationNote.value = _info.moderationNote ?? null;
 
-			watch((moderationNote), async () => {
-				await os.api('admin/update-user-note', { userId: user.value.id, text: moderationNote.value });
-				await refreshUser();
-			});
 		});
 	} else {
 		return () => os.api('users/show', {
@@ -235,18 +237,24 @@ function createFetcher() {
 	}
 }
 
+watch(moderationNote, async text => {
+ if (text == null || !info.value || text === info.value.moderationNote) return;
+ await os.api('admin/update-user-note', { userId: getUser().id, text });
+ refreshUser();
+});
+
 function refreshUser() {
 	init.value = createFetcher();
 }
 
 async function updateRemoteUser() {
-	await os.apiWithDialog('federation/update-remote-user', { userId: user.value.id });
+	await os.apiWithDialog('federation/update-remote-user', { userId: getUser().id });
 	refreshUser();
 }
 
 async function resetPassword() {
 	const { password } = await os.api('admin/reset-password', {
-		userId: user.value.id,
+		userId: getUser().id,
 	});
 
 	os.alert({
@@ -255,7 +263,7 @@ async function resetPassword() {
 	});
 }
 
-async function toggleSilence(v) {
+async function toggleSilence(v: boolean) {
 	const confirm = await os.confirm({
 		type: 'warning',
 		text: v ? i18n.ts.silenceConfirm : i18n.ts.unsilenceConfirm,
@@ -263,12 +271,12 @@ async function toggleSilence(v) {
 	if (confirm.canceled) {
 		silenced.value = !v;
 	} else {
-		await os.api(v ? 'admin/silence-user' : 'admin/unsilence-user', { userId: user.value.id });
+		await os.api(v ? 'admin/silence-user' : 'admin/unsilence-user', { userId: getUser().id });
 		await refreshUser();
 	}
 }
 
-async function toggleSuspend(v) {
+async function toggleSuspend(v: boolean) {
 	const confirm = await os.confirm({
 		type: 'warning',
 		text: v ? i18n.ts.suspendConfirm : i18n.ts.unsuspendConfirm,
@@ -276,34 +284,17 @@ async function toggleSuspend(v) {
 	if (confirm.canceled) {
 		suspended.value = !v;
 	} else {
-		await os.api(v ? 'admin/suspend-user' : 'admin/unsuspend-user', { userId: user.value.id });
+		await os.api(v ? 'admin/suspend-user' : 'admin/unsuspend-user', { userId: getUser().id });
 		await refreshUser();
 	}
 }
 
-async function toggleModerator(v) {
-	await os.api(v ? 'admin/moderators/add' : 'admin/moderators/remove', { userId: user.value.id });
+async function toggleModerator(v: boolean) {
+	await os.api(v ? 'admin/moderators/add' : 'admin/moderators/remove', { userId: getUser().id });
 	await refreshUser();
 }
 
-async function deleteAllFiles() {
-	const confirm = await os.confirm({
-		type: 'warning',
-		text: i18n.ts.deleteAllFilesConfirm,
-	});
-	if (confirm.canceled) return;
-	const process = async () => {
-		await os.api('admin/delete-all-files-of-a-user', { userId: user.value.id });
-		os.success();
-	};
-	await process().catch(err => {
-		os.alert({
-			type: 'error',
-			text: err.toString(),
-		});
-	});
-	await refreshUser();
-}
+
 
 async function applyDriveCapacityOverride() {
 	let driveCapOrMb = driveCapacityOverrideMb.value;
@@ -311,12 +302,12 @@ async function applyDriveCapacityOverride() {
 		driveCapOrMb = null;
 	}
 	try {
-		await os.apiWithDialog('admin/drive-capacity-override', { userId: user.value.id, overrideMb: driveCapOrMb });
+		await os.apiWithDialog('admin/drive-capacity-override', { userId: getUser().id, overrideMb: driveCapOrMb });
 		await refreshUser();
 	} catch (err) {
 		os.alert({
 			type: 'error',
-			text: err.toString(),
+			text: String(err),
 		});
 	}
 }
@@ -329,13 +320,13 @@ async function deleteAccount() {
 	if (confirm.canceled) return;
 
 	const typed = await os.inputText({
-		text: i18n.t('typeToConfirm', { x: user.value?.username }),
+		text: i18n.t('typeToConfirm', { x: getUser().username }),
 	});
 	if (typed.canceled) return;
 
 	if (typed.result === user.value?.username) {
 		await os.apiWithDialog('admin/delete-account', {
-			userId: user.value.id,
+			userId: getUser().id,
 		});
 	} else {
 		os.alert({
@@ -353,7 +344,7 @@ watch(() => props.userId, () => {
 
 watch((user), () => {
 	os.api('ap/get', {
-		uri: user.value.uri ?? `${url}/users/${user.value.id}`,
+		uri: getUser().uri ?? `${url}/users/${getUser().id}`,
 	}).then(res => {
 		ap.value = res;
 	});

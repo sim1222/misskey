@@ -12,13 +12,13 @@
 				<template #value>{{ scope.join('/') }}</template>
 			</MkKeyValue>
 		</FormSplit>
-		
+
 		<MkButton primary @click="createKey">{{ i18n.ts._registry.createKey }}</MkButton>
 
 		<FormSection v-if="keys">
 			<template #label>{{ i18n.ts.keys }}</template>
 			<div class="_formLinks">
-				<FormLink v-for="key in keys" :to="`/registry/value/system/${scope.join('/')}/${key[0]}`" class="_monospace">{{ key[0] }}<template #suffix>{{ key[1].toUpperCase() }}</template></FormLink>
+				<FormLink v-for="key in keys" :to="`/registry/value/system/${scope.join('/')}/${key[0]}`" class="_monospace">{{ key[0] }}<template #suffix>{{ typeof key[1] === 'string' ? key[1].toUpperCase() : '' }}</template></FormLink>
 			</div>
 		</FormSection>
 	</MkSpacer>
@@ -43,7 +43,7 @@ const props = defineProps<{
 
 const scope = computed(() => props.path.split('/'));
 
-let keys = ref(null);
+let keys = ref<[string, unknown][] | null>(null);
 
 function fetchKeys() {
 	os.api('i/registry/keys-with-type', {
@@ -70,7 +70,7 @@ async function createKey() {
 			default: scope.value.join('/'),
 		},
 	});
-	if (canceled) return;
+	if (canceled || result.key == null || result.value == null || result.scope == null) return;
 	os.apiWithDialog('i/registry/set', {
 		scope: result.scope.split('/'),
 		key: result.key,

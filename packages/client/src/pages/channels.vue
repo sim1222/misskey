@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineComponent, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 import MkChannelPreview from '@/components/MkChannelPreview.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';

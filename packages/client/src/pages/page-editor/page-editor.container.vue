@@ -25,7 +25,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import type { HpmlTypeChecker } from '@/scripts/hpml/type-checker';
+import { defineComponent, type PropType } from 'vue';
 
 export default defineComponent({
 	props: {
@@ -42,10 +43,12 @@ export default defineComponent({
 			default: false
 		},
 		error: {
+ type: Object as PropType<ReturnType<HpmlTypeChecker['typeCheck']>>,
 			required: false,
 			default: null
 		},
 		warn: {
+ type: Object as PropType<{ slot: number } | null>,
 			required: false,
 			default: null
 		}
