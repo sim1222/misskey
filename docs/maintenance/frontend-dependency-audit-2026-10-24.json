@@ -1,0 +1,105 @@
+{
+  "generatedAt": "2026-10-24T09:37:04.787Z",
+  "source": "Yarn Classic audit / npm registry",
+  "scope": "client",
+  "summary": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 6,
+      "high": 2,
+      "critical": 0
+    },
+    "dependencies": 700,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 700
+  },
+  "uniqueAdvisories": [
+    {
+      "id": "GHSA-4mjr-xmp4-gh2g",
+      "module": "qs",
+      "severity": "moderate",
+      "title": "qs: Denial of Service via Attacker Controlled isBuffer",
+      "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g",
+      "vulnerableVersions": ">=2.2.5 <6.16.0",
+      "patchedVersions": ">=6.16.0",
+      "paths": [
+        "cypress>@cypress/request>qs"
+      ]
+    },
+    {
+      "id": "GHSA-7pqw-9j4j-h8q3",
+      "module": "extract-zip",
+      "severity": "high",
+      "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+      "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+      "vulnerableVersions": "<=2.0.1",
+      "patchedVersions": "<0.0.0",
+      "paths": [
+        "cypress>extract-zip"
+      ]
+    },
+    {
+      "id": "GHSA-jmr9-qjv8-65gv",
+      "module": "extract-zip",
+      "severity": "high",
+      "title": "extract-zip unvalidated symlink path traversal",
+      "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+      "vulnerableVersions": "<=2.0.1",
+      "patchedVersions": "<0.0.0",
+      "paths": [
+        "cypress>extract-zip"
+      ]
+    },
+    {
+      "id": "GHSA-q8mj-m7cp-5q26",
+      "module": "qs",
+      "severity": "moderate",
+      "title": "qs has a remotely triggerable DoS: qs.stringify crashes with TypeError on null/undefined entries in comma-format arrays when encodeValuesOnly is set",
+      "url": "https://github.com/advisories/GHSA-q8mj-m7cp-5q26",
+      "vulnerableVersions": ">=6.11.1 <=6.15.1",
+      "patchedVersions": ">=6.15.2",
+      "paths": [
+        "cypress>@cypress/request>qs"
+      ]
+    },
+    {
+      "id": "GHSA-rj75-hqrm-r3gf",
+      "module": "postcss-selector-parser",
+      "severity": "moderate",
+      "title": "PostCSS: Quadratic complexity in flat selector parsing allows CPU exhaustion",
+      "url": "https://github.com/advisories/GHSA-rj75-hqrm-r3gf",
+      "vulnerableVersions": "<7.1.6",
+      "patchedVersions": ">=7.1.6",
+      "paths": [
+        "eslint-plugin-vue>postcss-selector-parser"
+      ]
+    },
+    {
+      "id": "GHSA-w5hq-g745-h8pq",
+      "module": "uuid",
+      "severity": "moderate",
+      "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+      "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+      "vulnerableVersions": "<11.1.1",
+      "patchedVersions": ">=11.1.1",
+      "paths": [
+        "cypress>@cypress/request>uuid",
+        "@syuilo/aiscript>uuid"
+      ]
+    },
+    {
+      "id": "GHSA-x5fp-wj9c-mxmx",
+      "module": "qs",
+      "severity": "moderate",
+      "title": "qs array-limit bypass via bracket-key comma parsing",
+      "url": "https://github.com/advisories/GHSA-x5fp-wj9c-mxmx",
+      "vulnerableVersions": ">=6.14.2 <=6.15.3",
+      "patchedVersions": ">=6.16.0",
+      "paths": [
+        "cypress>@cypress/request>qs"
+      ]
+    }
+  ]
+}
