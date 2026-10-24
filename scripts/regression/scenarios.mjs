@@ -122,6 +122,16 @@ export async function scenarios(f, o) {
 	await api('read clip notes', 'clips/notes', { clipId: clip.id }, bob);
 	const page = await api('create page', 'pages/create', { title: 'contract page', name: 'contract', content: [{ id: 'text-block', type: 'text', text: 'page 日本語' }], variables: [], script: '' }, alice);
 	await api('show page', 'pages/show', { pageId: page.id }, bob);
+    // Both values are supported by the handler; null previously failed its schema.
+    for (const pinnedPageId of [page.id, null]) {
+        const response = await fetch(`${f.base}/api/i/update`, {
+            method: 'POST', headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ i: alice.token, pinnedPageId }),
+        });
+        assert.equal(response.status, 200, 'Own page can be pinned and unpinned');
+        assert.equal((await response.json()).pinnedPageId, pinnedPageId);
+    }
+
 	await api('foreign page delete refused', 'pages/delete', { pageId: page.id }, bob, 400);
 	const channel = await api('create channel', 'channels/create', { name: 'contract channel', description: 'contract' }, alice);
 	await api('follow channel', 'channels/follow', { channelId: channel.id }, bob, 204);

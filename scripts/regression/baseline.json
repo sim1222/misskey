@@ -21269,7 +21269,8 @@
           },
           "pinnedPageId": {
             "format": "misskey:id",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "publicReactions": {
             "type": "boolean"
