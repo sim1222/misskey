@@ -25,7 +25,7 @@
 					<div class="_formRoot">
 						<span class="_formBlock">{{ i18n.ts._sensitiveMediaDetection.description }}</span>
 
-						<FormRadios v-model="sensitiveMediaDetection" class="_formBlock">
+						<FormRadios v-model="sensitiveMediaDetection" class="_formBlock" :choices="['none', 'all', 'local', 'remote'] as const">
 							<option value="none">{{ i18n.ts.none }}</option>
 							<option value="all">{{ i18n.ts.all }}</option>
 							<option value="local">{{ i18n.ts.localOnly }}</option>

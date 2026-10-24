@@ -15,7 +15,7 @@
 		<template #label>Black</template>
 	</MkSwitch>
 
-	<FormRadios v-model="statusbar.size" class="_formBlock">
+	<FormRadios v-model="statusbar.size" class="_formBlock" :choices="['verySmall', 'small', 'medium', 'large', 'veryLarge'] as const">
 		<template #label>{{ i18n.ts.size }}</template>
 		<option value="verySmall">{{ i18n.ts.small }}+</option>
 		<option value="small">{{ i18n.ts.small }}</option>

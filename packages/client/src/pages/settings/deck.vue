@@ -4,7 +4,7 @@
 
 	<FormSwitch v-model="alwaysShowMainColumn" class="_formBlock">{{ i18n.ts._deck.alwaysShowMainColumn }}</FormSwitch>
 
-	<FormRadios v-model="columnAlign" class="_formBlock">
+	<FormRadios v-model="columnAlign" class="_formBlock" :choices="['left', 'center'] as const">
 		<template #label>{{ i18n.ts._deck.columnAlign }}</template>
 		<option value="left">{{ i18n.ts.left }}</option>
 		<option value="center">{{ i18n.ts.center }}</option>

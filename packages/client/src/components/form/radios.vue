@@ -1,55 +1,33 @@
-<script lang="ts">
-import { defineComponent, h, isVNode } from 'vue';
+<template><RenderRadios v-bind="$attrs"/></template>
+<script lang="ts" setup generic="T">
+import { defineComponent, h, isVNode, mergeProps, shallowReactive, watch } from 'vue';
 import MkRadio from './radio.vue';
-
-export default defineComponent({
-	components: {
-		MkRadio,
-	},
-	props: {
-		modelValue: {
-			type: null,
-            required: false,
-		},
-	},
-	data() {
-		return {
-			value: this.modelValue,
-		};
-	},
-	watch: {
-		value() {
-			this.$emit('update:modelValue', this.value);
-		},
-	},
-	render() {
-		let options = this.$slots.default?.() ?? [];
-		const label = this.$slots.label && this.$slots.label();
-		const caption = this.$slots.caption && this.$slots.caption();
-
-		// なぜかFragmentになることがあるため
-		if (options.length === 1 && options[0].props == null) options = Array.isArray(options[0].children) ? options[0].children.filter(isVNode) : [];
-
-		return h('div', {
-			class: 'novjtcto',
-		}, [
-			...(label ? [h('div', {
-				class: 'label',
-			}, [label])] : []),
-			h('div', {
-				class: 'body',
-			}, options.filter(option => option.props != null).map(option => h(MkRadio<unknown>, {
-				key: option.key ?? undefined,
-				value: option.props?.value,
-				modelValue: this.value,
-				'onUpdate:modelValue': value => this.value = value,
-			}, { default: () => option.children })),
-			),
-			...(caption ? [h('div', {
-				class: 'caption',
-			}, [caption])] : []),
-		]);
-	},
+defineOptions({ inheritAttrs: false });
+const props = defineProps<{ modelValue: T; choices: readonly T[] }>();
+const slots = defineSlots<{ default?(): import('vue').VNode[]; label?(): import('vue').VNode[]; caption?(): import('vue').VNode[] }>();
+const emit = defineEmits<{ (event: 'update:modelValue', value: T): void }>();
+const state = shallowReactive<{ value: T }>({ value: props.modelValue });
+watch(() => state.value, value => emit('update:modelValue', value));
+const RenderRadios = defineComponent({
+ inheritAttrs: false,
+ setup(_props, { attrs }) {
+  return () => {
+   let options = slots.default?.() ?? [];
+   const label = slots.label?.();
+   const caption = slots.caption?.();
+   if (options.length === 1 && options[0].props == null) options = Array.isArray(options[0].children) ? options[0].children.filter(isVNode) : [];
+   return h('div', mergeProps({ class: 'novjtcto' }, attrs), [
+    ...(label ? [h('div', { class: 'label' }, [label])] : []),
+    h('div', { class: 'body' }, options.flatMap(option => {
+     const index = props.choices.findIndex(value => Object.is(value, option.props?.value));
+     if (index < 0) return [];
+     return [h(MkRadio<T>, { key: option.key ?? undefined, value: props.choices[index], modelValue: state.value,
+      'onUpdate:modelValue': (value: T) => { state.value = value; } }, { default: () => option.children })];
+    })),
+    ...(caption ? [h('div', { class: 'caption' }, [caption])] : []),
+   ]);
+  };
+ },
 });
 </script>
 

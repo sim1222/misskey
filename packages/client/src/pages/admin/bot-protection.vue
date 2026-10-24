@@ -2,7 +2,7 @@
 <div>
 	<FormSuspense :p="init">
 		<div class="_formRoot">
-			<FormRadios v-model="provider" class="_formBlock">
+			<FormRadios v-model="provider" class="_formBlock" :choices="[null, 'hcaptcha', 'recaptcha'] as const">
 				<option :value="null">{{ i18n.ts.none }} ({{ i18n.ts.notRecommended }})</option>
 				<option value="hcaptcha">hCaptcha</option>
 				<option value="recaptcha">reCAPTCHA</option>

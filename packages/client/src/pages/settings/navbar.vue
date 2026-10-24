@@ -5,7 +5,7 @@
 		<template #caption><button class="_textButton" @click="addItem">{{ i18n.ts.addItem }}</button></template>
 	</FormTextarea>
 
-	<FormRadios v-model="menuDisplay" class="_formBlock">
+	<FormRadios v-model="menuDisplay" class="_formBlock" :choices="['sideFull', 'sideIcon', 'top'] as const">
 		<template #label>{{ i18n.ts.display }}</template>
 		<option value="sideFull">{{ i18n.ts._menuDisplay.sideFull }}</option>
 		<option value="sideIcon">{{ i18n.ts._menuDisplay.sideIcon }}</option>

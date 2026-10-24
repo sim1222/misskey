@@ -19,7 +19,7 @@
 							<template #label>{{ $ts.text }}</template>
 						</FormTextarea>
 
-						<FormRadios v-model="emojiAlign" class="_formBlock">
+						<FormRadios v-model="emojiAlign" class="_formBlock" :choices="['left', 'center', 'right'] as const">
 							<template #label>{{ $ts._simkey.emojiAlign }}</template>
 							<option value="left"><i class="fas fa-align-left"/></option>
 							<option value="center"><i class="fas fa-align-center"></i></option>
@@ -41,7 +41,7 @@
 
 						<FormFolder :default-open="false" class="_formBlock">
 							<template #label>{{ $ts._pages.font }}</template>
-							<FormRadios v-model="font" class="_formBlock">
+							<FormRadios v-model="font" class="_formBlock" :choices="['notosans-mono-bold', 'mplus-1p-black', 'rounded-x-mplus-1p-black', 'ipamjm', 'aoyagireisyoshimo', 'LinLibertine_RBah'] as const">
 								<option value="notosans-mono-bold">Noto Sans Mono CJK JP Bold</option>
 								<option value="mplus-1p-black">M+ 1p black</option>
 								<option value="rounded-x-mplus-1p-black">Rounded M+ 1p black</option>
@@ -90,7 +90,7 @@
 							<template #label>{{ $ts.text }}</template>
 						</FormTextarea>
 
-						<FormRadios v-model="backColor" class="_formBlock">
+						<FormRadios v-model="backColor" class="_formBlock" :choices="backColors">
 							<template #label>{{ $ts._theme.color }}</template>
 							<option v-for="c in backColors" :value="c">{{c}}</option>
 						</FormRadios>

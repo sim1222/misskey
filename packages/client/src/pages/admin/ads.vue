@@ -11,7 +11,7 @@
 				<MkInput v-model="ad.imageUrl" class="_formBlock">
 					<template #label>{{ i18n.ts.imageUrl }}</template>
 				</MkInput>
-				<FormRadios v-model="ad.place" class="_formBlock">
+				<FormRadios v-model="ad.place" class="_formBlock" :choices="['square', 'horizontal', 'horizontal-big'] as const">
 					<template #label>Form</template>
 					<option value="square">square</option>
 					<option value="horizontal">horizontal</option>

@@ -36,7 +36,7 @@
 					<template #label>{{ item.label || key }}<span v-if="item.required === false"> ({{ $ts.optional }})</span></template>
 					<option v-for="(choice, index) in item.enum" :key="index" :value="choice.value">{{ choice.label }}</option>
 				</FormSelect>
-				<FormRadios v-else-if="item.type === 'radio'" v-model="values[key]" class="_formBlock">
+				<FormRadios v-else-if="item.type === 'radio'" v-model="values[key]" class="_formBlock" :choices="item.options.map(choice => choice.value)">
 					<template #label>{{ item.label || key }}<span v-if="item.required === false"> ({{ $ts.optional }})</span></template>
 					<option v-for="(choice, index) in item.options" :key="index" :value="choice.value">{{ choice.label }}</option>
 				</FormRadios>

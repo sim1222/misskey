@@ -15,7 +15,7 @@
 						<template #prefix><i class="fas fa-search"></i></template>
 						<template #label>{{ i18n.ts.searchUser }}</template>
 					</MkInput>
-					<MkRadios v-model="searchOrigin" class="_formBlock">
+					<MkRadios v-model="searchOrigin" class="_formBlock" :choices="['combined', 'local', 'remote'] as const">
 						<option value="combined">{{ i18n.ts.all }}</option>
 						<option value="local">{{ i18n.ts.local }}</option>
 						<option value="remote">{{ i18n.ts.remote }}</option>

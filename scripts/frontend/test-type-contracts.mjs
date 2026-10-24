@@ -46,6 +46,7 @@ const sfcCases = [
  '<script setup lang="ts">',
  "import { ref } from 'vue';",
  "import TextInput from '@/components/form/input.vue';",
+ "import Radios from '@/components/form/radios.vue';",
  "import Tabs from '@/components/MkTab.vue';",
  "import NumberInput from '@/components/form/number-input.vue';",
  "const text = ref('text'); const number = ref(1);",
@@ -56,6 +57,7 @@ const sfcCases = [
  '<TextInput v-model="number"/> <!-- reject: numeric text model -->',
  '<NumberInput v-model="text"/> <!-- reject: string numeric model -->',
  '<Tabs v-model="text" :choices="[42]"><option :value="42">invalid</option></Tabs> <!-- reject: numeric tab choice -->',
+ '<Radios v-model="text" :choices="[0, 1]"><option :value="0">invalid</option></Radios> <!-- reject: numeric radio model -->',
  '</template>',
 ];
 try {

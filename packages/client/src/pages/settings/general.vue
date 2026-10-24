@@ -12,7 +12,7 @@
 		</template>
 	</FormSelect>
 
-	<FormRadios v-model="overridedDeviceKind" class="_formBlock">
+	<FormRadios v-model="overridedDeviceKind" class="_formBlock" :choices="[null, 'smartphone', 'tablet', 'desktop'] as const">
 		<template #label>{{ i18n.ts.overridedDeviceKind }}</template>
 		<option :value="null">{{ i18n.ts.auto }}</option>
 		<option value="smartphone"><i class="fas fa-mobile-alt"/> {{ i18n.ts.smartphone }}</option>
@@ -54,7 +54,7 @@
 		</FormSwitch>
 		<FormSwitch v-model="disableDrawer" class="_formBlock">{{ i18n.ts.disableDrawer }}</FormSwitch>
 
-		<FormRadios v-model="fontSize" class="_formBlock">
+		<FormRadios v-model="fontSize" class="_formBlock" :choices="[null, '1', '2', '3'] as const">
 			<template #label>{{ i18n.ts.fontSize }}</template>
 			<option :value="null"><span style="font-size: 14px;">Aa</span></option>
 			<option value="1"><span style="font-size: 15px;">Aa</span></option>
