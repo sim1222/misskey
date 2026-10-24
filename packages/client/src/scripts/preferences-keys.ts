@@ -49,4 +49,3 @@ export const coldDeviceStorageSaveKeys = [
 	'sound_antenna',
 	'sound_channel',
 ] as const;
-
