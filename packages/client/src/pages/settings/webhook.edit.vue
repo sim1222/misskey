@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import FormInput from '@/components/form/input.vue';
 import FormSection from '@/components/form/section.vue';
 import FormSwitch from '@/components/form/switch.vue';
@@ -65,7 +65,7 @@ let event_reaction = ref(webhook.on.includes('reaction'));
 let event_mention = ref(webhook.on.includes('mention'));
 
 async function save(): Promise<void> {
-	const events = [];
+	const events: import('@/types/api').ApiRequest<'i/webhooks/create'>['on'] = [];
 	if (event_follow.value) events.push('follow');
 	if (event_followed.value) events.push('followed');
 	if (event_note.value) events.push('note');
@@ -75,6 +75,7 @@ async function save(): Promise<void> {
 	if (event_mention.value) events.push('mention');
 
 	os.apiWithDialog('i/webhooks/update', {
+        webhookId: props.webhookId,
 		name: name.value,
 		url: url.value,
 		secret: secret.value,
@@ -83,9 +84,9 @@ async function save(): Promise<void> {
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: 'Edit webhook',

@@ -34,7 +34,7 @@
 				<template #label>{{ i18n.ts.textColor }}</template>
 				<div class="cwepdizn-colors">
 					<div class="row">
-						<button v-for="color in fgColors" :key="color" class="color char _button" :class="{ active: (theme.props.fg === color.forLight) || (theme.props.fg === color.forDark) }" @click="setFgColor(color)">
+						<button v-for="color in fgColors" :key="color.color" class="color char _button" :class="{ active: (theme.props.fg === color.forLight) || (theme.props.fg === color.forDark) }" @click="setFgColor(color)">
 							<div class="preview" :style="{ color: color.forPreview ? color.forPreview : theme.base === 'light' ? '#5f5f5f' : '#dadada' }">A</div>
 						</button>
 					</div>
@@ -78,7 +78,7 @@ import FormButton from '@/components/MkButton.vue';
 import FormTextarea from '@/components/form/textarea.vue';
 import FormFolder from '@/components/form/folder.vue';
 
-import { $i } from '@/account';
+import { requireAccount } from '@/account';
 import { Theme, applyTheme } from '@/scripts/theme';
 import lightTheme from '@/themes/_light.json5';
 import darkTheme from '@/themes/_dark.json5';
@@ -89,6 +89,8 @@ import { addTheme } from '@/theme-store';
 import { i18n } from '@/i18n';
 import { useLeaveGuard } from '@/scripts/use-leave-guard';
 import { definePageMetadata } from '@/scripts/page-metadata';
+
+import type { ThemeDraft } from '@/scripts/theme';
 
 const bgColors = [
 	{ color: '#f5f5f5', kind: 'light', forPreview: '#f5f5f5' },
@@ -119,7 +121,7 @@ const fgColors = [
 	{ color: 'pink', forLight: '#84667d', forDark: '#e4d1e0', forPreview: '#b12390' },
 ];
 
-let theme = ref<Partial<Theme>>({
+let theme = ref<ThemeDraft>({
 	base: 'light',
 	props: lightTheme.props,
 });
@@ -151,11 +153,11 @@ function setBgColor(color: typeof bgColors[number]) {
 	}
 }
 
-function setAccentColor(color) {
+function setAccentColor(color: string) {
 	theme.value.props.accent = color;
 }
 
-function setFgColor(color) {
+function setFgColor(color: typeof fgColors[number]) {
 	theme.value.props.fg = theme.value.base === 'light' ? color.forLight : color.forDark;
 }
 
@@ -169,7 +171,7 @@ function applyThemeCode() {
 	let parsed;
 
 	try {
-		parsed = JSON5.parse(themeCode.value);
+		parsed = JSON5.parse(themeCode.value ?? '');
 	} catch (err) {
 		os.alert({
 			type: 'error',
@@ -186,18 +188,19 @@ async function saveAs() {
 		title: i18n.ts.name,
 		allowEmpty: false,
 	});
-	if (canceled) return;
+	if (canceled || name == null) return;
 
 	theme.value.id = uuid();
 	theme.value.name = name;
-	theme.value.author = `@${$i.username}@${toUnicode(host)}`;
+	theme.value.author = `@${requireAccount().username}@${toUnicode(host)}`;
 	if (description.value) theme.value.desc = description.value;
-	await addTheme(theme.value);
+	const savedTheme: Theme = { ...theme.value, id: theme.value.id, name, author: theme.value.author };
+	await addTheme(savedTheme);
 	applyTheme(theme.value);
 	if (defaultStore.state.darkMode) {
-		ColdDeviceStorage.set('darkTheme', theme.value);
+		ColdDeviceStorage.set('darkTheme', savedTheme);
 	} else {
-		ColdDeviceStorage.set('lightTheme', theme.value);
+		ColdDeviceStorage.set('lightTheme', savedTheme);
 	}
 	changed.value = false;
 	os.alert({

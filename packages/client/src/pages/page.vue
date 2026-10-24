@@ -11,7 +11,7 @@
 				</div>
 				-->
 					<div class="banner">
-						<img v-if="page.eyeCatchingImageId" :src="page.eyeCatchingImage.url"/>
+						<img v-if="page.eyeCatchingImage" :src="(page.eyeCatchingImage.url) ?? undefined"/>
 					</div>
 					<div class="content">
 						<XPage :page="page"/>
@@ -32,7 +32,7 @@
 							<MkUserName :user="page.user" style="display: block;"/>
 							<MkAcct :user="page.user"/>
 						</div>
-						<MkFollowButton v-if="!$i || $i.id != page.user.id" :user="page.user" :inline="true" :transparent="false" :full="true" large class="koudoku"/>
+						<MkFollowButton v-if="!$i || $i.id != page.user.id" :user="page.user" :full="true" large class="koudoku"/>
 					</div>
 					<div class="links">
 						<MkA :to="`/@${username}/pages/${pageName}/view-source`" class="link">{{ i18n.ts._pages.viewSource }}</MkA>
@@ -63,6 +63,8 @@
 </template>
 
 <script lang="ts" setup>
+import { requireValue } from '@/scripts/require-value';
+import type { entities } from '@/misskey';
 import { computed, watch, ref } from 'vue';
 import XPage from '@/components/page/page.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -80,13 +82,14 @@ const props = defineProps<{
 	username: string;
 }>();
 
-let page = ref(null);
-let error = ref(null);
+let page = ref<entities.Page | null>(null);
+const getPage = () => requireValue(page.value, 'Page');
+let error = ref<Error | null>(null);
 const otherPostsPagination = {
 	endpoint: 'users/pages' as const,
 	limit: 6,
 	params: computed(() => ({
-		userId: page.value.user.id,
+		userId: getPage().user.id,
 	})),
 };
 const path = computed(() => props.username + '/' + props.pageName);
@@ -105,24 +108,24 @@ function fetchPage() {
 
 function share() {
 	navigator.share({
-		title: page.value.title ?? page.value.name,
-		text: page.value.summary,
-		url: `${url}/@${page.value.user.username}/pages/${page.value.name}`,
+		title: getPage().title ?? getPage().name,
+		text: getPage().summary ?? undefined,
+		url: `${url}/@${getPage().user.username}/pages/${getPage().name}`,
 	});
 }
 
 function shareWithNote() {
 	os.post({
-		initialText: `${page.value.title || page.value.name} ${url}/@${page.value.user.username}/pages/${page.value.name}`,
+		initialText: `${getPage().title || getPage().name} ${url}/@${getPage().user.username}/pages/${getPage().name}`,
 	});
 }
 
 function like() {
 	os.apiWithDialog('pages/like', {
-		pageId: page.value.id,
+		pageId: getPage().id,
 	}).then(() => {
-		page.value.isLiked = true;
-		page.value.likedCount++;
+		getPage().isLiked = true;
+		getPage().likedCount++;
 	});
 }
 
@@ -133,16 +136,16 @@ async function unlike() {
 	});
 	if (confirm.canceled) return;
 	os.apiWithDialog('pages/unlike', {
-		pageId: page.value.id,
+		pageId: getPage().id,
 	}).then(() => {
-		page.value.isLiked = false;
-		page.value.likedCount--;
+		getPage().isLiked = false;
+		getPage().likedCount--;
 	});
 }
 
-function pin(pin) {
+function pin(pin: boolean) {
 	os.apiWithDialog('i/update', {
-		pinnedPageId: pin ? page.value.id : null,
+		pinnedPageId: pin ? getPage().id : null,
 	});
 }
 
@@ -153,12 +156,12 @@ const headerActions = computed(() => []);
 const headerTabs = computed(() => []);
 
 definePageMetadata(computed(() => page.value ? {
-	title: computed(() => page.value.title || page.value.name),
-	avatar: page.value.user,
-	path: `/@${page.value.user.username}/pages/${page.value.name}`,
+	title: getPage().title || getPage().name,
+	avatar: getPage().user,
+	path: `/@${getPage().user.username}/pages/${getPage().name}`,
 	share: {
-		title: page.value.title || page.value.name,
-		text: page.value.summary,
+		title: getPage().title || getPage().name,
+		text: getPage().summary ?? undefined,
 	},
 } : null));
 </script>

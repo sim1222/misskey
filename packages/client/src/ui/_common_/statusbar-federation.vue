@@ -3,7 +3,7 @@
 	<template v-if="display === 'marquee'">
 		<transition name="change" mode="default">
 			<MarqueeText :key="key" :duration="marqueeDuration" :reverse="marqueeReverse">
-				<span v-for="instance in instances" :key="instance.id" class="item" :class="{ colored }" :style="{ background: colored ? instance.themeColor : null }">
+				<span v-for="instance in instances" :key="instance.id" class="item" :class="{ colored }" :style="{ background: colored ? instance.themeColor ?? undefined : undefined }">
 					<img v-if="instance.iconUrl" class="icon" :src="instance.iconUrl" alt=""/>
 					<MkA :to="`/instance-info/${instance.host}`" class="host _monospace">
 						{{ instance.host }}
@@ -20,22 +20,22 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue';
-import * as misskey from 'misskey-js';
+import { ref } from 'vue';
+import * as misskey from '@/misskey';
 import MarqueeText from '@/components/MkMarquee.vue';
 import * as os from '@/os';
 import { useInterval } from '@/scripts/use-interval';
-import { getNoteSummary } from '@/scripts/get-note-summary';
-import { notePage } from '@/filters/note';
 
-const props = defineProps<{
+
+
+const props = withDefaults(defineProps<{
 	display?: 'marquee' | 'oneByOne';
 	colored?: boolean;
 	marqueeDuration?: number;
 	marqueeReverse?: boolean;
 	oneByOneInterval?: number;
 	refreshIntervalSec?: number;
-}>();
+}>(), { refreshIntervalSec: 120 });
 
 const instances = ref<misskey.entities.Instance[]>([]);
 const fetching = ref(true);

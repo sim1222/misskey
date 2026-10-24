@@ -72,7 +72,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, provide, ref, watch } from 'vue';
+import type { Column } from '@/types/deck';
+import type { MenuItem } from '@/types/menu';
+import { computed, defineAsyncComponent, ref } from 'vue';
 import { v4 as uuid } from 'uuid';
 import XCommon from './_common_/common.vue';
 import { deckStore, addColumn as addColumnToStore, loadDeck, getProfiles, deleteProfile as deleteProfile_ } from './deck/deck-store';
@@ -106,17 +108,14 @@ window.addEventListener('resize', () => {
 
 const drawerMenuShowing = ref(false);
 
-const route = 'TODO';
-watch(route, () => {
-	drawerMenuShowing.value = false;
-});
+mainRouter.on('change', () => { drawerMenuShowing.value = false; });
 
 const columns = deckStore.reactiveState.columns;
 const layout = deckStore.reactiveState.layout;
 const menuIndicated = computed(() => {
 	if ($i == null) return false;
 	for (const def in navbarItemDef) {
-		if (navbarItemDef[def].indicated) return true;
+		if (navbarItemDef[def]?.indicated) return true;
 	}
 	return false;
 });
@@ -127,8 +126,8 @@ function showSettings() {
 
 let columnsEl = ref<HTMLElement>();
 
-const addColumn = async (ev) => {
-	const columns = [
+const addColumn = async (ev: MouseEvent) => {
+	const columns: Column['type'][] = [
 		'main',
 		'widgets',
 		'notifications',
@@ -145,7 +144,7 @@ const addColumn = async (ev) => {
 			value: column, text: i18n.t('_deck._columns.' + column),
 		})),
 	});
-	if (canceled) return;
+	if (canceled || column == null) return;
 
 	addColumnToStore({
 		type: column,
@@ -155,7 +154,7 @@ const addColumn = async (ev) => {
 	});
 };
 
-const onContextmenu = (ev) => {
+const onContextmenu = (ev: MouseEvent) => {
 	os.contextMenu([{
 		text: i18n.ts._deck.addColumn,
 		action: addColumn,
@@ -168,6 +167,7 @@ window.addEventListener('wheel', (ev) => {
 	if (ev.target === columnsEl.value && ev.deltaX === 0) {
 		columnsEl.value.scrollLeft += ev.deltaY;
 	} else if (getScrollContainer(ev.target as HTMLElement) == null && ev.deltaX === 0) {
+		if (columnsEl.value == null) return;
 		columnsEl.value.scrollLeft += ev.deltaY;
 	}
 });
@@ -178,14 +178,16 @@ function moveFocus(id: string, direction: 'up' | 'down' | 'left' | 'right') {
 }
 
 function changeProfile(ev: MouseEvent) {
-	const items = ref([{
+	const items = ref<MenuItem[]>([{
 		text: deckStore.state.profile,
-		active: true.valueOf,
+		active: true,
+        action: () => {},
 	}]);
 	getProfiles().then(profiles => {
 		items.value = [{
 			text: deckStore.state.profile,
-			active: true.valueOf,
+			active: true,
+        action: () => {},
 		}, ...(profiles.filter(k => k !== deckStore.state.profile).map(k => ({
 			text: k,
 			action: () => {
@@ -200,7 +202,7 @@ function changeProfile(ev: MouseEvent) {
 					title: i18n.ts._deck.profile,
 					allowEmpty: false,
 				});
-				if (canceled) return;
+				if (canceled || name == null) return;
 
 				deckStore.set('profile', name);
 				unisonReload();

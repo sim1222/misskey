@@ -30,6 +30,9 @@
 </template>
 
 <script lang="ts" setup>
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
 import { computed, onMounted, onUnmounted, useCssModule, ref } from 'vue';
 import { v4 as uuid } from 'uuid';
 import FormSection from '@/components/form/section.vue';
@@ -39,7 +42,7 @@ import * as os from '@/os';
 import { ColdDeviceStorage, defaultStore } from '@/store';
 import { unisonReload } from '@/scripts/unison-reload';
 import { stream } from '@/stream';
-import { $i } from '@/account';
+
 import { i18n } from '@/i18n';
 import { version, host } from '@/config';
 import { definePageMetadata } from '@/scripts/page-metadata';
@@ -47,130 +50,41 @@ const { t, ts } = i18n;
 
 useCssModule();
 
-const defaultStoreSaveKeys: (keyof typeof defaultStore['state'])[] = [
-	'menu',
-	'visibility',
-	'localOnly',
-	'statusbars',
-	'widgets',
-	'tl',
-	'overridedDeviceKind',
-	'serverDisconnectedBehavior',
-	'nsfw',
-	'animation',
-	'animatedMfm',
-	'loadRawImages',
-	'imageNewTab',
-	'disableShowingAnimatedImages',
-	'disablePagesScript',
-	'useOsNativeEmojis',
-	'disableDrawer',
-	'useBlurEffectForModal',
-	'useBlurEffect',
-	'showFixedPostForm',
-	'enableInfiniteScroll',
-	'useReactionPickerForContextMenu',
-	'showGapBetweenNotesInTimeline',
-	'instanceTicker',
-	'reactionPickerSize',
-	'reactionPickerWidth',
-	'reactionPickerHeight',
-	'reactionPickerUseDrawerForMobile',
-	'defaultSideView',
-	'menuDisplay',
-	'reportError',
-	'squareAvatars',
-	'numberOfPageCache',
-	'aiChanMode',
-];
-const coldDeviceStorageSaveKeys: (keyof typeof ColdDeviceStorage.default)[] = [
-	'lightTheme',
-	'darkTheme',
-	'syncDeviceDarkMode',
-	'plugins',
-	'mediaVolume',
-	'sound_masterVolume',
-	'sound_note',
-	'sound_noteMy',
-	'sound_notification',
-	'sound_chat',
-	'sound_chatBg',
-	'sound_antenna',
-	'sound_channel',
-];
 
 const scope = ['clientPreferencesProfiles'];
 
-const profileProps = ['name', 'createdAt', 'updatedAt', 'misskeyVersion', 'settings'];
+import { defaultStoreSaveKeys, coldDeviceStorageSaveKeys } from '@/scripts/preferences-keys';
+import { isPreferencesProfile, isHotPreferences, isColdPreferences, type PreferencesProfile as Profile } from '@/scripts/preferences-profile';
+import { toApiError } from '@/types/api-error';
 
-type Profile = {
-	name: string;
-	createdAt: string;
-	updatedAt: string | null;
-	misskeyVersion: string;
-	host: string;
-	settings: {
-		hot: Record<keyof typeof defaultStoreSaveKeys, unknown>;
-		cold: Record<keyof typeof coldDeviceStorageSaveKeys, unknown>;
-		fontSize: string | null;
-		useSystemFont: 't' | null;
-		wallpaper: string | null;
-	};
-};
-
-const connection = $i && stream.useChannel('main');
+const connection = account && stream.useChannel('main');
 
 let profiles = ref<Record<string, Profile> | null>(null);
 
 os.api('i/registry/get-all', { scope })
 	.then(res => {
-		profiles.value = res || {};
+		const checked: Record<string, Profile> = {};
+ for (const [key, value] of Object.entries(res ?? {})) {
+ if (isPreferencesProfile(value)) checked[key] = value;
+ else console.warn('Invalid preference backup retained in registry', key);
+ }
+ profiles.value = checked;
 	});
 
-function isObject(value: unknown): value is Record<string, unknown> {
-	return value != null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function validate(profile: unknown): void {
-	if (!isObject(profile)) throw new Error('not an object');
-
-	// Check if unnecessary properties exist
-	if (Object.keys(profile).some(key => !profileProps.includes(key))) throw new Error('Unnecessary properties exist');
-
-	if (!profile.name) throw new Error('Missing required prop: name');
-	if (!profile.misskeyVersion) throw new Error('Missing required prop: misskeyVersion');
-
-	// Check if createdAt and updatedAt is Date
-	// https://zenn.dev/lollipop_onl/articles/eoz-judge-js-invalid-date
-	if (!profile.createdAt || Number.isNaN(new Date(profile.createdAt).getTime())) throw new Error('createdAt is falsy or not Date');
-	if (profile.updatedAt) {
-		if (Number.isNaN(new Date(profile.updatedAt).getTime())) {
-			throw new Error('updatedAt is not Date');
-		}
-	} else if (profile.updatedAt !== null) {
-		throw new Error('updatedAt is not null');
-	}
-
-	if (!profile.settings) throw new Error('Missing required prop: settings');
-	if (!isObject(profile.settings)) throw new Error('Invalid prop: settings');
+function validate(profile: unknown): asserts profile is Profile {
+ if (!isPreferencesProfile(profile)) throw new Error(ts._preferencesBackups.invalidFile);
 }
 
 function getSettings(): Profile['settings'] {
-	const hot = {} as Record<keyof typeof defaultStoreSaveKeys, unknown>;
-	for (const key of defaultStoreSaveKeys) {
-		hot[key] = defaultStore.state[key];
-	}
-
-	const cold = {} as Record<keyof typeof coldDeviceStorageSaveKeys, unknown>;
-	for (const key of coldDeviceStorageSaveKeys) {
-		cold[key] = ColdDeviceStorage.get(key);
-	}
+ const hot = Object.fromEntries(defaultStoreSaveKeys.map(key => [key, defaultStore.state[key]]));
+ const cold = Object.fromEntries(coldDeviceStorageSaveKeys.map(key => [key, ColdDeviceStorage.get(key)]));
+ if (!isHotPreferences(hot) || !isColdPreferences(cold)) throw new Error('Invalid saved preference types');
 
 	return {
 		hot,
 		cold,
 		fontSize: localStorage.getItem('fontSize'),
-		useSystemFont: localStorage.getItem('useSystemFont') as 't' | null,
+		useSystemFont: localStorage.getItem('useSystemFont'),
 		wallpaper: localStorage.getItem('wallpaper'),
 	};
 }
@@ -181,7 +95,7 @@ async function saveNew(): Promise<void> {
 	const { canceled, result: name } = await os.inputText({
 		title: ts._preferencesBackups.inputName,
 	});
-	if (canceled) return;
+	if (canceled || name == null) return;
 
 	if (Object.values(profiles.value).some(x => x.name === name)) {
 		return os.alert({
@@ -220,15 +134,15 @@ function loadFile(): void {
 			});
 		}
 
-		let profile: Profile;
+		let profile: unknown;
 		try {
-			profile = JSON.parse(await file.text()) as unknown as Profile;
+			profile = JSON.parse(await file.text());
 			validate(profile);
 		} catch (err) {
 			return os.alert({
 				type: 'error',
 				title: ts._preferencesBackups.cannotLoad,
-				text: err?.message,
+				text: toApiError(err).message,
 			});
 		}
 
@@ -236,12 +150,12 @@ function loadFile(): void {
 		await os.apiWithDialog('i/registry/set', { scope, key: id, value: profile });
 
 		// 一応廃棄
-		(window as any).__misskey_input_ref__ = null;
+		window.__misskey_input_ref__ = null;
 	};
 
 	// https://qiita.com/fukasawah/items/b9dc732d95d99551013d
 	// iOS Safari で正常に動かす為のおまじない
-	(window as any).__misskey_input_ref__ = input;
+	window.__misskey_input_ref__ = input;
 
 	input.click();
 }
@@ -349,7 +263,7 @@ async function rename(id: string): Promise<void> {
 	const { canceled: cancel1, result: name } = await os.inputText({
 		title: ts._preferencesBackups.inputName,
 	});
-	if (cancel1 || profiles.value[id].name === name) return;
+	if (cancel1 || name == null || profiles.value[id].name === name) return;
 
 	if (Object.values(profiles.value).some(x => x.name === name)) {
 		return os.alert({
@@ -362,7 +276,7 @@ async function rename(id: string): Promise<void> {
 
 	const { canceled: cancel2 } = await os.confirm({
 		type: 'info',
-		title: ts._preferencesBackups.rename,
+		title: ts.rename,
 		text: t('_preferencesBackups.renameConfirm', { old: registry.name, new: name }),
 	});
 	if (cancel2) return;
@@ -393,7 +307,7 @@ function menu(ev: MouseEvent, profileId: string) {
 		icon: 'fas fa-floppy-disk',
 		action: () => save(profileId),
 	}, null, {
-		text: ts._preferencesBackups.delete,
+		text: ts.delete,
 		icon: 'fas fa-trash-can',
 		action: () => deleteProfile(profileId),
 		danger: true,
@@ -406,7 +320,7 @@ onMounted(() => {
 		if (!recievedScope || recievedScope.length !== scope.length || recievedScope[0] !== scope[0]) return;
 		if (!profiles.value) return;
 
-		profiles.value[key] = value;
+		if (isPreferencesProfile(value)) profiles.value[key] = value;
 	});
 });
 

@@ -5,7 +5,7 @@
 	</p>
 	<ul>
 		<li v-for="(choice, i) in choices" :key="i">
-			<MkInput class="input" small :model-value="choice" :placeholder="$t('_poll.choiceN', { n: i + 1 })" @update:modelValue="onInput(i, $event)">
+			<MkInput class="input" small :model-value="choice" :placeholder="$t('_poll.choiceN', { n: i + 1 })" @update:modelValue="onInput(i, $event ?? '')">
 			</MkInput>
 			<button class="_button" @click="remove(i)">
 				<i class="fas fa-times"></i>
@@ -32,9 +32,9 @@
 				</MkInput>
 			</section>
 			<section v-else-if="expiration === 'after'">
-				<MkInput v-model="after" small type="number" class="input">
+				<MkNumberInput v-model="after" small type="number" class="input">
 					<template #label>{{ i18n.ts._poll.duration }}</template>
-				</MkInput>
+				</MkNumberInput>
 				<MkSelect v-model="unit" small>
 					<option value="second">{{ i18n.ts._time.second }}</option>
 					<option value="minute">{{ i18n.ts._time.minute }}</option>
@@ -48,8 +48,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { PollDraft } from '@/types/post';
 import { ref, watch } from 'vue';
 import MkInput from './form/input.vue';
+import MkNumberInput from './form/number-input.vue';
 import MkSelect from './form/select.vue';
 import MkSwitch from './form/switch.vue';
 import MkButton from './MkButton.vue';
@@ -57,22 +59,8 @@ import { formatDateTimeString } from '@/scripts/format-time-string';
 import { addTime } from '@/scripts/time';
 import { i18n } from '@/i18n';
 
-const props = defineProps<{
-	modelValue: {
-		expiresAt: string;
-		expiredAfter: number;
-		choices: string[];
-		multiple: boolean;
-	};
-}>();
-const emit = defineEmits<{
-	(ev: 'update:modelValue', v: {
-		expiresAt: string;
-		expiredAfter: number;
-		choices: string[];
-		multiple: boolean;
-	}): void;
-}>();
+const props = defineProps<{ modelValue: PollDraft }>();
+const emit = defineEmits<{ (event: 'update:modelValue', value: PollDraft): void }>();
 
 const choices = ref(props.modelValue.choices);
 const multiple = ref(props.modelValue.multiple);
@@ -84,7 +72,9 @@ const unit = ref('second');
 
 if (props.modelValue.expiresAt) {
 	expiration.value = 'at';
-	atDate.value = atTime.value = props.modelValue.expiresAt;
+	const date = new Date(props.modelValue.expiresAt);
+ atDate.value = formatDateTimeString(date, 'yyyy-MM-dd');
+ atTime.value = formatDateTimeString(date, 'HH:mm');
 } else if (typeof props.modelValue.expiredAfter === 'number') {
 	expiration.value = 'after';
 	after.value = props.modelValue.expiredAfter / 1000;
@@ -92,7 +82,7 @@ if (props.modelValue.expiresAt) {
 	expiration.value = 'infinite';
 }
 
-function onInput(i, value) {
+function onInput(i: number, value: string) {
 	choices.value[i] = value;
 }
 
@@ -104,7 +94,7 @@ function add() {
 	// });
 }
 
-function remove(i) {
+function remove(i: number) {
 	choices.value = choices.value.filter((_, _i) => _i !== i);
 }
 
@@ -114,15 +104,12 @@ function get() {
 	};
 
 	const calcAfter = () => {
-		let base = parseInt(after.value);
+		let base = parseInt(String(after.value));
 		switch (unit.value) {
-			case 'day': base *= 24;
-				// fallthrough
-			case 'hour': base *= 60;
-				// fallthrough
-			case 'minute': base *= 60;
-				// fallthrough
-			case 'second': return base *= 1000;
+			case 'day': return base * 24 * 60 * 60 * 1000;
+            case 'hour': return base * 60 * 60 * 1000;
+            case 'minute': return base * 60 * 1000;
+            case 'second': return base * 1000;
 			default: return null;
 		}
 	};

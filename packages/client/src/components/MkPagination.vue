@@ -31,9 +31,14 @@
 </transition>
 </template>
 
-<script lang="ts" setup>
-import { computed, ComputedRef, isRef, markRaw, onActivated, onDeactivated, Ref, ref, watch } from 'vue';
-import * as misskey from 'misskey-js';
+<script lang="ts">
+export type { Paging } from '@/types/paging';
+</script>
+
+<script lang="ts" setup generic="E extends PagedEndpoint">
+import { computed, isRef, shallowRef, onActivated, onDeactivated, ref, watch } from 'vue';
+import type { Paging, PagedEndpoint, PagedItem } from '@/types/paging';
+import { reactiveItems } from '@/scripts/reactive-items';
 import * as os from '@/os';
 import { onScrollTop, isTopVisible, getScrollPosition, getScrollContainer } from '@/scripts/scroll';
 import MkButton from '@/components/MkButton.vue';
@@ -41,27 +46,8 @@ import { i18n } from '@/i18n';
 
 const SECOND_FETCH_LIMIT = 30;
 
-export type Paging<E extends keyof misskey.Endpoints = keyof misskey.Endpoints> = {
-	endpoint: E;
-	limit: number;
-	params?: misskey.Endpoints[E]['req'] | ComputedRef<misskey.Endpoints[E]['req']>;
-
-	/**
-	 * 検索APIのような、ページング不可なエンドポイントを利用する場合
-	 * (そのようなAPIをこの関数で使うのは若干矛盾してるけど)
-	 */
-	noPaging?: boolean;
-
-	/**
-	 * items 配列の中身を逆順にする(新しい方が最後)
-	 */
-	reversed?: boolean;
-
-	offsetMode?: boolean;
-};
-
 const props = withDefaults(defineProps<{
-	pagination: Paging;
+	pagination: Paging<E>;
 	disableAutoLoad?: boolean;
 	displayLimit?: number;
 }>(), {
@@ -70,13 +56,15 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
 	(ev: 'queue', count: number): void;
+ (ev: 'before'): void;
+ (ev: 'after'): void;
 }>();
 
-type Item = { id: string; [another: string]: unknown; };
+type Item = PagedItem<E>;
 
 const rootEl = ref<HTMLElement>();
-const items = ref<Item[]>([]);
-const queue = ref<Item[]>([]);
+const items = shallowRef<Item[]>(reactiveItems([]));
+const queue = shallowRef<Item[]>(reactiveItems([]));
 const offset = ref(0);
 const fetching = ref(true);
 const moreFetching = ref(false);
@@ -87,11 +75,10 @@ const empty = computed(() => items.value.length === 0);
 const error = ref(false);
 
 const init = async (): Promise<void> => {
-	queue.value = [];
+ emit('before');
+	queue.value = reactiveItems([]);
 	fetching.value = true;
-	const params = props.pagination.params ? isRef(props.pagination.params) ? props.pagination.params.value : props.pagination.params : {};
-	await os.api(props.pagination.endpoint, {
-		...params,
+	await os.apiPage(props.pagination, {
 		limit: props.pagination.noPaging ? (props.pagination.limit || 10) : (props.pagination.limit || 10) + 1,
 	}).then(res => {
 		for (let i = 0; i < res.length; i++) {
@@ -104,15 +91,16 @@ const init = async (): Promise<void> => {
 		}
 		if (!props.pagination.noPaging && (res.length > (props.pagination.limit || 10))) {
 			res.pop();
-			items.value = props.pagination.reversed ? [...res].reverse() : res;
+			items.value = reactiveItems(props.pagination.reversed ? [...res].reverse() : res);
 			more.value = true;
 		} else {
-			items.value = props.pagination.reversed ? [...res].reverse() : res;
+			items.value = reactiveItems(props.pagination.reversed ? [...res].reverse() : res);
 			more.value = false;
 		}
 		offset.value = res.length;
 		error.value = false;
 		fetching.value = false;
+        emit('after');
 	}, err => {
 		error.value = true;
 		fetching.value = false;
@@ -120,7 +108,7 @@ const init = async (): Promise<void> => {
 };
 
 const reload = (): void => {
-	items.value = [];
+	items.value = reactiveItems([]);
 	init();
 };
 
@@ -128,9 +116,7 @@ const fetchMore = async (): Promise<void> => {
 	if (!more.value || fetching.value || moreFetching.value || items.value.length === 0) return;
 	moreFetching.value = true;
 	backed.value = true;
-	const params = props.pagination.params ? isRef(props.pagination.params) ? props.pagination.params.value : props.pagination.params : {};
-	await os.api(props.pagination.endpoint, {
-		...params,
+	await os.apiPage(props.pagination, {
 		limit: SECOND_FETCH_LIMIT + 1,
 		...(props.pagination.offsetMode ? {
 			offset: offset.value,
@@ -150,10 +136,10 @@ const fetchMore = async (): Promise<void> => {
 		}
 		if (res.length > SECOND_FETCH_LIMIT) {
 			res.pop();
-			items.value = props.pagination.reversed ? [...res].reverse().concat(items.value) : items.value.concat(res);
+			items.value = reactiveItems(props.pagination.reversed ? [...res].reverse().concat(items.value) : items.value.concat(res));
 			more.value = true;
 		} else {
-			items.value = props.pagination.reversed ? [...res].reverse().concat(items.value) : items.value.concat(res);
+			items.value = reactiveItems(props.pagination.reversed ? [...res].reverse().concat(items.value) : items.value.concat(res));
 			more.value = false;
 		}
 		offset.value += res.length;
@@ -166,9 +152,7 @@ const fetchMore = async (): Promise<void> => {
 const fetchMoreAhead = async (): Promise<void> => {
 	if (!more.value || fetching.value || moreFetching.value || items.value.length === 0) return;
 	moreFetching.value = true;
-	const params = props.pagination.params ? isRef(props.pagination.params) ? props.pagination.params.value : props.pagination.params : {};
-	await os.api(props.pagination.endpoint, {
-		...params,
+	await os.apiPage(props.pagination, {
 		limit: SECOND_FETCH_LIMIT + 1,
 		...(props.pagination.offsetMode ? {
 			offset: offset.value,
@@ -180,10 +164,10 @@ const fetchMoreAhead = async (): Promise<void> => {
 	}).then(res => {
 		if (res.length > SECOND_FETCH_LIMIT) {
 			res.pop();
-			items.value = props.pagination.reversed ? [...res].reverse().concat(items.value) : items.value.concat(res);
+			items.value = reactiveItems(props.pagination.reversed ? [...res].reverse().concat(items.value) : items.value.concat(res));
 			more.value = true;
 		} else {
-			items.value = props.pagination.reversed ? [...res].reverse().concat(items.value) : items.value.concat(res);
+			items.value = reactiveItems(props.pagination.reversed ? [...res].reverse().concat(items.value) : items.value.concat(res));
 			more.value = false;
 		}
 		offset.value += res.length;
@@ -208,7 +192,7 @@ const prepend = (item: Item): void => {
 					// オーバーフローしたら古いアイテムは捨てる
 					if (items.value.length >= props.displayLimit) {
 						// このやり方だとVue 3.2以降アニメーションが動かなくなる
-						//items.value = items.value.slice(-props.displayLimit);
+						//items.value = reactiveItems(items.value.slice(-props.displayLimit));
 						while (items.value.length >= props.displayLimit) {
 							items.value.shift();
 						}
@@ -247,7 +231,7 @@ const prepend = (item: Item): void => {
 				for (const item of queue.value) {
 					prepend(item);
 				}
-				queue.value = [];
+				queue.value = reactiveItems([]);
 			});
 		}
 	}
@@ -259,16 +243,17 @@ const append = (item: Item): void => {
 
 const removeItem = (finder: (item: Item) => boolean) => {
 	const i = items.value.findIndex(finder);
-	items.value.splice(i, 1);
+	if (i !== -1) items.value.splice(i, 1);
 };
 
 const updateItem = (id: Item['id'], replacer: (old: Item) => Item): void => {
 	const i = items.value.findIndex(item => item.id === id);
-	items.value[i] = replacer(items.value[i]);
+	if (i !== -1) items.value[i] = replacer(items.value[i]);
 };
 
 if (props.pagination.params && isRef(props.pagination.params)) {
-	watch(props.pagination.params, init, { deep: true });
+	const params = props.pagination.params;
+ watch(() => params.value, () => init(), { deep: true });
 }
 
 watch(queue, (a, b) => {

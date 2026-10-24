@@ -8,6 +8,6 @@ export const i18n = markRaw(new I18n(locale));
 declare module '@vue/runtime-core' {
 	interface ComponentCustomProperties {
 		$t: typeof i18n['t'];
-		$ts: typeof i18n['locale'];
+		$ts: typeof i18n['ts'];
 	}
 }

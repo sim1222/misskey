@@ -25,6 +25,7 @@ import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 
 export default defineComponent({
+    emits: ['denied', 'accepted'],
 	components: {
 		MkButton
 	},
@@ -41,11 +42,7 @@ export default defineComponent({
 	},
 	methods: {
 		cancel() {
-			os.api('auth/deny', {
-				token: this.session.token
-			}).then(() => {
-				this.$emit('denied');
-			});
+			this.$emit('denied');
 		},
 
 		accept() {

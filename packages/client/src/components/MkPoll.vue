@@ -1,7 +1,7 @@
 <template>
 <div class="tivcixzd" :class="{ done: closed || isVoted }">
 	<ul>
-		<li v-for="(choice, i) in note.poll.choices" :key="i" :class="{ voted: choice.voted }" @click="vote(i)">
+		<li v-for="(choice, i) in poll.choices" :key="i" :class="{ voted: choice.isVoted }" @click="vote(i)">
 			<div class="backdrop" :style="{ 'width': `${showResult ? (choice.votes / total * 100) : 0}%` }"></div>
 			<span>
 				<template v-if="choice.isVoted"><i class="fas fa-check"></i></template>
@@ -22,8 +22,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onUnmounted, ref, toRef } from 'vue';
-import * as misskey from 'misskey-js';
+import { computed, ref } from 'vue';
+import * as misskey from '@/misskey';
 import { sum } from '@/scripts/array';
 import { pleaseLogin } from '@/scripts/please-login';
 import * as os from '@/os';
@@ -35,11 +35,15 @@ const props = defineProps<{
 	readOnly?: boolean;
 }>();
 
+const poll = computed(() => {
+ if (!props.note.poll) throw new TypeError('Poll component requires a poll');
+ return props.note.poll;
+});
 const remaining = ref(-1);
 
-const total = computed(() => sum(props.note.poll.choices.map(x => x.votes)));
+const total = computed(() => sum(poll.value.choices.map(x => x.votes)));
 const closed = computed(() => remaining.value === 0);
-const isVoted = computed(() => !props.note.poll.multiple && props.note.poll.choices.some(c => c.isVoted));
+const isVoted = computed(() => !poll.value.multiple && poll.value.choices.some(c => c.isVoted));
 const timer = computed(() => i18n.t(
 	remaining.value >= 86400 ? '_poll.remainingDays' :
 	remaining.value >= 3600 ? '_poll.remainingHours' :
@@ -53,9 +57,9 @@ const timer = computed(() => i18n.t(
 const showResult = ref(props.readOnly || isVoted.value);
 
 // 期限付きアンケート
-if (props.note.poll.expiresAt) {
+if (poll.value.expiresAt) {
 	const tick = () => {
-		remaining.value = Math.floor(Math.max(new Date(props.note.poll.expiresAt).getTime() - Date.now(), 0) / 1000);
+		remaining.value = Math.floor(Math.max(new Date(poll.value.expiresAt ?? 0).getTime() - Date.now(), 0) / 1000);
 		if (remaining.value === 0) {
 			showResult.value = true;
 		}
@@ -67,14 +71,14 @@ if (props.note.poll.expiresAt) {
 	});
 }
 
-const vote = async (id) => {
+const vote = async (id: number) => {
 	pleaseLogin();
 
 	if (props.readOnly || closed.value || isVoted.value) return;
 
 	const { canceled } = await os.confirm({
 		type: 'question',
-		text: i18n.t('voteConfirm', { choice: props.note.poll.choices[id].text }),
+		text: i18n.t('voteConfirm', { choice: poll.value.choices[id].text }),
 	});
 	if (canceled) return;
 
@@ -82,7 +86,7 @@ const vote = async (id) => {
 		noteId: props.note.id,
 		choice: id,
 	});
-	if (!showResult.value) showResult.value = !props.note.poll.multiple;
+	if (!showResult.value) showResult.value = !poll.value.multiple;
 };
 </script>
 

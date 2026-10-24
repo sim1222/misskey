@@ -9,7 +9,7 @@
 		<template #label>{{ i18n.ts.twoStepAuthentication }}</template>
 		<X2fa/>
 	</FormSection>
-	
+
 	<FormSection>
 		<template #label>{{ i18n.ts.signinHistory }}</template>
 		<MkPagination :pagination="pagination" disable-auto-load>
@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+
 
 import X2fa from './2fa.vue';
 import FormSection from '@/components/form/section.vue';
@@ -59,19 +59,19 @@ async function change() {
 		title: i18n.ts.currentPassword,
 		type: 'password',
 	});
-	if (canceled1) return;
+	if (canceled1 || currentPassword == null) return;
 
 	const { canceled: canceled2, result: newPassword } = await os.inputText({
 		title: i18n.ts.newPassword,
 		type: 'password',
 	});
-	if (canceled2) return;
+	if (canceled2 || newPassword == null) return;
 
 	const { canceled: canceled3, result: newPassword2 } = await os.inputText({
 		title: i18n.ts.newPasswordRetype,
 		type: 'password',
 	});
-	if (canceled3) return;
+	if (canceled3 || newPassword2 == null) return;
 
 	if (newPassword !== newPassword2) {
 		os.alert({
@@ -80,7 +80,7 @@ async function change() {
 		});
 		return;
 	}
-	
+
 	os.apiWithDialog('i/change-password', {
 		currentPassword,
 		newPassword,
@@ -92,16 +92,16 @@ function regenerateToken() {
 		title: i18n.ts.password,
 		type: 'password',
 	}).then(({ canceled, result: password }) => {
-		if (canceled) return;
-		os.api('i/regenerate_token', {
+		if (canceled || password == null) return;
+		os.api('i/regenerate-token', {
 			password: password,
 		});
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts.security,

@@ -27,7 +27,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, watch, ref } from 'vue';
+import type { ApiResponse } from '@/types/api';
+import { computed, watch, ref } from 'vue';
 import MkTextarea from '@/components/form/textarea.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/form/input.vue';
@@ -43,11 +44,11 @@ const props = defineProps<{
 	channelId?: string;
 }>();
 
-let channel = ref(null);
-let name = ref(null);
-let description = ref(null);
+let channel = ref<ApiResponse<'channels/show'> | null>(null);
+let name = ref<string | null>(null);
+let description = ref<string | null>(null);
 let bannerUrl = ref<string | null>(null);
-let bannerId = ref<string | null>(null);
+let bannerId = ref<string | null | undefined>(undefined);
 
 watch(() => bannerId.value, async () => {
 	if (bannerId.value == null) {
@@ -68,22 +69,22 @@ async function fetchChannel() {
 
 	name.value = channel.value.name;
 	description.value = channel.value.description;
-	bannerId.value = channel.value.bannerId;
+	bannerId.value = undefined;
 	bannerUrl.value = channel.value.bannerUrl;
 }
 
 fetchChannel();
 
 function save() {
-	const params = {
+	if (name.value == null) return;
+    const params = {
 		name: name.value,
 		description: description.value,
 		bannerId: bannerId.value,
 	};
 
 	if (props.channelId) {
-		params.channelId = props.channelId;
-		os.api('channels/update', params).then(() => {
+		os.api('channels/update', { ...params, channelId: props.channelId }).then(() => {
 			os.success();
 		});
 	} else {
@@ -94,7 +95,7 @@ function save() {
 	}
 }
 
-function setBannerImage(evt) {
+function setBannerImage(evt: MouseEvent) {
 	selectFile(evt.currentTarget ?? evt.target, null).then(file => {
 		bannerId.value = file.id;
 	});

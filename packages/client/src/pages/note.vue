@@ -32,7 +32,7 @@
 						<XNotes class="_content" :pagination="prevPagination" :no-gap="true"/>
 					</div>
 				</div>
-				<MkError v-else-if="error" @retry="fetch()"/>
+				<MkError v-else-if="error" @retry="fetchNote()"/>
 				<MkLoading v-else/>
 			</transition>
 		</div>
@@ -41,9 +41,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineComponent, watch, ref } from 'vue';
-import * as misskey from 'misskey-js';
-import XNote from '@/components/MkNote.vue';
+import { computed, watch, ref } from 'vue';
+import * as misskey from '@/misskey';
+
 import XNoteDetailed from '@/components/MkNoteDetailed.vue';
 import XNotes from '@/components/MkNotes.vue';
 import MkRemoteCaution from '@/components/MkRemoteCaution.vue';
@@ -131,7 +131,7 @@ definePageMetadata(computed(() => note.value ? {
 	avatar: note.value.user,
 	path: `/notes/${note.value.id}`,
 	share: {
-		title: i18n.t('noteOf', { user: note.value.user.name }),
+		title: i18n.t('noteOf', { user: note.value.user.name ?? note.value.user.username }),
 		text: note.value.text,
 	},
 } : null));

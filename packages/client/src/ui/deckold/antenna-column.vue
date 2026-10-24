@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import XColumn from './column.vue';
 import XTimeline from '@/components/MkTimeline.vue';
 import * as os from '@/os';
@@ -26,7 +26,6 @@ const emit = defineEmits<{
 	(ev: 'parent-focus', direction: 'up' | 'down' | 'left' | 'right'): void;
 }>();
 
-let timeline = ref<InstanceType<typeof XTimeline>>();
 
 onMounted(() => {
 	if (props.column.antennaId == null) {
@@ -39,13 +38,13 @@ async function setAntenna() {
 	const { canceled, result: antenna } = await os.select({
 		title: i18n.ts.selectAntenna,
 		items: antennas.map(x => ({
-			value: x, text: x.name
+			value: x.id, text: x.name
 		})),
 		default: props.column.antennaId
 	});
-	if (canceled) return;
+	if (canceled || antenna == null) return;
 	updateColumn(props.column.id, {
-		antennaId: antenna.id
+		antennaId: antenna
 	});
 }
 /*

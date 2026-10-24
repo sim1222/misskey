@@ -10,7 +10,7 @@
 		<XKanban v-if="narrow && !root" class="banner" :powered-by="root"/>
 
 		<div class="contents">
-			<XHeader v-if="!root" class="header" :info="pageInfo"/>
+			<XHeader v-if="!root" class="header" :info="pageMetadata.current?.value ?? null" @menu="showMenu = true"/>
 			<main>
 				<RouterView/>
 			</main>
@@ -46,50 +46,44 @@
 </template>
 
 <script lang="ts" setup>
-import { ComputedRef, onMounted, provide, ref, computed } from 'vue';
+import { shallowReactive } from 'vue';
+
+import { onMounted, provide, ref, computed } from 'vue';
 import XHeader from './header.vue';
 import XKanban from './kanban.vue';
 import { host, instanceName } from '@/config';
-import { search } from '@/scripts/search';
+
 import * as os from '@/os';
-import MkPagination from '@/components/MkPagination.vue';
+
 import XSigninDialog from '@/components/MkSigninDialog.vue';
 import XSignupDialog from '@/components/MkSignupDialog.vue';
-import MkButton from '@/components/MkButton.vue';
-import { ColdDeviceStorage, defaultStore } from '@/store';
+
+
 import { mainRouter } from '@/router';
-import { PageMetadata, provideMetadataReceiver, setPageMetadata } from '@/scripts/page-metadata';
+import { type PageMetadataRef, provideMetadataReceiver } from '@/scripts/page-metadata';
 
 const DESKTOP_THRESHOLD = 1100;
 
-let pageMetadata = ref<null | ComputedRef<PageMetadata>>();
+let pageMetadata = shallowReactive<{ current: PageMetadataRef | null }>({ current: null });
 
 provide('router', mainRouter);
 provideMetadataReceiver((info) => {
-	pageMetadata.value = info;
-	if (pageMetadata.value.value) {
-		document.title = `${pageMetadata.value.value.title} | ${instanceName}`;
+	pageMetadata.current = info;
+	if (pageMetadata.current?.value) {
+		document.title = `${pageMetadata.current?.value.title} | ${instanceName}`;
 	}
 });
 
-const announcements = {
+({
 	endpoint: 'announcements',
 	limit: 10,
-};
+});
 let showMenu = ref(false);
 let isDesktop = ref(window.innerWidth >= DESKTOP_THRESHOLD);
 let narrow = ref(window.innerWidth < 1280);
 let meta = ref();
 
-const keymap = computed(() => {
-	return {
-		'd': () => {
-			if (ColdDeviceStorage.get('syncDeviceDarkMode')) return;
-			defaultStore.set('darkMode', !defaultStore.state.darkMode);
-		},
-		's': search,
-	};
-});
+
 
 const root = computed(() => mainRouter.currentRoute.value.name === 'index');
 

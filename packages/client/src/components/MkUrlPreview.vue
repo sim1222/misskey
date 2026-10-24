@@ -1,7 +1,7 @@
 <template>
-<div v-if="playerEnabled" class="player" :style="`padding: ${(player.height || 0) / (player.width || 1) * 100}% 0 0`">
+<div v-if="playerEnabled && player.url" class="player" :style="`padding: ${(player.height || 0) / (player.width || 1) * 100}% 0 0`">
 	<button class="disablePlayer" :title="i18n.ts.disablePlayer" @click="playerEnabled = false"><i class="fas fa-times"></i></button>
-	<iframe :src="player.url + (player.url.match(/\?/) ? '&autoplay=1&auto_play=1' : '?autoplay=1&auto_play=1')" :width="player.width || '100%'" :heigth="player.height || 250" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen/>
+	<iframe :src="player.url + (player.url.match(/\?/) ? '&autoplay=1&auto_play=1' : '?autoplay=1&auto_play=1')" :width="player.width || '100%'" :height="player.height || 250" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen/>
 </div>
 <div v-else-if="tweetId && tweetExpanded" ref="twitter" class="twitter">
 	<iframe ref="tweet" scrolling="no" frameborder="no" :style="{ position: 'relative', width: '100%', height: `${tweetHeight}px` }" :src="`https://platform.twitter.com/embed/index.html?embedId=${embedId}&amp;hideCard=false&amp;hideThread=false&amp;lang=en&amp;theme=${$store.state.darkMode ? 'dark' : 'light'}&amp;id=${tweetId}`"></iframe>
@@ -14,12 +14,12 @@
 			</div>
 			<article>
 				<header>
-					<h1 :title="title">{{ title }}</h1>
+					<h1 :title="(title) ?? undefined">{{ title }}</h1>
 				</header>
 				<p v-if="description" :title="description">{{ description.length > 85 ? description.slice(0, 85) + '…' : description }}</p>
 				<footer>
 					<img v-if="icon" class="icon" :src="icon"/>
-					<p :title="sitename">{{ sitename }}</p>
+					<p :title="(sitename) ?? undefined">{{ sitename }}</p>
 				</footer>
 			</article>
 		</component>
@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue';
+import { defineAsyncComponent, onUnmounted, ref } from 'vue';
 import { url as local, lang } from '@/config';
 import { i18n } from '@/i18n';
 import * as os from '@/os';
@@ -60,7 +60,7 @@ let description = ref<string | null>(null);
 let thumbnail = ref<string | null>(null);
 let icon = ref<string | null>(null);
 let sitename = ref<string | null>(null);
-let player = ref({
+let player = ref<{ url: string | null; width: number | null; height: number | null }>({
 	url: null,
 	width: null,
 	height: null,

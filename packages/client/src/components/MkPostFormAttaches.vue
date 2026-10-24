@@ -1,6 +1,6 @@
 <template>
 <div v-show="files.length != 0" class="skeikyzd">
-	<XDraggable v-model="_files" class="files" item-key="id" animation="150" delay="100" delay-on-touch-only="true">
+	<XDraggable v-model="_files" class="files" item-key="id" animation="150" :delay="100" :delay-on-touch-only="true">
 		<template #item="{element}">
 			<div class="file" @click="showFileMenu(element, $event)" @contextmenu.prevent="showFileMenu(element, $event)">
 				<MkDriveFileThumbnail :data-id="element.id" class="thumbnail" :file="element" fit="cover"/>
@@ -15,7 +15,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, defineAsyncComponent } from 'vue';
+import type { entities } from '@/misskey';
+import type { DialogResult } from '@/types/dialog';
+import { defineComponent, defineAsyncComponent, type PropType } from 'vue';
 import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
 import * as os from '@/os';
 
@@ -27,20 +29,25 @@ export default defineComponent({
 
 	props: {
 		files: {
-			type: Array,
+			type: Array as PropType<entities.DriveFile[]>,
 			required: true,
 		},
 		detachMediaFn: {
-			type: Function,
+			type: Function as PropType<(id: string) => void>,
 			required: false,
 		},
 	},
 
-	emits: ['updated', 'detach', 'changeSensitive', 'changeName'],
+	emits: {
+ updated: (_files: entities.DriveFile[]) => true,
+ detach: (_id: string) => true,
+ changeSensitive: (_file: entities.DriveFile, _sensitive: boolean) => true,
+ changeName: (_file: entities.DriveFile, _name: string) => true,
+ },
 
 	data() {
 		return {
-			menu: null as Promise<null> | null,
+			menu: null as Promise<void | null> | null,
 		};
 	},
 
@@ -49,21 +56,21 @@ export default defineComponent({
 			get() {
 				return this.files;
 			},
-			set(value) {
+			set(value: entities.DriveFile[]) {
 				this.$emit('updated', value);
 			},
 		},
 	},
 
 	methods: {
-		detachMedia(id) {
+		detachMedia(id: string) {
 			if (this.detachMediaFn) {
 				this.detachMediaFn(id);
 			} else {
 				this.$emit('detach', id);
 			}
 		},
-		toggleSensitive(file) {
+		toggleSensitive(file: entities.DriveFile) {
 			os.api('drive/files/update', {
 				fileId: file.id,
 				isSensitive: !file.isSensitive,
@@ -71,13 +78,13 @@ export default defineComponent({
 				this.$emit('changeSensitive', file, !file.isSensitive);
 			});
 		},
-		async rename(file) {
+		async rename(file: entities.DriveFile) {
 			const { canceled, result } = await os.inputText({
 				title: this.$ts.enterFileName,
 				default: file.name,
 				allowEmpty: false,
 			});
-			if (canceled) return;
+			if (canceled || result == null) return;
 			os.api('drive/files/update', {
 				fileId: file.id,
 				name: result,
@@ -87,7 +94,7 @@ export default defineComponent({
 			});
 		},
 
-		async describe(file) {
+		async describe(file: entities.DriveFile) {
 			os.popup(defineAsyncComponent(() => import('@/components/MkMediaCaption.vue')), {
 				title: this.$ts.describeFile,
 				input: {
@@ -96,9 +103,9 @@ export default defineComponent({
 				},
 				image: file,
 			}, {
-				done: result => {
+				done: (result: DialogResult<string | null>) => {
 					if (!result || result.canceled) return;
-					let comment = result.result.length === 0 ? null : result.result;
+					let comment = (result.result ?? '').length === 0 ? null : result.result;
 					os.api('drive/files/update', {
 						fileId: file.id,
 						comment: comment,
@@ -109,7 +116,7 @@ export default defineComponent({
 			}, 'closed');
 		},
 
-		showFileMenu(file, ev: MouseEvent) {
+		showFileMenu(file: entities.DriveFile, ev: MouseEvent) {
 			if (this.menu) return;
 			this.menu = os.popupMenu([{
 				text: this.$ts.renameFile,

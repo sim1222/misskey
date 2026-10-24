@@ -19,8 +19,8 @@
 		</div>
 	</div>
 
-	<div class="main" :class="{ 'noroot': $route.path === '/' }">
-		<div ref="contents" class="contents" :class="{ wallpaper }">
+	<div class="main" :class="{ 'noroot': mainRouter.getCurrentPath() === '/' }">
+		<div ref="contents" class="contents">
 			<header v-show="mainRouter.currentRoute?.name !== 'index'" ref="header" class="header">
 				<XHeader :info="pageInfo"/>
 			</header>
@@ -37,6 +37,7 @@
 </template>
 
 <script lang="ts">
+import type { entities } from '@/misskey';
 import { defineComponent, defineAsyncComponent } from 'vue';
 import XHeader from './header.vue';
 import { host, instanceName } from '@/config';
@@ -61,10 +62,10 @@ export default defineComponent({
 			host,
 			instanceName,
 			pageInfo: null,
-			meta: null,
+			meta: null as entities.DetailedInstanceMetadata | null,
 			narrow: window.innerWidth < 1280,
 			announcements: {
-				endpoint: 'announcements',
+				endpoint: 'announcements' as const,
 				limit: 10,
 			},
 			mainRouter,
@@ -102,25 +103,14 @@ export default defineComponent({
 	},
 
 	methods: {
+        signin() { os.popup(defineAsyncComponent(() => import('@/components/MkSigninDialog.vue')), { autoSet: true }, {}, 'closed'); },
+        signup() { os.popup(defineAsyncComponent(() => import('@/components/MkSignupDialog.vue')), { autoSet: true }, {}, 'closed'); },
 		// @ThatOneCalculator: Are these methods even used?
 		// I can't find references to them anywhere else in the code...
 
 		// setParallax(el) {
 		// 	new simpleParallax(el);
 		// },
-
-		changePage(page) {
-			if (page == null) return;
-			// eslint-disable-next-line no-undef
-			if (page[symbols.PAGE_INFO]) {
-				// eslint-disable-next-line no-undef
-				this.pageInfo = page[symbols.PAGE_INFO];
-			}
-		},
-
-		top() {
-			window.scroll({ top: 0, behavior: 'smooth' });
-		},
 
 		help() {
 			window.open('https://misskey-hub.net/docs/keyboard-shortcut.md', '_blank');
@@ -133,7 +123,7 @@ export default defineComponent({
 
 .noroot {
 	background: rgba(0, 0, 0, 0.6);
-	
+
 		&.transparent {
 			-webkit-backdrop-filter: var(--blur, blur(12px));
 			backdrop-filter: var(--blur, blur(12px));
@@ -157,7 +147,7 @@ export default defineComponent({
 			* {
 				color: #fff;
 			}
-					
+
 			> h1 {
 				margin: 0;
 				padding: 96px 32px 0 32px;
@@ -179,7 +169,7 @@ export default defineComponent({
 
 			> .action {
 				padding-bottom: 64px;
-				
+
 				> button {
 					display: inline-block;
 					padding: 10px 20px;
@@ -220,9 +210,9 @@ export default defineComponent({
 			}
 
 			> header {
-				
+
 			}
-					
+
 			> h1 {
 				margin: 0;
 				padding: 32px;

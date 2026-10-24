@@ -36,7 +36,8 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let announcements: any[] = ref([]);
+type AnnouncementDraft = import('@/types/api').ApiRequest<'admin/announcements/create'> & { id: string | null; reads?: number };
+let announcements = ref<AnnouncementDraft[]>([]);
 
 os.api('admin/announcements/list').then(announcementResponse => {
 	announcements.value = announcementResponse;
@@ -51,20 +52,20 @@ function add() {
 	});
 }
 
-function remove(announcement) {
+function remove(announcement: AnnouncementDraft) {
 	os.confirm({
 		type: 'warning',
 		text: i18n.t('removeAreYouSure', { x: announcement.title }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
 		announcements.value = announcements.value.filter(x => x !== announcement);
-		os.api('admin/announcements/delete', announcement);
+		if (announcement.id != null) os.api('admin/announcements/delete', { id: announcement.id });
 	});
 }
 
-function save(announcement) {
+function save(announcement: AnnouncementDraft) {
 	if (announcement.id == null) {
-		os.api('admin/announcements/create', announcement).then(() => {
+		os.api('admin/announcements/create', { title: announcement.title, text: announcement.text, imageUrl: announcement.imageUrl }).then(() => {
 			os.alert({
 				type: 'success',
 				text: i18n.ts.saved,
@@ -76,7 +77,7 @@ function save(announcement) {
 			});
 		});
 	} else {
-		os.api('admin/announcements/update', announcement).then(() => {
+		os.api('admin/announcements/update', { id: announcement.id, title: announcement.title, text: announcement.text, imageUrl: announcement.imageUrl }).then(() => {
 			os.alert({
 				type: 'success',
 				text: i18n.ts.saved,

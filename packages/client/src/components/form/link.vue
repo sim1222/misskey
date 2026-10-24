@@ -8,6 +8,14 @@
 			<i class="fas fa-external-link-alt icon"></i>
 		</span>
 	</a>
+	<button v-else-if="to == null" type="button" class="main _button" :class="{ active }">
+		<span class="icon"><slot name="icon"></slot></span>
+		<span class="text"><slot></slot></span>
+		<span class="right">
+			<span class="text"><slot name="suffix"></slot></span>
+			<i class="fas fa-chevron-right icon"></i>
+		</span>
+	</button>
 	<MkA v-else class="main _button" :class="{ active }" :to="to" :behavior="behavior">
 		<span class="icon"><slot name="icon"></slot></span>
 		<span class="text"><slot></slot></span>
@@ -22,8 +30,8 @@
 <script lang="ts" setup>
 import { } from 'vue';
 
-const props = defineProps<{
-	to: string;
+defineProps<{
+	to?: string;
 	active?: boolean;
 	external?: boolean;
 	behavior?: null | 'window' | 'browser' | 'modalWindow';

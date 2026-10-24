@@ -23,19 +23,22 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, inject, nextTick, onMounted, onUnmounted, provide, watch, ref, computed } from 'vue';
+import { shallowReactive } from 'vue';
+
+import type { PageMetadataRef } from '@/scripts/page-metadata';
+import { onMounted, onUnmounted, provide, watch, ref, computed } from 'vue';
 import { $i } from '../../account';
 import { i18n } from '@/i18n';
 import MkSuperMenu from '@/components/MkSuperMenu.vue';
 import MkInfo from '@/components/MkInfo.vue';
-import { scroll } from '@/scripts/scroll';
+
 import { instance } from '@/instance';
 import * as os from '@/os';
 import { lookupUser } from '@/scripts/lookup-user';
 import { useRouter } from '@/router';
-import { definePageMetadata, provideMetadataReceiver, setPageMetadata } from '@/scripts/page-metadata';
+import { definePageMetadata, provideMetadataReceiver } from '@/scripts/page-metadata';
 
-const isEmpty = (x: string | null) => x == null || x === '';
+const isEmpty = (x: string | null | undefined) => x == null || x === '';
 
 const router = useRouter();
 
@@ -48,11 +51,11 @@ const indexInfo = {
 provide('shouldOmitHeaderTitle', false);
 
 let INFO = ref(indexInfo);
-let childInfo = ref(null);
+let childInfo = shallowReactive<{ current: PageMetadataRef | null }>({ current: null });
 let narrow = ref(false);
-let view = ref(null);
-let el = ref(null);
-let pageProps = ref({});
+
+let el = ref<HTMLDivElement | null>(null);
+
 let noMaintainerInformation = isEmpty(instance.maintainerName) || isEmpty(instance.maintainerEmail);
 let noBotProtection = !instance.disableRegistration && !instance.enableHcaptcha && !instance.enableRecaptcha;
 let noEmailServer = !instance.enableEmail;
@@ -72,15 +75,15 @@ const ro = new ResizeObserver((entries, observer) => {
 	narrow.value = entries[0].borderBoxSize[0].inlineSize < NARROW_THRESHOLD;
 });
 
-const menuDef = computed(() => [{
+const menuDef = computed<import('@/components/MkSuperMenu.vue').SuperMenuGroup[]>(() => [{
 	title: i18n.ts.quickAction,
 	items: [{
-		type: 'button',
+		type: 'button' as const,
 		icon: 'fas fa-search',
 		text: i18n.ts.lookup,
 		action: lookup,
 	}, ...(instance.disableRegistration ? [{
-		type: 'button',
+		type: 'button' as const,
 		icon: 'fas fa-user',
 		text: i18n.ts.invite,
 		action: invite,
@@ -196,15 +199,17 @@ const menuDef = computed(() => [{
 	}],
 }]);
 
-watch(narrow.value, () => {
+watch(narrow, () => {
 	if (currentPage.value?.route.name == null && !narrow.value) {
 		router.push('/admin/overview');
 	}
 });
 
 onMounted(() => {
+	if (el.value == null) return;
 	ro.observe(el.value);
 
+	if (el.value == null) return;
 	narrow.value = el.value.offsetWidth < NARROW_THRESHOLD;
 	if (currentPage.value?.route.name == null && !narrow.value) {
 		router.push('/admin/overview');
@@ -217,9 +222,9 @@ onUnmounted(() => {
 
 provideMetadataReceiver((info) => {
 	if (info == null) {
-		childInfo.value = null;
+		childInfo.current = null;
 	} else {
-		childInfo.value = info;
+		childInfo.current = info;
 	}
 });
 
@@ -237,7 +242,7 @@ const invite = () => {
 	});
 };
 
-const lookup = (ev) => {
+const lookup = (ev: MouseEvent) => {
 	os.popupMenu([{
 		text: i18n.ts.user,
 		icon: 'fas fa-user',
@@ -265,9 +270,9 @@ const lookup = (ev) => {
 	}], ev.currentTarget ?? ev.target);
 };
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata(INFO.value);
 

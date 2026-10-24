@@ -1,7 +1,7 @@
 <template>
 <KeepAlive :max="defaultStore.state.numberOfPageCache">
 	<Suspense>
-		<component :is="currentPageComponent" :key="key" v-bind="Object.fromEntries(currentPageProps)"/>
+		<component :is="currentPageComponent" :key="key" v-bind="Object.fromEntries(currentPageProps)" @contextmenu="emit('contextmenu', $event)"/>
 
 		<template #fallback>
 			<MkLoading/>
@@ -11,10 +11,11 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, nextTick, onBeforeUnmount, onMounted, onUnmounted, provide, watch, shallowRef, ref } from 'vue';
+import { inject, onBeforeUnmount, provide, shallowRef, ref } from 'vue';
 import { Resolved, Router } from '@/nirax';
 import { defaultStore } from '@/store';
 
+const emit = defineEmits<{ (event: 'contextmenu', value: MouseEvent): void }>();
 const props = defineProps<{
 	router?: Router;
 }>();
@@ -45,7 +46,7 @@ let currentPageComponent = shallowRef(current.route.component);
 let currentPageProps = ref(current.props);
 let key = ref(current.route.path + JSON.stringify(Object.fromEntries(current.props)));
 
-function onChange({ resolved, key: newKey }) {
+function onChange({ resolved }: { resolved: Resolved }) {
 	const current = resolveNested(resolved);
 	if (current == null) return;
 	currentPageComponent.value = current.route.component;

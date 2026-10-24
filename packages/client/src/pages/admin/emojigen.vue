@@ -86,13 +86,13 @@
 							<template #label>{{ $ts.emojiName }}</template>
 						</FormInput>
 
-						<FormTextarea v-model="text" value="見せてほしい" class="_formBlock">
+						<FormTextarea v-model="text" class="_formBlock">
 							<template #label>{{ $ts.text }}</template>
 						</FormTextarea>
 
 						<FormRadios v-model="backColor" class="_formBlock">
 							<template #label>{{ $ts._theme.color }}</template>
-							<option v-for="c in backColors" v-bind:value="c">{{c}}</option>
+							<option v-for="c in backColors" :value="c">{{c}}</option>
 						</FormRadios>
 					</FormSection>
 					<FormSection>
@@ -107,6 +107,7 @@
 </template>
 
 <script lang="ts" setup>
+import { loadAdminEmoji } from '@/scripts/load-admin-emoji';
 import { v4 as uuid } from 'uuid';
 import { computed, defineAsyncComponent, ref, watch } from 'vue';
 import * as os from '@/os';
@@ -115,7 +116,7 @@ import { defaultStore } from '@/store';
 import { stream } from '@/stream';
 import { uploadFile } from '@/scripts/upload';
 import XHeader from './_header_.vue';
-import MkTab from '@/components/MkTab.vue';
+
 import MkLink from '@/components/MkLink.vue';
 import FormSection from '@/components/form/section.vue';
 import FormInput from '@/components/form/input.vue';
@@ -220,7 +221,7 @@ const preview = (): void => {
 	previewUrl.value = makeUrl();
 };
 
-const setAccentColor = (color) => {
+const setAccentColor = (color: string) => {
 	emojiColor.value = color.replace('#', '');
 };
 
@@ -245,29 +246,7 @@ const uploadFileFromUrlWithId = (url: string) => new Promise<string>(async resol
 	});
 });
 
-const getEmojiObject = emojiId => new Promise<Record<string, any> | null>(async resolve => {
-	const sinceId = await os.api('admin/emoji/list', {
-		limit: 1,
-		untilId: emojiId.id,
-	});
-
-	if (!sinceId || !sinceId[0] || !sinceId[0].id) {
-		resolve(null);
-		return;
-	}
-
-	const id = await os.api('admin/emoji/list', {
-		limit: 1,
-		sinceId: sinceId[0].id,
-	});
-
-	if (!id || !id[0]) {
-		resolve(null);
-		return;
-	}
-
-	resolve(id[0]);
-});
+const getEmojiObject = loadAdminEmoji;
 
 const uploadEmoji = async (type: string) => {
 
@@ -289,6 +268,7 @@ const uploadEmoji = async (type: string) => {
 				type: 'error',
 				text: i18n.ts.failedToUploadEmoji,
 			});
+            return;
 		}
 		os.popup(defineAsyncComponent(() => import('./emoji-edit-dialog.vue')), { emoji });
 	} else {
@@ -312,6 +292,7 @@ const uploadEmoji = async (type: string) => {
 				type: 'error',
 				text: i18n.ts.failedToUploadEmoji,
 			});
+            return;
 		}
 		os.popup(defineAsyncComponent(() => import('./emoji-edit-dialog.vue')), { emoji });
 	}

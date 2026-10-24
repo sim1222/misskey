@@ -10,8 +10,6 @@
 			class="select"
 			:disabled="disabled"
 			:required="required"
-			:readonly="readonly"
-			:placeholder="placeholder"
 			@focus="focused = true"
 			@blur="focused = false"
 			@input="onInput"
@@ -26,15 +24,16 @@
 </div>
 </template>
 
-<script lang="ts" setup>
-import { onMounted, onUnmounted, nextTick, ref, watch, computed, toRefs, VNode, useSlots } from 'vue';
+<script lang="ts" setup generic="T">
+import { onMounted, nextTick, ref, shallowRef, watch, toRefs, VNode, isVNode, useSlots } from 'vue';
+import type { MenuItem } from '@/types/menu';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 import { useInterval } from '@/scripts/use-interval';
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
-	modelValue: string;
+	modelValue: T;
 	required?: boolean;
 	readonly?: boolean;
 	disabled?: boolean;
@@ -47,29 +46,29 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'change', _ev: KeyboardEvent): void;
-	(ev: 'update:modelValue', value: string): void;
+	(ev: 'change', _ev: Event): void;
+	(ev: 'update:modelValue', value: T): void;
 }>();
 
 const slots = useSlots();
 
 const { modelValue, autofocus } = toRefs(props);
-const v = ref(modelValue.value);
+const v = shallowRef<T>(modelValue.value);
 const focused = ref(false);
 const changed = ref(false);
 const invalid = ref(false);
-const filled = computed(() => v.value !== '' && v.value != null);
-const inputEl = ref(null);
-const prefixEl = ref(null);
-const suffixEl = ref(null);
-const container = ref(null);
+
+const inputEl = ref<HTMLSelectElement | null>(null);
+const prefixEl = ref<HTMLElement | null>(null);
+const suffixEl = ref<HTMLElement | null>(null);
+const container = ref<HTMLElement | null>(null);
 const height =
 	props.small ? 36 :
 	props.large ? 40 :
 	38;
 
-const focus = () => inputEl.value.focus();
-const onInput = (ev) => {
+const focus = () => inputEl.value?.focus();
+const onInput = (ev: Event) => {
 	changed.value = true;
 	emit('change', ev);
 };
@@ -88,19 +87,19 @@ watch(v, newValue => {
 		updated();
 	}
 
-	invalid.value = inputEl.value.validity.badInput;
+	if (inputEl.value) invalid.value = inputEl.value.validity.badInput;
 });
 
 // このコンポーネントが作成された時、非表示状態である場合がある
 // 非表示状態だと要素の幅などは0になってしまうので、定期的に計算する
 useInterval(() => {
 	if (prefixEl.value) {
-		if (prefixEl.value.offsetWidth) {
+		if (prefixEl.value.offsetWidth && inputEl.value) {
 			inputEl.value.style.paddingLeft = prefixEl.value.offsetWidth + 'px';
 		}
 	}
 	if (suffixEl.value) {
-		if (suffixEl.value.offsetWidth) {
+		if (suffixEl.value.offsetWidth && inputEl.value) {
 			inputEl.value.style.paddingRight = suffixEl.value.offsetWidth + 'px';
 		}
 	}
@@ -111,24 +110,25 @@ useInterval(() => {
 
 onMounted(() => {
 	nextTick(() => {
-		if (autofocus.value) {
+		if (autofocus?.value) {
 			focus();
 		}
 	});
 });
 
 const onClick = (ev: MouseEvent) => {
+	if (props.disabled || props.readonly) return;
 	focused.value = true;
 
-	const menu = [];
-	let options = slots.default!();
+	const menu: MenuItem[] = [];
+	const options = slots.default?.() ?? [];
 
 	const pushOption = (option: VNode) => {
 		menu.push({
-			text: option.children,
-			active: v.value === option.props.value,
+			text: typeof option.children === 'string' ? option.children : '',
+			active: v.value === option.props?.value,
 			action: () => {
-				v.value = option.props.value;
+				v.value = option.props?.value;
 			},
 		});
 	};
@@ -139,12 +139,12 @@ const onClick = (ev: MouseEvent) => {
 				const optgroup = vnode;
 				menu.push({
 					type: 'label',
-					text: optgroup.props.label,
+					text: String(optgroup.props?.label ?? ''),
 				});
-				scanOptions(optgroup.children);
+				if (Array.isArray(optgroup.children)) scanOptions(optgroup.children.filter(isVNode));
 			} else if (Array.isArray(vnode.children)) { // 何故かフラグメントになってくることがある
 				const fragment = vnode;
-				scanOptions(fragment.children);
+				if (Array.isArray(fragment.children)) scanOptions(fragment.children.filter(isVNode));
 			} else if (vnode.props == null) { // v-if で条件が false のときにこうなる
 				// nop?
 			} else {
@@ -156,6 +156,7 @@ const onClick = (ev: MouseEvent) => {
 
 	scanOptions(options);
 
+	if (container.value == null) return;
 	os.popupMenu(menu, container.value, {
 		width: container.value.offsetWidth,
 	}).then(() => {

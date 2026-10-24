@@ -1,21 +1,22 @@
-import { defineAsyncComponent, Ref, inject } from 'vue';
-import * as misskey from 'misskey-js';
-import { pleaseLogin } from './please-login';
+import { defineAsyncComponent, Ref } from 'vue';
+import * as misskey from '@/misskey';
+
 import { $i } from '@/account';
 import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import * as os from '@/os';
+import { noteRequest } from '@/scripts/note-request';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
 import { url } from '@/config';
 import { noteActions } from '@/store';
 
 export function getNoteMenu(props: {
 	note: misskey.entities.Note;
-	menuButton: Ref<HTMLElement>;
-	translation: Ref<any>;
+	menuButton: Ref<HTMLElement | undefined>;
+	translation: Ref<import('@/types/api').ApiResponse<'notes/translate'> | null>;
 	translating: Ref<boolean>;
 	isDeleted: Ref<boolean>;
-	currentClipPage?: Ref<misskey.entities.Clip>;
+	currentClipPage?: Ref<misskey.entities.Clip> | null;
 }) {
 	const isRenote = (
 		props.note.renote != null &&
@@ -45,7 +46,8 @@ export function getNoteMenu(props: {
 				localOnly: appearNote.localOnly,
 				visibility: appearNote.visibility,
 			}
-			os.api('notes/create', postData, undefined);
+const request = noteRequest(postData);
+ if (request) os.api('notes/create', request);
 		});
 	}
 
@@ -90,7 +92,7 @@ export function getNoteMenu(props: {
 	}
 
 	function copyContent(): void {
-		copyToClipboard(appearNote.text);
+		copyToClipboard(appearNote.text ?? '');
 		os.success();
 	}
 
@@ -121,6 +123,7 @@ export function getNoteMenu(props: {
 				const { canceled, result } = await os.form(i18n.ts.createNewClip, {
 					name: {
 						type: 'string',
+ default: '',
 						label: i18n.ts.name,
 					},
 					description: {
@@ -171,27 +174,17 @@ export function getNoteMenu(props: {
 	}
 
 	async function unclip(): Promise<void> {
+ if (!props.currentClipPage) return;
 		os.apiWithDialog('clips/remove-note', { clipId: props.currentClipPage.value.id, noteId: appearNote.id });
 		props.isDeleted.value = true;
 	}
 
-	async function promote(): Promise<void> {
-		const { canceled, result: days } = await os.inputNumber({
-			title: i18n.ts.numberOfDays,
-		});
 
-		if (canceled) return;
-
-		os.apiWithDialog('admin/promo/create', {
-			noteId: appearNote.id,
-			expiresAt: Date.now() + (86400000 * days),
-		});
-	}
 
 	function share(): void {
 		navigator.share({
-			title: i18n.t('noteOf', { user: appearNote.user.name }),
-			text: appearNote.text,
+			title: i18n.t('noteOf', { user: appearNote.user.name ?? appearNote.user.username }),
+			text: appearNote.text ?? undefined,
 			url: `${url}/notes/${appearNote.id}`,
 		});
 	}
@@ -204,7 +197,7 @@ export function getNoteMenu(props: {
 			targetLang: localStorage.getItem('lang') || navigator.language,
 		});
 		props.translating.value = false;
-		props.translation.value = res;
+		props.translation.value = res ?? null;
 	}
 
 	let menu;

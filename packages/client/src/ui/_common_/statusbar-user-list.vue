@@ -4,7 +4,7 @@
 		<transition name="change" mode="default">
 			<MarqueeText :key="key" :duration="marqueeDuration" :reverse="marqueeReverse">
 				<span v-for="note in notes" :key="note.id" class="item">
-					<img class="avatar" :src="note.user.avatarUrl" decoding="async"/>
+					<img class="avatar" :src="(note.user.avatarUrl) ?? undefined" decoding="async"/>
 					<MkA class="text" :to="notePage(note)">
 						<Mfm class="text" :text="getNoteSummary(note)" :plain="true" :nowrap="true" :custom-emojis="note.emojis"/>
 					</MkA>
@@ -20,22 +20,22 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue';
-import * as misskey from 'misskey-js';
+import { ref, watch } from 'vue';
+import * as misskey from '@/misskey';
 import MarqueeText from '@/components/MkMarquee.vue';
 import * as os from '@/os';
 import { useInterval } from '@/scripts/use-interval';
 import { getNoteSummary } from '@/scripts/get-note-summary';
 import { notePage } from '@/filters/note';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	userListId?: string;
 	display?: 'marquee' | 'oneByOne';
 	marqueeDuration?: number;
 	marqueeReverse?: boolean;
 	oneByOneInterval?: number;
 	refreshIntervalSec?: number;
-}>();
+}>(), { refreshIntervalSec: 120 });
 
 const notes = ref<misskey.entities.Note[]>([]);
 const fetching = ref(true);

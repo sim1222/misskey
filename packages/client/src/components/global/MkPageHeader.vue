@@ -15,13 +15,13 @@
 					{{ metadata.subtitle }}
 				</div>
 				<div v-if="narrow && hasTabs" class="subtitle activeTab">
-					{{ tabs.find(tab => tab.key === props.tab)?.title }}
+					{{ visibleTabs.find(tab => tab.key === props.tab)?.title }}
 					<i class="chevron fas fa-chevron-down"></i>
 				</div>
 			</div>
 		</div>
 		<div v-if="!narrow || hideTitle" class="tabs">
-			<button v-for="tab in tabs" :ref="(el) => tabRefs[tab.key] = el" v-tooltip.noDelay="tab.title" class="tab _button" :class="{ active: tab.key != null && tab.key === props.tab }" @mousedown="(ev) => onTabMousedown(tab, ev)" @click="(ev) => onTabClick(tab, ev)">
+			<button v-for="tab in visibleTabs" :ref="(el) => setTabRef(tab.key, el)" v-tooltip.noDelay="tab.title" class="tab _button" :class="{ active: tab.key != null && tab.key === props.tab }" @mousedown="(ev) => onTabMousedown(tab, ev)" @click="(ev) => onTabClick(tab, ev)">
 				<i v-if="tab.icon" class="icon" :class="tab.icon"></i>
 				<span v-if="!tab.iconOnly" class="title">{{ tab.title }}</span>
 			</button>
@@ -29,7 +29,7 @@
 		</div>
 	</template>
 	<div class="buttons right">
-		<button v-tooltip.noDelay="i18n.ts.reload" class="_button button" onclick="location.reload();">
+		<button v-tooltip.noDelay="i18n.ts.reload" class="_button button" @click="reload">
 			<i class="fa-solid fa-arrow-rotate-right"></i>
 		</button>
 		<template v-for="action in actions">
@@ -40,7 +40,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref, inject, watch, shallowReactive, nextTick, reactive } from 'vue';
+import type { ComponentPublicInstance } from 'vue';
+import { computed, onMounted, onUnmounted, ref, inject, watch, nextTick } from 'vue';
 import tinycolor from 'tinycolor2';
 import { popupMenu } from '@/os';
 import { scrollToTop } from '@/scripts/scroll';
@@ -58,48 +59,53 @@ type Tab = {
 };
 
 const props = defineProps<{
-	tabs?: Tab[];
+ info?: import('@/scripts/page-metadata').PageMetadata;
+	tabs?: (Tab | null)[] | null;
 	tab?: string;
 	actions?: {
 		text: string;
 		icon: string;
 		handler: (ev: MouseEvent) => void;
-	}[];
+ highlighted?: boolean;
+	}[] | null;
 	thin?: boolean;
 	displayMyAvatar?: boolean;
 }>();
 
 const emit = defineEmits<{
-	(ev: 'update:tab', key: string);
+	(ev: 'update:tab', key: string): void;
 }>();
 
-const metadata = injectPageMetadata();
+const injectedMetadata = injectPageMetadata();
+const metadata = computed(() => props.info ?? injectedMetadata?.value);
 
 const hideTitle = inject('shouldOmitHeaderTitle', false);
 const thin_ = props.thin || inject('shouldHeaderThin', false);
 
 const el = ref<HTMLElement | null>(null);
-const tabRefs = {};
+const tabRefs: Record<string, HTMLElement | undefined> = {};
 const tabHighlightEl = ref<HTMLElement | null>(null);
-const bg = ref(null);
+const bg = ref<string>();
 let narrow = ref(false);
-const height = ref(0);
+
+const visibleTabs = computed(() => (props.tabs ?? []).filter((tab): tab is Tab => tab != null));
 const hasTabs = computed(() => props.tabs && props.tabs.length > 0);
 const hasActions = computed(() => props.actions && props.actions.length > 0);
 const show = computed(() => {
 	return !hideTitle || hasTabs.value || hasActions.value;
 });
 
+const reload = () => location.reload();
 const showTabsPopup = (ev: MouseEvent) => {
 	if (!hasTabs.value) return;
 	if (!narrow.value) return;
 	ev.preventDefault();
 	ev.stopPropagation();
-	const menu = props.tabs.map(tab => ({
+	const menu = ((props.tabs ?? []).filter((tab): tab is Tab => tab != null)).map(tab => ({
 		text: tab.title,
 		icon: tab.icon,
 		active: tab.key != null && tab.key === props.tab,
-		action: (ev) => {
+		action: (ev: MouseEvent) => {
 			onTabClick(tab, ev);
 		},
 	}));
@@ -111,13 +117,14 @@ const preventDrag = (ev: TouchEvent) => {
 };
 
 const onClick = () => {
+	if (el.value == null) return;
 	scrollToTop(el.value, { behavior: 'smooth' });
 };
 
 function onTabMousedown(tab: Tab, ev: MouseEvent): void {
 	// ユーザビリティの観点からmousedown時にはonClickは呼ばない
 	if (tab.key) {
-		emit('update:tab', tab.key);
+		if (tab.key != null) emit('update:tab', tab.key);
 	}
 }
 
@@ -128,16 +135,20 @@ function onTabClick(tab: Tab, ev: MouseEvent): void {
 		tab.onClick(ev);
 	}
 	if (tab.key) {
-		emit('update:tab', tab.key);
+		if (tab.key != null) emit('update:tab', tab.key);
 	}
 }
 
 const calcBg = () => {
-	const rawBg = metadata?.bg || 'var(--bg)';
+	const rawBg = metadata?.value?.bg || 'var(--bg)';
 	const tinyBg = tinycolor(rawBg.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(rawBg.slice(4, -1)) : rawBg);
 	tinyBg.setAlpha(0.85);
 	bg.value = tinyBg.toRgbString();
 };
+
+function setTabRef(key: string | null | undefined, value: Element | ComponentPublicInstance | null): void {
+ if (key != null) tabRefs[key] = value instanceof HTMLElement ? value : undefined;
+}
 
 let ro: ResizeObserver | null;
 
@@ -147,8 +158,8 @@ onMounted(() => {
 
 	watch(() => [props.tab, props.tabs], () => {
 		nextTick(() => {
-			const tabEl = tabRefs[props.tab];
-			if (tabEl && tabHighlightEl.value) {
+			const tabEl = props.tab == null ? undefined : tabRefs[props.tab];
+			if (tabEl?.parentElement && tabHighlightEl.value) {
 				// offsetWidth や offsetLeft は少数を丸めてしまうため getBoundingClientRect を使う必要がある
 				// https://developer.mozilla.org/ja/docs/Web/API/HTMLElement/offsetWidth#%E5%80%A4
 				const parentRect = tabEl.parentElement.getBoundingClientRect();
@@ -164,7 +175,9 @@ onMounted(() => {
 	if (el.value && el.value.parentElement) {
 		narrow.value = el.value.parentElement.offsetWidth < 500;
 		ro = new ResizeObserver((entries, observer) => {
+			if (el.value == null) return;
 			if (el.value.parentElement && document.body.contains(el.value)) {
+				if (el.value == null) return;
 				narrow.value = el.value.parentElement.offsetWidth < 500;
 			}
 		});

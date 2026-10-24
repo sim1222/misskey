@@ -26,9 +26,9 @@
 			</div>
 			-->
 				<FormSplit>
-					<MkInput v-model="ad.ratio" type="number">
+					<MkNumberInput v-model="ad.ratio" type="number">
 						<template #label>{{ i18n.ts.ratio }}</template>
-					</MkInput>
+					</MkNumberInput>
 					<MkInput v-model="ad.expiresAt" type="date">
 						<template #label>{{ i18n.ts.expiration }}</template>
 					</MkInput>
@@ -51,6 +51,7 @@ import { ref, computed } from 'vue';
 import XHeader from './_header_.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/form/input.vue';
+import MkNumberInput from '@/components/form/number-input.vue';
 import MkTextarea from '@/components/form/textarea.vue';
 import FormRadios from '@/components/form/radios.vue';
 import FormSplit from '@/components/form/split.vue';
@@ -58,7 +59,8 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-let ads: any[] = ref([]);
+type AdDraft = Omit<import('@/types/api').ApiResponse<'admin/ad/list'>[number], 'id' | 'expiresAt' | 'imageUrl' | 'createdAt'> & { id: string | null; expiresAt: string | null; imageUrl: string | null };
+let ads = ref<AdDraft[]>([]);
 
 os.api('admin/ad/list').then(adsResponse => {
 	ads.value = adsResponse;
@@ -77,31 +79,26 @@ function add() {
 	});
 }
 
-function remove(ad) {
+function remove(ad: AdDraft) {
 	os.confirm({
 		type: 'warning',
 		text: i18n.t('removeAreYouSure', { x: ad.url }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
 		ads.value = ads.value.filter(x => x !== ad);
-		os.apiWithDialog('admin/ad/delete', {
+		if (ad.id == null) return;
+        os.apiWithDialog('admin/ad/delete', {
 			id: ad.id,
 		});
 	});
 }
 
-function save(ad) {
-	if (ad.id == null) {
-		os.apiWithDialog('admin/ad/create', {
-			...ad,
-			expiresAt: new Date(ad.expiresAt).getTime(),
-		});
-	} else {
-		os.apiWithDialog('admin/ad/update', {
-			...ad,
-			expiresAt: new Date(ad.expiresAt).getTime(),
-		});
-	}
+function save(ad: AdDraft) {
+ if (ad.imageUrl == null) return;
+ const request = { memo: ad.memo, place: ad.place, priority: ad.priority, ratio: ad.ratio, url: ad.url,
+  imageUrl: ad.imageUrl, expiresAt: new Date(ad.expiresAt ?? 0).getTime() };
+ if (ad.id == null) os.apiWithDialog('admin/ad/create', request);
+ else os.apiWithDialog('admin/ad/update', { ...request, id: ad.id });
 }
 
 const headerActions = computed(() => [{

@@ -7,7 +7,7 @@
 			<!-- <div class="punished" v-if="user.isSilenced"><i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i> {{ i18n.ts.userSilenced }}</div> -->
 
 			<div class="profile">
-				<MkRemoteCaution v-if="user.host != null" :href="user.url" class="warn"/>
+				<MkRemoteCaution v-if="user.host != null" :href="user.url ?? undefined" class="warn"/>
 
 				<div :key="user.id" class="_block blur main">
 					<div class="banner-container" :style="style">
@@ -26,7 +26,7 @@
 						<span v-if="$i && $i.id != user.id && user.isFollowed" class="followed">{{ i18n.ts.followsYou }}</span>
 						<div v-if="$i" class="actions">
 							<button class="menu _button" @click="menu"><i class="fas fa-ellipsis-h"></i></button>
-							<MkFollowButton v-if="$i.id != user.id" :user="user" :inline="true" :transparent="false" :full="true" class="koudoku"/>
+							<MkFollowButton v-if="$i.id != user.id" :user="user" :full="true" class="koudoku"/>
 						</div>
 					</div>
 					<MkAvatar class="avatar" :user="user" :disable-preview="true" :show-indicator="true"/>
@@ -51,7 +51,7 @@
 						</dl>
 						<dl v-if="user.birthday" class="field">
 							<dt class="name"><i class="fas fa-birthday-cake fa-fw"></i> {{ i18n.ts.birthday }}</dt>
-							<dd class="value">{{ user.birthday.replace('-', '/').replace('-', '/') }} ({{ $t('yearsOld', { age }) }})</dd>
+							<dd class="value">{{ user.birthday.replace('-', '/').replace('-', '/') }} ({{ $t('yearsOld', { age: age ?? '' }) }})</dd>
 						</dl>
 						<dl class="field">
 							<dt class="name"><i class="fas fa-calendar-alt fa-fw"></i> {{ i18n.ts.registeredDate }}</dt>
@@ -61,23 +61,23 @@
 					<div v-if="user.fields.length > 0" class="fields">
 						<dl v-for="(field, i) in user.fields" :key="i" class="field">
 							<dt class="name">
-								<Mfm :text="field.name" :plain="true" :custom-emojis="user.emojis" :colored="false"/>
+								<Mfm :text="field.name" :plain="true" :custom-emojis="user.emojis"/>
 							</dt>
 							<dd class="value">
-								<Mfm :text="field.value" :author="user" :i="$i" :custom-emojis="user.emojis" :colored="false"/>
+								<Mfm :text="field.value" :author="user" :i="$i" :custom-emojis="user.emojis"/>
 							</dd>
 						</dl>
 					</div>
 					<div class="status">
-						<MkA v-click-anime :to="userPage(user)" :class="{ active: page === 'index' }">
+						<MkA v-click-anime :to="userPage(user)" :class="{ active: true }">
 							<b>{{ number(user.notesCount) }}</b>
 							<span>{{ i18n.ts.notes }}</span>
 						</MkA>
-						<MkA v-click-anime :to="userPage(user, 'following')" :class="{ active: page === 'following' }">
+						<MkA v-click-anime :to="userPage(user, 'following')" :class="{ active: false }">
 							<b>{{ number(user.followingCount) }}</b>
 							<span>{{ i18n.ts.following }}</span>
 						</MkA>
-						<MkA v-click-anime :to="userPage(user, 'followers')" :class="{ active: page === 'followers' }">
+						<MkA v-click-anime :to="userPage(user, 'followers')" :class="{ active: false }">
 							<b>{{ number(user.followersCount) }}</b>
 							<span>{{ i18n.ts.followers }}</span>
 						</MkA>
@@ -108,22 +108,22 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, inject, onMounted, onUnmounted, watch, ref } from 'vue';
+import { defineAsyncComponent, computed, onMounted, onUnmounted, ref } from 'vue';
 import calcAge from 's-age';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import XUserTimeline from './index.timeline.vue';
 import XNote from '@/components/MkNote.vue';
 import MkFollowButton from '@/components/MkFollowButton.vue';
-import MkContainer from '@/components/MkContainer.vue';
-import MkFolder from '@/components/MkFolder.vue';
+
+
 import MkRemoteCaution from '@/components/MkRemoteCaution.vue';
-import MkTab from '@/components/MkTab.vue';
+
 import MkInfo from '@/components/MkInfo.vue';
 import MkEmoji from '@/components/global/MkEmoji.vue';
 import { getScrollPosition } from '@/scripts/scroll';
 import { getUserMenu } from '@/scripts/get-user-menu';
 import number from '@/filters/number';
-import { userPage, acct as getAcct } from '@/filters/user';
+import { userPage } from '@/filters/user';
 import * as os from '@/os';
 import { useRouter } from '@/router';
 import { i18n } from '@/i18n';
@@ -152,10 +152,10 @@ const style = computed(() => {
 });
 
 const age = computed(() => {
-	return calcAge(props.user.birthday);
+	return props.user.birthday == null ? undefined : calcAge(props.user.birthday);
 });
 
-function menu(ev) {
+function menu(ev: MouseEvent) {
 	os.popupMenu(getUserMenu(props.user, router), ev.currentTarget ?? ev.target);
 }
 
@@ -165,7 +165,7 @@ function parallaxLoop() {
 }
 
 function parallax() {
-	const banner = bannerEl.value as any;
+	const banner = bannerEl.value;
 	if (banner == null) return;
 
 	const top = getScrollPosition(rootEl.value);

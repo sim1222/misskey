@@ -8,7 +8,7 @@ import '@/style.scss';
 import { set } from '@/scripts/idb-proxy';
 
 if (localStorage.getItem('accounts') != null) {
-	set('accounts', JSON.parse(localStorage.getItem('accounts')));
+	set('accounts', JSON.parse(localStorage.getItem('accounts') ?? 'null'));
 	localStorage.removeItem('accounts');
 }
 //#endregion
@@ -20,7 +20,7 @@ import JSON5 from 'json5';
 import widgets from '@/widgets';
 import directives from '@/directives';
 import components from '@/components';
-import { version, ui, lang, host } from '@/config';
+import { version, ui, lang } from '@/config';
 import { applyTheme } from '@/scripts/theme';
 import { isDeviceDarkmode } from '@/scripts/is-device-darkmode';
 import { i18n } from '@/i18n';
@@ -101,7 +101,7 @@ import { getAccountFromId } from '@/scripts/get-account-from-id';
 
 	//#region Set lang attr
 	const html = document.documentElement;
-	html.setAttribute('lang', lang);
+	if (lang !== null) html.setAttribute('lang', lang);
 	//#endregion
 
 	//#region loginId
@@ -162,7 +162,7 @@ import { getAccountFromId } from '@/scripts/get-account-from-id';
 	const fetchInstanceMetaPromise = fetchInstance();
 
 	fetchInstanceMetaPromise.then(() => {
-		localStorage.setItem('v', instance.version);
+		if (instance.version !== undefined) localStorage.setItem('v', instance.version);
 
 		// Init service worker
 		initializeSw();
@@ -331,7 +331,7 @@ import { getAccountFromId } from '@/scripts/get-account-from-id';
 		});
 	}
 
-	const hotkeys = {
+	const hotkeys: Record<string, (event: KeyboardEvent) => void> = {
 		'd': (): void => {
 			defaultStore.set('darkMode', !defaultStore.state.darkMode);
 		},
@@ -344,7 +344,7 @@ import { getAccountFromId } from '@/scripts/get-account-from-id';
 
 if ($i) {
 	// only add post shortcuts if logged in
-	hotkeys['p|n'] = post;
+	hotkeys['p|n'] = () => post();
 
 		if ($i.isDeleted) {
 			alert({

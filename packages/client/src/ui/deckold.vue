@@ -50,21 +50,23 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, provide, ref, watch } from 'vue';
+import type { Column } from '@/types/deck';
+
+import { computed, provide, ref } from 'vue';
 import { v4 as uuid } from 'uuid';
 import XCommon from './_common_old/common.vue';
-import { deckStore, addColumn as addColumnToStore, loadDeck, getProfiles, deleteProfile as deleteProfile_ } from './deckold/deck-store';
+import { deckStore, addColumn as addColumnToStore, loadDeck } from './deckold/deck-store';
 import DeckColumnCore from '@/ui/deckold/column-core.vue';
 import XSidebar from '@/ui/_common_old/sidebar.vue';
 import XDrawerMenu from '@/ui/_common_old/sidebar-for-mobile.vue';
-import MkButton from '@/components/ui/button.vue';
+
 import { getScrollContainer } from '@/scripts/scroll';
 import * as os from '@/os';
 import { navbarItemDef } from '@/navbar';
 import { $i } from '@/account';
 import { i18n } from '@/i18n';
 import { mainRouter } from '@/router';
-import { unisonReload } from '@/scripts/unison-reload';
+
 
 mainRouter.navHook = (path): boolean => {
 	const noMainColumn = !deckStore.state.columns.some(x => x.type === 'main');
@@ -82,23 +84,20 @@ window.addEventListener('resize', () => {
 
 const drawerMenuShowing = ref(false);
 
-const route = 'TODO';
-watch(route, () => {
-	drawerMenuShowing.value = false;
-});
+mainRouter.on('change', () => { drawerMenuShowing.value = false; });
 
 const columns = deckStore.reactiveState.columns;
 const layout = deckStore.reactiveState.layout;
 const menuIndicated = computed(() => {
 	if ($i == null) return false;
 	for (const def in navbarItemDef) {
-		if (navbarItemDef[def].indicated) return true;
+		if (navbarItemDef[def]?.indicated) return true;
 	}
 	return false;
 });
 
-const addColumn = async (ev) => {
-	const columns = [
+const addColumn = async (ev: MouseEvent) => {
+	const columns: Column['type'][] = [
 		'main',
 		'widgets',
 		'notifications',
@@ -115,7 +114,7 @@ const addColumn = async (ev) => {
 			value: column, text: i18n.t('_deck._columns.' + column)
 		}))
 	});
-	if (canceled) return;
+	if (canceled || column == null) return;
 
 	addColumnToStore({
 		type: column,
@@ -125,7 +124,7 @@ const addColumn = async (ev) => {
 	});
 };
 
-const onContextmenu = (ev) => {
+const onContextmenu = (ev: MouseEvent) => {
 	os.contextMenu([{
 		text: i18n.ts._deck.addColumn,
 		action: addColumn,
@@ -134,7 +133,7 @@ const onContextmenu = (ev) => {
 
 provide('shouldSpacerMin', true);
 if (deckStore.state.navWindow) {
-	provide('navHook', (url) => {
+	provide('navHook', (url: string) => {
 		os.pageWindow(url);
 	});
 }

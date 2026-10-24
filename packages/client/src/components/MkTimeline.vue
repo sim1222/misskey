@@ -1,17 +1,20 @@
 <template>
-<XNotes ref="tlComponent" :no-gap="!$store.state.showGapBetweenNotesInTimeline" :pagination="pagination" @queue="emit('queue', $event)"/>
+<XNotes ref="tlComponent" :no-gap="!$store.state.showGapBetweenNotesInTimeline" :pagination="pagination" @queue="emit('queue', $event)" @before="emit('before')" @after="emit('after')"/>
 </template>
 
 <script lang="ts" setup>
+import type { entities } from '@/misskey';
+import type { Paging, EndpointOf } from '@/types/paging';
+import { requireValue } from '@/scripts/require-value';
 import { ref, computed, provide, onUnmounted } from 'vue';
 import XNotes from '@/components/MkNotes.vue';
-import * as os from '@/os';
+
 import { stream } from '@/stream';
 import * as sound from '@/scripts/sound';
 import { $i } from '@/account';
 
 const props = defineProps<{
-	src: string;
+	src: 'antenna' | 'home' | 'local' | 'social' | 'global' | 'mentions' | 'directs' | 'list' | 'channel';
 	list?: string;
 	antenna?: string;
 	channel?: string;
@@ -20,15 +23,19 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	(ev: 'note'): void;
+ (ev: 'before'): void;
+ (ev: 'after'): void;
 	(ev: 'queue', count: number): void;
 }>();
 
 provide('inChannel', computed(() => props.src === 'channel'));
 
-const tlComponent: InstanceType<typeof XNotes> = ref();
+const tlComponent = ref<InstanceType<typeof XNotes>>();
 
-const prepend = note => {
-	tlComponent.value.pagingComponent?.prepend(note);
+const untilDate = ref<number>();
+const prepend = (note: entities.Note) => {
+ if (untilDate.value != null && new Date(note.createdAt).getTime() > untilDate.value) return;
+	tlComponent.value?.pagingComponent?.prepend(note);
 
 	emit('note');
 
@@ -38,106 +45,126 @@ const prepend = note => {
 };
 
 const onUserAdded = () => {
-	tlComponent.value.pagingComponent?.reload();
+	tlComponent.value?.pagingComponent?.reload();
 };
 
 const onUserRemoved = () => {
-	tlComponent.value.pagingComponent?.reload();
+	tlComponent.value?.pagingComponent?.reload();
 };
 
 const onChangeFollowing = () => {
-	if (!tlComponent.value.pagingComponent?.backed) {
-		tlComponent.value.pagingComponent?.reload();
+	if (!tlComponent.value?.pagingComponent?.backed) {
+		tlComponent.value?.pagingComponent?.reload();
 	}
 };
 
-let endpoint;
-let query;
-let connection;
-let connection2;
-
+const connections: { dispose(): void }[] = [];
+const pagination = ((): Paging<EndpointOf<entities.Note>> => {
 if (props.src === 'antenna') {
-	endpoint = 'antennas/notes';
-	query = {
-		antennaId: props.antenna,
+	const endpoint = 'antennas/notes';
+	const query = {
+		antennaId: requireValue(props.antenna, 'Antenna ID'),
 	};
-	connection = stream.useChannel('antenna', {
-		antennaId: props.antenna,
+	const connection = stream.useChannel('antenna', {
+		antennaId: requireValue(props.antenna, 'Antenna ID'),
 	});
 	connection.on('note', prepend);
+
+ connections.push(connection);
+ return { endpoint, limit: 10, params: computed(() => ({ ...query, untilDate: untilDate.value })) };
 } else if (props.src === 'home') {
-	endpoint = 'notes/timeline';
-	connection = stream.useChannel('homeTimeline');
+	const endpoint = 'notes/timeline';
+	const connection = stream.useChannel('homeTimeline');
 	connection.on('note', prepend);
 
-	connection2 = stream.useChannel('main');
+	const connection2 = stream.useChannel('main');
 	connection2.on('follow', onChangeFollowing);
 	connection2.on('unfollow', onChangeFollowing);
+
+ connections.push(connection);
+ connections.push(connection2);
+ return { endpoint, limit: 10, params: computed(() => ({ untilDate: untilDate.value })) };
 } else if (props.src === 'local') {
-	endpoint = 'notes/local-timeline';
-	connection = stream.useChannel('localTimeline');
+	const endpoint = 'notes/local-timeline';
+	const connection = stream.useChannel('localTimeline');
 	connection.on('note', prepend);
+
+ connections.push(connection);
+ return { endpoint, limit: 10, params: computed(() => ({ untilDate: untilDate.value })) };
 } else if (props.src === 'social') {
-	endpoint = 'notes/hybrid-timeline';
-	connection = stream.useChannel('hybridTimeline');
+	const endpoint = 'notes/hybrid-timeline';
+	const connection = stream.useChannel('hybridTimeline');
 	connection.on('note', prepend);
+
+ connections.push(connection);
+ return { endpoint, limit: 10, params: computed(() => ({ untilDate: untilDate.value })) };
 } else if (props.src === 'global') {
-	endpoint = 'notes/global-timeline';
-	connection = stream.useChannel('globalTimeline');
+	const endpoint = 'notes/global-timeline';
+	const connection = stream.useChannel('globalTimeline');
 	connection.on('note', prepend);
+
+ connections.push(connection);
+ return { endpoint, limit: 10, params: computed(() => ({ untilDate: untilDate.value })) };
 } else if (props.src === 'mentions') {
-	endpoint = 'notes/mentions';
-	connection = stream.useChannel('main');
+	const endpoint = 'notes/mentions';
+	const connection = stream.useChannel('main');
 	connection.on('mention', prepend);
+
+ connections.push(connection);
+ return { endpoint, limit: 10 };
 } else if (props.src === 'directs') {
-	endpoint = 'notes/mentions';
-	query = {
+	const endpoint = 'notes/mentions';
+	const query = {
 		visibility: 'specified',
 	};
-	const onNote = note => {
+	const onNote = (note: entities.Note) => {
 		if (note.visibility === 'specified') {
 			prepend(note);
 		}
 	};
-	connection = stream.useChannel('main');
+	const connection = stream.useChannel('main');
 	connection.on('mention', onNote);
+
+ connections.push(connection);
+ return { endpoint, limit: 10, params: computed(() => ({ ...query, untilDate: untilDate.value })) };
 } else if (props.src === 'list') {
-	endpoint = 'notes/user-list-timeline';
-	query = {
-		listId: props.list,
+	const endpoint = 'notes/user-list-timeline';
+	const query = {
+		listId: requireValue(props.list, 'List ID'),
 	};
-	connection = stream.useChannel('userList', {
-		listId: props.list,
+	const connection = stream.useChannel('userList', {
+		listId: requireValue(props.list, 'List ID'),
 	});
 	connection.on('note', prepend);
 	connection.on('userAdded', onUserAdded);
 	connection.on('userRemoved', onUserRemoved);
+
+ connections.push(connection);
+ return { endpoint, limit: 10, params: computed(() => ({ ...query, untilDate: untilDate.value })) };
 } else if (props.src === 'channel') {
-	endpoint = 'channels/timeline';
-	query = {
-		channelId: props.channel,
+	const endpoint = 'channels/timeline';
+	const query = {
+		channelId: requireValue(props.channel, 'Channel ID'),
 	};
-	connection = stream.useChannel('channel', {
-		channelId: props.channel,
+	const connection = stream.useChannel('channel', {
+		channelId: requireValue(props.channel, 'Channel ID'),
 	});
 	connection.on('note', prepend);
-}
 
-const pagination = {
-	endpoint: endpoint,
-	limit: 10,
-	params: query,
-};
+ connections.push(connection);
+ return { endpoint, limit: 10, params: computed(() => ({ ...query, untilDate: untilDate.value })) };
+}
+throw new TypeError("Unknown timeline source");
+})();
 
 onUnmounted(() => {
-	connection.dispose();
-	if (connection2) connection2.dispose();
+	for (const connection of connections) connection.dispose();
 });
 
-/* TODO
-const timetravel = (date?: Date) => {
-	this.date = date;
-	this.$refs.tl.reload();
-};
-*/
+function focus() { tlComponent.value?.focus(); }
+function timetravel(date?: Date) {
+ if (date && !Number.isFinite(date.getTime())) throw new TypeError('Invalid timeline date');
+ untilDate.value = date?.getTime();
+}
+defineExpose({ focus, timetravel });
 </script>

@@ -32,7 +32,7 @@
 			<MkButton v-if="showCancelButton || input || select" inline @click="cancel">{{ i18n.ts.cancel }}</MkButton>
 		</div>
 		<div v-if="actions" class="buttons">
-			<MkButton v-for="action in actions" :key="action.text" inline :primary="action.primary" @click="() => { action.callback(); close(); }">{{ action.text }}</MkButton>
+			<MkButton v-for="action in actions" :key="action.text" inline :primary="action.primary" @click="() => { action.callback(); modal?.close(); }">{{ action.text }}</MkButton>
 		</div>
 	</div>
 </MkModal>
@@ -42,42 +42,35 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import MkModal from '@/components/MkModal.vue';
 import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/form/input.vue';
+import MkInput from '@/components/form/input.base.vue';
 import MkSelect from '@/components/form/select.vue';
 import { i18n } from '@/i18n';
+import type { InputValue, TextInputType } from '@/types/input';
+import type { DialogResult } from '@/types/dialog';
 
 type Input = {
-	type: HTMLInputElement['type'];
+	type?: TextInputType | 'number';
 	placeholder?: string | null;
-	default: any | null;
+	default?: InputValue;
 };
 
 type Select = {
-	items: {
-		value: string;
-		text: string;
-	}[];
-	groupedItems: {
-		label: string;
-		items: {
-			value: string;
-			text: string;
-		}[];
-	}[];
-	default: string | null;
+ items?: { value: unknown; text: string }[];
+ groupedItems?: { label: string; items: { value: unknown; text: string }[] }[];
+ default?: unknown;
 };
 
 const props = withDefaults(defineProps<{
 	type?: 'success' | 'error' | 'warning' | 'info' | 'question' | 'waiting';
-	title: string;
-	text?: string;
+	title?: string | null;
+	text?: string | null;
 	input?: Input;
 	select?: Select;
 	icon?: string;
 	actions?: {
 		text: string;
 		primary?: boolean,
-		callback: (...args: any[]) => void;
+		callback: () => void;
 	}[];
 	showOkButton?: boolean;
 	showCancelButton?: boolean;
@@ -90,17 +83,17 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-	(ev: 'done', v: { canceled: boolean; result: any }): void;
+	(ev: 'done', v: DialogResult<unknown>): void;
 	(ev: 'closed'): void;
 }>();
 
 const modal = ref<InstanceType<typeof MkModal>>();
 
-const inputValue = ref(props.input?.default || null);
+const inputValue = ref<InputValue>(props.input?.default ?? null);
 const selectedValue = ref(props.select?.default || null);
 
-function done(canceled: boolean, result?) {
-	emit('done', { canceled, result });
+function done(canceled: boolean, result?: unknown) {
+	emit('done', canceled ? { canceled: true, result: undefined } : { canceled: false, result });
 	modal.value?.close();
 }
 

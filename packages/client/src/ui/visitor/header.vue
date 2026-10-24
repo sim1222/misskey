@@ -23,7 +23,7 @@
 		</div>
 	</div>
 	<div v-else-if="narrow === true" class="narrow">
-		<button class="menu _button" @click="$parent.showMenu = true">
+		<button class="menu _button" @click="$emit('menu')">
 			<i class="fas fa-bars icon"></i>
 		</button>
 		<div v-if="info" class="title">
@@ -40,20 +40,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, type PropType } from 'vue';
+import type { PageMetadata } from '@/scripts/page-metadata';
 import XSigninDialog from '@/components/MkSigninDialog.vue';
 import XSignupDialog from '@/components/MkSignupDialog.vue';
 import * as os from '@/os';
 import { search } from '@/scripts/search';
 
 export default defineComponent({
+    emits: ['menu'],
 	props: {
 		info: {
+			type: Object as PropType<PageMetadata | null>,
 			required: true
 		},
 	},
 
-	data() {
+	data(): { narrow: boolean | null; showMenu: boolean } {
 		return {
 			narrow: null,
 			showMenu: false,

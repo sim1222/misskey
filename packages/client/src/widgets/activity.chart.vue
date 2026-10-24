@@ -25,34 +25,25 @@
 </template>
 
 <script lang="ts" setup>
+import { listenDrag, type DragPoint } from '@/scripts/drag';
 import { ref } from 'vue'
 
 const props = defineProps<{
-	activity: any[]
+	activity: { total: number; notes: number; replies: number; renotes: number }[]
 }>();
 
-let viewBoxX: number = ref(147);
-let viewBoxY: number = ref(60);
-let zoom: number = ref(1);
-let pos: number = ref(0);
+let viewBoxX = ref<number>(147);
+let viewBoxY = ref<number>(60);
+let zoom = ref<number>(1);
+let pos = ref<number>(0);
 let pointsNote: any = ref(null);
 let pointsReply: any = ref(null);
 let pointsRenote: any = ref(null);
 let pointsTotal: any = ref(null);
 
-function dragListen(fn) {
-	window.addEventListener('mousemove', fn);
-	window.addEventListener('mouseleave', dragClear.bind(null, fn));
-	window.addEventListener('mouseup', dragClear.bind(null, fn));
-}
+function dragListen(fn: (event: DragPoint) => void) { listenDrag(window, fn); }
 
-function dragClear(fn) {
-	window.removeEventListener('mousemove', fn);
-	window.removeEventListener('mouseleave', dragClear);
-	window.removeEventListener('mouseup', dragClear);
-}
-
-function onMousedown(ev) {
+function onMousedown(ev: MouseEvent) {
 	const clickX = ev.clientX;
 	const clickY = ev.clientY;
 	const baseZoom = zoom.value;

@@ -53,12 +53,35 @@ export async function browserScenarios(f, o) {
 		await page.locator('[data-cy-open-post-form]').first().waitFor({ state: 'visible' });
 		o.record('browser signin', { status: 200, composerVisible: true });
 		await page.locator('[data-cy-open-post-form]').first().click();
+        // Exercise native input refs and draft restoration through the actual app.
+        const composer = page.locator('.gafaadew').last();
+        await composer.locator('[data-cy-post-form-text]').fill('Draft restoration 日本語 🌱');
+        await composer.locator('footer button').filter({ has: page.locator('.fa-eye-slash') }).click();
+        await composer.locator('input.cw').fill('Draft annotation');
+        await page.waitForFunction(() => Object.values(JSON.parse(localStorage.getItem('drafts') || '{}')).some(draft =>
+            draft.data?.text === 'Draft restoration 日本語 🌱' && draft.data?.cw === 'Draft annotation' && draft.data?.useCw === true));
+        await composer.locator('button.cancel').click();
+        await page.locator('[data-cy-post-form-text]').waitFor({ state: 'hidden' });
+        await page.locator('[data-cy-open-post-form]').first().click();
+        await composer.locator('input.cw').waitFor({ state: 'visible' });
+        assert.equal(await composer.locator('[data-cy-post-form-text]').inputValue(), 'Draft restoration 日本語 🌱');
+        assert.equal(await composer.locator('input.cw').inputValue(), 'Draft annotation');
+        await composer.locator('footer button').filter({ has: page.locator('.fa-eye-slash') }).click();
+        await composer.locator('input.cw').waitFor({ state: 'hidden' });
+        await composer.locator('footer button').filter({ has: page.locator('.fa-eye-slash') }).click();
+        assert.equal(await composer.locator('input.cw').inputValue(), 'Draft annotation');
+        await composer.locator('footer button').filter({ has: page.locator('.fa-eye-slash') }).click();
+        await composer.locator('footer button').filter({ has: page.locator('.fa-hashtag') }).click();
+        await composer.locator('input.hashtags').fill('draft-contract');
+        await composer.locator('footer button').filter({ has: page.locator('.fa-hashtag') }).click();
 		await page.locator('[data-cy-post-form-text]').last().fill('Browser regression 日本語 🌱');
 		const submitted = page.waitForResponse(response => response.url() === `${f.base}/api/notes/create`);
 		await page.locator('[data-cy-open-post-form-submit]').last().click();
 		const response = await submitted;
 		assert.equal(response.status(), 200);
 		const note = (await response.json()).createdNote;
+        assert.equal(note.cw, null, 'Hidden CW must not be submitted');
+        assert.equal(note.localOnly, false, 'Default federation preference must be preserved');
 		o.alias(note.id, 'browser-note');
 		await page.getByText('Browser regression 日本語', { exact: false }).first().waitFor({ state: 'visible' });
 		o.record('browser post appears in timeline', { text: note.text, visibility: note.visibility });

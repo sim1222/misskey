@@ -10,7 +10,7 @@
 	<header>
 		<button v-if="!fixed" class="cancel _button" @click="cancel"><i class="fas fa-times"></i></button>
 		<button v-click-anime v-tooltip="i18n.ts.switchAccount" class="account _button" @click="openAccountMenu">
-			<MkAvatar :user="postAccount ?? $i" class="avatar"/>
+			<MkAvatar :user="postAccount ?? account" class="avatar"/>
 		</button>
 		<div class="right">
 			<span class="text-count" :class="{ over: textLength > maxTextLength }">{{ maxTextLength - textLength }}</span>
@@ -45,7 +45,7 @@
 		<div ref="mask" class="mask"></div>
 		<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" class="hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
 		<XPostFormAttaches class="attaches" :files="files" @updated="updateFiles" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName"/>
-		<XPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
+		<XPollEditor v-if="poll" v-model="poll" />
 		<XNotePreview v-if="showPreview" class="preview" :text="text"/>
 		<footer>
 			<button v-tooltip="i18n.ts.attachFile" class="_button" @click="chooseFileFrom"><i class="fas fa-photo-video"></i></button>
@@ -65,9 +65,15 @@
 </template>
 
 <script lang="ts" setup>
+
+import type { NoteDraft, PollDraft, PostFormProps } from '@/types/post';
+import { requireAccount } from '@/account';
+const account = requireAccount();
+
+import type { entities } from '@/misskey';
 import { inject, watch, nextTick, onMounted, defineAsyncComponent, ref, computed } from 'vue';
 import * as mfm from 'mfm-js';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import insertTextAtCursor from 'insert-text-at-cursor';
 import { length } from 'stringz';
 import { toASCII } from 'punycode/';
@@ -85,33 +91,22 @@ import { Autocomplete } from '@/scripts/autocomplete';
 import * as os from '@/os';
 import { stream } from '@/stream';
 import { selectFiles } from '@/scripts/select-file';
-import {selectFileEnc, selectFilesEnc} from '@/scripts/select-file-enc';
+import { selectFileEnc } from '@/scripts/select-file-enc';
 import { defaultStore, notePostInterruptors, postFormActions } from '@/store';
 import MkInfo from '@/components/MkInfo.vue';
 import { i18n } from '@/i18n';
 import { instance } from '@/instance';
-import { $i, getAccounts, openAccountMenu as openAccountMenu_ } from '@/account';
+import { getAccounts, openAccountMenu as openAccountMenu_ } from '@/account';
+import { noteRequest, requestPoll } from '@/scripts/note-request';
+import type { ApiRequest } from '@/types/api';
+import { composeSettings } from '@/scripts/compose-settings';
 import { uploadFile } from '@/scripts/upload';
 
 const modal = inject('modal');
 
-const props = withDefaults(defineProps<{
-	reply?: misskey.entities.Note;
-	renote?: misskey.entities.Note;
-	channel?: any; // TODO
-	mention?: misskey.entities.User;
-	specified?: misskey.entities.User;
-	initialText?: string;
-	initialVisibility?: typeof misskey.noteVisibilities;
-	initialFiles?: misskey.entities.DriveFile[];
-	initialLocalOnly?: boolean;
-	initialVisibleUsers?: misskey.entities.User[];
-	initialNote?: misskey.entities.Note;
-	instant?: boolean;
-	fixed?: boolean;
-	autofocus?: boolean;
-}>(), {
+const props = withDefaults(defineProps<PostFormProps>(), {
 	initialVisibleUsers: () => [],
+ initialLocalOnly: undefined,
 	autofocus: true,
 });
 
@@ -129,26 +124,22 @@ const visibilityButton = ref<HTMLElement | null>(null);
 let posting = ref(false);
 let text = ref(props.initialText ?? '');
 let files = ref(props.initialFiles ?? []);
-let poll = ref<{
-	choices: string[];
-	multiple: boolean;
-	expiresAt: string | null;
-	expiredAfter: string | null;
-} | null>(null);
+let poll = ref<PollDraft | null>(null);
 let useCw = ref(false);
 let showPreview = ref(false);
 let cw = ref<string | null>(null);
-let localOnly = ref<boolean>(props.initialLocalOnly ?? defaultStore.state.rememberNoteVisibility ? defaultStore.state.localOnly : defaultStore.state.defaultNoteLocalOnly);
-let visibility = ref(props.initialVisibility ?? (defaultStore.state.rememberNoteVisibility ? defaultStore.state.visibility : defaultStore.state.defaultNoteVisibility) as typeof misskey.noteVisibilities[number]);
-let visibleUsers = ref([]);
+const initialSettings = composeSettings(props, defaultStore.state);
+let localOnly = ref(initialSettings.localOnly);
+let visibility = ref(initialSettings.visibility);
+let visibleUsers = ref<entities.UserLite[]>([]);
 if (props.initialVisibleUsers) {
 	props.initialVisibleUsers.forEach(pushVisibleUser);
 }
-let autocomplete = ref(null);
+
 let draghover = ref(false);
-let quoteId = ref(null);
+let quoteId = ref<string | null>(null);
 let hasNotSpecifiedMentions = ref(false);
-let recentHashtags = ref(JSON.parse(localStorage.getItem('hashtags') || '[]'));
+let recentHashtags = ref<string[]>(JSON.parse(localStorage.getItem('hashtags') || '[]'));
 let imeText = ref('');
 
 const typing = throttle(3000, () => {
@@ -204,7 +195,7 @@ const textLength = computed((): number => {
 });
 
 const maxTextLength = computed((): number => {
-	return instance ? instance.maxNoteTextLength : 1000;
+	return instance.maxNoteTextLength ?? 1000;
 });
 
 const canPost = computed((): boolean => {
@@ -215,7 +206,7 @@ const canPost = computed((): boolean => {
 });
 
 const withHashtags = computed(defaultStore.makeGetterSetter('postFormWithHashtags'));
-const hashtags = computed(defaultStore.makeGetterSetter('postFormHashtags'));
+const hashtags = computed<string>(defaultStore.makeGetterSetter('postFormHashtags'));
 
 watch((text), () => {
 	checkMissingMention();
@@ -232,7 +223,7 @@ if (props.mention) {
 	text.value += ' ';
 }
 
-if (props.reply && (props.reply.user.username !== $i.username || (props.reply.user.host != null && props.reply.user.host !== host))) {
+if (props.reply && (props.reply.user.username !== account.username || (props.reply.user.host != null && props.reply.user.host !== host))) {
 	text.value = `@${props.reply.user.username}${props.reply.user.host != null ? '@' + toASCII(props.reply.user.host) : ''} `;
 }
 
@@ -248,7 +239,7 @@ if (props.reply && props.reply.text != null) {
 				`@${x.username}@${toASCII(otherHost)}`;
 
 		// 自分は除外
-		if ($i.username === x.username && (x.host == null || x.host === host)) continue;
+		if (account.username === x.username && (x.host == null || x.host === host)) continue;
 
 		// 重複は除外
 		if (text.value.includes(`${mention} `)) continue;
@@ -266,13 +257,14 @@ if (props.channel) {
 if (props.reply && ['home', 'followers', 'specified'].includes(props.reply.visibility)) {
 	visibility.value = props.reply.visibility;
 	if (props.reply.visibility === 'specified') {
+ const reply = props.reply;
 		os.api('users/show', {
-			userIds: props.reply.visibleUserIds.filter(uid => uid !== $i.id && uid !== props.reply.userId),
+			userIds: (reply.visibleUserIds ?? []).filter(uid => uid !== account.id && uid !== reply.userId),
 		}).then(users => {
 			users.forEach(pushVisibleUser);
 		});
 
-		if (props.reply.userId !== $i.id) {
+		if (props.reply.userId !== account.id) {
 			os.api('users/show', { userId: props.reply.userId }).then(user => {
 				pushVisibleUser(user);
 			});
@@ -340,9 +332,7 @@ function togglePoll() {
 	}
 }
 
-function addTag(tag: string) {
-	insertTextAtCursor(textareaEl.value, ` #${tag} `);
-}
+
 
 function focus() {
 	if (textareaEl.value) {
@@ -351,7 +341,7 @@ function focus() {
 	}
 }
 
-function chooseFileFrom(ev) {
+function chooseFileFrom(ev: MouseEvent) {
 	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(files_ => {
 		for (const file of files_) {
 			files.value.push(file);
@@ -359,25 +349,25 @@ function chooseFileFrom(ev) {
 	});
 }
 
-function chooseFileFromEnc(ev) {
+function chooseFileFromEnc(ev: MouseEvent) {
 	selectFileEnc(ev.currentTarget ?? ev.target, i18n.ts.attachVideoFile).then(files_ => {
 		files.value.push(files_);
 	});
 }
 
-function detachFile(id) {
+function detachFile(id: string) {
 	files.value = files.value.filter(x => x.id !== id);
 }
 
-function updateFiles(_files) {
+function updateFiles(_files: entities.DriveFile[]) {
 	files.value = _files;
 }
 
-function updateFileSensitive(file, sensitive) {
+function updateFileSensitive(file: entities.DriveFile, sensitive: boolean) {
 	files.value[files.value.findIndex(x => x.id === file.id)].isSensitive = sensitive;
 }
 
-function updateFileName(file, name) {
+function updateFileName(file: entities.DriveFile, name: string) {
 	files.value[files.value.findIndex(x => x.id === file.id)].name = name;
 }
 
@@ -398,13 +388,13 @@ function setVisibility() {
 		currentLocalOnly: localOnly.value,
 		src: visibilityButton.value,
 	}, {
-		changeVisibility: v => {
+		changeVisibility: (v: misskey.NoteVisibility) => {
 			visibility.value = v;
 			if (defaultStore.state.rememberNoteVisibility) {
 				defaultStore.set('visibility', visibility.value);
 			}
 		},
-		changeLocalOnly: v => {
+		changeLocalOnly: (v: boolean) => {
 			localOnly.value = v;
 			if (defaultStore.state.rememberNoteVisibility) {
 				defaultStore.set('localOnly', localOnly.value);
@@ -413,7 +403,7 @@ function setVisibility() {
 	}, 'closed');
 }
 
-function pushVisibleUser(user) {
+function pushVisibleUser(user: entities.UserLite) {
 	if (!visibleUsers.value.some(u => u.username === user.username && u.host === user.host)) {
 		visibleUsers.value.push(user);
 	}
@@ -425,7 +415,7 @@ function addVisibleUser() {
 	});
 }
 
-function removeVisibleUser(user) {
+function removeVisibleUser(user: entities.UserLite) {
 	visibleUsers.value = erase(user, visibleUsers.value);
 }
 
@@ -452,9 +442,13 @@ function onCompositionEnd(ev: CompositionEvent) {
 }
 
 async function onPaste(ev: ClipboardEvent) {
-	for (const { item, i } of Array.from(ev.clipboardData.items).map((item, i) => ({ item, i }))) {
+ const evclipboardData = ev.clipboardData;
+ if (evclipboardData == null) return;
+
+	for (const { item, i } of Array.from(evclipboardData.items).map((item, i) => ({ item, i }))) {
 		if (item.kind === 'file') {
 			const file = item.getAsFile();
+ if (!file) continue;
 			const lio = file.name.lastIndexOf('.');
 			const ext = lio >= 0 ? file.name.slice(lio) : '';
 			const formatted = `${formatTimeString(new Date(file.lastModified), defaultStore.state.pastedFileName).replace(/{{number}}/g, `${i + 1}`)}${ext}`;
@@ -462,7 +456,7 @@ async function onPaste(ev: ClipboardEvent) {
 		}
 	}
 
-	const paste = ev.clipboardData.getData('text');
+	const paste = evclipboardData.getData('text');
 
 	if (!props.renote && !quoteId.value && paste.startsWith(url + '/notes/')) {
 		ev.preventDefault();
@@ -472,61 +466,68 @@ async function onPaste(ev: ClipboardEvent) {
 			text: i18n.ts.quoteQuestion,
 		}).then(({ canceled }) => {
 			if (canceled) {
+				if (textareaEl.value == null) return;
 				insertTextAtCursor(textareaEl.value, paste);
 				return;
 			}
 
-			quoteId.value = paste.substr(url.length).match(/^\/notes\/(.+?)\/?$/)[1];
+			quoteId.value = paste.substr(url.length).match(/^\/notes\/(.+?)\/?$/)?.[1] ?? null;
 		});
 	}
 }
 
-function onDragover(ev) {
-	if (!ev.dataTransfer.items[0]) return;
-	const isFile = ev.dataTransfer.items[0].kind === 'file';
-	const isDriveFile = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
+function onDragover(ev: DragEvent) {
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
+	if (!evdataTransfer.items[0]) return;
+	const isFile = evdataTransfer.items[0].kind === 'file';
+	const isDriveFile = evdataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
 	if (isFile || isDriveFile) {
 		ev.preventDefault();
 		draghover.value = true;
-		switch (ev.dataTransfer.effectAllowed) {
+		switch (evdataTransfer.effectAllowed) {
 			case 'all':
 			case 'uninitialized':
 			case 'copy':
 			case 'copyLink':
 			case 'copyMove':
-				ev.dataTransfer.dropEffect = 'copy';
+				evdataTransfer.dropEffect = 'copy';
 				break;
 			case 'linkMove':
 			case 'move':
-				ev.dataTransfer.dropEffect = 'move';
+				evdataTransfer.dropEffect = 'move';
 				break;
 			default:
-				ev.dataTransfer.dropEffect = 'none';
+				evdataTransfer.dropEffect = 'none';
 				break;
 		}
 	}
 }
 
-function onDragenter(ev) {
+function onDragenter(ev: DragEvent) {
 	draghover.value = true;
 }
 
-function onDragleave(ev) {
+function onDragleave(ev: DragEvent) {
 	draghover.value = false;
 }
 
-function onDrop(ev): void {
+function onDrop(ev: DragEvent): void {
+ const evdataTransfer = ev.dataTransfer;
+ if (evdataTransfer == null) return;
+
 	draghover.value = false;
 
 	// ファイルだったら
-	if (ev.dataTransfer.files.length > 0) {
+	if (evdataTransfer.files.length > 0) {
 		ev.preventDefault();
-		for (const x of Array.from(ev.dataTransfer.files)) upload(x);
+		for (const x of Array.from(evdataTransfer.files)) upload(x);
 		return;
 	}
 
 	//#region ドライブのファイル
-	const driveFile = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
+	const driveFile = evdataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
 	if (driveFile != null && driveFile !== '') {
 		const file = JSON.parse(driveFile);
 		files.value.push(file);
@@ -536,10 +537,10 @@ function onDrop(ev): void {
 }
 
 function saveDraft() {
-	const draftData = JSON.parse(localStorage.getItem('drafts') || '{}');
+	const draftData: Record<string, NoteDraft> = JSON.parse(localStorage.getItem('drafts') || '{}');
 
 	draftData[draftKey.value] = {
-		updatedAt: new Date(),
+		updatedAt: new Date().toISOString(),
 		data: {
 			text: text.value,
 			useCw: useCw.value,
@@ -555,7 +556,7 @@ function saveDraft() {
 }
 
 function deleteDraft() {
-	const draftData = JSON.parse(localStorage.getItem('drafts') || '{}');
+	const draftData: Record<string, NoteDraft> = JSON.parse(localStorage.getItem('drafts') || '{}');
 
 	delete draftData[draftKey.value];
 
@@ -563,13 +564,13 @@ function deleteDraft() {
 }
 
 async function post() {
-	let postData = {
+	const draftData = {
 		text: text.value === '' ? undefined : text.value,
 		fileIds: files.value.length > 0 ? files.value.map(f => f.id) : undefined,
 		replyId: props.reply ? props.reply.id : undefined,
 		renoteId: props.renote ? props.renote.id : quoteId.value ? quoteId.value : undefined,
 		channelId: props.channel ? props.channel.id : undefined,
-		poll: poll.value,
+		poll: requestPoll(poll.value),
 		cw: useCw.value ? cw.value || '' : undefined,
 		localOnly: localOnly.value,
 		visibility: visibility.value,
@@ -577,10 +578,13 @@ async function post() {
 	};
 
 	if (withHashtags.value && hashtags.value && hashtags.value.trim() !== '') {
-		const hashtags_ = hashtags.value.trim().split(' ').map(x => x.startsWith('#') ? x : '#' + x).join(' ');
-		postData.text = postData.text ? `${postData.text} ${hashtags_}` : hashtags_;
+		const hashtags_ = hashtags.value.trim().split(' ').map((x) => x.startsWith('#') ? x : '#' + x).join(' ');
+		draftData.text = draftData.text ? `${draftData.text} ${hashtags_}` : hashtags_;
 	}
 
+ const initialRequest = noteRequest(draftData);
+ if (!initialRequest) return;
+ let postData: ApiRequest<'notes/create'> = initialRequest;
 	// plugin
 	if (notePostInterruptors.length > 0) {
 		for (const interruptor of notePostInterruptors) {
@@ -588,11 +592,12 @@ async function post() {
 		}
 	}
 
-	let token = undefined;
+	let token: string | undefined;
 
-	if (postAccount.value) {
+	const chosenAccount = postAccount.value;
+ if (chosenAccount) {
 		const storedAccounts = await getAccounts();
-		token = storedAccounts.find(x => x.id === postAccount.value.id)?.token;
+		token = storedAccounts.find(x => x.id === chosenAccount.id)?.token;
 	}
 
 	posting.value = true;
@@ -624,6 +629,7 @@ function cancel() {
 
 function insertMention() {
 	os.selectUser().then(user => {
+		if (textareaEl.value == null) return;
 		insertTextAtCursor(textareaEl.value, '@' + Acct.toString(user) + ' ');
 	});
 }
@@ -632,13 +638,13 @@ async function insertEmoji(ev: MouseEvent) {
 	os.openEmojiPicker(ev.currentTarget ?? ev.target, {}, textareaEl.value);
 }
 
-function showActions(ev) {
+function showActions(ev: MouseEvent) {
 	os.popupMenu(postFormActions.map(action => ({
 		text: action.title,
 		action: () => {
 			action.handler({
 				text: text.value,
-			}, (key, value) => {
+			}, (key: string, value: string) => {
 				if (key === 'text') { text.value = value; }
 			});
 		},
@@ -651,16 +657,25 @@ function openAccountMenu(ev: MouseEvent) {
 	openAccountMenu_({
 		withExtraOperation: false,
 		includeCurrentAccount: true,
-		active: postAccount.value != null ? postAccount.value.id : $i.id,
-		onChoose: (account) => {
-			if (account.id === $i.id) {
+		active: postAccount.value != null ? postAccount.value.id : account.id,
+		onChoose: (chosenAccount) => {
+			if (chosenAccount.id === account.id) {
 				postAccount.value = null;
 			} else {
-				postAccount.value = account;
+				postAccount.value = chosenAccount;
 			}
 		},
 	}, ev);
 }
+
+watch([textareaEl, cwInputEl, hashtagsInputEl], ([textarea, cwInput, hashtagInput], _previous, onCleanup) => {
+ const instances: Autocomplete[] = [];
+ if (textarea) instances.push(new Autocomplete(textarea, text));
+ const cwElement = cwInput;
+ if (cwElement) instances.push(new Autocomplete(cwElement, cw));
+ if (hashtagInput) instances.push(new Autocomplete(hashtagInput, hashtags));
+ onCleanup(() => instances.forEach(instance => instance.detach()));
+}, { flush: 'post' });
 
 onMounted(() => {
 	if (props.autofocus) {
@@ -671,15 +686,12 @@ onMounted(() => {
 		});
 	}
 
-	// TODO: detach when unmount
-	new Autocomplete(textareaEl.value, (text));
-	new Autocomplete(cwInputEl.value, (cw));
-	new Autocomplete(hashtagsInputEl.value, (hashtags));
 
 	nextTick(() => {
 		// 書きかけの投稿を復元
 		if (!props.instant && !props.mention && !props.specified) {
-			const draft = JSON.parse(localStorage.getItem('drafts') || '{}')[draftKey.value];
+			const drafts: Record<string, NoteDraft> = JSON.parse(localStorage.getItem('drafts') || '{}');
+ const draft = drafts[draftKey.value];
 			if (draft) {
 				text.value = draft.data.text;
 				useCw.value = draft.data.useCw;
@@ -698,18 +710,18 @@ onMounted(() => {
 			const init = props.initialNote;
 			text.value = init.text ? init.text : '';
 			files.value = init.files;
-			cw.value = init.cw;
+			cw.value = init.cw ?? null;
 			useCw.value = init.cw != null;
 			if (init.poll) {
 				poll.value = {
 					choices: init.poll.choices.map(x => x.text),
 					multiple: init.poll.multiple,
 					expiresAt: init.poll.expiresAt,
-					expiredAfter: init.poll.expiredAfter,
+					expiredAfter: undefined,
 				};
 			}
 			visibility.value = init.visibility;
-			localOnly.value = init.localOnly;
+			localOnly.value = init.localOnly ?? false;
 			quoteId.value = init.renote ? init.renote.id : null;
 		}
 

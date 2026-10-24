@@ -26,13 +26,13 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import { onMounted, ref } from 'vue';
+import * as misskey from '@/misskey';
 import Cropper from 'cropperjs';
 import tinycolor from 'tinycolor2';
 import XModalWindow from '@/components/MkModalWindow.vue';
 import * as os from '@/os';
-import { $i } from '@/account';
+import { requireAccount } from '@/account';
 import { defaultStore } from '@/store';
 import { apiUrl, url } from '@/config';
 import { query } from '@/scripts/url';
@@ -58,69 +58,63 @@ let cropper: Cropper | null = null;
 let loading = ref(true);
 
 const ok = async () => {
-	const promise = new Promise<misskey.entities.DriveFile>(async (res) => {
-		const croppedCanvas = await cropper?.getCropperSelection()?.$toCanvas();
-		croppedCanvas.toBlob(blob => {
-			const formData = new FormData();
-			formData.append('file', blob);
-			formData.append('i', $i.token);
-			if (defaultStore.state.uploadFolder) {
-				formData.append('folderId', defaultStore.state.uploadFolder);
-			}
-
-			fetch(apiUrl + '/drive/files/create', {
-				method: 'POST',
-				body: formData,
-			})
-			.then(response => response.json())
-			.then(f => {
-				res(f);
-			});
-		});
-	});
+ const promise = (async (): Promise<misskey.entities.DriveFile> => {
+  const canvas = await cropper?.getCropperSelection()?.$toCanvas();
+  if (!canvas) throw new Error('Crop selection is unavailable');
+  const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error('Could not encode cropped image'))));
+  const formData = new FormData();
+  formData.append('file', blob);
+  formData.append('i', requireAccount().token);
+  if (defaultStore.state.uploadFolder) formData.append('folderId', defaultStore.state.uploadFolder);
+  const response = await fetch(apiUrl + '/drive/files/create', { method: 'POST', body: formData });
+  if (!response.ok) throw new Error(`Crop upload failed (${response.status})`);
+  return response.json();
+ })();
 
 	os.promiseDialog(promise);
 
 	const f = await promise;
 
 	emit('ok', f);
-	dialogEl.value.close();
+	dialogEl.value?.close();
 };
 
 const cancel = () => {
 	emit('cancel');
-	dialogEl.value.close();
+	dialogEl.value?.close();
 };
 
 const onImageLoad = () => {
 	loading.value = false;
 
 	if (cropper) {
-		cropper.getCropperImage()!.$center('contain');
-		cropper.getCropperSelection()!.$center();
+		cropper?.getCropperImage()?.$center('contain');
+		cropper.getCropperSelection()?.$center();
 	}
 };
 
 onMounted(() => {
+	if (imgEl.value == null) return;
 	cropper = new Cropper(imgEl.value, {
 	});
 
 	const computedStyle = getComputedStyle(document.documentElement);
 
-	const selection = cropper.getCropperSelection()!;
+	const selection = cropper.getCropperSelection();
+ if (!selection) return;
 	selection.themeColor = tinycolor(computedStyle.getPropertyValue('--accent')).toHexString();
 	selection.aspectRatio = props.aspectRatio;
 	selection.initialAspectRatio = props.aspectRatio;
 	selection.outlined = true;
 
 	window.setTimeout(() => {
-		cropper.getCropperImage()!.$center('contain');
+		cropper?.getCropperImage()?.$center('contain');
 		selection.$center();
 	}, 100);
 
 	// モーダルオープンアニメーションが終わったあとで再度調整
 	window.setTimeout(() => {
-		cropper.getCropperImage()!.$center('contain');
+		cropper?.getCropperImage()?.$center('contain');
 		selection.$center();
 	}, 500);
 });

@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, ref, computed } from 'vue';
+import { defineAsyncComponent, nextTick, ref } from 'vue';
 import { AiScript, parse } from '@syuilo/aiscript';
 import { serialize } from '@syuilo/aiscript/built/serializer';
 import { v4 as uuid } from 'uuid';
@@ -21,25 +21,21 @@ import FormTextarea from '@/components/form/textarea.vue';
 import FormButton from '@/components/MkButton.vue';
 import FormInfo from '@/components/MkInfo.vue';
 import * as os from '@/os';
-import { ColdDeviceStorage } from '@/store';
+import { isRecord } from '@/scripts/form';
+import { isPlugin } from '@/scripts/plugin-contract';
+import { ColdDeviceStorage, type Plugin } from '@/store';
 import { unisonReload } from '@/scripts/unison-reload';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
-const code = ref(null);
+const code = ref<string | null>(null);
 
-function installPlugin({ id, meta, ast, token }) {
-	ColdDeviceStorage.set('plugins', ColdDeviceStorage.get('plugins').concat({
-		...meta,
-		id,
-		active: true,
-		configData: {},
-		token: token,
-		ast: ast,
-	}));
+function installPlugin(plugin: Plugin) {
+ ColdDeviceStorage.set('plugins', [...ColdDeviceStorage.get('plugins'), plugin]);
 }
 
 async function install() {
+    if (code.value == null) return;
 	let ast;
 	try {
 		ast = parse(code.value);
@@ -60,8 +56,8 @@ async function install() {
 		return;
 	}
 
-	const metadata = meta.get(null);
-	if (metadata == null) {
+	const metadata: unknown = meta.get(null);
+	if (!isRecord(metadata)) {
 		os.alert({
 			type: 'error',
 			text: 'No metadata found :(',
@@ -69,16 +65,14 @@ async function install() {
 		return;
 	}
 
-	const { name, version, author, description, permissions, config } = metadata;
-	if (name == null || version == null || author == null) {
-		os.alert({
-			type: 'error',
-			text: 'Required property not found :(',
-		});
-		return;
-	}
+	const candidate = { ...metadata, id: uuid(), active: true, configData: {}, token: null, ast: serialize(ast) };
+ if (!isPlugin(candidate)) {
+  os.alert({ type: 'error', text: 'Invalid plugin metadata' });
+  return;
+ }
+ const { name, permissions } = candidate;
 
-	const token = permissions == null || permissions.length === 0 ? null : await new Promise((res, rej) => {
+	const token = permissions == null || permissions.length === 0 ? null : await new Promise<string>((res, rej) => {
 		os.popup(defineAsyncComponent(() => import('@/components/MkTokenGenerateWindow.vue')), {
 			title: i18n.ts.tokenRequested,
 			information: i18n.ts.pluginTokenRequestedDescription,
@@ -97,14 +91,7 @@ async function install() {
 		}, 'closed');
 	});
 
-	installPlugin({
-		id: uuid(),
-		meta: {
-			name, version, author, description, permissions, config,
-		},
-		token,
-		ast: serialize(ast),
-	});
+	installPlugin({ ...candidate, token });
 
 	os.success();
 
@@ -113,9 +100,9 @@ async function install() {
 	});
 }
 
-const headerActions = computed(() => []);
 
-const headerTabs = computed(() => []);
+
+
 
 definePageMetadata({
 	title: i18n.ts._plugin.install,

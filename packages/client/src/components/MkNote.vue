@@ -6,7 +6,7 @@
 	v-hotkey="keymap"
 	v-size="{ max: [500, 450, 350, 300] }"
 	class="tkcbzcuz"
-	:tabindex="!isDeleted ? '-1' : null"
+	:tabindex="!isDeleted ? '-1' : undefined"
 	:class="{ renote: isRenote }"
 >
 	<MkNoteSub v-if="appearNote.reply" :note="appearNote.reply" class="reply-to"/>
@@ -34,7 +34,7 @@
 	<article class="article" @contextmenu.stop="onContextmenu">
 		<MkAvatar class="avatar" :user="appearNote.user"/>
 		<div class="main">
-			<XNoteHeader class="header" :note="appearNote" :mini="true"/>
+			<XNoteHeader class="header" :note="appearNote" />
 			<MkInstanceTicker v-if="showTicker" class="ticker" :instance="appearNote.user.instance"/>
 			<div class="body">
 				<p v-if="appearNote.cw != null" class="cw">
@@ -49,7 +49,7 @@
 						<a v-if="appearNote.renote != null" class="rp">RN:</a>
 						<div v-if="translating || translation" class="translation">
 							<MkLoading v-if="translating" mini/>
-							<div v-else class="translated">
+							<div v-else-if="translation" class="translated">
 								<b>{{ $t('translatedFrom', { x: translation.sourceLang }) }}: </b>
 								<Mfm :text="translation.text" :author="appearNote.user" :i="$i" :custom-emojis="appearNote.emojis"/>
 							</div>
@@ -103,9 +103,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, onMounted, onUnmounted, reactive, ref, Ref } from 'vue';
+import { computed, inject, onMounted, ref, Ref } from 'vue';
 import * as mfm from 'mfm-js';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import MkNoteSub from '@/components/MkNoteSub.vue';
 import XNoteHeader from '@/components/MkNoteHeader.vue';
 import XNoteSimple from '@/components/MkNoteSimple.vue';
@@ -135,9 +135,9 @@ const props = defineProps<{
 	pinned?: boolean;
 }>();
 
-const inChannel = inject('inChannel', null);
+const inChannel = inject<Readonly<import('vue').Ref<boolean>> | null>('inChannel', null);
 
-let note = ref(JSON.parse(JSON.stringify(props.note)));
+let note = ref<misskey.entities.Note>(JSON.parse(JSON.stringify(props.note)));
 
 // plugin
 if (noteViewInterruptors.length > 0) {
@@ -162,7 +162,7 @@ const menuButton = ref<HTMLElement>();
 const renoteButton = ref<InstanceType<typeof XRenoteButton>>();
 const renoteTime = ref<HTMLElement>();
 const reactButton = ref<HTMLElement>();
-let appearNote = computed(() => isRenote ? note.value.renote as misskey.entities.Note : note.value);
+let appearNote = computed(() => isRenote && note.value.renote ? note.value.renote : note.value);
 const isMyRenote = $i && ($i.id === note.value.userId);
 const showContent = ref(false);
 const isLong = (appearNote.value.cw == null && appearNote.value.text != null && (
@@ -172,7 +172,7 @@ const isLong = (appearNote.value.cw == null && appearNote.value.text != null && 
 const collapsed = ref(appearNote.value.cw == null && isLong);
 const isDeleted = ref(false);
 const muted = ref(checkWordMute(appearNote.value, $i, defaultStore.state.mutedWords));
-const translation = ref(null);
+const translation = ref<import('@/types/api').ApiResponse<'notes/translate'> | null>(null);
 const translating = ref(false);
 const urls = appearNote.value.text ? extractUrlFromMfm(mfm.parse(appearNote.value.text)) : null;
 const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultStore.state.instanceTicker === 'remote' && appearNote.value.user.instance);
@@ -180,7 +180,7 @@ const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultS
 const keymap = {
 	'r': () => reply(true),
 	'e|a|plus': () => react(true),
-	'q': () => renoteButton.value.renote(true),
+	'q': () => renoteButton.value?.renote(true),
 	'up|k|shift+tab': focusBefore,
 	'down|j|tab': focusAfter,
 	'esc': blur,
@@ -207,6 +207,7 @@ function reply(viaKeyboard = false): void {
 function react(viaKeyboard = false): void {
 	pleaseLogin();
 	blur();
+	if (reactButton.value == null) return;
 	reactionPicker.show(reactButton.value, results => {
 		os.api('notes/reactions/create', {
 			noteId: appearNote.value.id,
@@ -215,7 +216,6 @@ function react(viaKeyboard = false): void {
 		if (results.withRenote) {
 			os.api('notes/create', {
 				renoteId: appearNote.value.id,
-				isRenote: true,
 			});
 		}
 	}, () => {
@@ -223,7 +223,7 @@ function react(viaKeyboard = false): void {
 	});
 }
 
-function undoReact(note): void {
+function undoReact(note: misskey.entities.Note): void {
 	const oldReaction = note.myReaction;
 	if (!oldReaction) return;
 	os.api('notes/reactions/delete', {
@@ -234,14 +234,16 @@ function undoReact(note): void {
 const currentClipPage = inject<Ref<misskey.entities.Clip> | null>('currentClipPage', null);
 
 function onContextmenu(ev: MouseEvent): void {
-	const isLink = (el: HTMLElement) => {
+	const isLink = (el: EventTarget | null): boolean => {
+ if (!(el instanceof HTMLElement)) return false;
 		if (el.tagName === 'A') return true;
 		if (el.parentElement) {
 			return isLink(el.parentElement);
 		}
+ return false;
 	};
 	if (isLink(ev.target)) return;
-	if (window.getSelection().toString() !== '') return;
+	if (window.getSelection()?.toString() !== '') return;
 
 	if (defaultStore.state.useReactionPickerForContextMenu) {
 		ev.preventDefault();
@@ -275,18 +277,22 @@ function showRenoteMenu(viaKeyboard = false): void {
 }
 
 function focus() {
+	if (el.value == null) return;
 	el.value.focus();
 }
 
 function blur() {
+	if (el.value == null) return;
 	el.value.blur();
 }
 
 function focusBefore() {
+	if (el.value == null) return;
 	focusPrev(el.value);
 }
 
 function focusAfter() {
+	if (el.value == null) return;
 	focusNext(el.value);
 }
 
@@ -653,6 +659,6 @@ function readPromo() {
 }
 
 .selecting {
-	
+
 }
 </style>

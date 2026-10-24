@@ -1,3 +1,4 @@
+import { loadAdminEmoji } from '@/scripts/load-admin-emoji';
 import { defineAsyncComponent } from 'vue';
 import { $i } from '@/account';
 import { i18n } from '@/i18n';
@@ -13,41 +14,14 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 	const isLocal = (host === null || host === '.');
 	const isCustom = reaction.startsWith(':');
 
-	const getEmojiObject = (emojiId): Promise<Record<string, any> | null> => new Promise<Record<string, any> | null>(async resolve => {
-		if (!($i?.isAdmin || $i?.isModerator)) {
-			resolve(null);
-			return;
-		}
-
-		const sinceId = await os.api('admin/emoji/list', {
-			limit: 1,
-			untilId: emojiId.id,
-		});
-
-		if (!sinceId || !sinceId[0] || !sinceId[0].id) {
-			resolve(null);
-			return;
-		}
-
-		const id = await os.api('admin/emoji/list', {
-			limit: 1,
-			sinceId: sinceId[0].id,
-		});
-
-		if (!id || !id[0]) {
-			resolve(null);
-			return;
-		}
-
-		resolve(id[0]);
-	});
+	const getEmojiObject = loadAdminEmoji;
 
 	const getEmojiId = async (): Promise<string | null> => {
 		if (isLocal) return null;
 		if (!host || !name) return null;
 		if (!($i?.isAdmin || $i?.isModerator)) return null;
 
-		const resList: Record<string, any>[] = await os.api('admin/emoji/list-remote', {
+		const resList = await os.api('admin/emoji/list-remote', {
 			host,
 			query: name,
 			limit: 100,
@@ -55,19 +29,18 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 
 		const emojiId = await resList.find(emoji => emoji.name === name && emoji.host === host)?.id;
 
-		return emojiId;
+		return emojiId ?? null;
 	};
 
 	const importEmoji = async (skip: boolean): Promise<void> => {
 		const emojiId = await getEmojiId();
-		if (!await emojiId) return;
+		if (!emojiId) return;
 		os.api('admin/emoji/copy', {
 			emojiId: emojiId,
 		}).then(async emoji => {
 			if (skip) return;
-			os.popup(defineAsyncComponent(() => import('@/pages/admin/emoji-edit-dialog.vue')), {
-				emoji: await getEmojiObject(emoji),
-			});
+			const detail = await getEmojiObject(emoji);
+            if (detail) os.popup(defineAsyncComponent(() => import('@/pages/admin/emoji-edit-dialog.vue')), { emoji: detail });
 		});
 	};
 
@@ -148,4 +121,3 @@ export async function openReactionImportMenu(ev: MouseEvent, reaction: string, n
 
 	os.contextMenu(menuItems, ev);
 }
-

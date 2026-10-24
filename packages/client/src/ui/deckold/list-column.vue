@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+
 import XColumn from './column.vue';
 import XTimeline from '@/components/MkTimeline.vue';
 import * as os from '@/os';
@@ -26,7 +26,6 @@ const emit = defineEmits<{
 	(ev: 'parent-focus', direction: 'up' | 'down' | 'left' | 'right'): void;
 }>();
 
-let timeline = ref<InstanceType<typeof XTimeline>>();
 
 if (props.column.listId == null) {
 	setList();
@@ -37,13 +36,13 @@ async function setList() {
 	const { canceled, result: list } = await os.select({
 		title: i18n.ts.selectList,
 		items: lists.map(x => ({
-			value: x, text: x.name
+			value: x.id, text: x.name
 		})),
 		default: props.column.listId
 	});
-	if (canceled) return;
+	if (canceled || list == null) return;
 	updateColumn(props.column.id, {
-		listId: list.id
+		listId: list
 	});
 }
 

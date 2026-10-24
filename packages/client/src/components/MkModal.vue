@@ -1,6 +1,6 @@
 <template>
 <transition :name="$store.state.animation ? (type === 'drawer') ? 'modal-drawer' : (type === 'popup') ? 'modal-popup' : 'modal' : ''" :duration="$store.state.animation ? 200 : 0" appear @after-leave="emit('closed')" @enter="emit('opening')" @after-enter="onOpened">
-	<div v-show="manualShowing != null ? manualShowing : showing" v-hotkey.global="keymap" class="qzhlnise" :class="{ drawer: type === 'drawer', dialog: type === 'dialog' || type === 'dialog:top', popup: type === 'popup' }" :style="{ zIndex, pointerEvents: (manualShowing != null ? manualShowing : showing) ? 'auto' : 'none', '--transformOrigin': transformOrigin }">
+	<div v-show="manualShowing != null ? manualShowing : showing" v-hotkey.global="keymap" class="qzhlnise" :class="{ drawer: type === 'drawer', dialog: type === 'dialog' || type === 'dialog:top', popup: type === 'popup' }" :style="{ zIndex, pointerEvents: (manualShowing != undefined ? manualShowing : showing) ? 'auto' : 'none', '--transformOrigin': transformOrigin }">
 		<div class="bg _modalBg" :class="{ transparent: transparentBg && (type === 'popup') }" :style="{ zIndex }" @click="onBgClick" @contextmenu.prevent.stop="() => {}"></div>
 		<div ref="content" class="content" :class="{ fixed, top: type === 'dialog:top' }" :style="{ zIndex }" @click.self="onBgClick">
 			<slot :max-height="maxHeight" :type="type"></slot>
@@ -10,6 +10,7 @@
 </template>
 
 <script lang="ts" setup>
+import { modalAnchorPosition, type ModalAnchor } from '@/scripts/modal-anchor';
 import { nextTick, onMounted, watch, provide, ref, computed } from 'vue';
 import * as os from '@/os';
 import { isTouchUsing } from '@/scripts/touch';
@@ -30,8 +31,8 @@ type ModalTypes = 'popup' | 'dialog' | 'dialog:top' | 'drawer';
 
 const props = withDefaults(defineProps<{
 	manualShowing?: boolean | null;
-	anchor?: { x: string; y: string; };
-	src?: HTMLElement;
+	anchor?: ModalAnchor;
+	src?: HTMLElement | null;
 	preferType?: ModalTypes | 'auto';
 	zPriority?: 'low' | 'middle' | 'high';
 	noOverlap?: boolean;
@@ -108,30 +109,12 @@ const align = () => {
 
 	const srcRect = props.src.getBoundingClientRect();
 
-	const width = content.value!.offsetWidth;
-	const height = content.value!.offsetHeight;
+	const width = content.value.offsetWidth;
+	const height = content.value.offsetHeight;
 
-	let left;
-	let top;
-
-	const x = srcRect.left + (fixed.value ? 0 : window.pageXOffset);
-	const y = srcRect.top + (fixed.value ? 0 : window.pageYOffset);
-
-	if (props.anchor.x === 'center') {
-		left = x + (props.src.offsetWidth / 2) - (width / 2);
-	} else if (props.anchor.x === 'left') {
-		// TODO
-	} else if (props.anchor.x === 'right') {
-		left = x + props.src.offsetWidth;
-	}
-
-	if (props.anchor.y === 'center') {
-		top = (y - (height / 2));
-	} else if (props.anchor.y === 'top') {
-		// TODO
-	} else if (props.anchor.y === 'bottom') {
-		top = y + props.src.offsetHeight;
-	}
+ const x = srcRect.left + (fixed.value ? 0 : window.pageXOffset);
+ const y = srcRect.top + (fixed.value ? 0 : window.pageYOffset);
+ let { left, top } = modalAnchorPosition({ left: x, top: y, width: props.src.offsetWidth, height: props.src.offsetHeight }, { width, height }, props.anchor);
 
 	if (fixed.value) {
 		// 画面から横にはみ出る場合

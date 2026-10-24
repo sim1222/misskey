@@ -13,6 +13,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { BlockDraftOf } from '@/scripts/hpml/block';
+
+
+
 /* eslint-disable vue/no-mutating-props */
 import { watch, ref } from 'vue';
 import XContainer from '../page-editor.container.vue';
@@ -20,20 +24,21 @@ import MkTextarea from '@/components/form/textarea.vue';
 import MkInput from '@/components/form/input.vue';
 
 const props = withDefaults(defineProps<{
-	value: any
+	value?: BlockDraftOf<'radioButton'>
 }>(), {
-	value: {
+	value: () => ({ id: '', type: 'radioButton',
 		name: '',
 		title: '',
 		values: []
-	}
+	})
 });
 
-let values: string = ref(props.value.values.join('\n'));
+let values = ref<string>((props.value.values ?? []).join('\n'));
 
-watch(values.value, () => {
+watch(values, () => {
 	props.value.values = values.value.split('\n');
 }, {
 	deep: true
 });
+defineEmits<{ (event: 'remove'): void }>();
 </script>

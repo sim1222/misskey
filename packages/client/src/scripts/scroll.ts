@@ -1,6 +1,6 @@
 type ScrollBehavior = 'auto' | 'smooth' | 'instant';
 
-export function getScrollContainer(el: HTMLElement | null): HTMLElement | null {
+export function getScrollContainer(el: Element | null): Element | null {
 	if (el == null || el.tagName === 'HTML') return null;
 	const overflow = window.getComputedStyle(el).getPropertyValue('overflow-y');
 	if (overflow === 'scroll' || overflow === 'auto') {
@@ -15,7 +15,7 @@ export function getScrollPosition(el: Element | null): number {
 	return container == null ? window.scrollY : container.scrollTop;
 }
 
-export function isTopVisible(el: Element | null): boolean {
+export function isTopVisible(el: HTMLElement): boolean {
 	const scrollTop = getScrollPosition(el);
 	const topPosition = el.offsetTop; // TODO: container内でのelの相対位置を取得できればより正確になる
 
@@ -27,9 +27,9 @@ export function isBottomVisible(el: HTMLElement, tolerance = 1, container = getS
 	return el.scrollHeight <= window.innerHeight + window.scrollY + tolerance;
 }
 
-export function onScrollTop(el: Element, cb) {
+export function onScrollTop(el: HTMLElement, cb: () => void) {
 	const container = getScrollContainer(el) || window;
-	const onScroll = ev => {
+	const onScroll = () => {
 		if (!document.body.contains(el)) return;
 		if (isTopVisible(el)) {
 			cb();
@@ -39,9 +39,9 @@ export function onScrollTop(el: Element, cb) {
 	container.addEventListener('scroll', onScroll, { passive: true });
 }
 
-export function onScrollBottom(el: Element, cb) {
+export function onScrollBottom(el: HTMLElement, cb: () => void) {
 	const container = getScrollContainer(el) || window;
-	const onScroll = ev => {
+	const onScroll = () => {
 		if (!document.body.contains(el)) return;
 		const pos = getScrollPosition(el);
 		if (pos + el.clientHeight > el.scrollHeight - 1) {
@@ -50,6 +50,7 @@ export function onScrollBottom(el: Element, cb) {
 		}
 	};
 	container.addEventListener('scroll', onScroll, { passive: true });
+    return () => container.removeEventListener('scroll', onScroll);
 }
 
 export function scroll(el: Element, options: {
@@ -73,7 +74,7 @@ export function scrollToBottom(el: Element, options: { behavior?: ScrollBehavior
 	scroll(el, { top: 99999, ...options }); // TODO: ちゃんと計算する
 }
 
-export function isBottom(el: Element, asobi = 0) {
+export function isBottom(el: HTMLElement, asobi = 0) {
 	const container = getScrollContainer(el);
 	const current = container
 		? el.scrollTop + el.offsetHeight

@@ -1,6 +1,6 @@
 <template>
 <component
-	:is="self ? 'MkA' : 'a'" ref="el" class="ieqqeuvs _link" :[attr]="self ? url.substr(local.length) : url" :rel="rel" :target="target"
+	:is="self ? 'MkA' : 'a'" ref="el" class="ieqqeuvs _link" :[attr]="self ? props.url.substr(local.length) : props.url" :rel="rel" :target="target"
 	@contextmenu.stop="() => {}"
 >
 	<template v-if="!self">

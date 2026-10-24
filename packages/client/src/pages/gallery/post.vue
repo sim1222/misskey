@@ -7,7 +7,7 @@
 				<div v-if="post" class="rkxwuolj">
 					<div class="files">
 						<div v-for="file in post.files" :key="file.id" class="file">
-							<img :src="file.url"/>
+							<img :src="(file.url) ?? undefined"/>
 						</div>
 					</div>
 					<div class="body _block blur">
@@ -33,7 +33,7 @@
 								<MkUserName :user="post.user" style="display: block;"/>
 								<MkAcct :user="post.user"/>
 							</div>
-							<MkFollowButton v-if="!$i || $i.id != post.user.id" :user="post.user" :inline="true" :transparent="false" :full="true" large class="koudoku"/>
+							<MkFollowButton v-if="!$i || $i.id != post.user.id" :user="post.user" :full="true" large class="koudoku"/>
 						</div>
 					</div>
 					<MkAd :prefer="['horizontal', 'horizontal-big']"/>
@@ -46,7 +46,7 @@
 						</MkPagination>
 					</MkContainer>
 				</div>
-				<MkError v-else-if="error" @retry="fetch()"/>
+				<MkError v-else-if="error" @retry="fetchPost()"/>
 				<MkLoading v-else/>
 			</transition>
 		</div>
@@ -55,11 +55,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineComponent, inject, watch, ref } from 'vue';
+import { requireValue } from '@/scripts/require-value';
+import type { entities } from '@/misskey';
+import { computed, watch, ref } from 'vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 import MkContainer from '@/components/MkContainer.vue';
-import ImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
+
 import MkPagination from '@/components/MkPagination.vue';
 import MkGalleryPostPreview from '@/components/MkGalleryPostPreview.vue';
 import MkFollowButton from '@/components/MkFollowButton.vue';
@@ -74,13 +76,14 @@ const props = defineProps<{
 	postId: string;
 }>();
 
-let post = ref(null);
-let error = ref(null);
+let post = ref<entities.GalleryPost | null>(null);
+const getPost = () => requireValue(post.value, 'Post');
+let error = ref<Error | null>(null);
 const otherPostsPagination = {
 	endpoint: 'users/gallery/posts' as const,
 	limit: 6,
 	params: computed(() => ({
-		userId: post.value.user.id,
+		userId: getPost().user.id,
 	})),
 };
 
@@ -97,15 +100,15 @@ function fetchPost() {
 
 function share() {
 	navigator.share({
-		title: post.value.title,
-		text: post.value.description,
-		url: `${url}/gallery/${post.value.id}`,
+		title: getPost().title,
+		text: getPost().description ?? undefined,
+		url: `${url}/gallery/${getPost().id}`,
 	});
 }
 
 function shareWithNote() {
 	os.post({
-		initialText: `${post.value.title} ${url}/gallery/${post.value.id}`,
+		initialText: `${getPost().title} ${url}/gallery/${getPost().id}`,
 	});
 }
 
@@ -113,8 +116,8 @@ function like() {
 	os.apiWithDialog('gallery/posts/like', {
 		postId: props.postId,
 	}).then(() => {
-		post.value.isLiked = true;
-		post.value.likedCount++;
+		getPost().isLiked = true;
+		getPost().likedCount++;
 	});
 }
 
@@ -127,13 +130,13 @@ async function unlike() {
 	os.apiWithDialog('gallery/posts/unlike', {
 		postId: props.postId,
 	}).then(() => {
-		post.value.isLiked = false;
-		post.value.likedCount--;
+		getPost().isLiked = false;
+		getPost().likedCount--;
 	});
 }
 
 function edit() {
-	router.push(`/gallery/${post.value.id}/edit`);
+	router.push(`/gallery/${getPost().id}/edit`);
 }
 
 watch(() => props.postId, fetchPost, { immediate: true });
@@ -147,8 +150,8 @@ const headerActions = computed(() => [{
 const headerTabs = computed(() => []);
 
 definePageMetadata(computed(() => post.value ? {
-	title: post.value.title,
-	avatar: post.value.user,
+	title: getPost().title,
+	avatar: getPost().user,
 } : null));
 </script>
 

@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from '@/misskey';
 import XDetails from '@/components/MkUsersTooltip.vue';
 import { pleaseLogin } from '@/scripts/please-login';
 import * as os from '@/os';
@@ -30,7 +30,7 @@ const props = defineProps<{
 
 const buttonRef = ref<HTMLElement>();
 
-const canRenote = computed(() => ['public', 'home'].includes(props.note.visibility) || props.note.userId === $i.id);
+const canRenote = computed(() => ['public', 'home'].includes(props.note.visibility) || props.note.userId === $i?.id);
 
 useTooltip(buttonRef, async (showing) => {
 	const renotes = await os.api('notes/renotes', {
@@ -42,6 +42,7 @@ useTooltip(buttonRef, async (showing) => {
 
 	if (users.length < 1) return;
 
+ if (!buttonRef.value) return;
 	os.popup(XDetails, {
 		showing,
 		users,
@@ -72,6 +73,7 @@ const renote = (viaKeyboard = false) => {
 		viaKeyboard,
 	});
 };
+defineExpose({ renote });
 </script>
 
 <style lang="scss" scoped>
