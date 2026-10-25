@@ -79,6 +79,7 @@ export class UrlPreviewService {
 			})}`) : await summaly.default(url, {
 				followRedirects: false,
 				lang: lang ?? 'ja-JP',
+				agents: { http: this.httpRequestService.httpAgent, https: this.httpRequestService.httpsAgent },
 			});
 	
 			if (!validateSummary(summary)) throw new Error('Invalid preview response');

@@ -7,6 +7,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import { StatusError } from '@/misc/status-error.js';
+import { guardOutboundAgent, OutboundAddressPolicy } from '@/misc/outbound-network.js';
 import type { Response } from 'node-fetch';
 import type { URL } from 'node:url';
 
@@ -77,6 +78,9 @@ export class HttpRequestService {
 				proxy: config.proxy,
 			})
 			: this.https;
+
+		const policy = new OutboundAddressPolicy(config.allowedPrivateNetworks);
+		for (const agent of new Set([this.http, this.https, this.httpAgent, this.httpsAgent])) guardOutboundAgent(agent, cache, policy, agent !== this.http && agent !== this.https);
 	}
 
 	/**
@@ -85,6 +89,7 @@ export class HttpRequestService {
 	 * @param bypassProxy Allways bypass proxy
 	 */
 	public getAgentByUrl(url: URL, bypassProxy = false): http.Agent | https.Agent {
+		if (url.protocol !== 'http:' && url.protocol !== 'https:') throw new Error('Unsupported outbound URL protocol');
 		if (bypassProxy || (this.config.proxyBypassHosts || []).includes(url.hostname)) {
 			return url.protocol === 'http:' ? this.http : this.https;
 		} else {
@@ -128,6 +133,7 @@ export class HttpRequestService {
 		timeout?: number,
 		size?: number,
 	}): Promise<Response> {
+		if (!['http:', 'https:'].includes(new globalThis.URL(args.url).protocol)) throw new Error('Unsupported outbound URL protocol');
 		const timeout = args.timeout ?? 10 * 1000;
 
 		const res = await fetch(args.url, {

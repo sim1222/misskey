@@ -110,6 +110,8 @@ export async function fixture() {
 		await symlink(resolve(root, 'packages/client'), resolve(directory, 'packages/client'), 'dir');
 		const config = {
 			url: base, port, id: 'aid', clusterLimit: 1,
+			// Only the loopback fixture servers are allowed as outbound targets.
+			allowedPrivateNetworks: ['127.0.0.0/8', '::1/128'],
 			db: { host: adminOptions.host, port: adminOptions.port, user: adminOptions.user, pass: adminOptions.password, db: name },
 			redis: { ...redisOptions, prefix: name },
 		};

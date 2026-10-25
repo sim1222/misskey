@@ -2,8 +2,6 @@ import * as fs from 'node:fs';
 import * as stream from 'node:stream';
 import * as util from 'node:util';
 import { Inject, Injectable } from '@nestjs/common';
-import IPCIDR from 'ip-cidr';
-import PrivateIp from 'private-ip';
 import got, * as Got from 'got';
 import chalk from 'chalk';
 import { DI } from '@/di-symbols.js';
@@ -59,13 +57,8 @@ export class DownloadService {
 				limit: 0,
 			},
 		}).on('response', (res: Got.Response) => {
-			if ((process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') && !this.config.proxy && res.ip) {
-				if (this.isPrivateIp(res.ip)) {
-					this.logger.warn(`Blocked address: ${res.ip}`);
-					req.destroy();
-				}
-			}
-	
+			// HttpRequestService's guarded agents validate before connecting,
+			// including every redirect and explicitly configured HTTP proxies.
 			const contentLength = res.headers['content-length'];
 			if (contentLength != null) {
 				const size = Number(contentLength);
@@ -112,14 +105,4 @@ export class DownloadService {
 		}
 	}
 	
-	private isPrivateIp(ip: string): boolean {
-		for (const net of this.config.allowedPrivateNetworks ?? []) {
-			const cidr = new IPCIDR(net);
-			if (cidr.contains(ip)) {
-				return false;
-			}
-		}
-
-		return PrivateIp(ip);
-	}
 }

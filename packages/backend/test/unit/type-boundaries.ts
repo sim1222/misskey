@@ -62,7 +62,7 @@ describe('Validated boundaries and generated API contracts', () => {
 		expect(genOpenapiSpec(loadConfig())).toEqual(document);
 	});
 	it('uses the configured HTTP agent and aborts slow requests', async () => {
-		const service = new HttpRequestService(loadConfig());
+		const service = new HttpRequestService({ ...loadConfig(), allowedPrivateNetworks: ['127.0.0.1/32'] });
 		const server = createServer((request, response) => {
 			if (request.url === '/slow') {
 				setTimeout(() => { response.end('{}'); }, 200);

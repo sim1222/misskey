@@ -1,0 +1,42 @@
+{
+  "package": "summaly@2.7.0",
+  "modified": [
+    "package.json",
+    "built/index.js",
+    "built/index.d.ts",
+    "built/utils/got.js"
+  ],
+  "files": {
+    "LICENSE": "dff88ba99695fb1ca84a7ec6b8dc18bf4a0fcf6cbda07ae5cd6dea3df58fbc20",
+    "package.json": "1c326d55dad4bf41237e6306b897171227bebcc00002530a3d8001038ccdefea",
+    "README.md": "137bbb59f29a15e82c353b4c2c9d06c7c9ec4428d50605e3d3ca325606cd92bf",
+    "built/general.js": "8d52381f2e3c13df8fa8dddd0ca2dbae96d024017455c5790905ecfb07489697",
+    "built/index.js": "27edded4183f465cb7227929b68655da1407631660d4b406b0e9af8a0e8d5276",
+    "built/iplugin.js": "ef1f170ad28f2d870a474d2f96ae353d770fff5f20e642cd8f9b6f1d7742df13",
+    "built/client.d.ts": "3eb01457e98759e4163fce24e3237b558c3bd0d70008fc7b777709ec7bc22cc2",
+    "built/iplugin.d.ts": "07cdcf49947c73499ee34bf3952ad2a3911e036db7f22794b37193e2bac7e930",
+    "built/summary.d.ts": "6ec574a91e4c5d19761d11915e2748ad426537d326d61bdb4127108dc598a921",
+    "built/client.js": "382d6a29eeac3fd8b03b7abed1c506c5a54421db479421b1f27a9b31854fa376",
+    "built/index.d.ts": "1bf351cedc9b47b835c82656abd0cc8d5d903841bd21aeed59fcd86738b133d9",
+    "built/general.d.ts": "dfe1467de8ea36e7af2b560b899c63dd5a8330bed83ea3bd475c082a396b3fea",
+    "built/summary.js": "ef1f170ad28f2d870a474d2f96ae353d770fff5f20e642cd8f9b6f1d7742df13",
+    "built/server/index.js": "3705888d8f688578075b06e60db487745563dfc5017ae177146e7bece396cb7d",
+    "built/server/index.d.ts": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
+    "built/plugins/wikipedia.js": "3d79fc183760f43de624942fab551e6a4ba88d8d1ef4aa85ca355689acd82dc3",
+    "built/plugins/wikipedia.d.ts": "0120aafc0e49d5b31cc0e82bde462194934c69bedffa72f13f74b6d53b1d1577",
+    "built/plugins/amazon.d.ts": "0120aafc0e49d5b31cc0e82bde462194934c69bedffa72f13f74b6d53b1d1577",
+    "built/plugins/amazon.js": "8407a877494cf1767c05996b2167c44c188083acf4da7d00d2c50b0c6c5a6776",
+    "built/utils/clip.js": "63bc85d664d0cedc7df3dd3c174086d15b40f632fb23d6bae0bec7c664cef2d3",
+    "built/utils/status-error.js": "550cca80f255be15e77858d01949f72e598a54f09f24272a05d34df034a61739",
+    "built/utils/null-or-empty.d.ts": "029821efaef21b9a5e791e255f2d01ac39c8b67293d46cf929baf285056ff384",
+    "built/utils/cleanup-title.d.ts": "75f4598fc1d6468d844c9b90f6de3441802a5da436b50562f34136feced35504",
+    "built/utils/null-or-empty.js": "e833f8695bc3e7c16d1e0a6905fdf2726c9a62cd6b27e0e703305dbbc71d328c",
+    "built/utils/encoding.js": "293c00cd83b80d4aa63acb00084727e60453197d89a36719a02f7e30f95af870",
+    "built/utils/status-error.d.ts": "4b60339c9aab8e81a64789cc2d79af7eaf9c9622ac4d789c166ffb090127f7d5",
+    "built/utils/clip.d.ts": "53b7c50c4af517eb11c1b90d9e42a01d9fa8fed5025d2f48d7cc3c0c2e54ece0",
+    "built/utils/got.js": "2a9db58aa996cb7920c2cabe3053170017c24905de27e17cc57da374f22fb118",
+    "built/utils/got.d.ts": "b8717f1046c58da06290c16229db541aed3d120261d5e14f5fe5907fb2cac426",
+    "built/utils/cleanup-title.js": "160d7a7e6e2cffc67ba31fc648d469ded93f6b49419cdf54785c06ed2fd45bbe",
+    "built/utils/encoding.d.ts": "0b78edd52142ec95d441d6752d79fe086f52328eca3259f9a3195db0b2ab77e2"
+  }
+}
