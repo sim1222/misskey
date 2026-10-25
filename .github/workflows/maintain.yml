@@ -96,7 +96,23 @@ jobs:
           yarn test:frontend:libraries
           yarn test:frontend:security
       - name: Observe HTTP, database, federation, streaming and browser behavior
-        run: yarn test:regression
+        shell: bash
+        run: |
+          set -o pipefail
+          if yarn test:regression 2>&1 | tee .maintenance-ci-regression.log; then
+            exit 0
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          message = Path('.maintenance-ci-regression.log').read_text(errors='replace')[-6000:]
+          for name in ['behavior-diff.json', 'migrations.log']:
+              path = Path('.maintenance-regression/latest') / name
+              if path.exists():
+                  message += '\n' + name + ':\n' + path.read_text(errors='replace')[-3000:]
+          escaped = message.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+          print('::error title=Regression comparison failed::' + escaped)
+          PY
+          exit 1
         env:
           REGRESSION_PG_PORT: '54312'
           REGRESSION_PG_USER: postgres
@@ -123,6 +139,7 @@ jobs:
           retention-days: 14
           path: |
             .maintenance-ci-install.log
+            .maintenance-ci-regression.log
             .maintenance-regression/latest
             .maintenance-federation/latest
             .maintenance-frontend/latest

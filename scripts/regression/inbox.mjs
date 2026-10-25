@@ -91,7 +91,7 @@ export async function inboxScenarios(f, o, alice, localNoteId) {
 		await send('valid forwarded LD-signed create', ldSigned, 202, false, invalidTransportKey);
 		await send('LD-signed content tampering rejected', { ...ldSigned, object: { ...remoteNote, content: 'forged' } }, 202, false, invalidTransportKey);
 		await send('LD-signed actor tampering rejected', { ...ldSigned, actor: `${remote}-forged` }, 202, false, invalidTransportKey);
-		await send('LD context fetch failure rejected', { ...ldSigned, '@context': 'https://unavailable.example.invalid/context' }, 202, false, invalidTransportKey);
+		await send('LD context fetch failure rejected', { ...ldSigned, '@context': `${f.base}/api/__unavailable_ld_context__` }, 202, false, invalidTransportKey);
 		await send('LD context hiding activity type rejected', { ...ldSigned, '@context': ['https://www.w3.org/ns/activitystreams', { type: 'https://untrusted.example/type' }] }, 202, false, invalidTransportKey);
 		await send('LD graph directive rejected', { ...ldSigned, '@graph': [{ type: 'Note', content: 'hidden' }] }, 202, false, invalidTransportKey);
 		const retained = (await f.db.query('SELECT text FROM note WHERE uri=$1', [remoteNote.id])).rows;

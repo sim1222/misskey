@@ -22,6 +22,19 @@ test('application process cannot connect to external hosts or Unix sockets', () 
 	}
 });
 
+test('fixture blocks external DNS including resolver instances and custom promisifiers', () => {
+	for (const expression of [
+		"require('node:dns').lookup('example.com', () => {})",
+		"require('node:dns').resolve4('example.com', () => {})",
+		"new (require('node:dns').Resolver)().resolve4('example.com', () => {})",
+		"require('node:dns').promises.resolve4('example.com')",
+		"new (require('node:dns').promises.Resolver)().resolve6('example.com')",
+		"require('node:util').promisify(require('node:dns').lookup)('example.com')",
+	]) assert.throws(() => execFileSync(process.execPath, ['--require', resolve(root, 'scripts/regression/network-guard.cjs'), '-e', expression], { stdio: 'pipe' }), /blocked external DNS/);
+	const local = execFileSync(process.execPath, ['--require', resolve(root, 'scripts/regression/network-guard.cjs'), '-e', "require('node:util').promisify(require('node:dns').lookup)('localhost').then(result => { if (!['127.0.0.1', '::1'].includes(result.address)) throw Error('Unexpected address'); console.log(result.family); })"], { encoding: 'utf8' });
+	assert.match(local.trim(), /^[46]$/);
+});
+
 test('normalization preserves privacy fields, nullability, array order and status', () => {
 	const o = new Observations('http://127.0.0.1:12345');
 	o.alias('abcdefghijkl', 'alice');

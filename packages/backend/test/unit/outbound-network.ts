@@ -26,15 +26,22 @@ describe('Checked agent connection boundaries', () => {
 		const stream = new PassThrough();
 		const captured = jest.fn<typeof agent.createConnection>().mockReturnValue(stream);
 		agent.createConnection = captured;
-		guardOutboundAgent(agent, { lookupAsync: async () => ({ address: '2606:4700:4700::1111', family: 6 }) }, new OutboundAddressPolicy(), proxy);
+		guardOutboundAgent(agent, { lookupAsync: async () => [{ address: '2606:4700:4700::1111', family: 6 }] }, new OutboundAddressPolicy(), proxy);
 		await new Promise<void>((resolve, reject) => { agent.createConnection({ hostname: 'peer.example', family: 6 }, (error, socket) => { if (error) reject(error); else { expect(socket).toBe(stream); resolve(); } }); });
-		expect(captured).toHaveBeenCalledWith(expect.objectContaining({ host: proxy ? '[2606:4700:4700::1111]' : '2606:4700:4700::1111', hostname: '2606:4700:4700::1111', servername: 'peer.example', family: 6 }), expect.any(Function));
+		expect(captured).toHaveBeenCalledWith(expect.objectContaining({ host: proxy ? '[2606:4700:4700::1111]' : 'peer.example', hostname: proxy ? '2606:4700:4700::1111' : 'peer.example', servername: 'peer.example', family: 6 }), expect.any(Function));
+		if (!proxy) {
+			const lookup = captured.mock.calls[0][0].lookup; if (!lookup) throw new Error('Expected pinned lookup');
+			const one = jest.fn(); lookup('peer.example', { all: false }, one);
+			expect(one).toHaveBeenCalledWith(null, '2606:4700:4700::1111', 6);
+			const all = jest.fn(); lookup('peer.example', { all: true }, all);
+			expect(all).toHaveBeenCalledWith(null, [{ address: '2606:4700:4700::1111', family: 6 }]);
+		}
 		stream.destroy(); agent.destroy();
 	});
-	it('preserves explicit SNI, supports literals and delivers each connection once', async () => {
+	it.each([false, true])('preserves explicit SNI and delivers each connection once (proxy=%s)', async proxy => {
 		const agent = new Agent(); const stream = new PassThrough();
 		agent.createConnection = (_options, callback) => { callback?.(null, stream); return stream; };
-		guardOutboundAgent(agent, { lookupAsync: async () => { throw new Error('Literal addresses must not use DNS'); } }, new OutboundAddressPolicy());
+		guardOutboundAgent(agent, { lookupAsync: async () => { throw new Error('Literal addresses must not use DNS'); } }, new OutboundAddressPolicy(), proxy);
 		const callback = jest.fn();
 		const options = { host: '[2606:4700:4700::1111]', servername: 'explicit.example', family: 4 };
 		agent.createConnection(options, callback);
@@ -42,6 +49,21 @@ describe('Checked agent connection boundaries', () => {
 		expect(callback).toHaveBeenCalledTimes(1); expect(callback).toHaveBeenCalledWith(null, stream);
 		expect(() => agent.createConnection({ host: '1.1.1.1' })).toThrow(/callback/);
 		stream.destroy(); agent.destroy();
+	});
+	it('filters a mixed DNS answer without changing the checked snapshot', async () => {
+		const agent = new Agent(); const stream = new PassThrough(); const connect = jest.fn<typeof agent.createConnection>().mockReturnValue(stream); agent.createConnection = connect;
+		guardOutboundAgent(agent, { lookupAsync: async () => [{ address: '127.0.0.1', family: 4 }, { address: '1.1.1.1', family: 4 }] }, new OutboundAddressPolicy());
+		await new Promise<void>((resolve, reject) => agent.createConnection({ host: 'peer.example' }, error => error ? reject(error) : resolve()));
+		const lookup = connect.mock.calls[0][0].lookup; if (!lookup) throw new Error('Expected fixed lookup');
+		const result = jest.fn(); lookup('peer.example', { all: true }, result);
+		expect(result).toHaveBeenCalledWith(null, [{ address: '1.1.1.1', family: 4 }]);
+		stream.destroy(); agent.destroy();
+	});
+	it.each([new Error('Proxy setup failed'), 'Proxy setup failed'])('reports synchronous proxy failures', async failure => {
+		const agent = new Agent(); agent.createConnection = () => { throw failure; };
+		guardOutboundAgent(agent, { lookupAsync: async () => [{ address: '1.1.1.1', family: 4 }] }, new OutboundAddressPolicy(), true);
+		await expect(new Promise((resolve, reject) => agent.createConnection({ host: 'peer.example' }, (error, socket) => error ? reject(error) : resolve(socket)))).rejects.toThrow('Proxy setup failed');
+		agent.destroy();
 	});
 	it('does not invent a TLS server name for a literal IP destination', async () => {
 		const agent = new Agent(); const stream = new PassThrough();
@@ -53,7 +75,7 @@ describe('Checked agent connection boundaries', () => {
 	});
 	it.each(['host', 'dns', 'connect'])('reports %s failures without attempting a forbidden connection', async failure => {
 		const agent = new Agent(); const connect = jest.fn<typeof agent.createConnection>().mockImplementation(() => { throw new Error('Connect failure'); }); agent.createConnection = connect;
-		guardOutboundAgent(agent, { lookupAsync: async () => { if (failure === 'dns') throw 'DNS failure'; return { address: '1.1.1.1', family: 4 }; } }, new OutboundAddressPolicy());
+		guardOutboundAgent(agent, { lookupAsync: async () => { if (failure === 'dns') throw 'DNS failure'; return [{ address: '1.1.1.1', family: 4 }]; } }, new OutboundAddressPolicy());
 		await expect(new Promise((resolve, reject) => agent.createConnection(failure === 'host' ? {} : { host: 'peer.example' }, (error, socket) => error ? reject(error) : resolve(socket)))).rejects.toThrow(/required|DNS failure|Connect failure/);
 		expect(connect).toHaveBeenCalledTimes(failure === 'connect' ? 1 : 0); agent.destroy();
 	});
@@ -87,14 +109,22 @@ describe('HTTP requests preserve normal routing while refusing SSRF', () => {
 		expect(received).toEqual([]);
 	});
 	it('checks DNS results before sending an HTTP request', async () => {
-		jest.spyOn(CacheableLookup.prototype, 'lookupAsync').mockResolvedValue({ address: '127.0.0.1', family: 4 });
+		jest.spyOn(CacheableLookup.prototype, 'query').mockResolvedValue([{ address: '127.0.0.1', family: 4 }]);
 		await expect(service().getResponse({ url: `http://public.example:${port}/private`, method: 'GET', headers: {} })).rejects.toThrow(/Blocked outbound/);
 		expect(received).toEqual([]);
 	});
 	it('pins the checked DNS answer and preserves the Host, method and query', async () => {
-		const lookup = jest.spyOn(CacheableLookup.prototype, 'lookupAsync').mockResolvedValueOnce({ address: '127.0.0.1', family: 4 }).mockResolvedValueOnce({ address: '127.0.0.2', family: 4 });
+		const lookup = jest.spyOn(CacheableLookup.prototype, 'query').mockResolvedValueOnce([{ address: '127.0.0.1', family: 4 }]).mockResolvedValueOnce([{ address: '127.0.0.2', family: 4 }]);
 		const response = await service(['127.0.0.1/32']).getResponse({ url: `http://public.example:${port}/ok?q=value`, method: 'POST', headers: {}, body: 'original' });
 		expect(await response.json()).toEqual({ host: `public.example:${port}`, path: '/ok?q=value', method: 'POST' });
+		expect(lookup).toHaveBeenCalledTimes(1);
+	});
+	it.each(['::1', '127.0.0.2'])('preserves connection fallback when the first address %s is unavailable', async first => {
+		const lookup = jest.spyOn(CacheableLookup.prototype, 'query').mockResolvedValue([
+			{ address: first, family: first === '::1' ? 6 : 4 }, { address: '127.0.0.1', family: 4 },
+		]);
+		const response = await service(['127.0.0.0/8', '::1/128']).getResponse({ url: `http://public.example:${port}/fallback`, method: 'GET', headers: {} });
+		expect(await response.json()).toEqual({ host: `public.example:${port}`, path: '/fallback', method: 'GET' });
 		expect(lookup).toHaveBeenCalledTimes(1);
 	});
 	it('rechecks the destination after an HTTP redirect', async () => {
@@ -111,6 +141,7 @@ describe('HTTP requests preserve normal routing while refusing SSRF', () => {
 		const sockets = new Set<import('node:net').Socket>();
 		proxy.on('connect', (req, socket, head) => {
 			targets.push(req.url ?? ''); sockets.add(socket);
+			if (req.url?.startsWith('127.0.0.2:')) { socket.end('HTTP/1.1 502 Bad Gateway\r\n\r\n'); return; }
 			const upstream = connect(port, '127.0.0.1'); sockets.add(upstream);
 			upstream.once('connect', () => { socket.write('HTTP/1.1 200 Connection Established\r\n\r\n'); upstream.write(head); socket.pipe(upstream).pipe(socket); });
 		});
@@ -120,10 +151,16 @@ describe('HTTP requests preserve normal routing while refusing SSRF', () => {
 			const proxyUrl = `http://127.0.0.1:${address.port}`;
 			await expect(service([], proxyUrl).getResponse({ url: `http://127.0.0.1:${port}/private`, method: 'GET', headers: {} })).rejects.toThrow(/Blocked outbound/);
 			expect(targets).toEqual([]); expect(received).toEqual([]);
-			jest.spyOn(CacheableLookup.prototype, 'lookupAsync').mockResolvedValue({ address: '127.0.0.1', family: 4 });
+			const lookup = jest.spyOn(CacheableLookup.prototype, 'query').mockResolvedValue([{ address: '127.0.0.1', family: 4 }]);
 			const response = await service(['127.0.0.1/32'], proxyUrl).getResponse({ url: `http://public.example:${port}/ok`, method: 'GET', headers: {} });
 			expect(await response.json()).toEqual({ host: `public.example:${port}`, path: '/ok', method: 'GET' });
 			expect(targets).toEqual([`127.0.0.1:${port}`]);
+			lookup.mockResolvedValue([{ address: '127.0.0.2', family: 4 }, { address: '127.0.0.1', family: 4 }]);
+			const fallback = await service(['127.0.0.0/8'], proxyUrl).getResponse({ url: `http://public.example:${port}/proxy-fallback`, method: 'GET', headers: {} });
+			expect(await fallback.json()).toEqual({ host: `public.example:${port}`, path: '/proxy-fallback', method: 'GET' });
+			expect(targets.slice(-2)).toEqual([`127.0.0.2:${port}`, `127.0.0.1:${port}`]);
+			lookup.mockResolvedValue([{ address: '127.0.0.2', family: 4 }]);
+			await expect(service(['127.0.0.0/8'], proxyUrl).getResponse({ url: `http://public.example:${port}/proxy-failure`, method: 'GET', headers: {} })).rejects.toThrow(/Bad response: 502/);
 		} finally { for (const socket of sockets) socket.destroy(); await new Promise<void>(resolve => proxy.close(() => resolve())); }
 	});
 });
