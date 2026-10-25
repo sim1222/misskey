@@ -43,6 +43,14 @@ describe('Checked agent connection boundaries', () => {
 		expect(() => agent.createConnection({ host: '1.1.1.1' })).toThrow(/callback/);
 		stream.destroy(); agent.destroy();
 	});
+	it('does not invent a TLS server name for a literal IP destination', async () => {
+		const agent = new Agent(); const stream = new PassThrough();
+		const connect = jest.fn<typeof agent.createConnection>().mockReturnValue(stream); agent.createConnection = connect;
+		guardOutboundAgent(agent, { lookupAsync: async () => { throw new Error('No DNS for literals'); } }, new OutboundAddressPolicy());
+		await new Promise<void>((resolve, reject) => agent.createConnection({ host: '1.1.1.1' }, error => error ? reject(error) : resolve()));
+		expect(connect).toHaveBeenCalledWith(expect.objectContaining({ host: '1.1.1.1', servername: undefined }), expect.any(Function));
+		stream.destroy(); agent.destroy();
+	});
 	it.each(['host', 'dns', 'connect'])('reports %s failures without attempting a forbidden connection', async failure => {
 		const agent = new Agent(); const connect = jest.fn<typeof agent.createConnection>().mockImplementation(() => { throw new Error('Connect failure'); }); agent.createConnection = connect;
 		guardOutboundAgent(agent, { lookupAsync: async () => { if (failure === 'dns') throw 'DNS failure'; return { address: '1.1.1.1', family: 4 }; } }, new OutboundAddressPolicy());
