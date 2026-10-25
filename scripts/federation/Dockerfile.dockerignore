@@ -3,6 +3,9 @@
 !packages/backend/
 !packages/backend/package.json
 !packages/backend/yarn.lock
+!packages/backend/vendor/
+!packages/backend/vendor/summaly/
+!packages/backend/vendor/summaly/**
 !packages/backend/built/
 !packages/backend/built/**
 !packages/backend/assets/
