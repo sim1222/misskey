@@ -52,6 +52,7 @@ describe('ActivityPub HTTP authentication envelope (GHSA-3f39-6537-3cgc)', () =>
 	it('rejects a body substituted after signing its digest', async () => { expect(await send({ body: body.replace('日本語', 'forged') })).toBe(401); expect(enqueue).not.toHaveBeenCalled(); });
 	it('preserves the signed X-Date alternative', async () => { expect(await send({ xDate: new Date().toUTCString(), signedHeaders: ['(request-target)', 'host', 'x-date', 'digest'] })).toBe(202); expect(enqueue).toHaveBeenCalledTimes(1); });
 	it('preserves HTTP Signature in Authorization', async () => { expect(await send({ authorization: true })).toBe(202); expect(enqueue).toHaveBeenCalledTimes(1); });
+	it('preserves case-insensitive DNS authorities in a signed Host', async () => { expect(await send({ host: config.host.toUpperCase() })).toBe(202); expect(enqueue).toHaveBeenCalledTimes(1); });
 	it.each(['(request-target)', 'host', 'date', 'digest'])('rejects an unsigned %s', async missing => { expect(await send({ signedHeaders: ['(request-target)', 'host', 'date', 'digest'].filter(h => h !== missing) })).toBe(401); expect(enqueue).not.toHaveBeenCalled(); });
 	it('rejects a signature made for a different receiving host', async () => { expect(await send({ host: 'another.example' })).toBe(401); expect(enqueue).not.toHaveBeenCalled(); });
 	it('rejects an expired request', async () => { expect(await send({ date: new Date(Date.now() - 60 * 60 * 1000).toUTCString() })).toBe(401); });

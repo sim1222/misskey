@@ -96,7 +96,7 @@ export class ActivityPubServerService {
 		// A valid signature over an unchecked Digest authenticates no activity.
 		const digest = ctx.get('digest');
 		const match = /^SHA-256=([A-Za-z0-9+/]{43}=)$/i.exec(digest);
-		if (ctx.get('host') !== this.config.host || !match || typeof ctx.request.rawBody !== 'string') {
+		if (ctx.get('host').toLowerCase() !== this.config.host.toLowerCase() || !match || typeof ctx.request.rawBody !== 'string') {
 			ctx.status = 401;
 			return;
 		}

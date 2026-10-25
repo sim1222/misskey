@@ -45,7 +45,7 @@ export class ApRequestService {
 			method: 'POST',
 			headers: this.objectAssignWithLcKey({
 				'Date': new Date().toUTCString(),
-				'Host': u.hostname,
+				'Host': u.host,
 				'Content-Type': 'application/activity+json',
 				'Digest': digestHeader,
 			}, args.additionalHeaders),
@@ -70,7 +70,7 @@ export class ApRequestService {
 			headers: this.objectAssignWithLcKey({
 				'Accept': 'application/activity+json, application/ld+json',
 				'Date': new Date().toUTCString(),
-				'Host': new URL(args.url).hostname,
+				'Host': u.host,
 			}, args.additionalHeaders),
 		};
 
@@ -108,7 +108,8 @@ export class ApRequestService {
 
 		for (const key of includeHeaders.map(x => x.toLowerCase())) {
 			if (key === '(request-target)') {
-				results.push(`(request-target): ${request.method.toLowerCase()} ${new URL(request.url).pathname}`);
+				const url = new URL(request.url);
+				results.push(`(request-target): ${request.method.toLowerCase()} ${url.pathname}${url.search}`);
 			} else {
 				results.push(`${key}: ${request.headers[key]}`);
 			}
