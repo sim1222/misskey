@@ -65,6 +65,16 @@ describe('Checked agent connection boundaries', () => {
 		await expect(new Promise((resolve, reject) => agent.createConnection({ host: 'peer.example' }, (error, socket) => error ? reject(error) : resolve(socket)))).rejects.toThrow('Proxy setup failed');
 		agent.destroy();
 	});
+	it('closes a failed proxy stream before trying the next checked address', async () => {
+		const agent = new Agent(); const failed = new PassThrough(); const winner = new PassThrough(); let attempts = 0;
+		agent.createConnection = (_options, callback) => {
+			if (attempts++ === 0) { callback?.(new Error('First target failed'), failed); return undefined; }
+			return winner;
+		};
+		guardOutboundAgent(agent, { lookupAsync: async () => [{ address: '1.1.1.1', family: 4 }, { address: '8.8.8.8', family: 4 }] }, new OutboundAddressPolicy(), true);
+		await new Promise<void>((resolve, reject) => agent.createConnection({ host: 'peer.example' }, (error, stream) => { if (error) reject(error); else { expect(stream).toBe(winner); resolve(); } }));
+		expect(attempts).toBe(2); expect(failed.destroyed).toBe(true); winner.destroy(); agent.destroy();
+	});
 	it('does not invent a TLS server name for a literal IP destination', async () => {
 		const agent = new Agent(); const stream = new PassThrough();
 		const connect = jest.fn<typeof agent.createConnection>().mockReturnValue(stream); agent.createConnection = connect;
