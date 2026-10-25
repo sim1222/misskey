@@ -97,3 +97,5 @@ yarn test:federation
 
 CI は同じ検査を保守ブランチで必須にし、ブラウザ比較の JSON を `.maintenance-frontend/latest` に保存する。
 既存の AntennaService/Redis の実行時エラー 3 件と、調査で判明している LD-signature の問題は、この型検査・依存更新で解決したものとして扱わない。
+
+LD-signature と URL プレビューの後続修正は [セキュリティパッチ](security-patches-2026-10-25.md) を参照。

@@ -58,6 +58,7 @@ describe('URL preview preserves metadata and rejects unsafe network/content', ()
 	});
 	it('applies the guarded agents to the scraper before any private request is made', async () => {
 		expect(await fetchPreview('http://127.0.0.2/private')).toEqual({}); expect(paths).toEqual([]);
+		expect(logger.warn.mock.calls.flat().join(' ')).toContain('Blocked outbound address: 127.0.0.2');
 	});
 	it.each(['javascript:alert(1)', 'data:text/html,script', 'ftp://example.com/x', 'file:///etc/passwd', 'not a URL'])('rejects unsafe preview media/player %s', async url => {
 		metadata.summalyProxy = 'https://proxy.example'; getJson.mockResolvedValue({ title: 'Example', url: 'https://article.example/', icon: url, thumbnail: url, player: { url, width: 640, height: 360 } });

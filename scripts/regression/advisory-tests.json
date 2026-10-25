@@ -1,6 +1,92 @@
 {
   "GHSA-cc6r-chgr-8r5m": {
-    "unitFiles": ["packages/backend/test/unit/miauth-callback.ts"],
+    "unitFiles": [
+      "packages/backend/test/unit/miauth-callback.ts"
+    ],
     "observations": []
+  },
+  "GHSA-2vxv-pv3m-3wvj": {
+    "unitFiles": [
+      "packages/backend/test/unit/ld-signature.ts",
+      "packages/backend/test/unit/inbox-ld-forwarding.ts"
+    ],
+    "observations": [
+      "valid forwarded LD-signed create",
+      "LD-signed content tampering rejected",
+      "LD-signed actor tampering rejected"
+    ]
+  },
+  "GHSA-38jx-423m-g387": {
+    "unitFiles": [
+      "packages/backend/test/unit/ld-signature.ts",
+      "packages/backend/test/unit/inbox-ld-forwarding.ts"
+    ],
+    "observations": [
+      "LD context fetch failure rejected"
+    ]
+  },
+  "GHSA-w8x2-gpq6-jxvf": {
+    "unitFiles": [
+      "packages/backend/test/unit/ld-signature.ts",
+      "packages/backend/test/unit/inbox-ld-forwarding.ts"
+    ],
+    "observations": [
+      "LD context hiding activity type rejected",
+      "LD graph directive rejected"
+    ]
+  },
+  "GHSA-3f39-6537-3cgc": {
+    "unitFiles": [
+      "packages/backend/test/unit/inbox-authentication.ts",
+      "packages/backend/test/unit/activitypub-request-signature.ts"
+    ],
+    "observations": [
+      "tampered signature rejected before queue"
+    ]
+  },
+  "GHSA-cgwp-vmr4-wx4q": {
+    "unitFiles": [],
+    "observations": [
+      "tag search binds normalized tag values",
+      "tag query binds every normalized term"
+    ]
+  },
+  "GHSA-5q3h-wpfw-hjjw": {
+    "unitFiles": [
+      "packages/backend/test/unit/outbound-network.ts"
+    ],
+    "observations": []
+  },
+  "GHSA-mqv7-gxh4-r5vf": {
+    "unitFiles": [
+      "packages/backend/test/unit/outbound-network.ts"
+    ],
+    "observations": []
+  },
+  "GHSA-jvcx-f39m-5xrj": {
+    "unitFiles": [
+      "packages/backend/test/unit/outbound-network.ts",
+      "packages/backend/test/unit/url-preview.ts"
+    ],
+    "observations": []
+  },
+  "GHSA-3p2w-xmv5-jm95": {
+    "unitFiles": [
+      "packages/backend/test/unit/url-preview.ts"
+    ],
+    "observations": [],
+    "browserScripts": [
+      "scripts/frontend/test-security.mjs"
+    ]
+  },
+  "GHSA-vc39-c453-67g3": {
+    "unitFiles": [
+      "packages/backend/test/unit/url-preview.ts",
+      "packages/backend/test/unit/preview-security.ts"
+    ],
+    "observations": [],
+    "browserScripts": [
+      "scripts/frontend/test-security.mjs"
+    ]
   }
 }

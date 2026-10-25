@@ -60,6 +60,8 @@ export async function inventory(f, o, users) {
 	await writeFile(resolve(f.output, 'inventory.md'), markdown);
 	const advisories = JSON.parse(await readFile(resolve(root, 'docs/maintenance/misskey-advisories.json'), 'utf8')).advisories;
 	const mapping = JSON.parse(await readFile(resolve(root, 'scripts/regression/advisory-tests.json'), 'utf8'));
+	const activeScripts = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8')).scripts;
+	const validationWorkflow = await readFile(resolve(root, '.github/workflows/maintain.yml'), 'utf8');
 	const security = [];
 	for (const advisory of advisories) {
 		const tests = mapping[advisory.id] ?? { unitFiles: [], observations: [] };
@@ -67,8 +69,14 @@ export async function inventory(f, o, users) {
 			assert.match(file, /^packages\/backend\/test\/unit\/[a-zA-Z0-9_-]+\.ts$/, 'Advisory unit tests must run in the active Jest suite');
 			await access(resolve(root, file));
 		}
+		for (const file of tests.browserScripts ?? []) {
+			assert.match(file, /^scripts\/frontend\/test-[a-z-]+\.mjs$/, 'Advisory browser tests must be frontend comparison scripts');
+			await access(resolve(root, file));
+			const script = Object.entries(activeScripts).find(([, command]) => command === `node ${file}`)?.[0];
+			assert.ok(script && validationWorkflow.includes(`yarn ${script}`), `Advisory browser test is not mandatory in CI: ${file}`);
+		}
 		for (const name of tests.observations) assert.ok(Object.hasOwn(o.values, name), `Advisory observation did not run: ${name}`);
-		const linked = tests.unitFiles.length + tests.observations.length > 0;
+		const linked = tests.unitFiles.length + tests.observations.length + (tests.browserScripts?.length ?? 0) > 0;
 		if (advisory.status === 'patched-and-regression-tested') assert.ok(linked, `Missing regression mapping: ${advisory.id}`);
 		security.push({ id: advisory.id, title: advisory.title, status: advisory.status, url: advisory.url, tests, coverage: linked ? 'linked regression (review scope)' : 'dedicated attack reproduction pending' });
 	}

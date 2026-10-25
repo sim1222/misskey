@@ -21,14 +21,14 @@
       "title": "Impersonation and takeover of remote accounts with unnormalized signed activities",
       "body": "Summary\n\nMisskey doesn't perform proper normalization on the JSON structures of incoming signed ActivityPub activity objects before processing them, allowing threat actors to spoof the contents of signed activities and impersonate the authors of the original activities.\n\nDetails\n\nThe reporter intends to keep this section undisclosed at least for 30 days after the publication of the advisory and until the remedy has been deployed widely.\n\nPoC\n\nThe reporter intends to keep this section undisclosed at least for 30 days after the publication of the advisory and until the remedy has been deployed widely.\n\nImpact\n\nThe vulnerability allows a threat actor to impersonate a target remote account and perform spoofed activities of any type attributed to the target account, provided that the threat actor has access to a valid Linked Data Signature by the target account.\n\nThere are a number of situations where the threat actor can obtain a valid signature by the target account, including:\n\n\nThe target account sends a signed activity to another account and the recipient account's server forwards the activity to a server controlled by the threat actor according to the inbox forwarding mechanism of ActivityPub\n\nThe target account has joined a relay to which a server controlled by the threat actor subscribes, and sends a signed activity to that relay\n\n\nTimeline\n\n\n\n\nDate and time\nEvent\n\n\n\n\n2022-02-03\nThe same kind of vulnerability in Mastodon was disclosed: CVE-2022-24307\n\n\n2024-04-29Z\nPeerTube released v6.1, which fixes the same kind of vulnerability\n\n\n2024-04-29T14:36Z\nIceshrimp released v2023.12.7, which fixes the same vulnerability\n\n\n2024-04-29T18Z\nThis advisory was published\n\n\n2024-04-29Z\nMeisskey released v10.102.699-m544 and v11.37.1-20240430023339, which fix the same vulneravility, and published a security advisory\n\n\n2024-04-29Z\nFirefish released v20240430, which fixes the same vulnerability\n\n\n2024-05-09T20:32:38Z\nSharkey released v2024.3.3, which fixes the same vulnerability",
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-2vxv-pv3m-3wvj",
-      "status": "requires-source-review"
+      "status": "patched-and-regression-tested"
     },
     {
       "id": "GHSA-38jx-423m-g387",
       "title": "JSON-LD signature validation + compaction is vulnerable to timing attacks",
       "body": "Summary\n\nAll Misskey servers running versions 12.37.0 and later, but prior to 2026.5.4, is vulnerable to timing attacks in JSON-LD signature validation and compaction process. This will lead to accept fake activities as valid, causing integrity loss.\n\nWorkaround\n\nThere is no known workaround. Please update to the latest Misskey immediately.\n\nNotes\n\n2026.5.4 fixes two vulnerabilities related to JSON-LD, each caused by different reasons. GHSA-w8x2-gpq6-jxvf (CVE-2026-46713) is a vulnerability caused by information being parsed in an unexpected format due to special keys contained in JSON-LD; however, GHSA-38jx-423m-g387 (CVE-2026-47746, this issue) is a vulnerability caused by the fact that the context regarding JSON-LD parsing is not shared between signature verification and actual processing, leading to the trust of information that should not be trusted (a so-called \"TOCTOU\" or \"timing attack\").",
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-38jx-423m-g387",
-      "status": "requires-source-review"
+      "status": "patched-and-regression-tested"
     },
     {
       "id": "GHSA-38w6-vx8g-67pp",
@@ -42,14 +42,14 @@
       "title": "Misskey&#39;s missing signature validation allows arbitrary users to impersonate any remote user.",
       "body": "Authors\n\n@yunochi*, @perillamint*\n\nSummary\n\nMisskey's missing signature validation allows arbitrary users to impersonate any remote user.\n\nDetails\n\nWhen Misskey has to verify the remote actor is eligible to POST into\nthe inbox, it only validates its HTTP message signature.\n\nDue to lack of the header validation such as Digest and Host, it allows\nattackers can spoof arbitrary users using ActivityPub server-to-server federation\nprotocol.\n\nSeverity\n\nCVSS v4.0 score: 7.1 (High)\n\nVector String: CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:L/VI:H/VA:N/SC:N/SI:N/SA:N\n\nCVSS v3.1 score: 9.3 (Critical)\n\nVector String: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:H/A:N\n\nPoC\n\nIncluded in mailed tarball. See /exploit\n\nPossible mitigation\n\nServer administrators\nConfigure the reverse proxy to explicitly filter out the requests with a\nnon-matching HOST header. Since most ActivityPub implementation which\nuses HTTP message signature to authenticate server-to-server federation\nincludes HOST in their signature, it will provide a not-perfect-but-practical\ndefense against this attack.\n\nAlso, use a firewall to block external requests bypassing the reverse\nproxy.\n\nThis vulnerability has been fixed in v2023.11.1; updating to v2023.11.1 or later is strongly recommended.\n\nMisskey maintainers\nThere is a patch that implements missing validation and submitted using the GHSA private fork feature. See branch advisory-fix-1 for the patch.",
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-3f39-6537-3cgc",
-      "status": "requires-source-review"
+      "status": "patched-and-regression-tested"
     },
     {
       "id": "GHSA-3p2w-xmv5-jm95",
       "title": "CSS Style Injection In `MkUrlPreview`",
       "body": "Summary\n\nDue to an oversight in the validation performed in UrlPreviewService and MkUrlPreview, it is possible for an attacker to inject arbitrary CSS into the MkUrlPreview component.\n\nDetails\n\nUrlPreviewService.wrap falls back to returning the original URL if it's using a protocol that is likely to not be understood by Misskey, IE something other than http or https. This both can deanonymize users and allow further attacks in the client.\nAdditionally, MkUrlPreview doesn't escape CSS when applying a background-image property, allowing an attacker to craft a URL that applies arbitrary styles to the preview element.\n\nPoC\n\n\nHave a webserver host a HTML page with a twitter:image opengraph attribute with the value of ftp://whatever-this-will-be-ignored/');position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background-color:red;fixup:url('\n\nMake a note linking to said HTML page.\n\nWhen the note is rendered, it will show a big red square covering the entire post area (no mfm required!).\n\n\nImpact\n\nTheoretically, an attacker can craft a CSS injection payload to create a fake error message that can deceive the user into giving away their credentials or similar sensitive information.",
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-3p2w-xmv5-jm95",
-      "status": "requires-source-review"
+      "status": "patched-and-regression-tested"
     },
     {
       "id": "GHSA-496g-mmpw-j9x3",
@@ -84,7 +84,7 @@
       "title": "Server-Side Request Forgery vulnerability in various APIs",
       "body": "Summary\n\nSome APIs using HttpRequestService do not properly check the target host.\n\nThis vulnerability allows an attacker to send POST or GET requests to the internal server, which may result in a SSRF attack.\n\nImpact\n\nIt allows an attacker to send POST or GET requests (with some controllable URL parameters) to private IPs, enabling further attacks on internal servers.",
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-5q3h-wpfw-hjjw",
-      "status": "requires-source-review"
+      "status": "patched-and-regression-tested"
     },
     {
       "id": "GHSA-675w-hf2m-qwmj",
@@ -140,7 +140,7 @@
       "title": "SQL injection of notes/search-by-tag",
       "body": "Impact\n\nタグによるノート検索API(notes/search-by-tag)において、パラメータの検証が不十分なためSQLインジェクションが可能です。\n\nSQL injection is possible due to insufficient parameter validation in the note search API by tag (notes/search-by-tag).\n\nPatches\n\n13.3.3で修正されています。\n\nThis has been fixed in 13.3.3.\n\nWorkarounds\n\napi/notes/search-by-tag へのアクセスを遮断する\n\nBlock access to api/notes/search-by-tag",
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-cgwp-vmr4-wx4q",
-      "status": "requires-source-review"
+      "status": "patched-and-regression-tested"
     },
     {
       "id": "GHSA-cvf3-p7p2-27fh",
@@ -210,7 +210,7 @@
       "title": "SSRF bypass in URL Preview",
       "body": "Summary\n\nAll Misskey servers running versions prior to 2026.6.0 contain a Server-Side Request Forgery (SSRF) vulnerability in the URL preview functionality. Due to missing network restrictions before establishing outbound connections, a remote attacker can cause the Misskey server to initiate HTTP requests to loopback, private, or link-local services.\n\nPlease note that because the IP address validation takes place after the request has been sent and the process is subsequently rejected, it is believed that no sensitive internal data that should not be visible to the client side is actually transmitted back or exposed to the attacker.\n\nWorkaround\n\nThere is no known workaround.",
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-jvcx-f39m-5xrj",
-      "status": "requires-source-review"
+      "status": "patched-and-regression-tested"
     },
     {
       "id": "GHSA-jx9q-24fh-4fxw",
@@ -238,7 +238,7 @@
       "title": "Server-Side Request Forgery vulnerability in download",
       "body": "Impact\n\nURLからアップロード及びリモート添付ファイルの処理にServer-Side Request Forgeryの脆弱性が存在します。\nこれにより、内部ネットワーク内の非公開の情報が漏洩する可能性があります。\n\nA Server-Side Request Forgery vulnerability exists in \"Upload from URL\" and remote attachment handling.\nThis could result in the exposure of non-public information within the internal network.\n\nPatches\n\n12.90.0 で修正されています。\nただし、Proxyを使用している場合は別途対策する必要があります。\n\nThis has been fixed in 12.90.0.\nHowever, if you are using a proxy, you will need to take additional measures.\n\nWorkarounds\n\nアプリケーションが実行されているホストからプライベートネットワーク等へのアクセスを、適切に制限することにより回避できる可能性があります。\n\nThis may be avoided by appropriately restricting access to private networks from the host where the application is running.\n\nReferences\n\n\nCHANGELOG\n\nFix commit: https://github.com/misskey-dev/misskey/commit/e1a8b158e04ad567d92d8daf3cc0898ee18f1a2e e1a8b15\n\n\nFor more information\n\nIf you have any questions or comments about this advisory:\n\n\nOpen an issue in https://github.com/misskey-dev/misskey/issues\n\nEmail us at syuilotan@yahoo.co.jp",
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-mqv7-gxh4-r5vf",
-      "status": "requires-source-review"
+      "status": "patched-and-regression-tested"
     },
     {
       "id": "GHSA-p73x-6qrq-34jc",
@@ -294,7 +294,7 @@
       "title": "XSS vulnerability using url preview",
       "body": "Impact\n\nURLプレビュー機能において、URLの検証が不十分なため、悪意のあるURLをプレビュー時に「プレイヤーで表示」もしくは「ウィンドウで表示」を行った場合に任意のJavaScriptが実行されます。\n\nIn the URL preview function, due to insufficient URL validation, arbitrary JavaScript is executed when a malicious URL is \"View in Player\" or \"View in Window\" during preview.\n\nPatches\n\n13.3.2で修正されています。\n\nThis has been fixed in 13.3.2.\n\nWorkarounds\n\n当該機能を使用しない。\n\nDo not use the said function.",
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-vc39-c453-67g3",
-      "status": "requires-source-review"
+      "status": "patched-and-regression-tested"
     },
     {
       "id": "GHSA-vwfw-pgg7-5hg6",
@@ -308,7 +308,7 @@
       "title": " JSON-LD signature validation + compaction may lead to improper activity handling",
       "body": "Summary\n\nAll Misskey servers running versions 12.37.0 and later, but prior to 2026.5.4, contain a vulnerability in JSON-LD signature validation and compaction process that allows spoofed activities to be accepted as valid.\n\nWorkaround\n\nThere is no known workaround. Please update to the latest Misskey immediately.\n\nAcknowledgement\n\nThis vulnerability was first discovered on Mastodon, and found out that it affects major ActivityPub-compatible software. Original finders are:\n\n\nDoyensec in collaboration with Claude and Anthropic Research\n\nhttps://github.com/tesaguri\n\nhttps://github.com/ClearlyClaire",
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-w8x2-gpq6-jxvf",
-      "status": "requires-source-review"
+      "status": "patched-and-regression-tested"
     },
     {
       "id": "GHSA-w98m-j6hq-cwjm",
@@ -338,5 +338,6 @@
       "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-xc6c-m4f7-jcc9",
       "status": "requires-source-review"
     }
-  ]
+  ],
+  "sourceReviewDate": "2026-10-25"
 }
