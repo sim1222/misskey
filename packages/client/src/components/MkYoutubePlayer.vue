@@ -22,6 +22,7 @@ import { ref } from 'vue'
 
 import XWindow from '@/components/MkWindow.vue';
 import { lang } from '@/config';
+import { safePreviewPlayer } from '@/scripts/preview-security';
 
 const props = defineProps<{
 	url: string;
@@ -46,7 +47,7 @@ const ytFetch = (): void => {
 			if (info.url == null) return;
 			title.value = info.title;
 			fetching.value = false;
-			player.value = info.player;
+			player.value = safePreviewPlayer(info.player);
 		});
 	});
 };

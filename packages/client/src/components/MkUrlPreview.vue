@@ -9,7 +9,7 @@
 <div v-else v-size="{ max: [400, 350] }" class="mk-url-preview">
 	<transition :name="$store.state.animation ? 'zoom' : ''" mode="out-in">
 		<component :is="self ? 'MkA' : 'a'" v-if="!fetching" class="link" :class="{ compact }" :[attr]="self ? url.substr(local.length) : url" rel="nofollow noopener" :target="target" :title="url">
-			<div v-if="thumbnail" class="thumbnail" :style="`background-image: url('${thumbnail}')`">
+			<div v-if="thumbnail" class="thumbnail" :style="{ backgroundImage: `url(${JSON.stringify(thumbnail)})` }">
 				<button v-if="!playerEnabled && player.url" class="_button" :title="i18n.ts.enablePlayer" @click.prevent="isMobile? playerEnabled = true : openPlayer()"><i class="fas fa-play-circle"></i></button>
 			</div>
 			<article>
@@ -38,6 +38,7 @@ import { url as local, lang } from '@/config';
 import { i18n } from '@/i18n';
 import * as os from '@/os';
 import { deviceKind } from '@/scripts/device-kind';
+import { safePreviewPlayer } from '@/scripts/preview-security';
 
 const props = withDefaults(defineProps<{
 	url: string;
@@ -95,7 +96,7 @@ fetch(`/url?url=${encodeURIComponent(requestUrl.href)}&lang=${requestLang}`).the
 		icon.value = info.icon;
 		sitename.value = info.sitename;
 		fetching.value = false;
-		player.value = info.player;
+		player.value = safePreviewPlayer(info.player);
 	});
 });
 

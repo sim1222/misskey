@@ -15,12 +15,14 @@ interface PreviewSummary {
 	title?: string | null;
 	icon?: string | null;
 	thumbnail?: string | null;
+	player?: { url?: string | null } | null;
 }
 const validateSummary = new Ajv().compile<PreviewSummary>({
 	type: 'object', properties: {
 		title: { type: ['string', 'null'] },
 		icon: { type: ['string', 'null'] },
 		thumbnail: { type: ['string', 'null'] },
+		player: { type: ['object', 'null'], properties: { url: { type: ['string', 'null'] } } },
 	},
 });
 
@@ -43,14 +45,18 @@ export class UrlPreviewService {
 	}
 
 	private wrap(url?: string | null): string | null {
-		return url != null
-			? url.match(/^https?:\/\//)
-				? `${this.config.url}/proxy/preview.webp?${query({
-					url,
-					preview: '1',
-				})}`
-				: url
-			: null;
+		if (!this.isHttpUrl(url)) return null;
+		return `${this.config.url}/proxy/preview.webp?${query({ url, preview: '1' })}`;
+	}
+
+	private isHttpUrl(value: unknown): value is string {
+		if (typeof value !== 'string') return false;
+		try {
+			const url = new URL(value);
+			return url.protocol === 'http:' || url.protocol === 'https:';
+		} catch {
+			return false;
+		}
 	}
 
 	public async handle(ctx: Koa.Context) {
@@ -88,6 +94,7 @@ export class UrlPreviewService {
 	
 			summary.icon = this.wrap(summary.icon);
 			summary.thumbnail = this.wrap(summary.thumbnail);
+			if (summary.player && !this.isHttpUrl(summary.player.url)) summary.player.url = null;
 	
 			// Cache 7days
 			ctx.set('Cache-Control', 'max-age=604800, immutable');

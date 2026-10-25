@@ -48,6 +48,7 @@
 		"test:frontend:unit": "node --test scripts/test/frontend-contracts.test.mjs",
 		"test:frontend:types": "node scripts/frontend/test-type-contracts.mjs",
 		"test:frontend:ui": "node scripts/frontend/test-ui.mjs",
+		"test:frontend:security": "node scripts/frontend/test-security.mjs",
 		"test:frontend:libraries": "node scripts/frontend/test-libraries.mjs"
 	},
 	"dependencies": {

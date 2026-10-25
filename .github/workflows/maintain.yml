@@ -94,6 +94,7 @@ jobs:
           yarn test:frontend:inputs
           yarn test:frontend:ui
           yarn test:frontend:libraries
+          yarn test:frontend:security
       - name: Observe HTTP, database, federation, streaming and browser behavior
         run: yarn test:regression
         env:
