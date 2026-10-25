@@ -6,6 +6,7 @@ import { resolve, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createServer } from 'node:http';
 import { chromium } from 'playwright-core';
+import { createHash } from 'node:crypto';
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const client = resolve(root, 'packages/client');
 const require = createRequire(resolve(client, 'package.json'));
@@ -15,6 +16,11 @@ const directory = await mkdtemp(join(tmpdir(), 'misskey-preview-security-'));
 let browser, server;
 const observations = [];
 try {
+	const referenceRoot = resolve(root, 'scripts/frontend/fixtures/security-v12');
+	const reference = JSON.parse(await readFile(resolve(referenceRoot, 'source.json'), 'utf8'));
+	assert.equal(reference.revision, '09f033c754941fb505d1335ab5b1aa132620afc3');
+	assert.deepEqual(Object.keys(reference.files).sort(), ['MkUrlPreview.vue', 'MkYoutubePlayer.vue']);
+	for (const [name, expected] of Object.entries(reference.files)) assert.equal(createHash('sha256').update(await readFile(resolve(referenceRoot, name))).digest('hex'), expected, `Frozen v12 source changed: ${name}`);
 	await writeFile(join(directory, 'window.vue'), '<template><div style="width:640px;height:402px"><slot/></div></template>');
 	await writeFile(join(directory, 'os.ts'), 'export function popup() {}');
 	await writeFile(join(directory, 'config.ts'), "export const url='https://local.example'; export const lang='en-US';");
@@ -92,7 +98,7 @@ window.fixture = { async mount(reference, kind, summary) {
 		}
 	}
 	await mkdir(resolve(root, '.maintenance-frontend/latest'), { recursive: true });
-	await writeFile(resolve(root, '.maintenance-frontend/latest/security-compatibility.json'), JSON.stringify(observations, null, 2) + '\n');
+	await writeFile(resolve(root, '.maintenance-frontend/latest/security-compatibility.json'), JSON.stringify({ reference, observations }, null, 2) + '\n');
 	console.log('Preview security: valid v12 players preserved; CSS/script attacks reproduce only on the frozen reference');
 } finally {
 	await browser?.close();
