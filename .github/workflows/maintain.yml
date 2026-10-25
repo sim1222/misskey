@@ -75,7 +75,7 @@ jobs:
       - name: Start application and check HTTP behavior
         run: yarn exec start-server-and-test start http://127.0.0.1:61812 'node scripts/maintenance-smoke.mjs'
       - name: Unit tests and source coverage
-        run: yarn jest --coverage --coverageReporters=json-summary --coverageReporters=lcov --coverageReporters=text-summary
+        run: node scripts/regression/unit-coverage.mjs
       - name: Configure regression browser
         timeout-minutes: 10
         shell: bash
@@ -107,6 +107,7 @@ jobs:
         env:
           REGRESSION_BASE_REF: ${{ github.event.before }}
           REGRESSION_PATCH_COVERAGE: .maintenance-federation/latest/combined-coverage.json
+          REGRESSION_UNIT_COVERAGE: packages/backend/coverage
         run: |
           if ! git cat-file -e "$REGRESSION_BASE_REF^{commit}"; then
             git fetch --no-tags --depth=1 origin "$REGRESSION_BASE_REF"

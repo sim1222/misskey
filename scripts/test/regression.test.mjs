@@ -8,6 +8,8 @@ import { localHost, root } from '../regression/harness.mjs';
 import { Observations, differences, verifyBaseline } from '../regression/observations.mjs';
 import { changedLines, uncoveredChanges } from '../regression/changed-coverage.mjs';
 import { requireBackend } from '../regression/harness.mjs';
+import { createHash } from 'node:crypto';
+import { unitSourceFingerprint, verifiedUnitCoverage } from '../regression/unit-coverage.mjs';
 
 test('fixture refuses non-local service hosts before database creation', () => {
 	for (const host of ['production.example.com', '192.168.1.1', '127.0.0.1.example.org', '/var/run/postgresql', 'localhost:5432', '']) assert.throws(() => localHost(host));
@@ -63,6 +65,7 @@ test('comparison gate fails on behavior changes and leaves the baseline untouche
 });
 
 test('patch gate detects newly untested executable lines and branch outcomes', () => {
+	assert.equal(changedLines('+++ b/packages/backend/src/@types/contract.d.ts\n@@ -0,0 +1 @@\n+declare module "jsonld" {}').size, 0);
 	const path = 'packages/backend/src/example.ts';
 	const lines = changedLines(`diff --git a/${path} b/${path}\n--- a/${path}\n+++ b/${path}\n@@ -3,0 +4,2 @@\n+if (user) return 1;\n+return 0;`);
 	assert.deepEqual([...lines.get(path)], [4, 5]);
@@ -73,4 +76,18 @@ test('patch gate detects newly untested executable lines and branch outcomes', (
 	map.data[resolve(root, path)].s[1] = 1;
 	map.data[resolve(root, path)].b[0][1] = 1;
 	assert.deepEqual(uncoveredChanges(lines, map), []);
+});
+
+test('patch coverage rejects stale, altered and mismatched-runtime unit reports', async () => {
+	const directory = await mkdtemp(join(tmpdir(), 'misskey-unit-coverage-'));
+	try {
+		const report = JSON.stringify({});
+		await writeFile(join(directory, 'coverage-final.json'), report);
+		const metadata = { node: process.version, sourceFingerprint: await unitSourceFingerprint(), reportHash: createHash('sha256').update(report).digest('hex') };
+		const save = value => writeFile(join(directory, 'coverage-metadata.json'), JSON.stringify(value));
+		await save(metadata); assert.deepEqual(await verifiedUnitCoverage(directory), {});
+		await save({ ...metadata, node: 'v0.0.0' }); await assert.rejects(verifiedUnitCoverage(directory), /different Node/);
+		await save({ ...metadata, sourceFingerprint: 'old' }); await assert.rejects(verifiedUnitCoverage(directory), /stale/);
+		await save(metadata); await writeFile(join(directory, 'coverage-final.json'), '{}\n'); await assert.rejects(verifiedUnitCoverage(directory), /differs/);
+	} finally { await rm(directory, { recursive: true, force: true }); }
 });

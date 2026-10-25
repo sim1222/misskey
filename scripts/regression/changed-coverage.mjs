@@ -4,12 +4,19 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { root, requireBackend } from './harness.mjs';
+import { verifiedUnitCoverage } from './unit-coverage.mjs';
 
 export function changedLines(diff) {
 	const files = new Map();
 	let path;
 	for (const line of diff.split('\n')) {
-		if (line.startsWith('+++ b/')) { path = line.slice(6); files.set(path, new Set()); }
+		if (line.startsWith('+++ b/')) {
+			path = line.slice(6);
+			// Declaration files cannot emit executable JavaScript. They remain
+			// covered by the mandatory compiler/type-contract checks instead.
+			if (path.endsWith('.d.ts')) { path = undefined; continue; }
+			files.set(path, new Set());
+		}
 		const hunk = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/.exec(line);
 		if (hunk && path) for (let i = 0; i < Number(hunk[2] ?? 1); i++) files.get(path).add(Number(hunk[1]) + i);
 	}
@@ -35,6 +42,7 @@ async function main() {
 	const diff = execFileSync('git', ['diff', '--no-ext-diff', '--no-renames', '--unified=0', '--diff-filter=AM', base, 'HEAD', '--', 'packages/backend/src'], { cwd: root, encoding: 'utf8' });
 	const { createCoverageMap } = requireBackend('istanbul-lib-coverage');
 	const map = createCoverageMap(JSON.parse(await readFile(resolve(root, process.env.REGRESSION_PATCH_COVERAGE ?? '.maintenance-regression/latest/coverage/coverage-final.json'), 'utf8')));
+	if (process.env.REGRESSION_UNIT_COVERAGE) map.merge(await verifiedUnitCoverage(resolve(root, process.env.REGRESSION_UNIT_COVERAGE)));
 	const files = changedLines(diff);
 	const failures = uncoveredChanges(files, map);
 	await writeFile(resolve(root, '.maintenance-regression/latest/changed-coverage.json'), JSON.stringify({ base, files: [...files.keys()], failures }, null, 2) + '\n');
