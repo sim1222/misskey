@@ -1,8 +1,8 @@
 import * as crypto from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
-import fetch from 'node-fetch';
 import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { CONTEXTS } from './misc/contexts.js';
+import { ACTIVITY_CONTEXT, CONTEXTS } from './misc/contexts.js';
+import type { JsonLdDocument } from 'jsonld';
 
 // RsaSignature2017 based from https://github.com/transmute-industries/RsaSignature2017
 
@@ -19,6 +19,8 @@ export class LdSignatureService {
 }
 
 class LdSignature {
+	private frozen = false;
+	private readonly documents = new Map<string, Promise<{ contextUrl: null; document: unknown; documentUrl: string }>>();
 	public debug = false;
 	public preLoad = true;
 	public loderTimeout = 10 * 1000;
@@ -90,14 +92,36 @@ class LdSignature {
 		return verifyData;
 	}
 
-	public async normalize(data: any) {
+	public async normalize(data: JsonLdDocument): Promise<string> {
 		const customLoader = this.getLoader();
-		return 42;
+		return (await import('jsonld')).default.canonize(data, {
+			algorithm: 'URDNA2015', format: 'application/n-quads', documentLoader: customLoader, maxDeepIterations: 1000,
+		});
+	}
+
+	public async compact(data: JsonLdDocument): Promise<JsonLdDocument> {
+		return (await import('jsonld')).default.compact(data, ACTIVITY_CONTEXT, { documentLoader: this.getLoader() });
+	}
+
+	public freeze(): void {
+		this.frozen = true;
+	}
+
+	public checkForForbiddenDirectives(value: unknown): void {
+		const pending = [value];
+		while (pending.length) {
+			const item = pending.pop();
+			if (item === null || typeof item !== 'object') continue;
+			for (const [key, child] of Object.entries(item)) {
+				if (['@included', '@graph', '@reverse'].includes(key)) throw new Error(`Forbidden JSON-LD directive ${key}`);
+				pending.push(child);
+			}
+		}
 	}
 
 	private getLoader() {
 		return async (url: string): Promise<any> => {
-			if (!url.match('^https?\:\/\/')) throw `Invalid URL ${url}`;
+			if (!/^https?:\/\//.test(url)) throw new Error(`Invalid URL ${url}`);
 
 			if (this.preLoad) {
 				if (url in CONTEXTS) {
@@ -111,23 +135,28 @@ class LdSignature {
 			}
 
 			if (this.debug) console.debug(`MISS: ${url}`);
-			const document = await this.fetchDocument(url);
-			return {
-				contextUrl: null,
-				document: document,
-				documentUrl: url,
-			};
+			const cached = this.documents.get(url);
+			if (cached) return structuredClone(await cached);
+			if (this.frozen) throw new Error('Uncached JSON-LD context after compaction');
+			if (this.documents.size >= 256) throw new Error('Too many JSON-LD contexts');
+			const loading = this.fetchDocument(url).then(document => {
+				this.checkForForbiddenDirectives(document);
+				return { contextUrl: null, document, documentUrl: url };
+			});
+			this.documents.set(url, loading);
+			return structuredClone(await loading);
 		};
 	}
 
 	private async fetchDocument(url: string) {
-		const json = await fetch(url, {
+		const json = await this.httpRequestService.getResponse({
+			url,
+			method: 'GET',
 			headers: {
 				Accept: 'application/ld+json, application/json',
 			},
-			// TODO
-			//timeout: this.loderTimeout,
-			agent: u => u.protocol === 'http:' ? this.httpRequestService.httpAgent : this.httpRequestService.httpsAgent,
+			timeout: this.loderTimeout,
+			size: 1024 * 1024,
 		}).then(res => {
 			if (!res.ok) {
 				throw `${res.status} ${res.statusText}`;

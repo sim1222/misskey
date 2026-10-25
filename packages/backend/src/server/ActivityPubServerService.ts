@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { validateActivity } from '@/core/remote/activitypub/validate-activity.js';
 import Router from '@koa/router';
-import json from 'koa-json-body';
+import bodyParser from 'koa-bodyparser';
 import httpSignature from '@peertube/http-signature';
 import { Brackets, In, IsNull, LessThan, Not } from 'typeorm';
 import { DI } from '@/di-symbols.js';
@@ -85,8 +86,23 @@ export class ActivityPubServerService {
 		let signature;
 
 		try {
-			signature = httpSignature.parseRequest(ctx.req, { 'headers': [] });
+			signature = httpSignature.parseRequest(ctx.req, { headers: ['(request-target)', 'host', ctx.get('x-date') ? 'x-date' : 'date', 'digest'] });
 		} catch (e) {
+			ctx.status = 401;
+			return;
+		}
+
+		// The signature must bind this receiver and the exact body being queued.
+		// A valid signature over an unchecked Digest authenticates no activity.
+		const digest = ctx.get('digest');
+		const match = /^SHA-256=([A-Za-z0-9+/]{43}=)$/i.exec(digest);
+		if (ctx.get('host') !== this.config.host || !match || typeof ctx.request.rawBody !== 'string') {
+			ctx.status = 401;
+			return;
+		}
+		const supplied = Buffer.from(match[1], 'base64');
+		const actual = createHash('sha256').update(ctx.request.rawBody).digest();
+		if (supplied.length !== actual.length || !timingSafeEqual(supplied, actual)) {
 			ctx.status = 401;
 			return;
 		}
@@ -405,8 +421,9 @@ export class ActivityPubServerService {
 		}
 
 		// inbox
-		router.post('/inbox', json(), ctx => this.inbox(ctx));
-		router.post('/users/:user/inbox', json(), ctx => this.inbox(ctx));
+		const parseInbox = bodyParser({ enableTypes: ['json'], detectJSON: () => true, jsonLimit: '1mb' });
+		router.post('/inbox', parseInbox, ctx => this.inbox(ctx));
+		router.post('/users/:user/inbox', parseInbox, ctx => this.inbox(ctx));
 
 		// note
 		router.get('/notes/:note', async (ctx, next) => {

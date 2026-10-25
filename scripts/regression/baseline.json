@@ -10914,9 +10914,9 @@
     "status": 202,
     "workerResult": "ok"
   },
-  "tampered signature ignored by worker": {
-    "status": 202,
-    "workerResult": "skip: http-signature verification failed and no LD-Signature. keyId=https://peer.example.invalid/users/remote#main-key"
+  "tampered signature rejected before queue": {
+    "status": 401,
+    "workerResult": null
   },
   "signed malformed activity rejected": {
     "status": 400,
@@ -56735,5 +56735,29 @@
       "name": "TypeError",
       "origin": "core/AntennaService.js"
     }
-  ]
+  ],
+  "valid forwarded LD-signed create": {
+    "status": 202,
+    "workerResult": "ok"
+  },
+  "LD-signed content tampering rejected": {
+    "status": 202,
+    "workerResult": "skip: LD-Signatureの検証に失敗しました"
+  },
+  "LD-signed actor tampering rejected": {
+    "status": 202,
+    "workerResult": "skip: LD-Signatureの検証に失敗しました"
+  },
+  "LD context fetch failure rejected": {
+    "status": 202,
+    "workerResult": "skip: failed to compact LD-signature activity"
+  },
+  "LD context hiding activity type rejected": {
+    "status": 202,
+    "workerResult": "skip: invalid compacted LD-signature activity"
+  },
+  "LD graph directive rejected": {
+    "status": 202,
+    "workerResult": "skip: failed to compact LD-signature activity"
+  }
 }

@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
-import { generateKeyPairSync, createHash } from 'node:crypto';
+import { generateKeyPairSync, createHash, sign } from 'node:crypto';
 import http from 'node:http';
 import { requireBackend, eventually } from './harness.mjs';
+import { CONTEXTS } from '../../packages/backend/built/core/remote/activitypub/misc/contexts.js';
 
 export async function inboxScenarios(f, o, alice, localNoteId) {
 	const signature = requireBackend('@peertube/http-signature');
@@ -9,6 +10,18 @@ export async function inboxScenarios(f, o, alice, localNoteId) {
 	const remoteId = 'zzzzzzzz01';
 	const remote = 'https://peer.example.invalid/users/remote';
 	const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048, publicKeyEncoding: { type: 'spki', format: 'pem' }, privateKeyEncoding: { type: 'pkcs8', format: 'pem' } });
+	const invalidTransportKey = generateKeyPairSync('rsa', { modulusLength: 2048, privateKeyEncoding: { type: 'pkcs8', format: 'pem' } }).privateKey;
+	const ldSign = async value => {
+		const options = { type: 'RsaSignature2017', creator: `${remote}#main-key`, created: '2024-01-02T03:04:05Z' };
+		const normalize = value => requireBackend('jsonld').canonize(value, { algorithm: 'URDNA2015', format: 'application/n-quads', documentLoader: async url => {
+			assert.ok(Object.hasOwn(CONTEXTS, url), `Reference signer must not fetch ${url}`);
+			return { contextUrl: null, documentUrl: url, document: CONTEXTS[url] };
+		} });
+		const hash = value => createHash('sha256').update(value).digest('hex');
+		const { type: _type, ...proof } = options;
+		const input = hash(await normalize({ ...proof, '@context': 'https://w3id.org/identity/v1' })) + hash(await normalize(value));
+		return { ...value, signature: { ...options, signatureValue: sign('sha256', Buffer.from(input), privateKey).toString('base64') } };
+	};
 	// Seed a previously discovered peer. No production identity or private data is
 	// required, and public-key resolution cannot trigger an external fetch.
 	const { rows: [row] } = await f.db.query('SELECT to_jsonb(u) AS value FROM "user" u WHERE id=$1', [alice.id]);
@@ -22,7 +35,7 @@ export async function inboxScenarios(f, o, alice, localNoteId) {
 	const prefix = `${f.name}:queue`;
 	const queues = ['inbox', 'deliver'].map(name => new Bull(name, { prefix, redis: { host: '127.0.0.1', port: Number(process.env.REGRESSION_REDIS_PORT ?? 56318) } }));
 	const [inbox, deliver] = queues;
-	const send = async (name, activity, expected = 202, tamper = false) => {
+	const send = async (name, activity, expected = 202, tamper = false, signingKey = privateKey) => {
 		let completed;
 		let timer;
 		const processed = expected === 202 ? new Promise((done, reject) => {
@@ -38,13 +51,14 @@ export async function inboxScenarios(f, o, alice, localNoteId) {
 			});
 			request.on('error', reject);
 			request.setTimeout(10000, () => request.destroy(new Error('Signed inbox request timed out')));
-			signature.sign(request, { key: privateKey, keyId: `${remote}#main-key`, headers: ['(request-target)', 'host', 'date', 'digest'] });
+			signature.sign(request, { key: signingKey, keyId: `${remote}#main-key`, headers: ['(request-target)', 'host', 'date', 'digest'] });
 			if (tamper) request.setHeader('host', 'tampered.invalid');
 			request.end(body);
 		});
+		if (result !== expected) { clearTimeout(timer); if (completed) inbox.off('global:completed', completed); }
+		assert.equal(result, expected, name);
 		const workerResult = processed ? await processed : null;
 		o.record(name, { status: result, workerResult });
-		assert.equal(result, expected, name);
 		if (expected === 202) await eventually(async () => {
 			assert.equal(await inbox.getWaitingCount(), 0);
 			assert.equal(await inbox.getActiveCount(), 0);
@@ -73,6 +87,16 @@ export async function inboxScenarios(f, o, alice, localNoteId) {
 		}, 'remote Note persisted');
 		o.record('received remote note row', stored);
 		await send('replayed remote create', activity('Create', remoteNote, 'create'));
+		const ldSigned = await ldSign(activity('Create', remoteNote, 'create-ld'));
+		await send('valid forwarded LD-signed create', ldSigned, 202, false, invalidTransportKey);
+		await send('LD-signed content tampering rejected', { ...ldSigned, object: { ...remoteNote, content: 'forged' } }, 202, false, invalidTransportKey);
+		await send('LD-signed actor tampering rejected', { ...ldSigned, actor: `${remote}-forged` }, 202, false, invalidTransportKey);
+		await send('LD context fetch failure rejected', { ...ldSigned, '@context': 'https://unavailable.example.invalid/context' }, 202, false, invalidTransportKey);
+		await send('LD context hiding activity type rejected', { ...ldSigned, '@context': ['https://www.w3.org/ns/activitystreams', { type: 'https://untrusted.example/type' }] }, 202, false, invalidTransportKey);
+		await send('LD graph directive rejected', { ...ldSigned, '@graph': [{ type: 'Note', content: 'hidden' }] }, 202, false, invalidTransportKey);
+		const retained = (await f.db.query('SELECT text FROM note WHERE uri=$1', [remoteNote.id])).rows;
+		assert.equal(retained.length, 1);
+		assert.equal(retained[0].text, stored.text);
 		assert.equal((await f.db.query('SELECT count(*)::integer AS n FROM note WHERE uri=$1', [remoteNote.id])).rows[0].n, 1);
 		const like = activity('Like', `${f.base}/notes/${localNoteId}`, 'like');
 		await send('signed remote like', like);
@@ -80,7 +104,7 @@ export async function inboxScenarios(f, o, alice, localNoteId) {
 		await send('signed remote undo like', activity('Undo', like, 'undo-like'));
 		await eventually(async () => assert.equal((await f.db.query('SELECT count(*)::integer AS n FROM note_reaction WHERE "userId"=$1', [remoteId])).rows[0].n, 0), 'reaction undone');
 		const before = (await f.db.query('SELECT count(*)::integer AS n FROM following WHERE "followerId"=$1', [remoteId])).rows[0].n;
-		await send('tampered signature ignored by worker', activity('Undo', follow, 'forged-undo'), 202, true);
+		await send('tampered signature rejected before queue', activity('Undo', follow, 'forged-undo'), 401, true);
 		assert.equal((await f.db.query('SELECT count(*)::integer AS n FROM following WHERE "followerId"=$1', [remoteId])).rows[0].n, before);
 		await send('signed malformed activity rejected', { type: 'Create', actor: 123, object: {} }, 400);
 		await send('signed remote delete', activity('Delete', { type: 'Tombstone', id: remoteNote.id, formerType: 'Note' }, 'delete'));

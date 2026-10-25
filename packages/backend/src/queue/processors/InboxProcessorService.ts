@@ -16,6 +16,7 @@ import InstanceChart from '@/core/chart/charts/instance.js';
 import ApRequestChart from '@/core/chart/charts/ap-request.js';
 import FederationChart from '@/core/chart/charts/federation.js';
 import { getApId } from '@/core/remote/activitypub/type.js';
+import { validateActivity } from '@/core/remote/activitypub/validate-activity.js';
 import type { CacheableRemoteUser } from '@/models/entities/User.js';
 import type { UserPublickey } from '@/models/entities/UserPublickey.js';
 import { ApDbResolverService } from '@/core/remote/activitypub/ApDbResolverService.js';
@@ -60,9 +61,9 @@ export class InboxProcessorService {
 		this.logger = this.queueLoggerService.logger.createSubLogger('inbox');
 	}
 
-	public async process(job: Bull.Job<InboxJobData>): Promise<string> {
+	public async process(job: Pick<Bull.Job<InboxJobData>, 'data'>): Promise<string> {
 		const signature = job.data.signature;	// HTTP-signature
-		const activity = job.data.activity;
+		let activity = job.data.activity;
 
 		//#region Log
 		const info = Object.assign({}, activity) as any;
@@ -144,6 +145,17 @@ export class InboxProcessorService {
 
 				// LD-Signature検証
 				const ldSignature = this.ldSignatureService.use();
+				const proof = activity.signature;
+				const { signature: _proof, ...unsigned } = activity;
+				try {
+					const compacted = await ldSignature.compact(unsigned);
+					ldSignature.checkForForbiddenDirectives(compacted);
+					if (!validateActivity(compacted)) return 'skip: invalid compacted LD-signature activity';
+					activity = { ...compacted, signature: proof };
+					ldSignature.freeze();
+				} catch {
+					return 'skip: failed to compact LD-signature activity';
+				}
 				const verified = await ldSignature.verifyRsaSignature2017(activity, authUser.key.keyPem).catch(() => false);
 				if (!verified) {
 					return 'skip: LD-Signatureの検証に失敗しました';
