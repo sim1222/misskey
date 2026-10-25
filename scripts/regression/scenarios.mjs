@@ -52,6 +52,11 @@ export async function scenarios(f, o) {
 		}
 	}
 	await api('public timeline', 'notes/local-timeline', { limit: 20 }, bob);
+	// NFKC turns these characters into SQL quotes only after the legacy
+	// blacklist runs. They must remain literal tag data at the database boundary.
+	const sqlTag = 'nomatch＂}＇ <@ note.tags OR TRUE OR ＇{＂nomatch';
+	assert.deepEqual(await api('tag search binds normalized tag values', 'notes/search-by-tag', { tag: sqlTag }, carol), []);
+	assert.deepEqual(await api('tag query binds every normalized term', 'notes/search-by-tag', { query: [[sqlTag], ['another-nonmatching-tag']] }, carol), []);
 	const home = await api('home timeline', 'notes/timeline', { limit: 20 }, bob);
 	assert.ok(home.some(n => n.id === notes.followers.id));
 	const outsider = await api('stranger timeline', 'notes/timeline', { limit: 20 }, carol);

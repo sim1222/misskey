@@ -56759,5 +56759,17 @@
   "LD graph directive rejected": {
     "status": 202,
     "workerResult": "skip: failed to compact LD-signature activity"
+  },
+  "tag search binds normalized tag values": {
+    "body": [],
+    "cacheControl": "private, max-age=0, must-revalidate",
+    "contentType": "application/json; charset=utf-8",
+    "status": 200
+  },
+  "tag query binds every normalized term": {
+    "body": [],
+    "cacheControl": "private, max-age=0, must-revalidate",
+    "contentType": "application/json; charset=utf-8",
+    "status": 200
   }
 }

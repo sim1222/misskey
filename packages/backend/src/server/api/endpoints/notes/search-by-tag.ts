@@ -96,14 +96,16 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			try {
 				if (ps.tag) {
 					if (!safeForSql(ps.tag)) throw 'Injection';
-					query.andWhere(`'{"${normalizeForSearch(ps.tag)}"}' <@ note.tags`);
+					query.andWhere(':tag <@ note.tags', { tag: [normalizeForSearch(ps.tag)] });
 				} else {
 					query.andWhere(new Brackets(qb => {
+						let index = 0;
 						for (const tags of ps.query!) {
 							qb.orWhere(new Brackets(qb => {
 								for (const tag of tags) {
 									if (!safeForSql(tag)) throw 'Injection';
-									qb.andWhere(`'{"${normalizeForSearch(tag)}"}' <@ note.tags`);
+									const parameter = `tag${index++}`;
+									qb.andWhere(`:${parameter} <@ note.tags`, { [parameter]: [normalizeForSearch(tag)] });
 								}
 							}));
 						}
