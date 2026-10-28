@@ -1,0 +1,282 @@
+[
+  {
+    "file": "06e74508a2c488bf50158de01e0873d61e82fa3c.patch",
+    "sha256": "ad5d9453773c846a320454257e16bdb587d9d0e593982d03abead3580018aad3",
+    "url": "https://github.com/misskey-dev/misskey/commit/06e74508a2c488bf50158de01e0873d61e82fa3c.patch"
+  },
+  {
+    "file": "GHSA-2m3r-xx7x-63j6.html",
+    "sha256": "8e7c7d0674185619ddbcf787c2b6946402faa68b6f6aa44ed0251875582c23f1",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-2m3r-xx7x-63j6"
+  },
+  {
+    "file": "GHSA-2m5x-5mp6-6vpq.html",
+    "sha256": "3912e0dfc92a9efe9919cc42ada2525909626a8dae7dea7fbf4afa35423adba2",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-2m5x-5mp6-6vpq"
+  },
+  {
+    "file": "GHSA-38w6-vx8g-67pp.html",
+    "sha256": "2036a51ea34e46198a615b31b91e5de477e7ff1fb488e4dc9847c33f22733f85",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-38w6-vx8g-67pp"
+  },
+  {
+    "file": "GHSA-496g-mmpw-j9x3.html",
+    "sha256": "f8fedf52349b96e6d7ffc2c8f7b9bd9d8576384073e531d3ed29fece635abc32",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-496g-mmpw-j9x3"
+  },
+  {
+    "file": "GHSA-4x7v-qx8f-g3p8.html",
+    "sha256": "0bb6a654906f2932b56de5e38f911d2aeaecebf26533f22befd906fded60f78e",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-4x7v-qx8f-g3p8"
+  },
+  {
+    "file": "GHSA-5c3q-jmv3-r6fx.html",
+    "sha256": "4003d0b7eb9866e172197627aca5378e611477ea6e1bf39844ae917f14cc7478",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-5c3q-jmv3-r6fx"
+  },
+  {
+    "file": "GHSA-5h8r-gq97-xv69.html",
+    "sha256": "b7e357dae35fde47fe26e7545ebc0b4138fa16c1274bcf0f5d1bb5a07fbdc921",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-5h8r-gq97-xv69"
+  },
+  {
+    "file": "GHSA-675w-hf2m-qwmj.html",
+    "sha256": "7c355c869a8d3fff8121a0570d36b138aa75a0c2cff0edc457fd6be4bfe5a591",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-675w-hf2m-qwmj"
+  },
+  {
+    "file": "GHSA-6qw9-6jxq-xj3p.html",
+    "sha256": "9a0c80b8c186c0a1700ff612f5793ea474372415f2c875cd6815caf837298a69",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-6qw9-6jxq-xj3p"
+  },
+  {
+    "file": "GHSA-6w2c-vf6f-xf26.html",
+    "sha256": "a596144833624d2a1078dd1eba757d2eec6ba98c48e575554a2025e100c23e8e",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-6w2c-vf6f-xf26"
+  },
+  {
+    "file": "GHSA-7pxq-6xx9-xpgm.html",
+    "sha256": "dd96c95ab58e010425d34edb126235226c3683e4da68ea27e8d66b6e955fee24",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-7pxq-6xx9-xpgm"
+  },
+  {
+    "file": "GHSA-7vgr-p3vc-p4h2.html",
+    "sha256": "3461a82dcb909f0c7f4d20a1f84774089e594272b43cd8597766276f39f53707",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-7vgr-p3vc-p4h2"
+  },
+  {
+    "file": "GHSA-9fj2-gjcf-cqqc.html",
+    "sha256": "2cf54f90bd51370f79b113e899785007a06ae8636b2ff852af6f2a241ff377e7",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-9fj2-gjcf-cqqc"
+  },
+  {
+    "file": "GHSA-cvf3-p7p2-27fh.html",
+    "sha256": "1269921266c227fbb8356d4e1df192914e8ea9a3b3611ed9d703cc735421d53f",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-cvf3-p7p2-27fh"
+  },
+  {
+    "file": "GHSA-g3ph-65m3-x625.html",
+    "sha256": "efcf89bcf85824797a4464bfd434f7adbd906c8be4e18825dbf724703b4b369d",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-g3ph-65m3-x625"
+  },
+  {
+    "file": "GHSA-g6hj-33h7-6fq8.html",
+    "sha256": "14aca05ae7c05ad2e87347850d8e04825e9fafc1b0bf1ab9b2b12aa9592e37c1",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-g6hj-33h7-6fq8"
+  },
+  {
+    "file": "GHSA-gg7j-c76w-8x3g.html",
+    "sha256": "8617d7cad9d6ceca4cc905999d5d9de23f13a5ea052354e1d76d0fdd0ab43d3a",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-gg7j-c76w-8x3g"
+  },
+  {
+    "file": "GHSA-gmq6-738q-vjp2.html",
+    "sha256": "6dc42fa3f1663d20348d72feaf1f75a585f39ad32858511188cb3446e8f709c4",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-gmq6-738q-vjp2"
+  },
+  {
+    "file": "GHSA-gq5q-c77c-v236.html",
+    "sha256": "36b36a4766b5c587c23c7b6bf5789565aca5e356e4b18755976f1afdf5726baa",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-gq5q-c77c-v236"
+  },
+  {
+    "file": "GHSA-grwc-c762-gcvp.html",
+    "sha256": "207525d1eef80581dcc037fb41353548213d7d301af8632175789a65b3a0e609",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-grwc-c762-gcvp"
+  },
+  {
+    "file": "GHSA-h3mq-w9gq-6mwm.html",
+    "sha256": "3c8829018eeba4069f336beda1e569b6fecd2590e0bfa992a70a264c7fa77403",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-h3mq-w9gq-6mwm"
+  },
+  {
+    "file": "GHSA-j49q-76hx-mv8f.html",
+    "sha256": "47a492d70eaf7a79698fb799c0e1a7c18921f77e8083bf49b58ec4314562c45f",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-j49q-76hx-mv8f"
+  },
+  {
+    "file": "GHSA-jx9q-24fh-4fxw.html",
+    "sha256": "5dcb5ded597a8b2bfc2450b9df7fe04e576fc1a0ae6b0698febae807dc08e7b7",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-jx9q-24fh-4fxw"
+  },
+  {
+    "file": "GHSA-m2gq-69fp-6hv4.html",
+    "sha256": "2cc251733f07d0364b14f6484280f97152a07e416ba14486fc7aab6cb378895e",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-m2gq-69fp-6hv4"
+  },
+  {
+    "file": "GHSA-m9xp-2fvm-pfmq.html",
+    "sha256": "a346e1d61440676b37fc790add476333021aa86615f6273fce53f23080455928",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-m9xp-2fvm-pfmq"
+  },
+  {
+    "file": "GHSA-p73x-6qrq-34jc.html",
+    "sha256": "a4ba474cb1346829372a893e7864e1f7de502227975d4e0b0c0bc478a4e47fc7",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-p73x-6qrq-34jc"
+  },
+  {
+    "file": "GHSA-pfp5-r48x-fg25.html",
+    "sha256": "63807cdcb31c5277c1b3dba548011eada9b55c2688980142912919595af930e8",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-pfp5-r48x-fg25"
+  },
+  {
+    "file": "GHSA-pj3p-xfwj-rwxv.html",
+    "sha256": "d6c43fb9aedb468e89a62eeddb292c0b253041454a5f1e91aea459b257249377",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-pj3p-xfwj-rwxv"
+  },
+  {
+    "file": "GHSA-pmmv-jwqh-f5ww.html",
+    "sha256": "7bad03ae2d307304a6a15b473bd2b3a869c6b60b143d24a73e7550e157cf7773",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-pmmv-jwqh-f5ww"
+  },
+  {
+    "file": "GHSA-qqrm-9grj-6v32.html",
+    "sha256": "3d4f2eaf70e1f6ca148307b60342484d825786e6804ce8c9d9998ba33054ebdc",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-qqrm-9grj-6v32"
+  },
+  {
+    "file": "GHSA-r33c-qg3g-v9cr.html",
+    "sha256": "518d0b1189083636777aa893418ccdb28e8abe2a3777af6193d223c119f8ece9",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-r33c-qg3g-v9cr"
+  },
+  {
+    "file": "GHSA-rrm8-pwmf-gxm3.html",
+    "sha256": "7bb4b8706ac33b0ace316831148a6e119251b46daf07fa564d0d3c52caa8f63d",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-rrm8-pwmf-gxm3"
+  },
+  {
+    "file": "GHSA-vwfw-pgg7-5hg6.html",
+    "sha256": "445d4b63990116be81d7394c93ecd0a45dcff6cd6e80cf3d29e76ea200898853",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-vwfw-pgg7-5hg6"
+  },
+  {
+    "file": "GHSA-w98m-j6hq-cwjm.html",
+    "sha256": "3a50e274c532e2d12f6b07ba3f94089396f87fdc2fcb3effd05cf5e70e8b4be5",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-w98m-j6hq-cwjm"
+  },
+  {
+    "file": "GHSA-wmhf-m93m-rgmj.html",
+    "sha256": "ec6909b82eb3051f9c65fdd134e3bdf16d255964d646902c2989bf16392e5d12",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-wmhf-m93m-rgmj"
+  },
+  {
+    "file": "GHSA-wwrj-3hvj-prpm.html",
+    "sha256": "6d32c82f342044926755423005157a21309d01f1adf19cc56bde38d1479fd4f8",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-wwrj-3hvj-prpm"
+  },
+  {
+    "file": "GHSA-xc6c-m4f7-jcc9.html",
+    "sha256": "27168f8d87a5b85cd4f4e5996619078c4bdf1ec43d7d13b6379e5d9d0534563f",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-xc6c-m4f7-jcc9"
+  },
+  {
+    "file": "a07dc589e75f0b6c4abf5d5ececb9f1c65e38a5c.patch",
+    "sha256": "5e8925f3f02b46aa47763766b6b4881630b0248397d377b178dc91d06fde66af",
+    "url": "https://github.com/misskey-dev/misskey/commit/a07dc589e75f0b6c4abf5d5ececb9f1c65e38a5c.patch"
+  },
+  {
+    "file": "b361a10c48829a9bc4c01257bdafb85509ce7c76.patch",
+    "sha256": "a7a1953c198130f65880666886a32d6b4df850a2c50ff686aeb9bb316f4e216d",
+    "url": "https://github.com/misskey-dev/misskey/commit/b361a10c48829a9bc4c01257bdafb85509ce7c76.patch"
+  },
+  {
+    "file": "b5d399674a89a3a8471444c4984b0d46068042e1.patch",
+    "sha256": "254de7dfe8527cebb8af1b1da002ccdfa0950b25f292047a7f49c2d1c09e6e40",
+    "url": "https://github.com/misskey-dev/misskey/commit/b5d399674a89a3a8471444c4984b0d46068042e1.patch"
+  },
+  {
+    "file": "cve-2026-28431.json",
+    "sha256": "c592f6bcaa1503e64aefbfb91e0fa7b82fe22f45fa5487b1f89d1750dc7a49ed",
+    "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/28xxx/CVE-2026-28431.json"
+  },
+  {
+    "file": "dialog-fix.diff",
+    "sha256": "f8e3a0c83959db99eafa5d5e85f4bf72997d8635fceda08344ebd53f22a1eae3",
+    "url": "https://github.com/misskey-dev/misskey/commit/ec203f7f795766f76b55fecc9248168c1cdf6c99.diff"
+  },
+  {
+    "file": "e074a91189fa083df3488bbbf9f69d412774f7ce.patch",
+    "sha256": "cf0d8f7fe9b3f4aa4597eed5b62f8953e83c75e938b9590e77b92e6542b79d06",
+    "url": "https://github.com/misskey-dev/misskey/commit/e074a91189fa083df3488bbbf9f69d412774f7ce.patch"
+  },
+  {
+    "file": "libheif-GHSA-rgj7-g3m4-5g8c.html",
+    "sha256": "7fb7e6a026cddf7a2f919934cfad89ce4dedd45c3acfb6b4fcebec3b7f4d8572",
+    "url": "https://github.com/advisories/GHSA-rgj7-g3m4-5g8c"
+  },
+  {
+    "file": "official-page-1.html",
+    "sha256": "9e492ab368803cbee437674d3fa1354d75b6e1f891b36169a1c5f5d128edac14",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories?page=1"
+  },
+  {
+    "file": "official-page-2.html",
+    "sha256": "f3fbc36288d2f2665e29e30272449b1ca56329e6d5336a9911f52ebb3240020b",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories?page=2"
+  },
+  {
+    "file": "official-page-3.html",
+    "sha256": "899ecba81414cace55b66bb4e2d9152b6d0bb239eff613419defa11cc8c37a2c",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories?page=3"
+  },
+  {
+    "file": "official-page-4.html",
+    "sha256": "dbe5ebb0762695fd3d1855ae3710a7f45b98a3db1c8b4cd92e89191d6b348bd1",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories?page=4"
+  },
+  {
+    "file": "official-page-5.html",
+    "sha256": "d43bbeb1e9c439670cedf753322194f5c9925eac91d8d560b3640f6602515f8e",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories?page=5"
+  },
+  {
+    "file": "official-page-6.html",
+    "sha256": "862ecf7c8f4dd2f08b8c37980664e48bf7a6a514b0a77231ccad999894a2b328",
+    "url": "https://github.com/misskey-dev/misskey/security/advisories?page=6"
+  },
+  {
+    "file": "upstream-2024.11.0.diff",
+    "sha256": "7666bb0b84b7686789b8680fb9414337fd967cafdb0f85ff2a9cb8d97611e8b8",
+    "url": "https://github.com/misskey-dev/misskey/compare/2024.10.1...2024.11.0-alpha.3.diff"
+  },
+  {
+    "file": "upstream-2025.2.1.diff",
+    "sha256": "360b3311b5a9c0577ad4c7e4d27d38608fb95302eba19c64e7c2898eb8e22ae2",
+    "url": "https://github.com/misskey-dev/misskey/compare/2025.2.0...2025.2.1.diff"
+  },
+  {
+    "file": "upstream-2026.3.1-compare.html",
+    "sha256": "85781cb2ca8979247eceabba933c46c827951597a409f93bfe240edb911e10b8",
+    "url": "https://github.com/misskey-dev/misskey/compare/2026.3.0...2026.3.1"
+  },
+  {
+    "file": "upstream-2026.3.1.diff",
+    "sha256": "d63a4acea80cf8325c45dbe4e2e786084e84824491045691c9b2b8414a63d176",
+    "url": "https://github.com/misskey-dev/misskey/compare/2026.3.0...2026.3.1.diff"
+  },
+  {
+    "file": "upstream-2026.5.4.diff",
+    "sha256": "2058e7e611d2bdef5c597544ad72d8b017e31290e6c89896905045113b9e2a22",
+    "url": "https://github.com/misskey-dev/misskey/compare/2026.5.3...2026.5.4.diff"
+  }
+]

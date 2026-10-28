@@ -1,0 +1,209 @@
+{
+  "revision": "d2ff8f6c20574fa3edb65c0465ef91beab109267",
+  "node": "v24.22.1",
+  "dependencyVersions": {
+    "typescript": "5.6.3",
+    "unzipper": "0.12.5",
+    "@bull-board/koa": "4.3.1",
+    "koa": "2.16.4",
+    "speakeasy": "2.0.0"
+  },
+  "scriptSha256": "aa21e983e173e26261b1adeb28280ab0746239279e3ca4459fafc0a0a30cac2a",
+  "method": "Exact source methods and callbacks extracted with TypeScript AST; injected repositories, credentials, rate limiter and HTTP responses; real pinned ZIP/Koa adapter libraries; not full-stack tests.",
+  "sources": {
+    ".node-version": "249baf635bb43877fcb9422efa1a4904b702d0ddf14d3949b7cd0950d5229c81",
+    "packages/backend/package.json": "3e696e6c5390e69e781cae9f3fbb886d4f20ca0b84f82fd4045f24cbb941b5b6",
+    "packages/backend/yarn.lock": "58f843b0bbd0ed963034e458a099499bfe932442bd77b93b46ea79aea1e2d841",
+    "packages/backend/src/server/api/SigninApiService.ts": "3af83b64e8218a1f74fc2a4c772956e5153697f5c2372932b7a127298e4d987c",
+    "packages/backend/src/core/entities/NoteReactionEntityService.ts": "bfe41736e45d22ad01eaa41db2b727f39eda935334cd3df58e2cf368343ec2eb",
+    "packages/backend/src/server/api/endpoints/notes/reactions.ts": "207d3815eba4995528f2343a2eae68a4d0360a936473fe00910485580c2efae5",
+    "packages/backend/src/server/api/endpoints/users/get-frequently-replied-users.ts": "3d9406bbc01286738a890b132d11c750ab6aa69191595ea1bb4417a323e53bdc",
+    "packages/backend/src/server/api/endpoints/i/import-following.ts": "491e434ea2245a758c030daec7415b3a6e2e4364072e7069fba7e8b0350f775e",
+    "packages/backend/src/server/api/endpoints/i/import-blocking.ts": "6a6337c7f64e0e45f52218c9d0148209798a0fb7296a48f29a40d0d535c0d097",
+    "packages/backend/src/server/api/endpoints/i/import-muting.ts": "dc955cb725252523192d7c2b85acb2d2a4fc1f1627055b5cc3d335a3cc04df58",
+    "packages/backend/src/server/api/endpoints/i/import-user-lists.ts": "5fd12cec4645da11953ed301b0f04d00a2e7d869a0d591671538dfc9cb2e367d",
+    "packages/backend/src/server/api/endpoints/admin/meta.ts": "860ceb9d16ff86900529f300e6ea331131b31aecafaf0c6575b39283fd40363b",
+    "packages/backend/src/server/api/ApiCallService.ts": "db02f3e9d66353389c7905a3058f575b6dcc4664bbecaeab597a1d5fe219b649",
+    "packages/backend/src/server/api/stream/index.ts": "e371560ec1f39ecb93b9ba3e3371fab5c91ab6c75c16b96587e5b617d714d1b0",
+    "packages/backend/src/server/api/stream/channels/antenna.ts": "04e5253c66cb8bc2ba63235cbe61631fcf69bcd5196998cbc706acfc259088e6",
+    "packages/backend/src/core/remote/activitypub/type.ts": "d6c2b294b63bd61d871c5d9a90eb0352e5bd3a785fd1194d03b5774a8d25ca5b",
+    "packages/backend/src/core/remote/activitypub/models/ApPersonService.ts": "64d9cbb0e61073fa56871d585a3f52722b4b46e9d9d1b4d857a22f0ddfbcc8fb",
+    "packages/backend/src/core/remote/activitypub/models/ApQuestionService.ts": "01f499cbeb5244a5231a0a13292ec5acf36549136b0b16f4e6fb1f05009623c4",
+    "packages/backend/src/core/remote/activitypub/ApInboxService.ts": "d126b0861d06c4881cb663d055101eae34d0097b29ce5d18cdafd90eb8f9142d",
+    "packages/backend/src/core/remote/activitypub/ApRequestService.ts": "11f93b9d11e03bd95a13b17e6bc5b9025a806b8eb24ad97751e5be2bde050f72",
+    "packages/client/src/scripts/theme.ts": "0d0e78c91bd2aea85944bee0b7e423f0e7388bf85adfb41320e7353863911b38",
+    "packages/client/src/os.ts": "2c5a766b4d2d43b6888a3beb74f7b74782f6678a7d7ba1dd27cc884000878862",
+    "packages/client/src/account.ts": "1a007a4f09091754d70d62e59121081d64d76a7e837350f4133f858167463886",
+    "packages/backend/src/queue/processors/ImportCustomEmojisProcessorService.ts": "fa33b601d37c9735feed46ff747b9520ffc7b0a598518a7a90b82fa4508db57f",
+    "packages/backend/src/server/web/ClientServerService.ts": "079432fd8e742f1fb5610f742f1eb439588324b302c50cda463dfdb3fcec1abc",
+    "packages/backend/src/server/api/endpoints/admin/reset-password.ts": "3ffc6379f8b14b9af6c1a98c870b54221d42b1ccfb63fa87064bdc1364e5e8c4"
+  },
+  "results": {
+    "totpReuse": {
+      "successfulSigninsWithSameCode": 2
+    },
+    "securityKeyChallenge": {
+      "crossUserLookupBoundToRequester": true,
+      "rejectedBeforeDeletion": true
+    },
+    "privateReactions": {
+      "anonymousResult": [
+        {
+          "id": "reaction1",
+          "createdAt": "1970-01-01T00:00:00.000Z",
+          "user": {
+            "id": "private-reactor"
+          },
+          "type": "like"
+        }
+      ],
+      "selector": {
+        "noteId": "private-note"
+      }
+    },
+    "privateReplyFrequency": {
+      "anonymousResult": [
+        {
+          "user": {
+            "id": "private-correspondent"
+          },
+          "weight": 1
+        }
+      ],
+      "selectors": [
+        {
+          "userId": "victim",
+          "replyId": {
+            "not": null
+          }
+        },
+        {
+          "id": [
+            "private-reply"
+          ]
+        }
+      ]
+    },
+    "foreignFileImports": {
+      "following": {
+        "selector": {
+          "id": "otherfile"
+        },
+        "queued": {
+          "importingUser": "alice",
+          "file": "otherfile"
+        }
+      },
+      "blocking": {
+        "selector": {
+          "id": "otherfile"
+        },
+        "queued": {
+          "importingUser": "alice",
+          "file": "otherfile"
+        }
+      },
+      "muting": {
+        "selector": {
+          "id": "otherfile"
+        },
+        "queued": {
+          "importingUser": "alice",
+          "file": "otherfile"
+        }
+      },
+      "user-lists": {
+        "selector": {
+          "id": "otherfile"
+        },
+        "queued": {
+          "importingUser": "alice",
+          "file": "otherfile"
+        }
+      }
+    },
+    "thirdPartyAdminMeta": {
+      "emptyPermissionTokenReachedExecutor": true,
+      "secure": null,
+      "kind": null
+    },
+    "legacyUploadCleanup": {
+      "rejectedStatus": 403,
+      "ownTemporaryUploadRemains": true
+    },
+    "privateNoteEvents": {
+      "anonymousEvents": [
+        {
+          "type": "noteUpdated",
+          "body": {
+            "id": "private-note",
+            "type": "reacted",
+            "body": {
+              "reaction": "like",
+              "userId": "private-reactor"
+            }
+          }
+        }
+      ]
+    },
+    "antennaSubscription": {
+      "anonymousSubscriptions": [
+        "antennaStream:another-users-antenna"
+      ]
+    },
+    "originLinks": {
+      "acceptedJavascriptScheme": true,
+      "acceptedUnrelatedHttpsOrigin": true
+    },
+    "spoofedPoll": {
+      "status": "ok: Question updated",
+      "changedVotes": [
+        999
+      ]
+    },
+    "activityFetch": {
+      "rejectedMismatchedFinalUrl": false,
+      "rejectedWrongMediaType": false
+    },
+    "recursiveTheme": {
+      "error": "RangeError"
+    },
+    "aiscriptRequestPath": {
+      "normalizedPathOutsideApi": "/proxy/avatar.webp"
+    },
+    "dashboardCookie": {
+      "loginSetsSecure": false,
+      "loginSetsSameSite": false,
+      "logoutClearsTokenCookie": false
+    },
+    "legacyEmojiMetadataRead": {
+      "readOutsideExtractionDirectory": true,
+      "valueWasOwnSentinel": true
+    },
+    "zipExtraction": {
+      "ordinaryFilePreserved": true,
+      "testedTraversalWrites": 3,
+      "escapedWrites": 0,
+      "symlinkCreated": false
+    },
+    "dashboardPaths": {
+      "unauthenticatedStatuses": {
+        "/queue/api/queues": 401,
+        "/Queue/api/queues": 404,
+        "/%71ueue/api/queues": 404,
+        "/queuex/api/queues": 404,
+        "//queue/api/queues": 404
+      },
+      "authenticatedControl": 200
+    },
+    "forwardedFor": {
+      "sameSocketDifferentReportedIPs": [
+        "198.51.100.1",
+        "198.51.100.2"
+      ]
+    },
+    "adminPasswordReset": {
+      "administratorTargetRejected": true
+    }
+  }
+}

@@ -1,0 +1,1449 @@
+{
+  "reviewDate": "2026-10-28",
+  "reviewedRevision": "d2ff8f6c20574fa3edb65c0465ef91beab109267",
+  "branch": "v12-mod-maintain",
+  "scope": "Public official Misskey advisories; not an exhaustive dependency/OS audit or a production exposure assessment.",
+  "counts": {
+    "not-affected-as-described": 13,
+    "affected": 18,
+    "mitigated": 12,
+    "conditional": 2,
+    "unresolved": 3
+  },
+  "previouslyUnreviewed": 37,
+  "applicationRuntimeChanged": false,
+  "fullStackChecksRerun": false,
+  "probeEvidence": "evidence/2026-10-28/probe-results.json",
+  "items": [
+    {
+      "classification": "not-affected-as-described",
+      "reason": "修正対象は新 Chat の chat/rooms/show とルーム情報の参加・招待確認。この版の旧 messaging/users/groups は別実装で、ChatService・ChatRoom・chat/rooms/show は存在しない。旧メッセージ機能全体の安全性を証明する判定ではない。",
+      "conditions": "このリポジトリの機能構成に限る。後から Chat を移植した派生版は再判定する。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/endpoints.ts",
+          "line": 215,
+          "sha256": "3864dac2cd2eb2b78c9b92b98060dddec46c86213f2889e932de5a8675baea47",
+          "anchor": "messaging/messages"
+        },
+        {
+          "path": "packages/backend/src/core/MessagingService.ts",
+          "line": 22,
+          "sha256": "6f9a4af5275e6efa086dae72c1f085bb5be2227c6c00a4f7c02a3ff690a15dc4",
+          "anchor": "export class MessagingService"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2026.5.3...2026.5.4"
+      ],
+      "relatedFindings": [],
+      "absentPaths": [
+        "packages/backend/src/core/ChatService.ts",
+        "packages/backend/src/server/api/endpoints/chat/rooms/show.ts",
+        "packages/backend/src/models/entities/ChatRoom.ts"
+      ],
+      "id": "GHSA-2m3r-xx7x-63j6",
+      "title": "Lack of proper permission checks in Direct Messaging",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-2m3r-xx7x-63j6"
+    },
+    {
+      "classification": "affected",
+      "reason": "signin は speakeasy.totp.verify の結果だけで成功し、使用済みステップを記録・排他消費しない。同じコードで2回成功する。",
+      "conditions": "TOTP 有効アカウントで、攻撃者がパスワードと有効期間内のコードを得た場合。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/SigninApiService.ts",
+          "line": 148,
+          "sha256": "3af83b64e8218a1f74fc2a4c772956e5153697f5c2372932b7a127298e4d987c",
+          "anchor": "const verified ="
+        },
+        {
+          "path": "packages/backend/src/models/entities/UserProfile.ts",
+          "line": 97,
+          "sha256": "0033f69e341486e5389b8230921f16d7df2eda59903e7fdc68f103f8de47e580",
+          "anchor": "public twoFactorSecret"
+        }
+      ],
+      "probes": [
+        "totpReuse"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-2m5x-5mp6-6vpq",
+      "title": "TOTP tokens can be reused",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-2m5x-5mp6-6vpq"
+    },
+    {
+      "classification": "affected",
+      "reason": "Bull 認証用 token Cookie は Secure/SameSite を明示せずクライアントで設定する。/queue の認証は Cookie だけで、Origin・CSRF トークンの検査がない。",
+      "conditions": "管理者またはモデレーターがログインしたブラウザ。成立条件はブラウザの既定 SameSite、同一 site の別オリジン、HTTPS・プロキシ設定にも依存する。クロスサイト攻撃のブラウザ再現は未実施。",
+      "evidence": [
+        {
+          "path": "packages/client/src/account.ts",
+          "line": 134,
+          "sha256": "1a007a4f09091754d70d62e59121081d64d76a7e837350f4133f858167463886",
+          "anchor": "document.cookie = `token="
+        },
+        {
+          "path": "packages/backend/src/server/web/ClientServerService.ts",
+          "line": 114,
+          "sha256": "079432fd8e742f1fb5610f742f1eb439588324b302c50cda463dfdb3fcec1abc",
+          "anchor": "const token = ctx.cookies.get('token')"
+        }
+      ],
+      "probes": [
+        "dashboardCookie"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-38w6-vx8g-67pp",
+      "title": "CSRF vulnerability due to insecure configuration of authentication cookie attributes",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-38w6-vx8g-67pp"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "この版にお気に入り・クリップのエクスポート API/ワーカーはない。i/export-notes は本人のノートの出力であり、当該の経路ではない。",
+      "conditions": "favorite/clip への追加や他の公開範囲検査を安全と判断するものではない。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/endpoints.ts",
+          "line": 177,
+          "sha256": "3864dac2cd2eb2b78c9b92b98060dddec46c86213f2889e932de5a8675baea47",
+          "anchor": "i/export-notes"
+        },
+        {
+          "path": "packages/backend/src/queue/processors/ExportNotesProcessorService.ts",
+          "line": 78,
+          "sha256": "fabc5511b32911c9ec2cf3cb4547e68c5163ca7a9ac6aa3819b6d1a5873d70fd",
+          "anchor": "userId: user.id"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "absentPaths": [
+        "packages/backend/src/server/api/endpoints/i/export-favorites.ts",
+        "packages/backend/src/server/api/endpoints/i/export-clips.ts",
+        "packages/backend/src/queue/processors/ExportFavoritesProcessorService.ts",
+        "packages/backend/src/queue/processors/ExportClipsProcessorService.ts"
+      ],
+      "id": "GHSA-496g-mmpw-j9x3",
+      "title": "Export data contains private post data",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-496g-mmpw-j9x3"
+    },
+    {
+      "classification": "affected",
+      "reason": "fetch-rss は未認証 GET/POST を許し、meta.limit がない。本文の同期 XML 解析に到達する。ただし共通 getResponse に10MiB上限が既にあり、本文サイズまで無制限ではない。前回の SSRF 防御も有効。",
+      "conditions": "公開された fetch-rss。RSS 取得の連続・並列要求による負荷。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/endpoints/fetch-rss.ts",
+          "line": 13,
+          "sha256": "4cd96d3f8107068df48f757b6f01b56fc44fd447539e34e1bfd08c648dc217e5",
+          "anchor": "requireCredential: false"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/fetch-rss.ts",
+          "line": 48,
+          "sha256": "4cd96d3f8107068df48f757b6f01b56fc44fd447539e34e1bfd08c648dc217e5",
+          "anchor": "rssParser.parseString(text)"
+        },
+        {
+          "path": "packages/backend/src/core/HttpRequestService.ts",
+          "line": 143,
+          "sha256": "d7da08eb12ab59e4f948a25ce817560728159ebcfdc64f017a64fce0aa517ad6",
+          "anchor": "size: args.size ?? 10 * 1024 * 1024"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-4x7v-qx8f-g3p8",
+      "title": "Lack of rate limiting and size restrictions in RSS fetching API",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-4x7v-qx8f-g3p8"
+    },
+    {
+      "classification": "affected",
+      "reason": "notes/reactions は未認証で noteId を直接検索し、ノートの存在・閲覧権を検査しない。serializer はリアクションしたユーザーと種類を返す。",
+      "conditions": "閲覧権のないノートの ID が分かる場合。本文漏えいとは別の交流情報漏えい。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/endpoints/notes/reactions.ts",
+          "line": 14,
+          "sha256": "207d3815eba4995528f2343a2eae68a4d0360a936473fe00910485580c2efae5",
+          "anchor": "requireCredential: false"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/notes/reactions.ts",
+          "line": 62,
+          "sha256": "207d3815eba4995528f2343a2eae68a4d0360a936473fe00910485580c2efae5",
+          "anchor": "noteId: ps.noteId"
+        },
+        {
+          "path": "packages/backend/src/core/entities/NoteReactionEntityService.ts",
+          "line": 55,
+          "sha256": "bfe41736e45d22ad01eaa41db2b727f39eda935334cd3df58e2cf368343ec2eb",
+          "anchor": "user: await this.userEntityService.pack"
+        }
+      ],
+      "probes": [
+        "privateReactions"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-5c3q-jmv3-r6fx",
+      "title": "Lack of proper permission checks",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-5c3q-jmv3-r6fx"
+    },
+    {
+      "classification": "affected",
+      "reason": "Inbox update は活動の actor 自体だけを照合し、対象 Question の所有者と比較しない。インラインの他人の Question を updateQuestion へ渡し、保存済み投票数を書き換える。",
+      "conditions": "任意のリモート Actor の正当な署名と、保存済みリモート投票の URI。ローカル投票は updateQuestion が拒否。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/remote/activitypub/ApInboxService.ts",
+          "line": 733,
+          "sha256": "d126b0861d06c4881cb663d055101eae34d0097b29ce5d18cdafd90eb8f9142d",
+          "anchor": "else if (getApType(object) === 'Question')"
+        },
+        {
+          "path": "packages/backend/src/core/remote/activitypub/models/ApQuestionService.ts",
+          "line": 84,
+          "sha256": "01f499cbeb5244a5231a0a13292ec5acf36549136b0b16f4e6fb1f05009623c4",
+          "anchor": "const question = await resolver.resolve(value)"
+        }
+      ],
+      "probes": [
+        "spoofedPoll"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-5h8r-gq97-xv69",
+      "title": "Missing validation allows spoofed poll updates",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-5h8r-gq97-xv69"
+    },
+    {
+      "classification": "affected",
+      "reason": "Person と Note の url を getOneApHrefNullable でそのまま保存し、id との同一ホスト・オリジンを確認しない。リモート表示リンクに使用される。",
+      "conditions": "攻撃者が配信する AP オブジェクトの表示・更新。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/remote/activitypub/models/ApPersonService.ts",
+          "line": 312,
+          "sha256": "64d9cbb0e61073fa56871d585a3f52722b4b46e9d9d1b4d857a22f0ddfbcc8fb",
+          "anchor": "url: getOneApHrefNullable(person.url)"
+        },
+        {
+          "path": "packages/backend/src/core/remote/activitypub/models/ApNoteService.ts",
+          "line": 306,
+          "sha256": "8fe38e04e34564328b408a1d3577daad9bb371ef8170638842095c46893816b6",
+          "anchor": "url: getOneApHrefNullable(note.url)"
+        },
+        {
+          "path": "packages/client/src/components/MkRemoteCaution.vue",
+          "line": 2,
+          "sha256": "abc19254480516d84791bf9c69b68069a63ac575de0cee8bba53f74a971f51a5",
+          "anchor": ":href="
+        }
+      ],
+      "probes": [
+        "originLinks"
+      ],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2024.10.1...2024.11.0-alpha.3"
+      ],
+      "relatedFindings": [],
+      "id": "GHSA-675w-hf2m-qwmj",
+      "title": "Missing validation allows spoofed \"origin\" links",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-675w-hf2m-qwmj"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "アプリ認可画面は app.name/description を Vue のテキスト補間で表示し、HTML を実行する v-html がない。旧アプリ名注入経路の修正が既に含まれる。",
+      "conditions": "アプリ認可画面の当該 HTML 注入に限る。",
+      "evidence": [
+        {
+          "path": "packages/client/src/pages/auth.form.vue",
+          "line": 5,
+          "sha256": "b59db8fc073c630cf980905c7adec59610e10b579b18187925d9c956fbbf8dd8",
+          "anchor": "<h2>{{ app.name }}</h2>"
+        },
+        {
+          "path": "packages/client/src/pages/auth.form.vue",
+          "line": 7,
+          "sha256": "b59db8fc073c630cf980905c7adec59610e10b579b18187925d9c956fbbf8dd8",
+          "anchor": "<p class=\"description\">{{ app.description }}</p>"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-6qw9-6jxq-xj3p",
+      "title": "XSS vulnerability using app authentication form",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-6qw9-6jxq-xj3p"
+    },
+    {
+      "classification": "affected",
+      "reason": "不完全パッチの前段にある取得先と id/url の権威検査そのものがない。signedGet は最終応答 URL と id を照合せず JSON を返すため、この修正版の厳密な id・要求 URL・最終 URL 照合も満たさない。",
+      "conditions": "攻撃者の AP 文書を取得させる経路、または他ホストへのリダイレクトを利用できる場合。署名/Digest の修正だけでは取得したオブジェクトの権威を保証しない。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/remote/activitypub/ApRequestService.ts",
+          "line": 181,
+          "sha256": "11f93b9d11e03bd95a13b17e6bc5b9025a806b8eb24ad97751e5be2bde050f72",
+          "anchor": "return await res.json();"
+        },
+        {
+          "path": "packages/backend/src/core/remote/activitypub/ApResolverService.ts",
+          "line": 135,
+          "sha256": "b5e072dcc46e13be72412db6073e59715f5399d067a00d8ad05a5f1bb65b0001",
+          "anchor": "const object = (this.user"
+        }
+      ],
+      "probes": [
+        "activityFetch"
+      ],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2025.2.0...2025.2.1"
+      ],
+      "relatedFindings": [],
+      "id": "GHSA-6w2c-vf6f-xf26",
+      "title": "Incomplete Patch on CVE-2024-52591 leading to Forgery of Federated Notes",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-6w2c-vf6f-xf26"
+    },
+    {
+      "classification": "affected",
+      "reason": "admin/meta に secure と kind がない。共通 API 認可は宣言された kind のみ検査するため、管理者に発行された permission=[] のアプリトークンが管理設定 executor へ到達する。実 executor は SMTP・ストレージの秘密値を返す。WebSocket の token.permission もチャンネル接続で確認しない。",
+      "conditions": "利用者が第三者アプリを認可した場合。管理者が認可すると特に深刻。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/endpoints/admin/meta.ts",
+          "line": 12,
+          "sha256": "860ceb9d16ff86900529f300e6ea331131b31aecafaf0c6575b39283fd40363b",
+          "anchor": "requireAdmin: true"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/admin/meta.ts",
+          "line": 356,
+          "sha256": "860ceb9d16ff86900529f300e6ea331131b31aecafaf0c6575b39283fd40363b",
+          "anchor": "smtpPass: instance.smtpPass"
+        },
+        {
+          "path": "packages/backend/src/server/api/ApiCallService.ts",
+          "line": 189,
+          "sha256": "db02f3e9d66353389c7905a3058f575b6dcc4664bbecaeab597a1d5fe219b649",
+          "anchor": "if (token && ep.meta.kind"
+        },
+        {
+          "path": "packages/backend/src/server/api/stream/index.ts",
+          "line": 265,
+          "sha256": "e371560ec1f39ecb93b9ba3e3371fab5c91ab6c75c16b96587e5b617d714d1b0",
+          "anchor": "public connectChannel"
+        }
+      ],
+      "probes": [
+        "thirdPartyAdminMeta"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-7pxq-6xx9-xpgm",
+      "title": "Improper authorization when accessing with third-party application",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-7pxq-6xx9-xpgm"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "当該修正は HTML の link[rel=alternate] を signedGet が追跡するときのホスト検査。この版の signedGet に HTML 解析・alternate 追跡はなく、常に JSON として読む。",
+      "conditions": "この取得経路に限る。別の取得先/id 不一致と media type 未検査は m2gq/6w2c/qqrm として影響あり。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/remote/activitypub/ApRequestService.ts",
+          "line": 161,
+          "sha256": "11f93b9d11e03bd95a13b17e6bc5b9025a806b8eb24ad97751e5be2bde050f72",
+          "anchor": "public async signedGet"
+        },
+        {
+          "path": "packages/backend/src/core/remote/activitypub/ApRequestService.ts",
+          "line": 181,
+          "sha256": "11f93b9d11e03bd95a13b17e6bc5b9025a806b8eb24ad97751e5be2bde050f72",
+          "anchor": "return await res.json();"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2024.10.1...2024.11.0-alpha.3"
+      ],
+      "relatedFindings": [],
+      "id": "GHSA-7vgr-p3vc-p4h2",
+      "title": "Missing validation allows spoofed profiles",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-7vgr-p3vc-p4h2"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "Koa の /queue 完全一致・/queue/ 前方一致の認証は、KoaAdapter が同じリテラルで mount する全経路を覆う。大文字、エンコード、隣接 prefix、二重 slash の候補は401/404、認証済み対照は200となった。",
+      "conditions": "同じ Koa 版・mount の構成。Fastify 等へ置換した構成や、未試験の正規化を行う本番プロキシまでは含まない。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/web/ClientServerService.ts",
+          "line": 113,
+          "sha256": "079432fd8e742f1fb5610f742f1eb439588324b302c50cda463dfdb3fcec1abc",
+          "anchor": "ctx.path === bullBoardPath || ctx.path.startsWith"
+        },
+        {
+          "path": "packages/backend/src/server/web/ClientServerService.ts",
+          "line": 143,
+          "sha256": "079432fd8e742f1fb5610f742f1eb439588324b302c50cda463dfdb3fcec1abc",
+          "anchor": "serverAdapter.setBasePath(bullBoardPath)"
+        }
+      ],
+      "probes": [
+        "dashboardPaths"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-9fj2-gjcf-cqqc",
+      "title": "Bypass authentication of Bull dashboard",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-9fj2-gjcf-cqqc"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "当該の新 passkey 保存領域はない。旧 WebAuthn は DB の challenge を userId・id・challenge・registrationChallenge で照会し、取得できた後に同じ userId/id で削除する。他人の challengeId では削除に到達しない。",
+      "conditions": "旧 WebAuthn の他ユーザー challenge 操作に限る。WebAuthn 全体の監査結果ではない。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/SigninApiService.ts",
+          "line": 174,
+          "sha256": "3af83b64e8218a1f74fc2a4c772956e5153697f5c2372932b7a127298e4d987c",
+          "anchor": "const challenge = await this.attestationChallengesRepository.findOneBy"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/i/2fa/key-done.ts",
+          "line": 121,
+          "sha256": "eb7fcb37627477349a18b14a3e62cc437547b85edc13ca7dcb95431aac80b443",
+          "anchor": "id: ps.challengeId"
+        },
+        {
+          "path": "packages/backend/src/models/entities/AttestationChallenge.ts",
+          "line": 25,
+          "sha256": "91480609654db5741b22531a20390b61cfefa66716fa9d62aa1c207f99a123e8",
+          "anchor": "public challenge: string"
+        }
+      ],
+      "probes": [
+        "securityKeyChallenge"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-g3ph-65m3-x625",
+      "title": "Passkey (WebAuthn) login flow can be disrupted",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-g3ph-65m3-x625"
+    },
+    {
+      "classification": "affected",
+      "reason": "following/blocking/muting/user-lists の import API は fileId だけで取得し userId を検査しない。他人のファイル ID から自分の import job を作成できる。上流修正は検索条件への userId 追加。",
+      "conditions": "ログイン用の本人トークンと、サイズ制限等を満たす他人の Drive ファイル ID が必要。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/endpoints/i/import-following.ts",
+          "line": 62,
+          "sha256": "491e434ea2245a758c030daec7415b3a6e2e4364072e7069fba7e8b0350f775e",
+          "anchor": "findOneBy({ id: ps.fileId })"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/i/import-blocking.ts",
+          "line": 63,
+          "sha256": "6a6337c7f64e0e45f52218c9d0148209798a0fb7296a48f29a40d0d535c0d097",
+          "anchor": "findOneBy({ id: ps.fileId })"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/i/import-muting.ts",
+          "line": 63,
+          "sha256": "dc955cb725252523192d7c2b85acb2d2a4fc1f1627055b5cc3d335a3cc04df58",
+          "anchor": "findOneBy({ id: ps.fileId })"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/i/import-user-lists.ts",
+          "line": 62,
+          "sha256": "5fd12cec4645da11953ed301b0f04d00a2e7d869a0d591671538dfc9cb2e367d",
+          "anchor": "findOneBy({ id: ps.fileId })"
+        }
+      ],
+      "probes": [
+        "foreignFileImports"
+      ],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2026.3.0...2026.3.1"
+      ],
+      "relatedFindings": [],
+      "id": "GHSA-g6hj-33h7-6fq8",
+      "title": "Lack of resource ownership validation",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-g6hj-33h7-6fq8"
+    },
+    {
+      "classification": "affected",
+      "reason": "Mk:api の ep は文字列確認だけで rawApi へ渡り、/api/ に ../ を連結できる。URL 正規化で /proxy 等へ出る。要求16件の制限はパス検査ではない。",
+      "conditions": "攻撃者の AiScript を利用者が実行する場合。AiScript 全体に既に与えられた能力との差は個別に評価する。",
+      "evidence": [
+        {
+          "path": "packages/client/src/scripts/aiscript/api.ts",
+          "line": 38,
+          "sha256": "dc32fbd17c98ad6c3c016e2ee2377a4f7676a6079c97c4b68879abfac4956c48",
+          "anchor": "'Mk:api'"
+        },
+        {
+          "path": "packages/client/src/os.ts",
+          "line": 45,
+          "sha256": "2c5a766b4d2d43b6888a3beb74f7b74782f6678a7d7ba1dd27cc884000878862",
+          "anchor": "fetch(endpoint.indexOf('://')"
+        }
+      ],
+      "probes": [
+        "aiscriptRequestPath"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-gmq6-738q-vjp2",
+      "title": "Directory Traversal in AiScript via `Mk:api`",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-gmq6-738q-vjp2"
+    },
+    {
+      "classification": "affected",
+      "reason": "MediaProxyServerService は User-Agent が空または Misskey/ を含む要求を拒否せず、そのままダウンロードする。公開アドレス間の再帰は前回の非公開 IP 拒否では防げない。上流のループ防止検査がない。",
+      "conditions": "公開 media proxy。外部プロキシを使う場合はその側も調査が必要。負荷をかける再帰ネットワーク実験は実行していない。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/MediaProxyServerService.ts",
+          "line": 55,
+          "sha256": "b0ed8541c0fbe74a7649687734aded24b211286256960713bc80f11396212e54",
+          "anchor": "private async handler"
+        },
+        {
+          "path": "packages/backend/src/server/MediaProxyServerService.ts",
+          "line": 67,
+          "sha256": "b0ed8541c0fbe74a7649687734aded24b211286256960713bc80f11396212e54",
+          "anchor": "await this.downloadService.downloadUrl(url, path)"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2024.10.1...2024.11.0-alpha.3"
+      ],
+      "relatedFindings": [],
+      "id": "GHSA-gq5q-c77c-v236",
+      "title": "Uncontrolled Recursion and Asymmetric Resource Consumption (Amplification) in media/file proxy",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-gq5q-c77c-v236"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "上流2026.3.1の修正は署名に Digest がないときの return 不足。この版は前回のパッチで parseRequest に digest を必須指定し、本文不一致・欠落時も return するため、キューに進まない。既存の必須ヘッダー拒否テストに対応する。",
+      "conditions": "前回パッチ適用済みの保守ブランチに限る。元の v12-mod はこの判定の対象ではない。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/ActivityPubServerService.ts",
+          "line": 89,
+          "sha256": "fd7fe65f29c72db5bbdc36732721e6efbd83242b07a94676833da4e48b36dc40",
+          "anchor": "headers: ['(request-target)'"
+        },
+        {
+          "path": "packages/backend/src/server/ActivityPubServerService.ts",
+          "line": 105,
+          "sha256": "fd7fe65f29c72db5bbdc36732721e6efbd83242b07a94676833da4e48b36dc40",
+          "anchor": "supplied.length !== actual.length"
+        },
+        {
+          "path": "packages/backend/test/unit/inbox-authentication.ts",
+          "line": 56,
+          "sha256": "921947f5997d54dd40787bee50b3176e7b9e632f5dd5012f22fbbd506626683e",
+          "anchor": "it.each(['(request-target)'"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2026.3.0...2026.3.1"
+      ],
+      "relatedFindings": [],
+      "id": "GHSA-grwc-c762-gcvp",
+      "title": "HTTP signature verification can be bypassed",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-grwc-c762-gcvp"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "公表された slacc>=0.1.0 の書庫エントリー/シンボリックリンク経路は存在しない。固定された unzipper は Unix symlink エントリーを通常ファイルとして展開し、今回の実験でもリンクを作らない。ただし旧 importer の meta.json 参照に独立した任意ファイル読込があり、EMOJI-META-READ として影響確認済み。",
+      "conditions": "当該 slacc 経路への非該当であり、絵文字インポート全体は安全ではない。未信頼パックの import は危険。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/queue/processors/ImportCustomEmojisProcessorService.ts",
+          "line": 4,
+          "sha256": "fa33b601d37c9735feed46ff747b9520ffc7b0a598518a7a90b82fa4508db57f",
+          "anchor": "import unzipper from 'unzipper'"
+        },
+        {
+          "path": "packages/backend/package.json",
+          "line": 122,
+          "sha256": "3e696e6c5390e69e781cae9f3fbb886d4f20ca0b84f82fd4045f24cbb941b5b6",
+          "anchor": "\"unzipper\": \"0.12.5\""
+        },
+        {
+          "path": "packages/backend/src/queue/processors/ImportCustomEmojisProcessorService.ts",
+          "line": 83,
+          "sha256": "fa33b601d37c9735feed46ff747b9520ffc7b0a598518a7a90b82fa4508db57f",
+          "anchor": "const emojiPath = outputPath + '/' + record.fileName"
+        }
+      ],
+      "probes": [
+        "zipExtraction",
+        "legacyEmojiMetadataRead"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [
+        "EMOJI-META-READ"
+      ],
+      "id": "GHSA-h3mq-w9gq-6mwm",
+      "title": "Insufficient validation in custom emoji ZIP import leads to arbitrary file read",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-h3mq-w9gq-6mwm"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "上流修正は userId を持つ個人向け announcement を匿名取得する問題。この版の Announcement に宛先 userId はなく、announcements/show もない。全体向けお知らせのみ。",
+      "conditions": "この版のお知らせモデルに限る。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/models/entities/Announcement.ts",
+          "line": 5,
+          "sha256": "f31716b2ca05b9d31dbab6adff9d8cd9337626d02d12c9dffd9385edf07b7cfc",
+          "anchor": "export class Announcement"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/announcements.ts",
+          "line": 82,
+          "sha256": "01420098c3904e758eb1d2ffdec41508239694b3466f102095ffbadab595bb28",
+          "anchor": "const announcements = await query.take"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2026.5.3...2026.5.4"
+      ],
+      "relatedFindings": [],
+      "absentPaths": [
+        "packages/backend/src/server/api/endpoints/announcements/show.ts"
+      ],
+      "id": "GHSA-j49q-76hx-mv8f",
+      "title": "Improper authorization in announcements API",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-j49q-76hx-mv8f"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "slacc による展開ではなく unzipper@0.12.5 を使用する。Extract は区切り文字を正規化し path.relative で展開先外を拒否する。親・隣接 prefix・逆 slash の書込を拒否し、普通のファイルは展開できた。",
+      "conditions": "ロックファイル通りの unzipper を用いた展開経路。meta.json による読込は別件 EMOJI-META-READ で未修正。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/queue/processors/ImportCustomEmojisProcessorService.ts",
+          "line": 75,
+          "sha256": "fa33b601d37c9735feed46ff747b9520ffc7b0a598518a7a90b82fa4508db57f",
+          "anchor": "unzipper.Extract({ path: outputPath })"
+        },
+        {
+          "path": "packages/backend/package.json",
+          "line": 122,
+          "sha256": "3e696e6c5390e69e781cae9f3fbb886d4f20ca0b84f82fd4045f24cbb941b5b6",
+          "anchor": "\"unzipper\": \"0.12.5\""
+        }
+      ],
+      "probes": [
+        "zipExtraction"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [
+        "EMOJI-META-READ"
+      ],
+      "id": "GHSA-jx9q-24fh-4fxw",
+      "title": "Path traversal in custom emoji ZIP import leads to arbitrary file write",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-jx9q-24fh-4fxw"
+    },
+    {
+      "classification": "affected",
+      "reason": "AP の取得結果の最終 URL と id の権威関係を検証しない。Person/Note の初期要求ホスト確認だけでは、リダイレクト後の返答元と主張された id の不一致を防げない。",
+      "conditions": "攻撃者の文書を取得させる経路、または利用可能なリダイレクト。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/remote/activitypub/ApRequestService.ts",
+          "line": 181,
+          "sha256": "11f93b9d11e03bd95a13b17e6bc5b9025a806b8eb24ad97751e5be2bde050f72",
+          "anchor": "return await res.json();"
+        },
+        {
+          "path": "packages/backend/src/core/remote/activitypub/ApResolverService.ts",
+          "line": 135,
+          "sha256": "b5e072dcc46e13be72412db6073e59715f5399d067a00d8ad05a5f1bb65b0001",
+          "anchor": "const object = (this.user"
+        },
+        {
+          "path": "packages/backend/src/core/remote/activitypub/models/ApPersonService.ts",
+          "line": 203,
+          "sha256": "64d9cbb0e61073fa56871d585a3f52722b4b46e9d9d1b4d857a22f0ddfbcc8fb",
+          "anchor": "const idHost ="
+        }
+      ],
+      "probes": [
+        "activityFetch"
+      ],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2024.10.1...2024.11.0-alpha.3"
+      ],
+      "relatedFindings": [],
+      "id": "GHSA-m2gq-69fp-6hv4",
+      "title": "Missing validation allows spoofed profiles and notes",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-m2gq-69fp-6hv4"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "公表の v13 以後の Fastify multipart cleanup 実装はない。この版は Koa/Multer と Endpoint の unlink を使う。ただし、アップロード成功後に認証で拒否すると Endpoint の cleanup に到達せずファイルが残る別経路を確認した。UPLOAD-AUTH-CLEANUP として別に扱う。",
+      "conditions": "元アドバイザリーへの非該当はアップロード DoS 全体の解消を意味しない。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/ApiServerService.ts",
+          "line": 89,
+          "sha256": "a29d8132b32032c44671b27d2272cb3fc42b82be689c558847b1036e7bca2475",
+          "anchor": "upload.single('file')"
+        },
+        {
+          "path": "packages/backend/src/server/api/ApiCallService.ts",
+          "line": 77,
+          "sha256": "db02f3e9d66353389c7905a3058f575b6dcc4664bbecaeab597a1d5fe219b649",
+          "anchor": "this.authenticateService.authenticate(body['i'])"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoint-base.ts",
+          "line": 39,
+          "sha256": "aacdb9e39fb48b4d60704d240c5b6e38a270ca7da20d54fc695d327fb36d1158",
+          "anchor": "fs.unlink(file.path"
+        }
+      ],
+      "probes": [
+        "legacyUploadCleanup"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [
+        "UPLOAD-AUTH-CLEANUP"
+      ],
+      "id": "GHSA-m9xp-2fvm-pfmq",
+      "title": "Denial of service resulting from insufficient cleanup processing during file uploads",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-m9xp-2fvm-pfmq"
+    },
+    {
+      "classification": "affected",
+      "reason": "rss と rss-ticker の双方が未検証の item.link を href に渡す。RSS の取得・解析経路もリンクの HTTP(S) 制限をしない。",
+      "conditions": "悪意のある項目を含む RSS を表示しリンクを操作した場合。ブラウザ依存の実行条件は未再現で、確認内容は危険な URL の受入れ経路。",
+      "evidence": [
+        {
+          "path": "packages/client/src/widgets/rss.vue",
+          "line": 9,
+          "sha256": "c08d44faac9dc8ff841332f9a62aa65f13ee6fc5107918c021df816f44e746b0",
+          "anchor": ":href=\"item.link\""
+        },
+        {
+          "path": "packages/client/src/widgets/rss-ticker.vue",
+          "line": 12,
+          "sha256": "e648bb2397f5f5f49a13d99bae41aca219b67b124a78befed3e0611c5bc36f99",
+          "anchor": ":href=\"item.link\""
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/fetch-rss.ts",
+          "line": 48,
+          "sha256": "4cd96d3f8107068df48f757b6f01b56fc44fd447539e34e1bfd08c648dc217e5",
+          "anchor": "rssParser.parseString(text)"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-p73x-6qrq-34jc",
+      "title": "Cross-site scripting in RSS feed item links",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-p73x-6qrq-34jc"
+    },
+    {
+      "classification": "affected",
+      "reason": "Actor/Note の url に HTTP(S) の制限がなく、javascript: が保存・リモート表示リンクに流れる。前回のプレビュー用 URL 検査はこのリンクに適用されない。",
+      "conditions": "悪意のある AP プロフィール・投稿を表示しリモート表示を操作した場合。ブラウザでのスクリプト実行の再現は未実施。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/remote/activitypub/models/ApPersonService.ts",
+          "line": 312,
+          "sha256": "64d9cbb0e61073fa56871d585a3f52722b4b46e9d9d1b4d857a22f0ddfbcc8fb",
+          "anchor": "url: getOneApHrefNullable(person.url)"
+        },
+        {
+          "path": "packages/backend/src/core/remote/activitypub/models/ApNoteService.ts",
+          "line": 306,
+          "sha256": "8fe38e04e34564328b408a1d3577daad9bb371ef8170638842095c46893816b6",
+          "anchor": "url: getOneApHrefNullable(note.url)"
+        },
+        {
+          "path": "packages/client/src/scripts/get-note-menu.ts",
+          "line": 235,
+          "sha256": "664543adc25c9b8ee38068d517b1c3ca02ab54a3e096e4a597a8ff1262411910",
+          "anchor": "window.open(appearNote.url || appearNote.uri"
+        },
+        {
+          "path": "packages/client/src/components/MkRemoteCaution.vue",
+          "line": 2,
+          "sha256": "abc19254480516d84791bf9c69b68069a63ac575de0cee8bba53f74a971f51a5",
+          "anchor": ":href="
+        }
+      ],
+      "probes": [
+        "originLinks"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-pfp5-r48x-fg25",
+      "title": "XSS of ActivityPub URI",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-pfp5-r48x-fg25"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "admin/reset-password は呼出者がモデレーターでも、対象 user.isAdmin が true ならパスワード生成・更新より前に拒否する。旧 isAdmin モデルで対象管理者を保護している。",
+      "conditions": "このエンドポイントの管理者パスワード変更に限る。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/endpoints/admin/reset-password.ts",
+          "line": 53,
+          "sha256": "3ffc6379f8b14b9af6c1a98c870b54221d42b1ccfb63fa87064bdc1364e5e8c4",
+          "anchor": "if (user.isAdmin)"
+        },
+        {
+          "path": "packages/backend/src/server/api/ApiCallService.ts",
+          "line": 185,
+          "sha256": "db02f3e9d66353389c7905a3058f575b6dcc4664bbecaeab597a1d5fe219b649",
+          "anchor": "if (ep.meta.requireModerator"
+        }
+      ],
+      "probes": [
+        "adminPasswordReset"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-pj3p-xfwj-rwxv",
+      "title": "Moderators can take over administrator account (privilege elevation)",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-pj3p-xfwj-rwxv"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "MkDialog の title/text は既に Mfm コンポーネントに渡され、古い v-html 注入はない。公開された修正コミットと一致する構造。",
+      "conditions": "ダイアログの旧 HTML 注入に限る。MFM やリンク全体の監査とは別。",
+      "evidence": [
+        {
+          "path": "packages/client/src/components/MkDialog.vue",
+          "line": 15,
+          "sha256": "c1aff811adf55608e21cb5b0dd8fc4c0741974fef8a71bc2dfc6bd65a8c50b58",
+          "anchor": "<header v-if=\"title\"><Mfm :text=\"title\"/>"
+        },
+        {
+          "path": "packages/client/src/components/MkDialog.vue",
+          "line": 16,
+          "sha256": "c1aff811adf55608e21cb5b0dd8fc4c0741974fef8a71bc2dfc6bd65a8c50b58",
+          "anchor": "<Mfm :text=\"text\"/>"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/commit/ec203f7f795766f76b55fecc9248168c1cdf6c99"
+      ],
+      "relatedFindings": [],
+      "id": "GHSA-pmmv-jwqh-f5ww",
+      "title": "XSS vulnerability using dialog",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-pmmv-jwqh-f5ww"
+    },
+    {
+      "classification": "affected",
+      "reason": "signedGet/汎用getJsonからAPを取得する両経路に、応答 Content-Type の ActivityStreams 検査がない。@context の存在確認はメディア型検査の代替にならない。",
+      "conditions": "ユーザーアップロード等を同じホストで返す他サーバーの JSON 文書を、AP として取得させられる場合。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/remote/activitypub/ApRequestService.ts",
+          "line": 181,
+          "sha256": "11f93b9d11e03bd95a13b17e6bc5b9025a806b8eb24ad97751e5be2bde050f72",
+          "anchor": "return await res.json();"
+        },
+        {
+          "path": "packages/backend/src/core/remote/activitypub/ApResolverService.ts",
+          "line": 137,
+          "sha256": "b5e072dcc46e13be72412db6073e59715f5399d067a00d8ad05a5f1bb65b0001",
+          "anchor": "this.httpRequestService.getJson(value, 'application/activity+json"
+        },
+        {
+          "path": "packages/backend/src/core/HttpRequestService.ts",
+          "line": 111,
+          "sha256": "d7da08eb12ab59e4f948a25ce817560728159ebcfdc64f017a64fce0aa517ad6",
+          "anchor": "return await res.json();"
+        }
+      ],
+      "probes": [
+        "activityFetch"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-qqrm-9grj-6v32",
+      "title": "Lack of media type verification of Activity Streams objects allows impersonation and takeover of remote accounts",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-qqrm-9grj-6v32"
+    },
+    {
+      "classification": "conditional",
+      "reason": "固定 sharp@0.35.5 は当該修正済みの >=0.35.4。ロックされた Linux x64 prebuilt を integrity 照合して確認し、libheif は修正版1.23.2より新しい1.23.5。system libvips の利用や別プラットフォームの実物、本番OSの libheif は未確認。",
+      "conditions": "標準 Linux x64 prebuilt はこの指摘への対処済み。システム側の libvips/libheif をリンクする運用では実物の確認が必要。",
+      "evidence": [
+        {
+          "path": "packages/backend/package.json",
+          "line": 106,
+          "sha256": "3e696e6c5390e69e781cae9f3fbb886d4f20ca0b84f82fd4045f24cbb941b5b6",
+          "anchor": "\"sharp\": \"0.35.5\""
+        },
+        {
+          "path": "packages/backend/yarn.lock",
+          "line": 487,
+          "sha256": "58f843b0bbd0ed963034e458a099499bfe932442bd77b93b46ea79aea1e2d841",
+          "anchor": "\"@img/sharp-libvips-linux-x64@1.3.4\""
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [
+        "https://github.com/advisories/GHSA-rgj7-g3m4-5g8c"
+      ],
+      "relatedFindings": [],
+      "id": "GHSA-rrm8-pwmf-gxm3",
+      "title": "Unexpected crashes, and potential other vulnerabilities via heap overflow due to a vulnerability in libheif (dependency)",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-rrm8-pwmf-gxm3"
+    },
+    {
+      "classification": "affected",
+      "reason": "users/get-frequently-replied-users は未認証で全公開範囲の最近の返信と返信先の作者を集計する。閲覧権・公開範囲フィルターなしで相手と重みを返す。",
+      "conditions": "対象ユーザーの ID と、非公開返信が存在する場合。本文自体とは別の交流情報。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/endpoints/users/get-frequently-replied-users.ts",
+          "line": 14,
+          "sha256": "3d9406bbc01286738a890b132d11c750ab6aa69191595ea1bb4417a323e53bdc",
+          "anchor": "requireCredential: false"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/users/get-frequently-replied-users.ts",
+          "line": 80,
+          "sha256": "3d9406bbc01286738a890b132d11c750ab6aa69191595ea1bb4417a323e53bdc",
+          "anchor": "replyId: Not(IsNull())"
+        },
+        {
+          "path": "packages/backend/src/server/api/endpoints/users/get-frequently-replied-users.ts",
+          "line": 125,
+          "sha256": "3d9406bbc01286738a890b132d11c750ab6aa69191595ea1bb4417a323e53bdc",
+          "anchor": "weight: repliedUsers[user] / peak"
+        }
+      ],
+      "probes": [
+        "privateReplyFrequency"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-vwfw-pgg7-5hg6",
+      "title": "Lack of proper authorization checks",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-vwfw-pgg7-5hg6"
+    },
+    {
+      "classification": "affected",
+      "reason": "login は token Cookie を1年保持で設定するが signout は igi のみ書き換え、token を削除も失効もしない。Bull 認証用 token が残る。",
+      "conditions": "ログイン後にログアウトした端末を他人が使える場合。複数アカウントでの切替も別途考慮が必要。",
+      "evidence": [
+        {
+          "path": "packages/client/src/account.ts",
+          "line": 28,
+          "sha256": "1a007a4f09091754d70d62e59121081d64d76a7e837350f4133f858167463886",
+          "anchor": "export async function signout()"
+        },
+        {
+          "path": "packages/client/src/account.ts",
+          "line": 62,
+          "sha256": "1a007a4f09091754d70d62e59121081d64d76a7e837350f4133f858167463886",
+          "anchor": "document.cookie = 'igi=; path=/'"
+        },
+        {
+          "path": "packages/client/src/account.ts",
+          "line": 134,
+          "sha256": "1a007a4f09091754d70d62e59121081d64d76a7e837350f4133f858167463886",
+          "anchor": "document.cookie = `token="
+        }
+      ],
+      "probes": [
+        "dashboardCookie"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-w98m-j6hq-cwjm",
+      "title": "Token remains valid in cookie after signing out",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-w98m-j6hq-cwjm"
+    },
+    {
+      "classification": "affected",
+      "reason": "theme compile の getColor は @/$/関数参照を再帰解決するが訪問済み・深さの制限がない。@loop の自己参照で RangeError を再現。",
+      "conditions": "不正なテーマをインポート・適用したクライアント。サーバー停止の実験ではない。",
+      "evidence": [
+        {
+          "path": "packages/client/src/scripts/theme.ts",
+          "line": 103,
+          "sha256": "0d0e78c91bd2aea85944bee0b7e423f0e7388bf85adfb41320e7353863911b38",
+          "anchor": "function compile(theme"
+        },
+        {
+          "path": "packages/client/src/scripts/theme.ts",
+          "line": 107,
+          "sha256": "0d0e78c91bd2aea85944bee0b7e423f0e7388bf85adfb41320e7353863911b38",
+          "anchor": "return getColor(theme.props[val.substr(1)])"
+        }
+      ],
+      "probes": [
+        "recursiveTheme"
+      ],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2026.5.3...2026.5.4"
+      ],
+      "relatedFindings": [],
+      "id": "GHSA-wmhf-m93m-rgmj",
+      "title": "Denial of Service via Uncontrolled Recursion in Theme Compilation",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-wmhf-m93m-rgmj"
+    },
+    {
+      "classification": "conditional",
+      "reason": "ServerService は koa.proxy=true を固定し、signin のレート制限は ctx.ip をキーにする。同じソケットでも X-Forwarded-For を変えると ctx.ip が変わる。信頼するプロキシの範囲をアプリで指定しない。",
+      "conditions": "直接アクセス可能、またはプロキシが受信 X-Forwarded-For を安全に置換しない場合に影響あり。本番のプロキシ・アクセス制御は未調査。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/ServerService.ts",
+          "line": 63,
+          "sha256": "fadc17f47631727603a3644305f880debc1e90a89ddf812dd401ad26fa1ad0b3",
+          "anchor": "koa.proxy = true"
+        },
+        {
+          "path": "packages/backend/src/server/api/SigninApiService.ts",
+          "line": 61,
+          "sha256": "3af83b64e8218a1f74fc2a4c772956e5153697f5c2372932b7a127298e4d987c",
+          "anchor": "getIpHash(ctx.ip)"
+        }
+      ],
+      "probes": [
+        "forwardedFor"
+      ],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-wwrj-3hvj-prpm",
+      "title": "Login rate limit bypass via spoofed X-Forwarded-For header.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-wwrj-3hvj-prpm"
+    },
+    {
+      "classification": "not-affected-as-described",
+      "reason": "CreateNotificationService の follow/receiveFollowRequest メールメソッドは本文全体がコメントで、外部 Actor の名前をメール HTML に渡す経路が実行されない。関数の呼出しが残っていても送信は行わない。",
+      "conditions": "この保守ブランチのコードに限る。稼働中 fork でコメントを戻していれば影響ありとなる。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/CreateNotificationService.ts",
+          "line": 93,
+          "sha256": "40a26697e38a1ea4d4ea89196f8a01c599852459fc80df297604d5f9fd9bc57a",
+          "anchor": "private async emailNotificationFollow"
+        },
+        {
+          "path": "packages/backend/src/core/CreateNotificationService.ts",
+          "line": 104,
+          "sha256": "40a26697e38a1ea4d4ea89196f8a01c599852459fc80df297604d5f9fd9bc57a",
+          "anchor": "private async emailNotificationReceiveFollowRequest"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-xc6c-m4f7-jcc9",
+      "title": "Unsanitized user-input values are injected into HTML notification emails",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-xc6c-m4f7-jcc9"
+    },
+    {
+      "classification": "unresolved",
+      "reason": "CVE-2026-28431 は3つのGHSAをまとめるが、本文・公開CVE記録にはIDごとの具体的な経路が示されない。2026.3.1の個別修正コミットまで照合した。投稿イベントの無権限購読と他人のアンテナ購読はこの版で実際に再現した一方、複数階層ノートの隠蔽は旧版で既に再packする箇所もあるため、3件それぞれを「影響あり」または「影響なし」と断定しない。",
+      "conditions": "非公開情報への不正アクセスの経路が確認されているため、保留を安全判定に使わない。次は各修正コミット単位の実HTTP/WebSocket試験と完全な公開範囲行列を追加し、上流の追加情報と対応付ける。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/stream/index.ts",
+          "line": 201,
+          "sha256": "e371560ec1f39ecb93b9ba3e3371fab5c91ab6c75c16b96587e5b617d714d1b0",
+          "anchor": "private onSubscribeNote"
+        },
+        {
+          "path": "packages/backend/src/server/api/stream/index.ts",
+          "line": 228,
+          "sha256": "e371560ec1f39ecb93b9ba3e3371fab5c91ab6c75c16b96587e5b617d714d1b0",
+          "anchor": "private async onNoteStreamMessage"
+        },
+        {
+          "path": "packages/backend/src/server/api/stream/channels/antenna.ts",
+          "line": 24,
+          "sha256": "04e5253c66cb8bc2ba63235cbe61631fcf69bcd5196998cbc706acfc259088e6",
+          "anchor": "public async init"
+        },
+        {
+          "path": "packages/backend/src/core/entities/NoteEntityService.ts",
+          "line": 342,
+          "sha256": "967ffd23bc693e96c1cc8c4bd93b7c0bead2515e10abb9a6f8f5870a529f4ad7",
+          "anchor": "await this.hideNote(packed, meId)"
+        }
+      ],
+      "probes": [
+        "privateNoteEvents",
+        "antennaSubscription"
+      ],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2026.3.0...2026.3.1",
+        "https://github.com/misskey-dev/misskey/commit/a07dc589e75f0b6c4abf5d5ececb9f1c65e38a5c",
+        "https://github.com/misskey-dev/misskey/commit/b361a10c48829a9bc4c01257bdafb85509ce7c76",
+        "https://github.com/misskey-dev/misskey/commit/06e74508a2c488bf50158de01e0873d61e82fa3c",
+        "https://github.com/CVEProject/cvelistV5/blob/main/cves/2026/28xxx/CVE-2026-28431.json"
+      ],
+      "relatedFindings": [
+        "STREAM-ACCESS-BOUNDARY"
+      ],
+      "id": "GHSA-r33c-qg3g-v9cr",
+      "title": "Lack of proper authorization checks and input validation",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-r33c-qg3g-v9cr"
+    },
+    {
+      "classification": "unresolved",
+      "reason": "CVE-2026-28431 は3つのGHSAをまとめるが、本文・公開CVE記録にはIDごとの具体的な経路が示されない。2026.3.1の個別修正コミットまで照合した。投稿イベントの無権限購読と他人のアンテナ購読はこの版で実際に再現した一方、複数階層ノートの隠蔽は旧版で既に再packする箇所もあるため、3件それぞれを「影響あり」または「影響なし」と断定しない。",
+      "conditions": "非公開情報への不正アクセスの経路が確認されているため、保留を安全判定に使わない。次は各修正コミット単位の実HTTP/WebSocket試験と完全な公開範囲行列を追加し、上流の追加情報と対応付ける。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/stream/index.ts",
+          "line": 201,
+          "sha256": "e371560ec1f39ecb93b9ba3e3371fab5c91ab6c75c16b96587e5b617d714d1b0",
+          "anchor": "private onSubscribeNote"
+        },
+        {
+          "path": "packages/backend/src/server/api/stream/index.ts",
+          "line": 228,
+          "sha256": "e371560ec1f39ecb93b9ba3e3371fab5c91ab6c75c16b96587e5b617d714d1b0",
+          "anchor": "private async onNoteStreamMessage"
+        },
+        {
+          "path": "packages/backend/src/server/api/stream/channels/antenna.ts",
+          "line": 24,
+          "sha256": "04e5253c66cb8bc2ba63235cbe61631fcf69bcd5196998cbc706acfc259088e6",
+          "anchor": "public async init"
+        },
+        {
+          "path": "packages/backend/src/core/entities/NoteEntityService.ts",
+          "line": 342,
+          "sha256": "967ffd23bc693e96c1cc8c4bd93b7c0bead2515e10abb9a6f8f5870a529f4ad7",
+          "anchor": "await this.hideNote(packed, meId)"
+        }
+      ],
+      "probes": [
+        "privateNoteEvents",
+        "antennaSubscription"
+      ],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2026.3.0...2026.3.1",
+        "https://github.com/misskey-dev/misskey/commit/a07dc589e75f0b6c4abf5d5ececb9f1c65e38a5c",
+        "https://github.com/misskey-dev/misskey/commit/b361a10c48829a9bc4c01257bdafb85509ce7c76",
+        "https://github.com/misskey-dev/misskey/commit/06e74508a2c488bf50158de01e0873d61e82fa3c",
+        "https://github.com/CVEProject/cvelistV5/blob/main/cves/2026/28xxx/CVE-2026-28431.json"
+      ],
+      "relatedFindings": [
+        "STREAM-ACCESS-BOUNDARY"
+      ],
+      "id": "GHSA-cvf3-p7p2-27fh",
+      "title": "Lack of proper authorization checks",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-cvf3-p7p2-27fh"
+    },
+    {
+      "classification": "unresolved",
+      "reason": "CVE-2026-28431 は3つのGHSAをまとめるが、本文・公開CVE記録にはIDごとの具体的な経路が示されない。2026.3.1の個別修正コミットまで照合した。投稿イベントの無権限購読と他人のアンテナ購読はこの版で実際に再現した一方、複数階層ノートの隠蔽は旧版で既に再packする箇所もあるため、3件それぞれを「影響あり」または「影響なし」と断定しない。",
+      "conditions": "非公開情報への不正アクセスの経路が確認されているため、保留を安全判定に使わない。次は各修正コミット単位の実HTTP/WebSocket試験と完全な公開範囲行列を追加し、上流の追加情報と対応付ける。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/stream/index.ts",
+          "line": 201,
+          "sha256": "e371560ec1f39ecb93b9ba3e3371fab5c91ab6c75c16b96587e5b617d714d1b0",
+          "anchor": "private onSubscribeNote"
+        },
+        {
+          "path": "packages/backend/src/server/api/stream/index.ts",
+          "line": 228,
+          "sha256": "e371560ec1f39ecb93b9ba3e3371fab5c91ab6c75c16b96587e5b617d714d1b0",
+          "anchor": "private async onNoteStreamMessage"
+        },
+        {
+          "path": "packages/backend/src/server/api/stream/channels/antenna.ts",
+          "line": 24,
+          "sha256": "04e5253c66cb8bc2ba63235cbe61631fcf69bcd5196998cbc706acfc259088e6",
+          "anchor": "public async init"
+        },
+        {
+          "path": "packages/backend/src/core/entities/NoteEntityService.ts",
+          "line": 342,
+          "sha256": "967ffd23bc693e96c1cc8c4bd93b7c0bead2515e10abb9a6f8f5870a529f4ad7",
+          "anchor": "await this.hideNote(packed, meId)"
+        }
+      ],
+      "probes": [
+        "privateNoteEvents",
+        "antennaSubscription"
+      ],
+      "upstreamReferences": [
+        "https://github.com/misskey-dev/misskey/compare/2026.3.0...2026.3.1",
+        "https://github.com/misskey-dev/misskey/commit/a07dc589e75f0b6c4abf5d5ececb9f1c65e38a5c",
+        "https://github.com/misskey-dev/misskey/commit/b361a10c48829a9bc4c01257bdafb85509ce7c76",
+        "https://github.com/misskey-dev/misskey/commit/06e74508a2c488bf50158de01e0873d61e82fa3c",
+        "https://github.com/CVEProject/cvelistV5/blob/main/cves/2026/28xxx/CVE-2026-28431.json"
+      ],
+      "relatedFindings": [
+        "STREAM-ACCESS-BOUNDARY"
+      ],
+      "id": "GHSA-gg7j-c76w-8x3g",
+      "title": "Lack of proper permission checks",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-gg7j-c76w-8x3g"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/queue/processors/InboxProcessorService.ts",
+          "line": 151,
+          "sha256": "615c40464852f16f708544c9bd75c77dc05e1d1103023ca9ac4c1d7d21cbf1e4",
+          "anchor": "const compacted = await ldSignature.compact"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-2vxv-pv3m-3wvj",
+      "title": "Impersonation and takeover of remote accounts with unnormalized signed activities",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-2vxv-pv3m-3wvj"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/remote/activitypub/LdSignatureService.ts",
+          "line": 140,
+          "sha256": "b9597ea4648615195e556d52faf96a13272df448af2ec7d34e4c0d82fff2d3d2",
+          "anchor": "if (this.frozen)"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-38jx-423m-g387",
+      "title": "JSON-LD signature validation + compaction is vulnerable to timing attacks",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-38jx-423m-g387"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/ActivityPubServerService.ts",
+          "line": 105,
+          "sha256": "fd7fe65f29c72db5bbdc36732721e6efbd83242b07a94676833da4e48b36dc40",
+          "anchor": "supplied.length !== actual.length"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-3f39-6537-3cgc",
+      "title": "Misskey's missing signature validation allows arbitrary users to impersonate any remote user.",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-3f39-6537-3cgc"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/client/src/components/MkUrlPreview.vue",
+          "line": 12,
+          "sha256": "a375e098bea9e283d28bd4d1cb0282e76ff2e5a12d099006dc89e8c4a26b689d",
+          "anchor": "JSON.stringify(thumbnail)"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-3p2w-xmv5-jm95",
+      "title": "CSS Style Injection In `MkUrlPreview`",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-3p2w-xmv5-jm95"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/HttpRequestService.ts",
+          "line": 83,
+          "sha256": "d7da08eb12ab59e4f948a25ce817560728159ebcfdc64f017a64fce0aa517ad6",
+          "anchor": "guardOutboundAgent(agent"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-5q3h-wpfw-hjjw",
+      "title": "Server-Side Request Forgery vulnerability in various APIs",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-5q3h-wpfw-hjjw"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/client/src/scripts/url.ts",
+          "line": 17,
+          "sha256": "b3a6ee3f37922eb2bcb9b4add9c2fe3f7c3b1daaf3c0fb305102e6aaf3e90931",
+          "anchor": "url.protocol"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-cc6r-chgr-8r5m",
+      "title": "XSS vulnerability using authentication callback",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-cc6r-chgr-8r5m"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/api/endpoints/notes/search-by-tag.ts",
+          "line": 99,
+          "sha256": "57031a137e77da2e4531d33a7299abe0663060abdf101a9daf2300f73f8ff821",
+          "anchor": "<@ note.tags"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-cgwp-vmr4-wx4q",
+      "title": "SQL injection of notes/search-by-tag",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-cgwp-vmr4-wx4q"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/server/web/UrlPreviewService.ts",
+          "line": 88,
+          "sha256": "16025dffc3cbb7e3d308f77757127b2c59922b9c32d9e5d1ac5f8d7f33614a46",
+          "anchor": "agents: { http:"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-jvcx-f39m-5xrj",
+      "title": "SSRF bypass in URL Preview",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-jvcx-f39m-5xrj"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/DownloadService.ts",
+          "line": 60,
+          "sha256": "e655ac07182758af11fe2335f7b8fdfff6480d80a9a5a18f0e5aecf07396d198",
+          "anchor": "guarded agents validate before connecting"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-mqv7-gxh4-r5vf",
+      "title": "Server-Side Request Forgery vulnerability in download",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-mqv7-gxh4-r5vf"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/client/src/components/MkYoutubePlayer.vue",
+          "line": 25,
+          "sha256": "7ced82198a1ec0ba38c3189f77ba5a9879c268bbdc73a77bd0c0d2fb573cdee6",
+          "anchor": "safePreviewPlayer"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-vc39-c453-67g3",
+      "title": "XSS vulnerability using url preview",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-vc39-c453-67g3"
+    },
+    {
+      "classification": "mitigated",
+      "reason": "前回までの修正コードと既存の必須テスト対応付けを再確認。今回はアプリの再ビルド・実DB・連合試験を再実行したものではない。",
+      "conditions": "この保守ブランチにパッチを適用した状態に限る。元ブランチや本番への適用は未確認。",
+      "evidence": [
+        {
+          "path": "packages/backend/src/core/remote/activitypub/LdSignatureService.ts",
+          "line": 116,
+          "sha256": "b9597ea4648615195e556d52faf96a13272df448af2ec7d34e4c0d82fff2d3d2",
+          "anchor": "['@included', '@graph', '@reverse']"
+        }
+      ],
+      "probes": [],
+      "upstreamReferences": [],
+      "relatedFindings": [],
+      "id": "GHSA-w8x2-gpq6-jxvf",
+      "title": "JSON-LD signature validation + compaction may lead to improper activity handling",
+      "url": "https://github.com/misskey-dev/misskey/security/advisories/GHSA-w8x2-gpq6-jxvf"
+    }
+  ],
+  "relatedFindings": [
+    {
+      "id": "EMOJI-META-READ",
+      "status": "affected",
+      "reason": "旧絵文字 importer は meta.json の fileName を展開先に連結するだけで、任意の親ディレクトリの既存ファイルを DriveService.addFile に渡せる。自作 sentinel の読込を再現。slacc の symlink GHSA と同一経路とは扱わない。",
+      "precondition": "信頼されない絵文字パックを管理者/モデレーターが import する場合。",
+      "probes": [
+        "legacyEmojiMetadataRead"
+      ]
+    },
+    {
+      "id": "UPLOAD-AUTH-CLEANUP",
+      "status": "affected",
+      "reason": "Multer の書込完了後、API 認証で拒否すると Endpoint の cleanup に到達しない。自作のアップロード相当ファイルが403後に残ることを再現。Fastify の当該 GHSA と同一実装とは扱わない。",
+      "precondition": "公開 multipart アップロード経路。実HTTPで大量送信は行っていない。",
+      "probes": [
+        "legacyUploadCleanup"
+      ]
+    },
+    {
+      "id": "STREAM-ACCESS-BOUNDARY",
+      "status": "affected",
+      "reason": "未認証の投稿イベント購読と他人のアンテナID購読を再現。3つの公表GHSAへの個別割当は保留だが、このコードの欠落自体は確認済み。",
+      "precondition": "対象の投稿/アンテナIDを知る場合。",
+      "probes": [
+        "privateNoteEvents",
+        "antennaSubscription"
+      ]
+    }
+  ]
+}

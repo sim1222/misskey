@@ -88,5 +88,11 @@
     "browserScripts": [
       "scripts/frontend/test-security.mjs"
     ]
+  },
+  "GHSA-grwc-c762-gcvp": {
+    "unitFiles": [
+      "packages/backend/test/unit/inbox-authentication.ts"
+    ],
+    "observations": []
   }
 }

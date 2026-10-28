@@ -1,0 +1,67 @@
+{
+  "checkedDate": "2026-10-28",
+  "pages": {
+    "1": [
+      "GHSA-4x7v-qx8f-g3p8",
+      "GHSA-5c3q-jmv3-r6fx",
+      "GHSA-g3ph-65m3-x625",
+      "GHSA-h3mq-w9gq-6mwm",
+      "GHSA-jx9q-24fh-4fxw",
+      "GHSA-m9xp-2fvm-pfmq",
+      "GHSA-p73x-6qrq-34jc",
+      "GHSA-rrm8-pwmf-gxm3",
+      "GHSA-vwfw-pgg7-5hg6",
+      "GHSA-xc6c-m4f7-jcc9"
+    ],
+    "2": [
+      "GHSA-2m3r-xx7x-63j6",
+      "GHSA-2m5x-5mp6-6vpq",
+      "GHSA-38jx-423m-g387",
+      "GHSA-g6hj-33h7-6fq8",
+      "GHSA-gg7j-c76w-8x3g",
+      "GHSA-grwc-c762-gcvp",
+      "GHSA-j49q-76hx-mv8f",
+      "GHSA-jvcx-f39m-5xrj",
+      "GHSA-w8x2-gpq6-jxvf",
+      "GHSA-wmhf-m93m-rgmj"
+    ],
+    "3": [
+      "GHSA-38w6-vx8g-67pp",
+      "GHSA-3p2w-xmv5-jm95",
+      "GHSA-496g-mmpw-j9x3",
+      "GHSA-675w-hf2m-qwmj",
+      "GHSA-6w2c-vf6f-xf26",
+      "GHSA-cvf3-p7p2-27fh",
+      "GHSA-gmq6-738q-vjp2",
+      "GHSA-pj3p-xfwj-rwxv",
+      "GHSA-r33c-qg3g-v9cr",
+      "GHSA-wwrj-3hvj-prpm"
+    ],
+    "4": [
+      "GHSA-2vxv-pv3m-3wvj",
+      "GHSA-3f39-6537-3cgc",
+      "GHSA-5h8r-gq97-xv69",
+      "GHSA-5q3h-wpfw-hjjw",
+      "GHSA-7pxq-6xx9-xpgm",
+      "GHSA-7vgr-p3vc-p4h2",
+      "GHSA-gq5q-c77c-v236",
+      "GHSA-m2gq-69fp-6hv4",
+      "GHSA-qqrm-9grj-6v32",
+      "GHSA-w98m-j6hq-cwjm"
+    ],
+    "5": [
+      "GHSA-6qw9-6jxq-xj3p",
+      "GHSA-9fj2-gjcf-cqqc",
+      "GHSA-cc6r-chgr-8r5m",
+      "GHSA-cgwp-vmr4-wx4q",
+      "GHSA-mqv7-gxh4-r5vf",
+      "GHSA-pfp5-r48x-fg25",
+      "GHSA-pmmv-jwqh-f5ww",
+      "GHSA-vc39-c453-67g3"
+    ],
+    "6": []
+  },
+  "total": 48,
+  "new": [],
+  "noLongerListed": []
+}
